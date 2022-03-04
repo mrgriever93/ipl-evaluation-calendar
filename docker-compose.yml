@@ -1,0 +1,48 @@
+version: "3"
+services:
+  #PHP Service
+  app:
+    build: .
+    container_name: app
+    restart: unless-stopped
+    command: bash -c "
+      composer install &&
+      php artisan key:generate &&
+      php artisan migrate:fresh &&
+      php artisan db:seed &&
+      php artisan passport:install &&
+      npm install && 
+      npm run prod &&
+      php-fpm"
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - db
+    extra_hosts: 
+      - "dc3c2.ipleiria.pt:172.20.1.12"
+    #ports:
+    #  - "9011:9011"
+
+  #Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: webserver
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+
+  #MySQL Service
+  db:
+    image: mariadb:10.5.8
+    container_name: db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: calendario
+      MYSQL_ROOT_PASSWORD: root
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
