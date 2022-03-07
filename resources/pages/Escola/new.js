@@ -2,7 +2,7 @@ import axios from 'axios';
 import _ from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Field, Form as FinalForm } from 'react-final-form';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import {
@@ -18,7 +18,7 @@ import {
 import { errorConfig, successConfig } from '../../utils/toastConfig';
 
 const New = ({ match }) => {
-  const history = useHistory();
+  const history = useNavigate();
   const [loading, setLoading] = useState(!!match.params?.id);
   const [isSaving, setIsSaving] = useState(false);
   const [school, setSchool] = useState({});
@@ -54,7 +54,7 @@ const New = ({ match }) => {
 
   useEffect(() => {
     if (!loading && match.params?.id && !school) {
-      history.push('/escola');
+      history('/escola');
     }
   }, [match.params, loading, school, history]);
 

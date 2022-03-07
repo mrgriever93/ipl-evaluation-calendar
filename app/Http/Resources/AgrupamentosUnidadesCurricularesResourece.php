@@ -18,7 +18,7 @@ class AgrupamentosUnidadesCurricularesResourece extends JsonResource
         return [
             "id"=>$this->id,
             "descricao"=>$this->descricao,
-            "ucs"=>UnidadesCurricularesForAgrupamentosResource::collection($this->unidadeCurricularAgrupamentoAssocs),
+            "ucs"=> UnidadesCurricularesForAgrupamentosResource::collection($this->unidadeCurricularAgrupamentoAssocs),
             "ano_letivo_id"=>$this->ano_letivo_id
         ];
     }

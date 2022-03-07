@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Field, Form as FinalForm } from 'react-final-form';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import {
@@ -15,7 +15,7 @@ import {
 import { successConfig } from '../../utils/toastConfig';
 
 const New = ({ match }) => {
-  const history = useHistory();
+  const history = useNavigate();
   const [userDetail, setUserDetail] = useState({});
   const [userGroups, setUserGroups] = useState([]);
   const [loading, setLoading] = useState(!!match.params?.id);
@@ -45,7 +45,7 @@ const New = ({ match }) => {
 
   useEffect(() => {
     if (!loading && match.params?.id && !userDetail) {
-      history.push('/utilizador');
+      history('/utilizador');
     }
   }, [match.params, loading, userDetail, history]);
 

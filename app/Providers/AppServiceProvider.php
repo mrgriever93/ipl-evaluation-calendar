@@ -3,8 +3,6 @@
 namespace App\Providers;
 
 use Carbon\Carbon;
-use Validator;
-
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -16,6 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // TODO @miguel.cerejo
         Carbon::setWeekStartsAt(Carbon::SUNDAY);
         Carbon::setWeekEndsAt(Carbon::SATURDAY);
     }
@@ -27,5 +26,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        //
     }
 }

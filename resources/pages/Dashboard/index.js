@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   Link,
-  Redirect, Route, Switch, useLocation,
+  Navigate, Route, Routes, useLocation,
 } from 'react-router-dom';
 import {
   Container,
@@ -69,7 +69,7 @@ const DashboardPage = () => {
       <GlobalStyle />
       <HeaderMenu />
       <Container className="resize-container" fluid={location.pathname.includes('/permissoes')}>
-        <Switch>
+        <Routes>
           <Route path="/calendario" component={Calendario} />
           {
             (isAuthorized.CREATE_COURSE_UNITS
@@ -152,9 +152,8 @@ const DashboardPage = () => {
           {
             (true || isAuthorized.CHANGE_PERMISSIONS) && <Route path="/permissoes" component={Permissoes} />
           }
-          <Route path="/" exact component={Calendario} />
-          <Redirect to="/404" />
-        </Switch>
+          <Route path="/" exact component={Calendario}  element={<Navigate replace to="/404" />} />
+        </Routes>
       </Container>
       <Segment
         className="footer"

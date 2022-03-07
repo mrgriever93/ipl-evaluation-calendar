@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\CalendarPhase;
+use App\Models\CalendarPhase;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CalendarPhaseRequest;
 use App\Http\Resources\CalendarPhaseResource;

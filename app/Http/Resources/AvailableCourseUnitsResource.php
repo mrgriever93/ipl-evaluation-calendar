@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\CourseUnit;
+use App\Models\CourseUnit;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AvailableCourseUnitsResource extends JsonResource

@@ -2,10 +2,10 @@
 
 namespace App\Policies;
 
-use App\Calendar;
-use App\Permission;
-use App\PermissionTypes;
-use App\User;
+use App\Models\Calendar;
+use App\Models\Permission;
+use App\Models\PermissionTypes;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class CalendarPolicy

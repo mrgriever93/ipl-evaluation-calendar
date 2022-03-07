@@ -2,20 +2,20 @@
 
 namespace Database\Seeders;
 
-use App\AcademicYear;
-use App\Branch;
-use App\CalendarPhase;
-use App\Course;
-use App\CourseUnit;
-use App\EpochType;
-use App\EvaluationType;
-use App\Group;
-use App\InterruptionType;
-use App\Permission;
-use App\PermissionCategory;
-use App\School;
-use App\Semester;
-use App\User;
+use App\Models\AcademicYear;
+use App\Models\Branch;
+use App\Models\CalendarPhase;
+use App\Models\Course;
+use App\Models\CourseUnit;
+use App\Models\EpochType;
+use App\Models\EvaluationType;
+use App\Models\Group;
+use App\Models\InterruptionType;
+use App\Models\Permission;
+use App\Models\PermissionCategory;
+use App\Models\School;
+use App\Models\Semester;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -85,33 +85,33 @@ class PermissionsAndGroupsSeeder extends Seeder
             ["name" => "create_course_units", "description" => "Criar UCs"],
             ["name" => "edit_course_units", "description" => "Editar UCs"],
             ["name" => "delete_course_units", "description" => "Eliminar UCs"],
-            
+
             ["name" => "edit_user_groups", "description" => "Editar Grupos de Utilizador"],
             ["name" => "delete_user_groups", "description" => "Eliminar Grupos de Utilizador"],
             ["name" => "create_user_groups", "description" => "Criar Grupos de Utilizador"],
-            
+
             ["name" => "edit_users", "description" => "Editar utilizadores"],
             ["name" => "lock_users", "description" => "Bloquear utilizadores"],
-            
+
             ["name" => "create_evaluation_types", "description" => "Criar tipos de avaliações"],
             ["name" => "edit_evaluation_types", "description" => "Editar tipos de avaliações"],
             ["name" => "delete_evaluation_types", "description" => "Eliminar tipos de avaliações"],
-            
+
             ["name" => "create_interruption_types", "description" => "Criar tipos de interrupções"],
             ["name" => "edit_interruption_types", "description" => "Editar tipos de interrupções"],
             ["name" => "delete_interruption_types", "description" => "Eliminar tipos de interrupções"],
-            
+
             ["name" => "create_calendar_phases", "description" => "Criar fases de calendário"],
             ["name" => "edit_calendar_phases", "description" => "Editar fases de calendário"],
             ["name" => "delete_calendar_phases", "description" => "Eliminar fases de calendário"],
-            
+
             /*["name" => "create_languages", "description" => "Criar idiomas"],
             ["name" => "edit_languages", "description" => "Editar idiomas"],
             ["name" => "translate", "description" => "Traduzir idiomas"],*/
-            
+
             ["name" => "create_schools", "description" => "Criar escolas"],
             ["name" => "edit_schools", "description" => "Editar escolas"],
-            
+
             ["name" => "create_academic_years", "description" => "Criar anos letivos"],
             ["name" => "edit_academic_years", "description" => "Editar anos letivos"],
             ["name" => "delete_academic_years", "description" => "Eliminar anos letivos"],
@@ -120,13 +120,13 @@ class PermissionsAndGroupsSeeder extends Seeder
             ["name" => "define_course_coordinator", "description" => "Definir Coordenador de Curso"],
             ["name" => "define_course_unit_responsible", "description" => "Definir Responsável da Unidade Curricular"],
             ["name" => "define_course_unit_teachers", "description" => "Definir Professores das Unidades Curriculares"],
-            
+
             ["name" => "create_courses", "description" => "Criar cursos"],
             ["name" => "edit_courses", "description" => "Editar cursos"],
             ["name" => "delete_courses", "description" => "Eliminar cursos"],
             ["name" => "publish_calendar", "description" => "Publicar calendário"],
             ["name" => "create_copy", "description" => "Criar cópia"],
-            
+
             ["name" => "manage_evaluation_methods", "description" => "Gerir métodos de Avaliação"],
 
             // for each phase
@@ -138,9 +138,9 @@ class PermissionsAndGroupsSeeder extends Seeder
             ["name" => "add_interruption", "description" => "Adicionar interrupções"],
             ["name" => "edit_interruption", "description" => "Editar interrupções"],
             ["name" => "remove_interruption", "description" => "Remover interrupções"],
-            
+
         ];
-        
+
         $userGroups = [
             ["code" => "super_admin", "description" => "Super Admin"],
             ["code" => "admin", "description" => "Administrador de Sistema"],
@@ -176,14 +176,14 @@ class PermissionsAndGroupsSeeder extends Seeder
             ["code" => "ESECS", "name" => "Escola Superior de Educação e Ciências Sociais"],
             ["code" => "ESSLEI", "name" =>"Escola Superior de Saúde"],
             [
-                "code" => "ESTG", 
-                "name" => "Escola Superior de Tecnologia e Gestão", 
-                "base_link" => "http://www.dei.estg.ipleiria.pt/intranet/horarios/ws/inscricoes/cursos_ucs.php", 
-                "index_course_code" => "0", 
-                "index_course_name" => "1", 
-                "index_course_unit_name" => "3", 
-                "index_course_unit_curricular_year" => "5", 
-                "index_course_unit_code" => "2", 
+                "code" => "ESTG",
+                "name" => "Escola Superior de Tecnologia e Gestão",
+                "base_link" => "http://www.dei.estg.ipleiria.pt/intranet/horarios/ws/inscricoes/cursos_ucs.php",
+                "index_course_code" => "0",
+                "index_course_name" => "1",
+                "index_course_unit_name" => "3",
+                "index_course_unit_curricular_year" => "5",
+                "index_course_unit_code" => "2",
                 "index_course_unit_teachers"=> "4",
                 "query_param_academic_year"=> "anoletivo",
                 "query_param_semester" => "periodo"
@@ -247,7 +247,7 @@ class PermissionsAndGroupsSeeder extends Seeder
             }
         }
 
-        
+
         foreach ($users as $user) {
             $newUser = new User();
             $newUser->name = $user['name'];

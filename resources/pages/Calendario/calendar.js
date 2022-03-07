@@ -3,8 +3,8 @@ import _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Field, Form as FinalForm } from 'react-final-form';
-import { useHistory } from 'react-router';
-import { DateInput, TimeInput } from 'semantic-ui-calendar-react';
+import { useNavigate } from 'react-router';
+import { DateInput, TimeInput } from 'semantic-ui-calendar-react-yz';
 import {
   Accordion,
   Button,
@@ -106,7 +106,7 @@ const RemoveExamButton = styled.div`
 
 const Calendar = ({ match }) => {
   const [calendarPermissions, setCalendarPermissions] = useState(JSON.parse(localStorage.getItem('calendarPermissions')) || []);
-  const history = useHistory();
+  const history = useNavigate();
   const [interruptionsList, setInterruptions] = useState([]);
   const [epochsList, setEpochs] = useState([]);
   const [generalInfo, setGeneralInfo] = useState();
@@ -233,7 +233,7 @@ const Calendar = ({ match }) => {
           setIsLoading(false);
           setPreviousFromDefinitive(previous_from_definitive);
         } else {
-          history.push('/calendario');
+          history('/calendario');
         }
       })
       .catch((r) => alert(r));

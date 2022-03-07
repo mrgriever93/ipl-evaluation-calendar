@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\API\LoginController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 use App\Http\Controllers\API\AcademicYearController;
 use App\Http\Controllers\API\CalendarController;
@@ -26,9 +29,19 @@ use App\Http\Controllers\SchoolController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::get('/version', function () {
+    return 'v2';
+});
 
 
-Route::post('/login', 'API\LoginController@login');
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+
+
+
+Route::post('/login', [LoginController::class, "login"]);//'API\LoginController@login');
 Route::post('/logout', 'API\LoginController@logout');
 
 /** NEW ENDPOINTS! **/
@@ -92,9 +105,9 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/courses/{course}', [CourseController::class, 'destroy']);
     Route::patch('/courses/{course}', [CourseController::class, 'update']);
     Route::patch('/courses/{course}/coordinator', [CourseController::class, 'assignCoordinator']);
-    
+
     Route::delete('/branches/{branch}', [CourseController::class, 'deleteBranch']);
-    
+
     Route::post('/methods', [MethodController::class, 'store']);
     Route::get('/methods', [MethodController::class, 'index']);
     Route::get('/methods/{method}', [MethodController::class, 'show']);
@@ -144,7 +157,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/course-units/{courseUnit}/epochs', [CourseUnitController::class, 'epochsForCourseUnit']);
     Route::get('/course-units/{courseUnit}/methods', [CourseUnitController::class, 'methodsForCourseUnit']);
     Route::patch('/course-units/{courseUnit}/responsible', [CourseUnitController::class, 'assignResponsible']);
-    
+
 });
 
 // TODO

@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\API;
 
-use App\CalendarPhase;
-use App\Group;
-use App\GroupPermission;
+use App\Models\CalendarPhase;
+use App\Models\Group;
+use App\Models\GroupPermission;
+use App\Models\Permission;
+use App\Models\PermissionCategory;
+use App\Models\PermissionTypes;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PermissionRequest;
 use App\Http\Resources\CalendarPermissionsResource;
@@ -12,9 +16,6 @@ use App\Http\Resources\GroupsPermissionsResource;
 use App\Http\Resources\GroupsResource;
 use App\Http\Resources\PermissionsResource;
 use App\Http\Resources\PhaseResource;
-use App\Permission;
-use App\PermissionCategory;
-use App\PermissionTypes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -94,8 +95,8 @@ class PermissionController extends Controller
         $permissions = Permission::where('category_id', $operator, $category->id)->get();
 
 
-       
-        
+
+
 
         return response()->json([
             'permissions' => PermissionsResource::collection($permissions),

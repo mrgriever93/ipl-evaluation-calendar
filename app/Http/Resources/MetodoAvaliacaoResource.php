@@ -4,8 +4,8 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-use App\Avaliacao;
-use App\TipoAvaliacao;
+use App\Models\Avaliacao;
+use App\Models\TipoAvaliacao;
 
 use App\Http\Resources\UnidadeCurricularResource;
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\InterruptionType;
+use App\Models\InterruptionType;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class InterruptionResource extends JsonResource

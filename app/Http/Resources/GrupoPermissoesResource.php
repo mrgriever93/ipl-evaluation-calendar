@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources;
 
-use App\FaseCalendario;
-use App\GrupoFasePermissaoAssoc;
-use App\Permissao;
+use App\Models\FaseCalendario;
+use App\Models\GrupoFasePermissaoAssoc;
+use App\Models\Permissao;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class GrupoPermissoesResource extends JsonResource

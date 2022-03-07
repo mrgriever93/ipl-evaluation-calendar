@@ -2,7 +2,7 @@ import _ from "lodash";
 import React, { useEffect, useMemo } from "react";
 import { Field, Form as FinalForm } from "react-final-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import {
   Button,
@@ -19,7 +19,7 @@ import {
 } from "../../redux/languages/actions";
 
 const New = ({ match }) => {
-  const history = useHistory();
+  const history = useNavigate();
   const dispatch = useDispatch();
   const languageDetail = useSelector((state) => state.languages.detail);
   const loading = useSelector((state) => state.languages.loading);
@@ -40,7 +40,7 @@ const New = ({ match }) => {
 
   useEffect(() => {
     if (!loading && match.params?.id && !languageDetail) {
-      history.push("/idioma");
+      history("/idioma");
     }
   }, [match.params, loading, languageDetail, history]);
 

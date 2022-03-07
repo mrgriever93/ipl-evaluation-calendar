@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-use App\TipoInterrupcao;
+use App\Models\TipoInterrupcao;
 
 class InterrupcaoResource extends JsonResource
 {
@@ -26,5 +26,5 @@ class InterrupcaoResource extends JsonResource
             'created_at'                        => $this->created_at,
             'updated_at'                        => $this->updated_at,
         ];
-    } 
+    }
 }

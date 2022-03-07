@@ -2,11 +2,11 @@
 
 namespace App\Listeners;
 
-use App\Course;
-use App\Epoch;
+use App\Models\Course;
+use App\Models\Epoch;
+use App\Models\Exam;
+use App\Models\Calendar;
 use App\Events\CalendarPublished;
-use App\Exam;
-use App\Calendar;
 use Carbon\Carbon;
 
 class CalculateDifferencesFromLastCalendar
@@ -37,10 +37,10 @@ class CalculateDifferencesFromLastCalendar
         $oldMethods = Exam::whereIn('epoch_id', $calendar->previousCalendar->epochs->pluck('id'))->pluck('method_id');
         $addedExams = Exam::whereIn('method_id', $methods)->whereNotIn('method_id', $oldMethods)->get();
 
-        
+
         $epochs = Epoch::where('calendar_id', $calendar->previousCalendar->id)->get('id');
         $deletedExams = Exam::whereIn('epoch_id', $epochs)->whereNotIn('method_id', $methods)->get();
-        
+
         $examsWithDifferences = array();
 
         $diff = array_diff($addedExams->pluck('id')->toArray(), $examsWithDifferences);

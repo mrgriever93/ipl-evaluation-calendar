@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import {
   Button,
@@ -30,7 +30,7 @@ const columns = [
 
 const List = ({ match }) => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const history = useNavigate();
   const [filteredLanguages, setFilteredLanguages] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const languages = useSelector((state) => state.languages.list);
@@ -60,7 +60,7 @@ const List = ({ match }) => {
   };
 
   const edit = (id) => {
-    history.push(`${match.path}/edit/${id}`);
+    history(`${match.path}/edit/${id}`);
   };
 
   const remove = (language) => {

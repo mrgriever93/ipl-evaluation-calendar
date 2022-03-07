@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Calendar;
-use App\CourseUnit;
-use App\CourseUnitGroup;
-use App\Epoch;
+use App\Models\Calendar;
+use App\Models\CourseUnit;
+use App\Models\CourseUnitGroup;
+use App\Models\Epoch;
 use App\Filters\CourseUnitGroupFilters;
 use App\Http\Requests\CourseUnitGroupRequest;
 use App\Http\Resources\CourseUnitGroupResource;
@@ -56,14 +56,14 @@ class CourseUnitGroupController extends Controller
 
                 foreach ($courseUnitEntity->methods as $method) {
                     $existingEpochToCopy = $method->epochs()->first();
-                    $existingEpochToSync = 
+                    $existingEpochToSync =
                         Epoch::where('epoch_type_id', $existingEpochToCopy->epoch_type_id)
                         ->whereIn('calendar_id', Calendar::where('course_id', $courseUnitEntity->course_id)->get()->pluck('id'))
                         ->get();
                     if (!is_null($existingEpochToSync)) {
                         $method->epochs()->syncWithoutDetaching($existingEpochToSync->pluck('id'));
                     }
-                    
+
                 }
 
             }
@@ -77,7 +77,7 @@ class CourseUnitGroupController extends Controller
                 ->update(['course_unit_group_id' => $newCourseUnitGroup->id]);
 
             return response()->json("Created!", Response::HTTP_CREATED);
-        } 
+        }
 
         return response()->json("Existing methods for more than 1 course unit in the group!", Response::HTTP_UNPROCESSABLE_ENTITY);
     }

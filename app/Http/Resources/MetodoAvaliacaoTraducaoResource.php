@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-use App\TipoAvaliacao;
+use App\Models\TipoAvaliacao;
 
 class MetodoAvaliacaoTraducaoResource extends JsonResource
 {
@@ -27,10 +27,10 @@ class MetodoAvaliacaoTraducaoResource extends JsonResource
             'peso'                              => $this->peso,
             'tipo_avaliacao'                    => new TipoAvaliacaoTraducaoResource($this->tipoAvaliacao, $this->idioma),
             'unidade_curricular'                => UnidadeCurricularSemanalResource::collection($this->unidadeCurricular), // TODO: melhorar...
-            'epoca'                             => $this->epoca=='periodica' ? 'periodica' 
-                                                    : ($this->epoca=='normal' ? 'normal' 
+            'epoca'                             => $this->epoca=='periodica' ? 'periodica'
+                                                    : ($this->epoca=='normal' ? 'normal'
                                                         : ($this->epoca=='recurso' ? 'recurso'
-                                                            : ($this->epoca=='especial' ? 'especial' 
+                                                            : ($this->epoca=='especial' ? 'especial'
                                                             : '-')
                                                         )
                                                     ),

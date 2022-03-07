@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
-use App\Idioma;
-use App\Permissao;
+use App\Models\Idioma;
+use App\Models\Permissao;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class GrupoPermissaoAssocResource extends JsonResource

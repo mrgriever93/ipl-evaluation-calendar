@@ -2,22 +2,13 @@
 
 namespace App\Console;
 
-use App\AcademicYear;
-use App\Course;
+use App\Models\AcademicYear;
+use App\Models\Course;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-    /**
-     * The Artisan commands provided by your application.
-     *
-     * @var array
-     */
-    protected $commands = [
-        //
-    ];
-
     /**
      * Define the application's command schedule.
      *
@@ -26,6 +17,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        // $schedule->command('inspire')->hourly();
         $schedule->call(function () {
             Course::importCoursesFromWebService(AcademicYear::where('active', true));
         })->dailyAt(3);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Field, useField } from 'react-final-form';
-import { DateInput } from 'semantic-ui-calendar-react';
+import { DateInput } from 'semantic-ui-calendar-react-yz';
 import {
   Grid, Button, Card, Form,
 } from 'semantic-ui-react';

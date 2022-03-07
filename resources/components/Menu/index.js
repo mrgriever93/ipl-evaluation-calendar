@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Container, Image, Menu, Dropdown,
 } from 'semantic-ui-react';
@@ -13,7 +13,7 @@ import SCOPES, {
 import ShowComponentIfAuthorized from '../ShowComponentIfAuthorized';
 
 const HeaderMenu = () => {
-  const history = useHistory();
+  const history = useNavigate();
   const dispatch = useDispatch();
   const [academicYearsList, setAcademicYearsList] = useState([]);
 
@@ -22,7 +22,7 @@ const HeaderMenu = () => {
       localStorage.removeItem('authToken');
       localStorage.removeItem('username');
       dispatch(logout());
-      history.push('/login');
+      history('/login');
     });
   };
 

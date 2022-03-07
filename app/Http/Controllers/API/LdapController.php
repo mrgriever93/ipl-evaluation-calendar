@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 use LdapRecord\Connection;
 
@@ -44,7 +44,7 @@ class LdapController extends Controller
     }
 
     public function searchUsers(Request $request) {
-       
+
         $query = $this->connection->query()->setDn('OU=Docentes,OU=Funcionarios,dc=ipleiria,dc=pt');
 
         $records = $query->whereContains('displayName', $request->q)->orWhereContains('cn', $request->q)->get();

@@ -2,11 +2,11 @@
 
 namespace App\Filters;
 
-use App\Calendar;
-use App\Course;
-use App\Epoch;
-use App\InitialGroups;
-use App\CalendarPhase;
+use App\Models\Calendar;
+use App\Models\Course;
+use App\Models\Epoch;
+use App\Models\InitialGroups;
+use App\Models\CalendarPhase;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use tiagomichaelsousa\LaravelFilters\QueryFilters;
@@ -23,7 +23,7 @@ class CalendarFilters extends QueryFilters
         || $user->groups->contains('name', InitialGroups::PEDAGOGIC)
         || $user->groups->contains('name', InitialGroups::RESPONSIBLE_PEDAGOGIC)
         || $user->groups->contains('name', InitialGroups::SUPER_ADMIN)
-        ) 
+        )
             return;
 
         if (count($user->groups) === 1 && $user->groups->contains('description', InitialGroups::STUDENT)) {
@@ -35,7 +35,7 @@ class CalendarFilters extends QueryFilters
                             ->orWhere('calendar_phase_id', CalendarPhase::where('name', 'evaluation_students')->first()->id)
                             ->whereIn('course_id', Auth::user()->courses->pluck('id'));
             }
-    
+
             return $this
                         ->builder
                         ->published()
@@ -54,6 +54,6 @@ class CalendarFilters extends QueryFilters
 
             return $this->builder->whereIn('course_id', Auth::user()->courseUnits->pluck('course_id'))->orPublished();
         }
-        
+
     }
 }

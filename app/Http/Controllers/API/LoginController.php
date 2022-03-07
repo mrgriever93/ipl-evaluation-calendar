@@ -2,40 +2,22 @@
 
 namespace App\Http\Controllers\API;
 
-use App\CalendarPhase;
-use App\Course;
 use App\Http\Controllers\Controller;
-
-use App\Http\Requests\IdiomaRequest;
 use App\Http\Requests\LoginRequest;
-use App\Http\Resources\IdiomaResource;
-use App\Http\Resources\TipoInterrupcaoResource;
-use App\Http\Resources\UtilizadorAutenticadoResource;
-use App\Interrupcao;
-use App\Idioma;
-use App\Traducao;
-use App\TipoInterrupcao;
-use App\Entidade;
-use App\Group;
-use App\GroupPermission;
-use App\Http\Resources\CalendarPermissionsResource;
-use App\Http\Resources\PermissionsResource;
 use App\Http\Resources\UserResource;
-use App\InitialGroups;
-use App\Ldap\User as LdapUser;
-use App\PermissionTypes;
-use App\User as Utilizador;
-use App\User;
-use Carbon\Carbon;
-use GuzzleHttp\Client;
-
-
-use DB;
-use \Config as Config;
-use Illuminate\Database\Eloquent\Builder;
+use App\Http\Resources\UtilizadorAutenticadoResource;
+use App\Models\Course;
+use App\Models\Entidade;
+use App\Models\Group;
+use App\Models\Idioma;
+use App\Models\InitialGroups;
+use App\Models\Interrupcao;
+use App\Models\TipoInterrupcao;
+use App\Models\Traducao;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+
 
 class LoginController extends Controller
 {
@@ -54,7 +36,7 @@ class LoginController extends Controller
 
     public function login(LoginRequest $request)
     {
-        if (Auth::attempt($this->credentials($request))) {
+       if (Auth::attempt($this->credentials($request))) {
             $user = Auth::user();
             $user->refresh();
             if (!$user->enabled) {

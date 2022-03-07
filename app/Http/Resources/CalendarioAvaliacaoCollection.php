@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
-use App\Epoca;
-use App\Avaliacao;
+use App\Models\Epoca;
+use App\Models\Avaliacao;
 use App\Http\Resources\CalendarioAvaliacaoResource;
 use Illuminate\Support\Arr;
 
@@ -45,7 +45,7 @@ class CalendarioAvaliacaoCollection extends ResourceCollection
 
         if(count($this->appends)==0) {
             $queryString = '?page=';
-        } 
+        }
 
         return [
             'data' => CalendarioAvaliacaoResource::collection($this->collection),
@@ -66,13 +66,13 @@ class CalendarioAvaliacaoCollection extends ResourceCollection
                 // 'from'          => 0, // TODO: em falta
             ],
         ];
-    } 
+    }
 
     public function appends($appends)
     {
         $this->appends = $appends;
     }
-    
+
     public function toResponse($request)
     {
         return JsonResource::toResponse($request);

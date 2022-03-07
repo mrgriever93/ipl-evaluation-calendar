@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Calendar;
-use App\Course;
-use App\CourseUnit;
-use App\Epoch;
+use App\Models\Calendar;
+use App\Models\Course;
+use App\Models\CourseUnit;
+use App\Models\Epoch;
+use App\Models\Group;
+use App\Models\User;
 use App\Filters\CourseUnitFilters;
-use App\Group;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CourseUnitRequest;
 use App\Http\Resources\CourseUnitResource;
-use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -40,10 +40,10 @@ class CourseUnitController extends Controller
             $courseUnit->responsibleUser()->associate(null);
         }
     }
-    
+
     public function assignResponsible(Request $request, CourseUnit $courseUnit){
         $responsibleUser = User::where('email', $request->responsible_user_email)->first();
-        
+
         if (is_null($responsibleUser)) {
             $newUser = new User([
                 "email" => $request->responsible_user_email,
@@ -51,10 +51,10 @@ class CourseUnitController extends Controller
                 "password" => ""
             ]);
             $newUser->save();
-            
+
             $this->attachResponsibleGroupToUser($newUser->id);
         }
-        
+
         $this->assignResponsibleUserToCourseUnit(is_null($responsibleUser) ? $newUser->id : $responsibleUser->id, $courseUnit);
         $courseUnit->save();
     }
@@ -65,7 +65,7 @@ class CourseUnitController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request, CourseUnitFilters $filters)
-    {   
+    {
         $courseUnits = CourseUnit::with('methods')->filter($filters)->ofAcademicYear($request->cookie('academic_year'));
         if ($request->has('all') && $request->all === "true") {
             $courseUnits = $courseUnits->orderBy('name')->get();
@@ -79,7 +79,7 @@ class CourseUnitController extends Controller
                 if (with(clone $userGroups)->responsible()->get()->count() > 0 && $userGroups->count() == 1) {
                     $courseUnits->where('responsible_user_id', Auth::user()->id);
                 }
-    
+
                 if (with(clone $userGroups)->coordinator()->get()->count() > 0) {
                     $courseUnits->whereIn('course_id', Course::where('coordinator_user_id', Auth::user()->id)->pluck('id'));
 
@@ -91,32 +91,32 @@ class CourseUnitController extends Controller
                 if (with(clone $userGroups)->isTeacher()->get()->count() > 0) {
                     $courseUnits->whereIn('id', Auth::user()->courseUnits->pluck('id'));
                 }
-    
-                
+
+
 
                 $schoolsForTheUser = collect();
 
                 if (Auth::user()->gopSchools->pluck('id')->count() > 0) {
                     $schoolsForTheUser->push(Auth::user()->gopSchools->pluck('id'));
-                    
+
                 }
                 if (Auth::user()->boardSchools->pluck('id')->count() > 0) {
                     $schoolsForTheUser->push(Auth::user()->boardSchools->pluck('id'));
-                    
+
                 }
                 if (Auth::user()->pedagogicSchools->pluck('id')->count() > 0) {
                     $schoolsForTheUser->push(Auth::user()->pedagogicSchools->pluck('id'));
                 }
 
                 if ($schoolsForTheUser->count() > 0) {
-                    $courseUnits->whereIn('course_id', Course::whereIn('school_id', $schoolsForTheUser->toArray())->get()->pluck('id')); 
+                    $courseUnits->whereIn('course_id', Course::whereIn('school_id', $schoolsForTheUser->toArray())->get()->pluck('id'));
                 }
             }
-            
+
             $courseUnits = $courseUnits->orderBy('name')->paginate(10);
         }
 
-        
+
 
         return CourseUnitResource::collection($courseUnits);
     }
@@ -172,7 +172,7 @@ class CourseUnitController extends Controller
         $teachersForCourseUnit = [];
         foreach ($request->teachers as $teacher) {
             $teacherUser = User::where('email', $teacher['email'])->first();
-        
+
             if (is_null($teacherUser)) {
                 $newUser = new User([
                     "email" => $teacher['email'],
@@ -197,7 +197,7 @@ class CourseUnitController extends Controller
     public function epochsForCourseUnit(CourseUnit $courseUnit) {
         $availableCalendarsForCourseUnit = Calendar::where('course_id', $courseUnit->course_id)->whereIn('semester', [$courseUnit->semester, 3])->get()->pluck('id');
         $epochs = Epoch::whereIn('calendar_id', $availableCalendarsForCourseUnit)->groupBy(['epoch_type_id', 'name'])->get(['epoch_type_id', 'name']);
-    
+
         return response()->json([
             "courseUnit" => $courseUnit->name,
             "courseUnitGroup" => $courseUnit->group ? $courseUnit->group->description : null,

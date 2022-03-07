@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Epoca;
+use App\Models\Epoca;
 use App\Http\Resources\MetodoAvaliacaoTraducaoResource;
 use App\Http\Resources\ComentarioResource;
 
@@ -17,7 +17,7 @@ class AvaliacaoTraducaoResource extends JsonResource
         // Ensure you call the parent constructor
         parent::__construct($resource);
         $this->resource = $resource;
-        
+
         $this->idioma = $idioma;
     }
 
@@ -34,5 +34,5 @@ class AvaliacaoTraducaoResource extends JsonResource
             'metodo_avaliacao'                  => new MetodoAvaliacaoTraducaoResource($this->metodoAvaliacao, $this->idioma),
             'comentarios'                       => ComentarioResource::collection($this->comentarios),
         ];
-    } 
+    }
 }

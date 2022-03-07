@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\CalendarioAvaliacao;
-use App\User;
+use App\Models\CalendarioAvaliacao;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class CalendarioAvaliacaoPolicy

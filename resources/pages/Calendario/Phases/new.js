@@ -2,7 +2,7 @@ import axios from 'axios';
 import _ from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Field, Form as FinalForm } from 'react-final-form';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import {
@@ -16,7 +16,7 @@ import {
 import { successConfig } from '../../../utils/toastConfig';
 
 const New = ({ match }) => {
-  const history = useHistory();
+  const history = useNavigate();
   const [phaseDetail, setPhaseDetail] = useState({});
   const [loading, setLoading] = useState(!!match.params?.id);
   const [isSaving, setIsSaving] = useState(false);
@@ -36,7 +36,7 @@ const New = ({ match }) => {
 
   useEffect(() => {
     if (!loading && match.params?.id && !phaseDetail) {
-      history.push('/fases');
+      history('/fases');
     }
   }, [match.params, loading, phaseDetail, history]);
 

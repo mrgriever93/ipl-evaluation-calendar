@@ -1,7 +1,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Container, Card, Icon, Table, Form, Button, Search, Modal, List, Header, Image, Grid,
 } from 'semantic-ui-react';
@@ -17,7 +17,7 @@ import IplLogo from '../../../public/images/ipl.png';
 const SweetAlertComponent = withReactContent(Swal);
 
 const Detail = ({ match }) => {
-  const history = useHistory();
+  const history = useNavigate();
   const [courseDetail, setCourseDetail] = useState({});
   const [loading, setLoading] = useState(false);
   const [teachers, setTeachers] = useState([]);
@@ -78,7 +78,7 @@ const Detail = ({ match }) => {
     if (match.params?.id) {
       loadCourseDetail();
     } else {
-      history.push('/curso');
+      history('/curso');
     }
   }, [match.params, history]);
 

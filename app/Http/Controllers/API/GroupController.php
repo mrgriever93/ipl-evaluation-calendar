@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Group;
+use App\Models\Group;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GroupRequest;
 use App\Http\Requests\NewGroupRequest;

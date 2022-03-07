@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Calendar;
-use App\CalendarPhase;
-use App\Course;
-use App\CourseUnit;
+use App\Models\Calendar;
+use App\Models\CalendarPhase;
+use App\Models\Course;
+use App\Models\CourseUnit;
+use App\Models\Epoch;
+use App\Models\Exam;
+use App\Models\InitialGroups;
+use App\Models\Interruption;
+use App\Models\InterruptionType;
+use App\Models\Method;
+use App\Models\Semester;
+
 use App\Http\Controllers\Controller;
-use App\Epoch;
 use App\Events\CalendarChanged;
 use App\Events\CalendarDeleted;
 use App\Events\CalendarPublished;
-use App\Exam;
 use App\Filters\CalendarFilters;
 use App\Http\Requests\NewCalendarRequest;
 use App\Http\Requests\PublishCalendarRequest;
@@ -21,11 +27,6 @@ use App\Http\Resources\AvailableMethodsResource;
 use App\Http\Resources\CalendarResource;
 use App\Http\Resources\CourseUnitResource;
 use App\Http\Resources\SemesterResource;
-use App\InitialGroups;
-use App\Interruption;
-use App\InterruptionType;
-use App\Method;
-use App\Semester;
 use Carbon\Carbon;
 use Dotenv\Util\Str;
 use Illuminate\Database\Eloquent\Builder;
@@ -85,7 +86,7 @@ class CalendarController extends Controller
                         }
                     }
                 }
-                
+
             }
 
             foreach ($request->interruptions as $key => $interruption) {
@@ -109,7 +110,7 @@ class CalendarController extends Controller
         return response()->json("Created", Response::HTTP_CREATED);
     }
 
-    public function getAvailableMethods(Request $request, Calendar $calendar) {    
+    public function getAvailableMethods(Request $request, Calendar $calendar) {
         $availableMethods = DB::table("calendars")
             ->join("epochs", function($join){
                 $join->on("calendars.id", "epochs.calendar_id");
@@ -134,7 +135,7 @@ class CalendarController extends Controller
                 $query->from("exams")->whereRaw("exams.method_id = methods.id")->where("exams.epoch_id", $request->epoch_id);
             });
 
-            if (Auth::user()->groups()->isTeacher()->get()->count() > 0 
+            if (Auth::user()->groups()->isTeacher()->get()->count() > 0
                 && (
                     Auth::user()->groups()->coordinator()->get()->count() == 0
                     && Auth::user()->groups()->board()->get()->count() == 0
@@ -154,11 +155,11 @@ class CalendarController extends Controller
 
             $eachCourseUnit = $availableMethods->select("course_units.*")->distinct()->get();
             $response = collect();
-            
+
             foreach ($eachCourseUnit as $courseUnit) {
                 $response->push($courseUnit);
             }
-            
+
 
             $availableMethods = $availableMethods->join("evaluation_types", function($join){
                 $join->on("evaluation_types.id", "methods.evaluation_type_id");
@@ -169,7 +170,7 @@ class CalendarController extends Controller
                 $courseUnit->methods = $available
                     ->where('course_units.id', $courseUnit->id)
                     ->select(["methods.*", "evaluation_types.description"])->get()->toArray();
-                   
+
             }
 
             return AvailableCourseUnitsResource::collection($response);
@@ -239,9 +240,9 @@ class CalendarController extends Controller
 
                 foreach ($epoch->methods as $method) {
                     $method->epochs()->attach($newEpoch);
-                    
+
                 }
-                
+
             }
             $clone->published = false;
             $clone->calendar_phase_id = 1;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Epoca;
+use App\Models\Epoca;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -27,5 +27,5 @@ class AvaliacaoResource extends JsonResource
             'metodo_avaliacao'                  => new MetodoAvaliacaoResource($this->metodoAvaliacao),
             'comentarios'                       => ComentarioResource::collection($this->comentarios),
         ];
-    } 
+    }
 }

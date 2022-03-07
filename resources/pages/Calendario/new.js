@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Button, Card, Container, Form, Icon, Step,
 } from 'semantic-ui-react';
@@ -61,7 +61,7 @@ const formInitialValues = {
 };
 
 const New = () => {
-  const history = useHistory();
+  const history = useNavigate();
   const [activeSemester, setActiveSemester] = useState(0);
   const [semesterList, setSemesterList] = useState([]);
   const [additionalInterruptions, setAdditionalInterruptions] = useState([]);
@@ -167,7 +167,7 @@ const New = () => {
           icon: 'success',
           confirmButtonColor: '#21ba45',
         });
-        history.push('/calendario');
+        history('/calendario');
       } else {
         SweetAlertComponent.fire({
           title: 'Erro!',

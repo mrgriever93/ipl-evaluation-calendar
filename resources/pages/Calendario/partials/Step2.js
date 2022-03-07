@@ -1,5 +1,5 @@
 import React from 'react';
-import { DateInput } from 'semantic-ui-calendar-react';
+import { DateInput } from 'semantic-ui-calendar-react-yz';
 import {
   Container, Card, Form, Button, Icon,
 } from 'semantic-ui-react';

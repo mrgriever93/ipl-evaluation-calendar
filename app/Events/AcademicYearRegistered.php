@@ -2,8 +2,8 @@
 
 namespace App\Events;
 
-use App\AcademicYear;
-use App\Calendar;
+use App\Models\AcademicYear;
+use App\Models\Calendar;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;

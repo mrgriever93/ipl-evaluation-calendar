@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Traducao;
+use App\Models\Traducao;
 use Illuminate\Http\Request;
 
 class TraducaoController extends Controller

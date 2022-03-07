@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\EvaluationType;
+use App\Models\EvaluationType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EvaluationTypeRequest;
 use App\Http\Requests\NewEvaluationTypeRequest;

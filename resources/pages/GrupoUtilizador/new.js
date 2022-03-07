@@ -10,7 +10,7 @@ import {
   Loader,
 } from 'semantic-ui-react';
 import { Field, Form as FinalForm } from 'react-final-form';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import _ from 'lodash';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -18,7 +18,7 @@ import { toast } from 'react-toastify';
 import { errorConfig, successConfig } from '../../utils/toastConfig';
 
 const New = ({ match }) => {
-  const history = useHistory();
+  const history = useNavigate();
   const [loading, setLoading] = useState(!!match.params?.id);
   const [isSaving, setIsSaving] = useState(false);
   const [userGroup, setUserGroup] = useState({});
@@ -37,7 +37,7 @@ const New = ({ match }) => {
 
   useEffect(() => {
     if (!loading && match.params?.id && !userGroup) {
-      history.push('/grupo-utilizador');
+      history('/grupo-utilizador');
     }
   }, [match.params, loading, userGroup, history]);
 
