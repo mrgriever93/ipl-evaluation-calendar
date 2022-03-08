@@ -60,7 +60,12 @@ function App() {
             <ToastContainer/>
             <Routes>
                 <Route path="/login" exact element={ <Login />}/>
-
+                {authToken && ( 
+                    <Routes>
+                        <Route path="/404" exact element={<NotFoundPage />}/>
+                        <Route path="/" element={<Dashboard />}/>
+                    </Routes>
+                )}                
             </Routes>
         </StoreProvider>
     );

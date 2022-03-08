@@ -42,23 +42,23 @@ class LoginController extends Controller
             if (!$user->enabled) {
                 return response()->json("Unauthorized.", Response::HTTP_UNAUTHORIZED);
             }
+// TODO @miguel.cerejo
+            // if (isset($user->ldap)) {
+            //     $groups = $user->ldap->title;
+            //     foreach ($groups as $group) {
+            //         if (Group::where('description', $group)->count() > 0) {
+            //             $user->groups()->syncWithoutDetaching([Group::where('description', $group)->first()->id]);
+            //         }
 
-            if (isset($user->ldap)) {
-                $groups = $user->ldap->title;
-                foreach ($groups as $group) {
-                    if (Group::where('description', $group)->count() > 0) {
-                        $user->groups()->syncWithoutDetaching([Group::where('description', $group)->first()->id]);
-                    }
-
-                    if ($group === InitialGroups::STUDENT) {
-                        foreach ($user->ldap->departmentnumber as $course) {
-                            if (Course::where('code', $course)->count() > 0) {
-                                $user->courses()->syncWithoutDetaching([Course::where('code', $course)->first()->id]);
-                            }
-                        }
-                    }
-                }
-            }
+            //         if ($group === InitialGroups::STUDENT) {
+            //             foreach ($user->ldap->departmentnumber as $course) {
+            //                 if (Course::where('code', $course)->count() > 0) {
+            //                     $user->courses()->syncWithoutDetaching([Course::where('code', $course)->first()->id]);
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
             $scopes = $user->permissions()->where('group_permissions.enabled', true)->groupBy('permissions.name')->pluck('permissions.name')->values()->toArray();
             $accessToken = $user->createToken('authToken', $scopes)->accessToken;
 

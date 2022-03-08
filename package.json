@@ -16,7 +16,6 @@
     "devDependencies": {
         "@babel/preset-react": "^7.16.7",
         "@pmmmwh/react-refresh-webpack-plugin": "^0.5.4",
-        "axios": "^0.26",
         "cross-env": "^7.0",
         "eslint": "^8.10.0",
         "eslint-config-airbnb": "^19.0.4",
@@ -25,7 +24,6 @@
         "eslint-plugin-react": "^7.29.3",
         "eslint-plugin-react-hooks": "^4.3.0",
         "laravel-mix": "^6.0.43",
-        "lodash": "^4.17.21",
         "popper.js": "^1.12",
         "postcss": "^8.4.8",
         "react-refresh": "^0.11.0",
