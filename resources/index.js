@@ -8,8 +8,8 @@ import { requestInterceptor } from "./utils/axiosInterceptor";
 axios.interceptors.request.use(requestInterceptor);
 
 ReactDOM.render(
-  <Router>
-    <App />
-  </Router>,
-  document.getElementById("root")
+    <Router>
+        <App />
+    </Router>,
+    document.getElementById("root")
 );

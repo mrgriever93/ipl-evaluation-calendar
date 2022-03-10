@@ -19,7 +19,6 @@ axios.interceptors.request.use((config) => {
             'authToken',
         )}`;
     }
-
     return config;
 });
 
@@ -42,38 +41,29 @@ axios.interceptors.response.use(
 );
 
 function App() {
-    const history = useNavigate();
+    const navigate = useNavigate();
     const authToken = localStorage.getItem('authToken');
     useEffect(() => {
         if (!authToken) {
-            history('/login');
+            navigate('/login');
         } else if (
             jwtDecode(localStorage.getItem('authToken')).exp
             < Date.now() / 1000
         ) {
-            history('/login');
+            navigate('/login');
         }
-    }, [authToken, history]);
+    }, [authToken, navigate]);
 
     return (
         <StoreProvider store={store}>
             <ToastContainer/>
             <Routes>
                 <Route path="/login" exact element={ <Login />}/>
-                {authToken && ( 
-                    <Routes>
-                        <Route path="/404" exact element={<NotFoundPage />}/>
-                        <Route path="/" element={<Dashboard />}/>
-                    </Routes>
-                )}                
+                {authToken && <Route path="/" element={<Dashboard />}/> }
+                {authToken && <Route path="/404" exact element={<NotFoundPage />}/> }
             </Routes>
         </StoreProvider>
     );
 }
 
 export default App;
-/*
-        {authToken && ( )}
-        <Route path="/404" exact component={NotFoundPage}/>
-        <Route path="/" component={Dashboard}/>
-* */

@@ -5,9 +5,9 @@ import Detail from './detail';
 
 const Curso = ({ match }) => (
   <Routes>
-    <Route path={`${match.path}/:id(\\d+)`} exact component={Detail} />
-    <Route path={`${match.path}/`} exact component={List} />
-    <Route path={`${match.path}/*`} component={List} element={<Navigate replace to="/404" />} />
+    <Route path={`${match.path}/:id(\\d+)`} exact element={<Detail />} />
+    <Route path={`${match.path}/`} exact element={<List />} />
+    <Route path={`${match.path}/*`} element={<Navigate replace to="/404" />} />
   </Routes>
 );
 
