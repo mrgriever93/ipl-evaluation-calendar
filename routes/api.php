@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\API\CalendarChangeController;
+use App\Http\Controllers\API\CalendarPhaseController;
+use App\Http\Controllers\API\EvaluationTypeController;
+use App\Http\Controllers\API\GroupController;
+use App\Http\Controllers\API\InterruptionTypeController;
 use App\Http\Controllers\API\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -46,41 +51,41 @@ Route::post('/logout', 'API\LoginController@logout');
 
 /** NEW ENDPOINTS! **/
 
-Route::middleware('auth:api')->get('/calendar', 'API\CalendarController@index');
-Route::middleware('auth:api')->get('/calendar/{calendar}', 'API\CalendarController@show');
-Route::middleware('auth:api')->post('/calendar', 'API\CalendarController@store');
-Route::middleware('auth:api')->patch('/calendar/{calendar}', 'API\CalendarController@update');
-Route::middleware('auth:api')->delete('/calendar/{calendar}', 'API\CalendarController@destroy');
+Route::middleware('auth:api')->get('/calendar', [CalendarController::class, 'index']);
+Route::middleware('auth:api')->get('/calendar/{calendar}', [CalendarController::class, 'show']);
+Route::middleware('auth:api')->post('/calendar', [CalendarController::class, 'store']);
+Route::middleware('auth:api')->patch('/calendar/{calendar}', [CalendarController::class, 'update']);
+Route::middleware('auth:api')->delete('/calendar/{calendar}', [CalendarController::class, 'destroy']);
 
 
-Route::middleware('auth:api')->get('/evaluation-types', 'API\EvaluationTypeController@list');
-Route::middleware('auth:api')->get('/evaluation-types/{id}', 'API\EvaluationTypeController@show');
-Route::middleware('auth:api')->delete('/evaluation-types/{evaluationType}', 'API\EvaluationTypeController@destroy');
-Route::middleware('auth:api')->post('/evaluation-types', 'API\EvaluationTypeController@store');
-Route::middleware('auth:api')->patch('/evaluation-types/{evaluationType}', 'API\EvaluationTypeController@update');
+Route::middleware('auth:api')->get('/evaluation-types', [EvaluationTypeController::class, 'list']);
+Route::middleware('auth:api')->get('/evaluation-types/{id}', [EvaluationTypeController::class, 'show']);
+Route::middleware('auth:api')->delete('/evaluation-types/{evaluationType}', [EvaluationTypeController::class, 'destroy']);
+Route::middleware('auth:api')->post('/evaluation-types', [EvaluationTypeController::class, 'store']);
+Route::middleware('auth:api')->patch('/evaluation-types/{evaluationType}', [EvaluationTypeController::class, 'update']);
 
 
-Route::middleware('auth:api')->post('/interruption-types', 'API\InterruptionTypeController@store');
-Route::middleware('auth:api')->get('/interruption-types', 'API\InterruptionTypeController@index');
-Route::middleware('auth:api')->get('/interruption-types/{interruptionType}', 'API\InterruptionTypeController@show');
-Route::middleware('auth:api')->patch('/interruption-types/{interruptionType}', 'API\InterruptionTypeController@update');
-Route::middleware('auth:api')->delete('/interruption-types/{interruptionType}', 'API\InterruptionTypeController@destroy');
+Route::middleware('auth:api')->post('/interruption-types', [InterruptionTypeController::class, 'store']);
+Route::middleware('auth:api')->get('/interruption-types', [InterruptionTypeController::class, 'index']);
+Route::middleware('auth:api')->get('/interruption-types/{interruptionType}', [InterruptionTypeController::class, 'show']);
+Route::middleware('auth:api')->patch('/interruption-types/{interruptionType}', [InterruptionTypeController::class, 'update']);
+Route::middleware('auth:api')->delete('/interruption-types/{interruptionType}', [InterruptionTypeController::class, 'destroy']);
 
-Route::middleware('auth:api')->get('/calendar-history/{calendar}', 'API\CalendarChangeController@show');
+Route::middleware('auth:api')->get('/calendar-history/{calendar}', [CalendarChangeController::class, 'show']);
 
 
-Route::middleware('auth:api')->get('/user-group', 'API\GroupController@index');
-Route::middleware('auth:api')->get('/user-group/{group}', 'API\GroupController@show');
-Route::middleware('auth:api')->post('/user-group', 'API\GroupController@store');
-Route::middleware('auth:api')->patch('/user-group/{group}', 'API\GroupController@update');
-Route::middleware('auth:api')->delete('/user-group/{group}', 'API\GroupController@destroy');
-Route::middleware('auth:api')->get('/permissions/groups', 'API\GroupController@listPermissions');
+Route::middleware('auth:api')->get('/user-group', [GroupController::class, 'index']);
+Route::middleware('auth:api')->get('/user-group/{group}', [GroupController::class, 'show']);
+Route::middleware('auth:api')->post('/user-group', [GroupController::class, 'store']);
+Route::middleware('auth:api')->patch('/user-group/{group}', [GroupController::class, 'update']);
+Route::middleware('auth:api')->delete('/user-group/{group}', [GroupController::class, 'destroy']);
+Route::middleware('auth:api')->get('/permissions/groups', [GroupController::class, 'listPermissions']);
 
-Route::middleware('auth:api')->delete('/calendar-phases/{calendarPhase}', 'API\CalendarPhaseController@destroy');
-Route::middleware('auth:api')->get('/calendar-phases', 'API\CalendarPhaseController@index');
-Route::middleware('auth:api')->patch('/calendar-phases/{calendarPhase}', 'API\CalendarPhaseController@update');
-Route::middleware('auth:api')->get('/calendar-phases/{calendarPhase}', 'API\CalendarPhaseController@show');
-Route::middleware('auth:api')->post('/calendar-phases', 'API\CalendarPhaseController@store');
+Route::middleware('auth:api')->delete('/calendar-phases/{calendarPhase}', [CalendarPhaseController::class, 'destroy']);
+Route::middleware('auth:api')->get('/calendar-phases', [CalendarPhaseController::class, 'index']);
+Route::middleware('auth:api')->patch('/calendar-phases/{calendarPhase}', [CalendarPhaseController::class, 'update']);
+Route::middleware('auth:api')->get('/calendar-phases/{calendarPhase}', [CalendarPhaseController::class, 'show']);
+Route::middleware('auth:api')->post('/calendar-phases', [CalendarPhaseController::class, 'store']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/users/{user}', [UserController::class, 'show']);
