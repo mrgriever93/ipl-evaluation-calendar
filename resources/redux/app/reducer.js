@@ -1,5 +1,4 @@
 import types from "./action-types";
-import _ from "lodash";
 
 const initialState = {
     academicYear: {},
@@ -13,7 +12,7 @@ const appReducer = (state = initialState, action) => {
                 academicYear: action.payload,
             };
         default:
-            return { ...state };
+            return {...state};
     }
 };
 

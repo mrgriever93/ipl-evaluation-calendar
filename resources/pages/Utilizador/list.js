@@ -106,20 +106,15 @@ const List = ({match}) => {
                         <Form.Group widths="2">
                             <Form.Field>
                                 <label>Utilizador</label>
-                                <Input
-                                    fluid
+                                <Input fluid loading={searching}
                                     placeholder="Pesquisar utilizador..."
                                     onChange={_.debounce(searchUser, 900)}
-                                    loading={searching}
                                 />
                             </Form.Field>
 
-                            <Form.Dropdown
-                                options={userGroups}
-                                selection
-                                search
-                                multiple
-                                clearable
+                            <Form.Dropdown options={userGroups}
+                                selection search
+                                multiple clearable
                                 label="Grupo de Utilizador"
                                 loading={loadingGroups}
                                 onChange={filterByGroup}
@@ -139,17 +134,13 @@ const List = ({match}) => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {userList.map(({
-                                               id, email, name, enabled,
-                                           }) => (
+                            {userList.map(({id, email, name, enabled,}) => (
                                 <Table.Row key={id}>
                                     <Table.Cell>{id}</Table.Cell>
                                     <Table.Cell>{email}</Table.Cell>
                                     <Table.Cell>{name}</Table.Cell>
                                     <Table.Cell textAlign="center">
-                                        <Icon
-                                            name={enabled ? 'checkmark' : 'close'}
-                                        />
+                                        <Icon name={enabled ? 'checkmark' : 'close'}/>
                                     </Table.Cell>
                                     <Table.Cell>
                                         <ShowComponentIfAuthorized permission={[SCOPES.EDIT_USERS]}>
@@ -175,13 +166,7 @@ const List = ({match}) => {
                                                             !enabled,
                                                         )}
                                                     >
-                                                        <Icon
-                                                            name={
-                                                                enabled
-                                                                    ? 'lock'
-                                                                    : 'unlock'
-                                                            }
-                                                        />
+                                                        <Icon name={enabled ? 'lock' : 'unlock'}/>
                                                     </Button>
                                                 )}
                                             />
@@ -198,17 +183,9 @@ const List = ({match}) => {
                             </Dimmer>
                         )}
                     </Table>
-                    <Pagination
-                        secondary
-                        pointing
-                        fluid
-                        defaultActivePage={1}
-                        totalPages={paginationInfo.last_page}
-                        onPageChange={loadUsers}
-                    />
+                    <Pagination secondary pointing fluid defaultActivePage={1} totalPages={paginationInfo.last_page} onPageChange={loadUsers}/>
                 </Card.Content>
             </Card>
-
         </Container>
     );
 };
