@@ -171,9 +171,7 @@ const List = ({ match }) => {
                     <Table.Cell width="2">{num_course_units}</Table.Cell>
                     <Table.Cell width="4">
                       <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]}>
-                        <Link
-                          to={`${match.path}edit/${id}`}
-                        >
+                        <Link to={`/escola/edit/${id}`}>
                           <Button color="yellow" icon>
                             <Icon name="edit" />
                           </Button>

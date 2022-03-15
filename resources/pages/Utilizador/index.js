@@ -1,14 +1,8 @@
 import React from 'react';
-import { Navigate, Route, Routes } from 'react-router';
-import List from './list';
-import Edit from './edit';
+import {Outlet} from 'react-router';
 
-const Utilizador = ({ match }) => (
-  <Routes>
-    <Route path={`${match.path}/`} exact element={<List />} />
-    <Route path={`${match.path}/edit/:id`} exact element={<Edit />} />
-    <Route path={`${match.path}/*`} element={<Navigate replace to="/404" />} />
-  </Routes>
+const Utilizador = () => (
+    <Outlet/>
 );
 
 export default Utilizador;
