@@ -1,15 +1,14 @@
 import React, {useEffect} from 'react';
 import {ToastContainer} from 'react-toastify';
-import {Routes, Route, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {Provider as StoreProvider} from 'react-redux';
 import 'semantic-ui-css/semantic.min.css';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
-import Login from './pages/Auth/Login';
-import NotFoundPage from './pages/NotFound';
-import Dashboard from './pages/Dashboard';
 import store from './redux/store';
 import 'react-toastify/dist/ReactToastify.css';
+
+import RoutesList from './routes';
 
 axios.defaults.baseURL = 'http://localhost/api';
 
@@ -53,15 +52,10 @@ function App() {
             navigate('/login');
         }
     }, [authToken, navigate]);
-
     return (
         <StoreProvider store={store}>
             <ToastContainer/>
-            <Routes>
-                <Route path="/login" exact element={ <Login />}/>
-                {authToken && <Route path="/" element={<Dashboard />}/> }
-                {authToken && <Route path="/404" exact element={<NotFoundPage />}/> }
-            </Routes>
+            <RoutesList isLoggedIn={authToken}/>
         </StoreProvider>
     );
 }

@@ -160,7 +160,7 @@ const List = ({match}) => {
                     )}
                     <Table celled fixed>
                         <Table.Header>
-                            <Table.Row>
+                            <Table.Row key={'table_header'}>
                                 {columns.map(
                                     ({
                                          name,
@@ -192,7 +192,7 @@ const List = ({match}) => {
                                 (
                                     {
                                         id, display_id, course, temporary, phase, semester, published,
-                                    },
+                                    }
                                 ) => (
                                     <Table.Row key={id}>
                                         <Table.Cell>{display_id}</Table.Cell>
