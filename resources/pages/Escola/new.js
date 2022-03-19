@@ -20,6 +20,10 @@ const NewEscola = () => {
     const [groups, setGroups] = useState([]);
 
     useEffect(() => {
+        if(!/\d+/.test(paramsId)){
+            history(-1);
+            toast('Ocorreu um erro ao carregar a informacao pretendida', errorConfig);
+        }
         axios.get('/user-group').then((res) => {
             if (res.status === 200) {
                 setGroups(res.data.data.map((group) => ({

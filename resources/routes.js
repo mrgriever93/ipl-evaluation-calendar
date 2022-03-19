@@ -80,11 +80,6 @@ const isAuthorized = useComponentIfAuthorized([
 ], true);
 
 const RouterList = (isLoggedIn) => {
-    const validateId = () => {
-        let params = useParams();
-        let userId = params.id.match(/\d+/);
-        return !!userId;
-    }
     return useRoutes([
         {
             element: isLoggedIn ? <Dashboard /> : <Navigate to="/no-permissions" />,
@@ -104,7 +99,7 @@ const RouterList = (isLoggedIn) => {
                                 { path: '*', element: <NotFoundPage />}
                             ],
                         },
-                        { path: ':id', exact: true, element: (validateId ? <CalendarDetail /> : <NotFoundPage />)},
+                        { path: ':id', exact: true, element: <CalendarDetail />},
                         { path: '', exact: true, element: <CalendarList />},
                         { path: '*', element: <NotFoundPage />}
                     ],
@@ -112,7 +107,7 @@ const RouterList = (isLoggedIn) => {
                 {
                     path:"/curso",
                     children: [
-                        { path: ':id', exact: true, element: (validateId ? <CursoDetail /> : <NotFoundPage />)},
+                        { path: ':id', exact: true, element: <CursoDetail />},
                         { path: '', exact: true, element: <CursoList /> },
                         { path: '*', element: <NotFoundPage />}
                     ]
@@ -122,8 +117,8 @@ const RouterList = (isLoggedIn) => {
                     element: (isAuthorized.CREATE_COURSE_UNITS || isAuthorized.VIEW_COURSE_UNITS || isAuthorized.EDIT_COURSE_UNITS || isAuthorized.DELETE_COURSE_UNITS) ? <AgrupamentoUnidadeCurricular /> : <Navigate to="/no-permissions" />,
                     children: [
                         { path: 'novo', exact: true, element: <AgrupamentoUnidadeCurricularNew />},
-                        { path: 'edit/:id', exact: true, element: (validateId ? <AgrupamentoUnidadeCurricularNew /> : <NotFoundPage />)},
-                        { path: ':id/metodos', exact: true, element: (validateId ? <AgrupamentoUnidadeCurricularMethods /> : <NotFoundPage />)},
+                        { path: 'edit/:id', exact: true, element: <AgrupamentoUnidadeCurricularNew />},
+                        { path: ':id/metodos', exact: true, element: <AgrupamentoUnidadeCurricularMethods />},
                         { path: '', exact: true, element: <AgrupamentoUnidadeCurricularList /> },
                         { path: '*', element: <NotFoundPage />}
                     ]
@@ -133,9 +128,9 @@ const RouterList = (isLoggedIn) => {
                     element: (isAuthorized.CREATE_COURSE_UNITS || isAuthorized.VIEW_COURSE_UNITS || isAuthorized.EDIT_COURSE_UNITS || isAuthorized.DELETE_COURSE_UNITS) ? <UnidadeCurricular /> : <Navigate to="/no-permissions" />,
                     children: [
                         { path: 'novo', exact: true, element: <UnidadeCurricularNew />},
-                        { path: ':id', exact: true, element: (validateId ? <UnidadeCurricularNew /> : <NotFoundPage />)},
-                        { path: 'edit/:id', exact: true, element: (validateId ? <UnidadeCurricularNew /> : <NotFoundPage />)},
-                        { path: ':id/metodos', exact: true, element: (validateId ? <UnidadeCurricularMethods /> : <NotFoundPage />)},
+                        { path: ':id', exact: true, element: <UnidadeCurricularNew />},
+                        { path: 'edit/:id', exact: true, element: <UnidadeCurricularNew />},
+                        { path: ':id/metodos', exact: true, element: <UnidadeCurricularMethods />},
                         { path: '', exact: true, element: <UnidadeCurricularList /> },
                         { path: '*', element: <NotFoundPage />}
                     ]
@@ -149,7 +144,7 @@ const RouterList = (isLoggedIn) => {
                     element: (isAuthorized.CREATE_SCHOOLS || isAuthorized.EDIT_SCHOOLS) ? <Escola /> : <Navigate to="/no-permissions" />,
                     children: [
                         { path: 'novo', exact: true, element: <EscolaNew />},
-                        { path: 'edit/:id', exact: true, element: (validateId ? <EscolaNew /> : <NotFoundPage />)},
+                        { path: 'edit/:id', exact: true, element: <EscolaNew />},
                         { path: '', exact: true, element: <EscolaList />},
                         { path: '*', element: <NotFoundPage />}
                     ],
@@ -159,7 +154,7 @@ const RouterList = (isLoggedIn) => {
                     element: ( isAuthorized.CREATE_LANGUAGES || isAuthorized.EDIT_LANGUAGES || isAuthorized.TRANSLATE) ? <Idioma /> : <Navigate to="/no-permissions" />,
                     children: [
                         { path: 'novo', exact: true, element: <IdiomaNew />},
-                        { path: 'edit/:id', exact: true, element: (validateId ? <IdiomaNew /> : <NotFoundPage />)},
+                        { path: 'edit/:id', exact: true, element: <IdiomaNew />},
                         { path: '', exact: true, element: <IdiomaList />},
                         { path: '*', element: <NotFoundPage />}
                     ],
@@ -168,7 +163,7 @@ const RouterList = (isLoggedIn) => {
                     path: "/utilizador",
                     element: (isAuthorized.EDIT_USERS || isAuthorized.LOCK_USERS) ? <Utilizador /> : <Navigate to="/no-permissions" />,
                     children: [
-                        { path: 'edit/:id', exact: true, element: (validateId ? <UtilizadorDetail /> : <NotFoundPage />)},
+                        { path: 'edit/:id', exact: true, element: <UtilizadorDetail />},
                         { path: '', exact: true, element: <UtilizadorList />},
                         { path: '*', element: <NotFoundPage />}
                     ],
@@ -178,7 +173,7 @@ const RouterList = (isLoggedIn) => {
                     element: (isAuthorized.CREATE_INTERRUPTION_TYPES || isAuthorized.EDIT_INTERRUPTION_TYPES || isAuthorized.DELETE_INTERRUPTION_TYPES) ? <Interrupcao /> : <Navigate to="/no-permissions" />,
                     children: [
                         { path: 'novo', exact: true, element: <InterrupcaoNew />},
-                        { path: 'edit/:id', exact: true, element: (validateId ? <InterrupcaoNew /> : <NotFoundPage />)},
+                        { path: 'edit/:id', exact: true, element: <InterrupcaoNew />},
                         { path: '', exact: true, element: <InterrupcaoList />},
                         { path: '*', element: <NotFoundPage />}
                     ],
@@ -188,7 +183,7 @@ const RouterList = (isLoggedIn) => {
                     element: (isAuthorized.CREATE_EVALUATION_TYPES || isAuthorized.EDIT_EVALUATION_TYPES || isAuthorized.DELETE_EVALUATION_TYPES) ? <TipoAvaliacao /> : <Navigate to="/no-permissions" />,
                     children: [
                         { path: 'novo', exact: true, element: <TipoAvaliacaoNew />},
-                        { path: 'edit/:id', exact: true, element: (validateId ? <TipoAvaliacaoNew /> : <NotFoundPage />)},
+                        { path: 'edit/:id', exact: true, element: <TipoAvaliacaoNew />},
                         { path: '', exact: true, element: <TipoAvaliacaoList />},
                         { path: '*', element: <NotFoundPage />}
                     ],
@@ -198,7 +193,7 @@ const RouterList = (isLoggedIn) => {
                     element: (isAuthorized.EDIT_USER_GROUPS || isAuthorized.CREATE_USER_GROUPS || isAuthorized.DELETE_USER_GROUPS) ? <GrupoUtilizador /> : <Navigate to="/no-permissions" />,
                     children: [
                         { path: 'novo', exact: true, element: <GrupoUtilizadorNew />},
-                        { path: 'edit/:id', exact: true, element: (validateId ? <GrupoUtilizadorNew /> : <NotFoundPage />)},
+                        { path: 'edit/:id', exact: true, element: <GrupoUtilizadorNew />},
                         { path: '', exact: true, element: <GrupoUtilizadorList />},
                         { path: '*', element: <NotFoundPage />}
                     ],
