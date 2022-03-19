@@ -54,13 +54,17 @@ const formInitialValues = {
     },
     step3: {
         allCourses: true,
+        paginationInfo: {
+            current_page: 1,
+            last_page: 1,
+        }
     },
     step4: {
         importHolidays: true,
     },
 };
 
-const New = () => {
+const NewCalendar = () => {
     const history = useNavigate();
     const [activeSemester, setActiveSemester] = useState(0);
     const [semesterList, setSemesterList] = useState([]);
@@ -134,9 +138,7 @@ const New = () => {
             import_holidays: values.step4.importHolidays,
             semester: values.step1.semester,
             is_all_courses: values.step3.allCourses,
-            ...(values.step3.allCourses
-                ? null
-                : {courses: [...values.step3.courses.map((x) => x.id)]}),
+            ...(values.step3.allCourses ? null : {courses: [...values.step3.courses.map((x) => x.id)]}),
             epochs: [
                 ...Object.keys(values.step1.seasons).map((key) => ({
                     name: key.split('_')[0],
@@ -157,9 +159,7 @@ const New = () => {
         };
         axios.post('/calendar', body).then((response) => {
             setIsSaving(false);
-            const pluralOrSingularForm = values.step3.allCourses || values.step3.courses?.length > 1
-                ? 's'
-                : '';
+            const pluralOrSingularForm = values.step3.allCourses || values.step3.courses?.length > 1 ? 's' : '';
             if (response.status === 201) {
                 SweetAlertComponent.fire({
                     title: 'Sucesso!',
@@ -185,18 +185,14 @@ const New = () => {
 
     return (
         <Container style={{marginTop: '2em'}}>
-            <FinalForm
-                onSubmit={onSubmit}
-                initialValues={formInitialValues}
+            <FinalForm onSubmit={onSubmit} initialValues={formInitialValues} key={'form_new_calendar'}
                 render={({handleSubmit}) => (
                     <Card fluid>
                         <Card.Content header="Novo Calendário"/>
                         <Card.Content>
                             <Step.Group widths={stepsData.length}>
                                 {stepsData.map((step) => (
-                                    <Step
-                                        link
-                                        active={currentStep === step.number}
+                                    <Step link active={currentStep === step.number} key={'step_' + step.number}
                                         completed={completedSteps.includes(
                                             step.number,
                                         )}
@@ -215,7 +211,7 @@ const New = () => {
                                 ))}
                             </Step.Group>
                             <Card.Content>
-                                <Form autocomplete="off">
+                                <Form autoComplete="off">
                                     {currentStep === 1 ? (
                                         <Step1
                                             activeSemester={activeSemester}
@@ -252,52 +248,29 @@ const New = () => {
                         </Card.Content>
                         <Card.Content extra>
                             {currentStep === 2 && (
-                                <Button
+                                <Button icon labelPosition="left" color="teal" floated="left"
                                     onClick={() => {
                                         setAdditionalInterruptions((current) => [...current, current.length]);
                                     }}
-                                    icon
-                                    labelPosition="left"
-                                    color="teal"
-                                    floated="left"
                                 >
                                     Adicionar interrupção
                                     <Icon name="plus"/>
                                 </Button>
                             )}
                             {currentStep === 4 && (
-                                <Button
-                                    onClick={handleSubmit}
-                                    icon
-                                    labelPosition="left"
-                                    color="blue"
-                                    floated="right"
-                                    loading={isSaving}
-                                >
+                                <Button icon labelPosition="left" color="blue" floated="right" loading={isSaving} onClick={handleSubmit}>
                                     Criar Calendário
                                     <Icon name="send"/>
                                 </Button>
                             )}
                             {currentStep < 4 && (
-                                <Button
-                                    onClick={() => handleStepChange(currentStep + 1)}
-                                    icon
-                                    labelPosition="right"
-                                    color="green"
-                                    floated="right"
-                                >
+                                <Button icon labelPosition="right" color="green" floated="right" onClick={() => handleStepChange(currentStep + 1)}>
                                     Seguinte
                                     <Icon name="right arrow"/>
                                 </Button>
                             )}
                             {currentStep > 1 && (
-                                <Button
-                                    onClick={() => handleStepChange(currentStep - 1)}
-                                    icon
-                                    labelPosition="left"
-                                    color="green"
-                                    floated="right"
-                                >
+                                <Button icon labelPosition="left" color="green" floated="right" onClick={() => handleStepChange(currentStep - 1)}>
                                     Anterior
                                     <Icon name="left arrow"/>
                                 </Button>
@@ -310,4 +283,4 @@ const New = () => {
     );
 };
 
-export default New;
+export default NewCalendar;

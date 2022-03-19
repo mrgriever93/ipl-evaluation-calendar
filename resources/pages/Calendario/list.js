@@ -42,7 +42,7 @@ const MessageFading = styled(Message)`
     animation: flickerAnimation 1s infinite;
 `;
 
-const List = ({match}) => {
+const CalendarList = ({match}) => {
     const [calendars, setCalendars] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [modalInfo, setModalInfo] = useState();
@@ -167,20 +167,14 @@ const List = ({match}) => {
                                          textAlign,
                                          restrictedToCreators,
                                          permission,
-                                     }) => (restrictedToCreators ? (
-                                        <ShowComponentIfAuthorized
-                                            permission={[permission]}
-                                        >
-                                            <Table.HeaderCell
-                                                textAlign={textAlign}
-                                            >
+                                     }, index) => (restrictedToCreators ? (
+                                        <ShowComponentIfAuthorized permission={[permission]} key={'auth_table_header_cell_' + index}>
+                                            <Table.HeaderCell textAlign={textAlign} key={'table_header_cell_' + index}>
                                                 {name}
                                             </Table.HeaderCell>
                                         </ShowComponentIfAuthorized>
                                     ) : (
-                                        <Table.HeaderCell
-                                            textAlign={textAlign}
-                                        >
+                                        <Table.HeaderCell textAlign={textAlign} key={'table_header_cell_' + index}>
                                             {name}
                                         </Table.HeaderCell>
                                     )),
@@ -203,18 +197,12 @@ const List = ({match}) => {
                                             permission={[SCOPES.VIEW_CALENDAR_INFO]}
                                             renderIfNotAllowed={() => (
                                                 <Table.Cell>
-                                                    {published
-                                                        ? temporary
-                                                            ? 'Provisório'
-                                                            : 'Definitivo'
-                                                        : phase.description}
+                                                    {published ? temporary ? 'Provisório' : 'Definitivo' : phase.description}
                                                 </Table.Cell>
                                             )}
                                         >
                                             <Table.Cell>
-                                                {temporary
-                                                    ? 'Provisório'
-                                                    : 'Definitivo'}
+                                                {temporary ? 'Provisório' : 'Definitivo'}
                                             </Table.Cell>
                                         </ShowComponentIfAuthorized>
                                         <ShowComponentIfAuthorized
@@ -286,4 +274,4 @@ const List = ({match}) => {
     );
 };
 
-export default List;
+export default CalendarList;
