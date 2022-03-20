@@ -63,7 +63,7 @@ class Course extends Model
             'password' => env('LDAP_PASSWORD'),
              'version' => 3,
          ]);
-         $query = $connection->query()->setDn('OU=Funcionarios,dc=ipleiria,dc=pt');
+         $LdapConnection = $connection->query()->setDn('OU=Funcionarios,dc=ipleiria,dc=pt');
 
         foreach ($schools as $school) {
             foreach ([1, 2] as $semester) {
@@ -119,7 +119,8 @@ class Course extends Model
                                     $userEmail = "{$username}@ipleiria.pt";
                                     $foundUser = User::where("email", $userEmail)->first();
                                     if (is_null($foundUser)) {
-                                        $ldapUser = (clone $query)->whereContains('mailNickname', $username)->orWhereContains('mail', $userEmail)->first('cn');
+
+                                        $ldapUser = (clone $LdapConnection)->whereContains('mailNickname', $username)->orWhereContains('mail', $userEmail)->first('cn');
                                         $foundUser = User::create([
                                             "email" => $userEmail,
                                             "name" => $ldapUser['cn'][0],

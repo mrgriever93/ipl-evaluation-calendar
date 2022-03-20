@@ -6,6 +6,8 @@ use App\Http\Controllers\API\EvaluationTypeController;
 use App\Http\Controllers\API\GroupController;
 use App\Http\Controllers\API\InterruptionTypeController;
 use App\Http\Controllers\API\LoginController;
+use App\Models\AcademicYear;
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +38,10 @@ use App\Http\Controllers\SchoolController;
 */
 Route::get('/version', function () {
     return 'v2';
+});
+
+Route::get('/v2/sync-courses', function () {
+    Course::importCoursesFromWebService(AcademicYear::where('active', true)->first()->code);
 });
 
 
