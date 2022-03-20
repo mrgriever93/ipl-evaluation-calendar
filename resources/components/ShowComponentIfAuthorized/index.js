@@ -2,6 +2,9 @@ import PropTypes from 'prop-types';
 
 export const useComponentIfAuthorized = (permission, returnIndividual = false) => {
     const userScopes = JSON.parse(localStorage.getItem('scopes'));
+    if(!userScopes){
+        return false;
+    }
     if (Array.isArray(permission)) {
         if (returnIndividual) {
             return permission.reduce((acc, curr) => {
