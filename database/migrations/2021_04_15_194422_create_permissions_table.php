@@ -19,6 +19,9 @@ class CreatePermissionsTable extends Migration
             $table->foreign('category_id')->references('id')->on('permission_categories');
             $table->string('name');
             $table->string('description');
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
     }
 

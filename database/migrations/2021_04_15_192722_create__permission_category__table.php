@@ -17,7 +17,9 @@ class CreatePermissionCategoryTable extends Migration
             $table->unsignedBigInteger('id')->autoIncrement();
             $table->string('name');
             $table->string('description');
-            $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
     }
 

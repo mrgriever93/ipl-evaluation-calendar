@@ -14,6 +14,9 @@ class AddLdapColumnsToUsersTable extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('guid')->unique()->nullable();
             $table->string('domain')->nullable();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
 
     }

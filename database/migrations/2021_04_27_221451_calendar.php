@@ -33,6 +33,8 @@ class Calendar extends Migration
             $table->string('index_course_unit_teachers')->nullable();
             $table->string('query_param_academic_year')->nullable();
             $table->string('query_param_semester')->nullable();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
 
         Schema::create('courses', function (Blueprint $table) {
@@ -46,7 +48,9 @@ class Calendar extends Migration
             $table->integer('num_years')->nullable();
             $table->foreign('coordinator_user_id')->references('id')->on('users');
             $table->foreign('school_id')->references('id')->on('schools');
-            $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
             $table->softDeletes();
         });
 
@@ -56,6 +60,9 @@ class Calendar extends Migration
             $table->string('name');
             $table->string('initials');
             $table->foreign('course_id')->references('id')->on('courses');
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
 
         Schema::create('academic_years', function (Blueprint $table) {
@@ -63,6 +70,9 @@ class Calendar extends Migration
             $table->string('code')->unique();
             $table->string('display');
             $table->boolean('active')->default(true);
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
             $table->softDeletes();
         });
 
@@ -84,7 +94,9 @@ class Calendar extends Migration
             $table->unsignedBigInteger('updated_by');
             $table->foreign('created_by')->references('id')->on('users');
             $table->foreign('updated_by')->references('id')->on('users');
-            $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
             $table->softDeletes();
         });
 
@@ -98,7 +110,9 @@ class Calendar extends Migration
             $table->string('code')->unique();
             $table->string('description');
             $table->boolean('enabled')->default(true);
-            $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
 
         Schema::create('epoch_types', function (Blueprint $table) {
@@ -127,7 +141,9 @@ class Calendar extends Migration
             $table->timestamp('end_date')->useCurrent();
             $table->foreign('calendar_id')->references('id')->on('calendars');
             $table->foreign('epoch_type_id')->references('id')->on('epoch_types');
-            $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
             $table->softDeletes();
         });
 
@@ -138,7 +154,9 @@ class Calendar extends Migration
             $table->decimal("weight");
             $table->boolean("enabled")->default(true);
             $table->foreign('evaluation_type_id')->references('id')->on('evaluation_types');
-            $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
 
         Schema::create('epoch_method', function (Blueprint $table) {
@@ -151,7 +169,9 @@ class Calendar extends Migration
         Schema::create('course_unit_groups', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
             $table->string('description');
-            $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
 
         Schema::create('course_units', function (Blueprint $table) {
@@ -169,7 +189,9 @@ class Calendar extends Migration
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('set null');
             $table->foreign('responsible_user_id')->references('id')->on('users');
             $table->foreign('course_unit_group_id')->references('id')->on('course_unit_groups')->onDelete('set null');
-            $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
 
         Schema::create('course_unit_method', function (Blueprint $table) {
@@ -191,7 +213,9 @@ class Calendar extends Migration
             $table->string('observations')->nullable();
             $table->foreign('epoch_id')->references('id')->on('epochs');
             $table->foreign('method_id')->references('id')->on('methods')->onDelete('cascade');
-            $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
 
         Schema::create('interruption_types', function (Blueprint $table) {
@@ -199,7 +223,9 @@ class Calendar extends Migration
             $table->string('name');
             $table->string('description');
             $table->boolean('enabled')->default(true);
-            $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
             $table->softDeletes();
         });
 
@@ -213,7 +239,9 @@ class Calendar extends Migration
             $table->boolean('enabled')->default(true);
             $table->foreign('interruption_type_id')->references('id')->on('interruption_types');
             $table->foreign('calendar_id')->references('id')->on('calendars');
-            $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
             $table->softDeletes();
         });
 
@@ -223,9 +251,14 @@ class Calendar extends Migration
             $table->unsignedBigInteger('calendar_phase_id');
             $table->string('observations')->nullable();
             $table->boolean('temporary');
-            $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
             $table->foreign('calendar_id')->references('id')->on('calendars');
             $table->foreign('calendar_phase_id')->references('id')->on('calendar_phases');
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
             $table->softDeletes();
         });
 
@@ -237,10 +270,12 @@ class Calendar extends Migration
             $table->boolean('ignored')->default(false);
             $table->foreign('exam_id')->references('id')->on('exams');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
 
-        
+
         Schema::create('academic_year_course', function (Blueprint $table) {
             $table->unsignedBigInteger('academic_year_id');
             $table->unsignedBigInteger('course_id');
@@ -253,6 +288,9 @@ class Calendar extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('course_id')->references('id')->on('courses');
             $table->foreign('user_id')->references('id')->on('users');
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
 
         Schema::create('course_unit_user', function (Blueprint $table) {

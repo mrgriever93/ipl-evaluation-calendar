@@ -21,7 +21,9 @@ class FinalPermissions extends Migration
             $table->string('password');
             $table->boolean('enabled')->default(true);
             $table->boolean('protected')->default(false);
-            $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
             $table->softDeletes();
         });
 
@@ -31,7 +33,9 @@ class FinalPermissions extends Migration
             $table->string('description');
             $table->boolean('enabled')->default(true);
             $table->boolean('removable')->default(true);
-            $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
             $table->softDeletes();
         });
 
@@ -41,7 +45,9 @@ class FinalPermissions extends Migration
             $table->string('description');
             $table->boolean('enabled')->default(true);
             $table->boolean('removable')->default(true);
-            $table->timestamps();
+
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
 
         Schema::create('group_permissions', function (Blueprint $table) {
@@ -49,13 +55,14 @@ class FinalPermissions extends Migration
             $table->unsignedBigInteger('group_id');
             $table->unsignedBigInteger('permission_id');
             $table->foreignId('phase_id')->nullable()->constrained('calendar_phases');
-            
+
             $table->boolean('enabled')->default(true);
 
             $table->foreign('group_id')->references('id')->on('groups');
             $table->foreign('permission_id')->references('id')->on('permissions');
 
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
 
         Schema::create('group_user', function (Blueprint $table) {

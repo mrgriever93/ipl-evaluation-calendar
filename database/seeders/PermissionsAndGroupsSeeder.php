@@ -105,9 +105,9 @@ class PermissionsAndGroupsSeeder extends Seeder
             ["name" => "edit_calendar_phases", "description" => "Editar fases de calendário"],
             ["name" => "delete_calendar_phases", "description" => "Eliminar fases de calendário"],
 
-            /*["name" => "create_languages", "description" => "Criar idiomas"],
+            ["name" => "create_languages", "description" => "Criar idiomas"],
             ["name" => "edit_languages", "description" => "Editar idiomas"],
-            ["name" => "translate", "description" => "Traduzir idiomas"],*/
+            ["name" => "translate", "description" => "Traduzir idiomas"],
 
             ["name" => "create_schools", "description" => "Criar escolas"],
             ["name" => "edit_schools", "description" => "Editar escolas"],
@@ -170,6 +170,8 @@ class PermissionsAndGroupsSeeder extends Seeder
             ["name" => "Responsável CP", "email" => "responsavel_cp@ipleiria.pt", "group" => "responsible_pedagoci"],
             ["name" => "Responsável UC", "email" => "responsavel_uc@ipleiria.pt", "group" => "responsible_course_unit"],
         ];
+
+
 
         $schools = [
             ["code" => "ESAD.CR", "name" => "Escola Superior de Artes e Design - Caldas da Rainha"],
