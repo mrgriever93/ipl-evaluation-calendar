@@ -17,6 +17,11 @@ class Permission extends Model
     {
         return $this->belongsTo(PermissionCategory::class);
     }
+    
+    public function section()
+    {
+        return $this->belongsTo(PermissionSection::class);
+    }
 
     public function group()
     {

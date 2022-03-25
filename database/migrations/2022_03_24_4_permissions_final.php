@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class FinalPermissions extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -39,6 +39,13 @@ class FinalPermissions extends Migration
             $table->softDeletes();
         });
 
+        Schema::create('group_user', function (Blueprint $table) {
+            $table->unsignedBigInteger('group_id');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('group_id')->references('id')->on('groups');
+            $table->foreign('user_id')->references('id')->on('users');
+        });
+
         Schema::create('calendar_phases', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
             $table->string('name');
@@ -64,13 +71,6 @@ class FinalPermissions extends Migration
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
-
-        Schema::create('group_user', function (Blueprint $table) {
-            $table->unsignedBigInteger('group_id');
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('group_id')->references('id')->on('groups');
-            $table->foreign('user_id')->references('id')->on('users');
-        });
     }
 
     /**
@@ -80,6 +80,9 @@ class FinalPermissions extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('users');
+        Schema::dropIfExists('groups');
+        Schema::dropIfExists('group_user');
+        Schema::dropIfExists('group_permissions');
     }
-}
+};

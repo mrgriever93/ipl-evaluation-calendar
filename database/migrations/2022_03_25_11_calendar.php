@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class Calendar extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -251,9 +251,7 @@ class Calendar extends Migration
             $table->unsignedBigInteger('calendar_phase_id');
             $table->string('observations')->nullable();
             $table->boolean('temporary');
-
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
+            
             $table->foreign('calendar_id')->references('id')->on('calendars');
             $table->foreign('calendar_phase_id')->references('id')->on('calendar_phases');
 
@@ -317,4 +315,4 @@ class Calendar extends Migration
     {
         //
     }
-}
+};

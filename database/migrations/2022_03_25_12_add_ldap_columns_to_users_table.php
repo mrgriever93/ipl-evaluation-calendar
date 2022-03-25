@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddLdapColumnsToUsersTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -14,9 +14,6 @@ class AddLdapColumnsToUsersTable extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('guid')->unique()->nullable();
             $table->string('domain')->nullable();
-
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });
 
     }
@@ -30,4 +27,4 @@ class AddLdapColumnsToUsersTable extends Migration
             $table->dropColumn(['guid', 'domain']);
         });
     }
-}
+};

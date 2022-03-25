@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePermissionsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -19,6 +19,8 @@ class CreatePermissionsTable extends Migration
             $table->foreign('category_id')->references('id')->on('permission_categories');
             $table->string('name');
             $table->string('description');
+            $table->unsignedBigInteger('section_id');
+            $table->foreign('section_id')->references('id')->on('permission_sections');
 
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
@@ -34,4 +36,4 @@ class CreatePermissionsTable extends Migration
     {
         Schema::dropIfExists('permissions');
     }
-}
+};

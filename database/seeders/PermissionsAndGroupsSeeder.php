@@ -13,6 +13,7 @@ use App\Models\Group;
 use App\Models\InterruptionType;
 use App\Models\Permission;
 use App\Models\PermissionCategory;
+use App\Models\PermissionSection;
 use App\Models\School;
 use App\Models\Semester;
 use App\Models\User;
@@ -74,70 +75,77 @@ class PermissionsAndGroupsSeeder extends Seeder
             "calendar"
         ];
 
+        $permissionSections = [
+            ["code" => "calendar",  "description_pt" => "Calendário",   "description_en" => "Calendar"],
+            ["code" => "ucs",       "description_pt" => "UCs",          "description_en" => "CUs"],
+            ["code" => "users",     "description_pt" => "Utilizadores", "description_en" => "Users"],
+            ["code" => "courses",   "description_pt" => "Cursos",       "description_en" => "Courses"],
+        ];
+
         $newPermissions = [
-            ["name" => "create_calendar", "description" => "Criar calendário"],
-            ["name" => "delete_calendar", "description" => "Eliminar calendário"],
-            ["name" => "view_calendar_info", "description" => "Ver informações do calendário"],
-            ["name" => "view_comments", "description" => "Ver comentários"],
-            ["name" => "view_calendar_history", "description" => "Ver o histórico do calendário"],
-            ["name" => "view_actual_phase", "description" => "Ver fase atual"],
-            ["name" => "view_course_units", "description" => "Ver UCs"],
-            ["name" => "create_course_units", "description" => "Criar UCs"],
-            ["name" => "edit_course_units", "description" => "Editar UCs"],
-            ["name" => "delete_course_units", "description" => "Eliminar UCs"],
+            ["name" => "create_calendar", "description" => "Criar calendário", "section_code" => "calendar"],
+            ["name" => "delete_calendar", "description" => "Eliminar calendário", "section_code" => "calendar"],
+            ["name" => "view_calendar_info", "description" => "Ver informações do calendário", "section_code" => "calendar"],
+            ["name" => "view_comments", "description" => "Ver comentários", "section_code" => "calendar"],
+            ["name" => "view_calendar_history", "description" => "Ver o histórico do calendário", "section_code" => "calendar"],
+            ["name" => "view_actual_phase", "description" => "Ver fase atual", "section_code" => "calendar"],
+            ["name" => "view_course_units", "description" => "Ver UCs", "section_code" => "calendar"],
+            ["name" => "create_course_units", "description" => "Criar UCs", "section_code" => "calendar"],
+            ["name" => "edit_course_units", "description" => "Editar UCs", "section_code" => "calendar"],
+            ["name" => "delete_course_units", "description" => "Eliminar UCs", "section_code" => "calendar"],
 
-            ["name" => "edit_user_groups", "description" => "Editar Grupos de Utilizador"],
-            ["name" => "delete_user_groups", "description" => "Eliminar Grupos de Utilizador"],
-            ["name" => "create_user_groups", "description" => "Criar Grupos de Utilizador"],
+            ["name" => "edit_user_groups", "description" => "Editar Grupos de Utilizador", "section_code" => "calendar"],
+            ["name" => "delete_user_groups", "description" => "Eliminar Grupos de Utilizador", "section_code" => "calendar"],
+            ["name" => "create_user_groups", "description" => "Criar Grupos de Utilizador", "section_code" => "calendar"],
 
-            ["name" => "edit_users", "description" => "Editar utilizadores"],
-            ["name" => "lock_users", "description" => "Bloquear utilizadores"],
+            ["name" => "edit_users", "description" => "Editar utilizadores", "section_code" => "calendar"],
+            ["name" => "lock_users", "description" => "Bloquear utilizadores", "section_code" => "calendar"],
 
-            ["name" => "create_evaluation_types", "description" => "Criar tipos de avaliações"],
-            ["name" => "edit_evaluation_types", "description" => "Editar tipos de avaliações"],
-            ["name" => "delete_evaluation_types", "description" => "Eliminar tipos de avaliações"],
+            ["name" => "create_evaluation_types", "description" => "Criar tipos de avaliações", "section_code" => "calendar"],
+            ["name" => "edit_evaluation_types", "description" => "Editar tipos de avaliações", "section_code" => "calendar"],
+            ["name" => "delete_evaluation_types", "description" => "Eliminar tipos de avaliações", "section_code" => "calendar"],
 
-            ["name" => "create_interruption_types", "description" => "Criar tipos de interrupções"],
-            ["name" => "edit_interruption_types", "description" => "Editar tipos de interrupções"],
-            ["name" => "delete_interruption_types", "description" => "Eliminar tipos de interrupções"],
+            ["name" => "create_interruption_types", "description" => "Criar tipos de interrupções", "section_code" => "calendar"],
+            ["name" => "edit_interruption_types", "description" => "Editar tipos de interrupções", "section_code" => "calendar"],
+            ["name" => "delete_interruption_types", "description" => "Eliminar tipos de interrupções", "section_code" => "calendar"],
 
-            ["name" => "create_calendar_phases", "description" => "Criar fases de calendário"],
-            ["name" => "edit_calendar_phases", "description" => "Editar fases de calendário"],
-            ["name" => "delete_calendar_phases", "description" => "Eliminar fases de calendário"],
+            ["name" => "create_calendar_phases", "description" => "Criar fases de calendário", "section_code" => "calendar"],
+            ["name" => "edit_calendar_phases", "description" => "Editar fases de calendário", "section_code" => "calendar"],
+            ["name" => "delete_calendar_phases", "description" => "Eliminar fases de calendário", "section_code" => "calendar"],
 
-            ["name" => "create_languages", "description" => "Criar idiomas"],
-            ["name" => "edit_languages", "description" => "Editar idiomas"],
-            ["name" => "translate", "description" => "Traduzir idiomas"],
+            ["name" => "create_languages", "description" => "Criar idiomas", "section_code" => "calendar"],
+            ["name" => "edit_languages", "description" => "Editar idiomas", "section_code" => "calendar"],
+            ["name" => "translate", "description" => "Traduzir idiomas", "section_code" => "calendar"],
 
-            ["name" => "create_schools", "description" => "Criar escolas"],
-            ["name" => "edit_schools", "description" => "Editar escolas"],
+            ["name" => "create_schools", "description" => "Criar escolas", "section_code" => "calendar"],
+            ["name" => "edit_schools", "description" => "Editar escolas", "section_code" => "calendar"],
 
-            ["name" => "create_academic_years", "description" => "Criar anos letivos"],
-            ["name" => "edit_academic_years", "description" => "Editar anos letivos"],
-            ["name" => "delete_academic_years", "description" => "Eliminar anos letivos"],
+            ["name" => "create_academic_years", "description" => "Criar anos letivos", "section_code" => "calendar"],
+            ["name" => "edit_academic_years", "description" => "Editar anos letivos", "section_code" => "calendar"],
+            ["name" => "delete_academic_years", "description" => "Eliminar anos letivos", "section_code" => "calendar"],
 
-            ["name" => "change_permissions", "description" => "Gerir permissões"],
-            ["name" => "define_course_coordinator", "description" => "Definir Coordenador de Curso"],
-            ["name" => "define_course_unit_responsible", "description" => "Definir Responsável da Unidade Curricular"],
-            ["name" => "define_course_unit_teachers", "description" => "Definir Professores das Unidades Curriculares"],
+            ["name" => "change_permissions", "description" => "Gerir permissões", "section_code" => "calendar"],
+            ["name" => "define_course_coordinator", "description" => "Definir Coordenador de Curso", "section_code" => "calendar"],
+            ["name" => "define_course_unit_responsible", "description" => "Definir Responsável da Unidade Curricular", "section_code" => "calendar"],
+            ["name" => "define_course_unit_teachers", "description" => "Definir Professores das Unidades Curriculares", "section_code" => "calendar"],
 
-            ["name" => "create_courses", "description" => "Criar cursos"],
-            ["name" => "edit_courses", "description" => "Editar cursos"],
-            ["name" => "delete_courses", "description" => "Eliminar cursos"],
-            ["name" => "publish_calendar", "description" => "Publicar calendário"],
-            ["name" => "create_copy", "description" => "Criar cópia"],
+            ["name" => "create_courses", "description" => "Criar cursos", "section_code" => "calendar"],
+            ["name" => "edit_courses", "description" => "Editar cursos", "section_code" => "calendar"],
+            ["name" => "delete_courses", "description" => "Eliminar cursos", "section_code" => "calendar"],
+            ["name" => "publish_calendar", "description" => "Publicar calendário", "section_code" => "calendar"],
+            ["name" => "create_copy", "description" => "Criar cópia", "section_code" => "calendar"],
 
-            ["name" => "manage_evaluation_methods", "description" => "Gerir métodos de Avaliação"],
+            ["name" => "manage_evaluation_methods", "description" => "Gerir métodos de Avaliação", "section_code" => "calendar"],
 
             // for each phase
-            ["name" => "add_comments", "description" => "Adicionar comentários"],
-            ["name" => "change_calendar_phase", "description" => "Mudar fase de calendário"],
-            ["name" => "add_exams", "description" => "Adicionar avaliações"],
-            ["name" => "edit_exams", "description" => "Editar avaliações"],
-            ["name" => "remove_exams", "description" => "Remover avaliações"],
-            ["name" => "add_interruption", "description" => "Adicionar interrupções"],
-            ["name" => "edit_interruption", "description" => "Editar interrupções"],
-            ["name" => "remove_interruption", "description" => "Remover interrupções"],
+            ["name" => "add_comments", "description" => "Adicionar comentários", "section_code" => "calendar"],
+            ["name" => "change_calendar_phase", "description" => "Mudar fase de calendário", "section_code" => "calendar"],
+            ["name" => "add_exams", "description" => "Adicionar avaliações", "section_code" => "calendar"],
+            ["name" => "edit_exams", "description" => "Editar avaliações", "section_code" => "calendar"],
+            ["name" => "remove_exams", "description" => "Remover avaliações", "section_code" => "calendar"],
+            ["name" => "add_interruption", "description" => "Adicionar interrupções", "section_code" => "calendar"],
+            ["name" => "edit_interruption", "description" => "Editar interrupções", "section_code" => "calendar"],
+            ["name" => "remove_interruption", "description" => "Remover interrupções", "section_code" => "calendar"],
 
         ];
 
@@ -218,6 +226,14 @@ class PermissionsAndGroupsSeeder extends Seeder
             $newCategory->save();
         }
 
+        foreach ($permissionSections as $section) {
+            $newSection = new PermissionSection();
+            $newSection->code = $section["code"];
+            $newSection->description_pt = $section["description_pt"];
+            $newSection->description_en = $section["description_en"];
+            $newSection->save();
+        }
+
         foreach ($userGroups as $userGroup) {
             $newUserGroup = new Group();
             $newUserGroup->name = $userGroup['code'];
@@ -235,6 +251,7 @@ class PermissionsAndGroupsSeeder extends Seeder
             $newPermission->name = $newPerm["name"];
             $newPermission->description = $newPerm["description"];
             $newPermission->category_id = $isGeneral ? 1 : 2;
+            $newPermission->section_id = PermissionSection::where('code', $newPerm["section_code"])->first()->id;
             $newPermission->save();
             if ($isGeneral) {
                 $newPermission->group()->attach(
