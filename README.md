@@ -62,3 +62,39 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+
+
+## Installation
+
+1) Install Ubuntu & Docker (WSL 2 on Windows )
+2) To do sail command:
+
+        $> <command here>
+
+3) Run migrations and seeders for the database 
+
+        $> sail artisan migrate --seed
+
+4) Create personal Token for login
+
+        $> sail artisan passport:client --personal
+
+5) Test LDAP connection
+
+        $> sail artisan ldap:test
+
+-----
+
+6) To run React frontend
+
+        $> npm install
+
+
+        $> npm run watch        // watch changes on files
+        
+        or
+        
+        $> npm run dev          // compile once
+

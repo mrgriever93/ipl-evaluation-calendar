@@ -1,16 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-    Card,
-    Container,
-    Table,
-    Form,
-    Button,
-    Header,
-    Icon,
-    Modal,
-    Dimmer,
-    Loader,
-} from 'semantic-ui-react';
+import { Card, Container, Table, Form, Button, Header, Icon, Modal, Dimmer, Loader } from 'semantic-ui-react';
 import styled from 'styled-components';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
@@ -40,6 +29,7 @@ const List = ({match}) => {
 
     const loadUserGroups = useCallback(() => {
         setIsLoading(true);
+        
         axios.get('/user-group').then((response) => {
             setIsLoading(false);
             if (response.status === 200) {
@@ -47,7 +37,7 @@ const List = ({match}) => {
             }
         });
     }, []);
-
+    
     useEffect(() => {
         loadUserGroups();
     }, []);
@@ -90,7 +80,7 @@ const List = ({match}) => {
         <Container style={{marginTop: '2em'}}>
             <Card fluid>
                 <Card.Content>
-                    {isLoading && (
+                    { isLoading && (
                         <Dimmer active inverted>
                             <Loader indeterminate>A carregar os grupos</Loader>
                         </Dimmer>
@@ -99,9 +89,7 @@ const List = ({match}) => {
                         <Header as="span">Grupos de Utilizador</Header>
                         <ShowComponentIfAuthorized permission={[SCOPES.CREATE_USER_GROUPS]}>
                             <Link to="/grupo-utilizador/novo">
-                                <Button floated="right" color="green">
-                                    Novo
-                                </Button>
+                                <Button floated="right" color="green">Novo</Button>
                             </Link>
                         </ShowComponentIfAuthorized>
                     </Wrapper>
@@ -109,11 +97,7 @@ const List = ({match}) => {
                 <Card.Content>
                     <Form>
                         <Form.Group widths="2">
-                            <Form.Input
-                                label="Pesquisar"
-                                placeholder="Pesquisar grupos de utilizador..."
-                                onChange={handleSearch}
-                            />
+                            <Form.Input label="Pesquisar" placeholder="Pesquisar grupos de utilizador..." onChange={handleSearch} />
                         </Form.Group>
                     </Form>
                 </Card.Content>
@@ -122,81 +106,49 @@ const List = ({match}) => {
                         <Table.Header>
                             <Table.Row>
                                 {columns.map((col, index) => (
-                                    <Table.HeaderCell
-                                        key={index}
-                                        textAlign={col.align}
-                                    >
-                                        {col.name}
-                                    </Table.HeaderCell>
+                                    <Table.HeaderCell key={index} textAlign={col.align} >{col.name} </Table.HeaderCell>
                                 ))}
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {(filteredResults?.length
-                                    ? filteredResults
-                                    : userGroups
-                            )?.map(
+                            {(filteredResults?.length ? filteredResults : userGroups )?.map(
                                 (
-                                    {
-                                        id, description, enabled, removable,
-                                    },
-                                    index,
-                                ) => (
-                                    <Table.Row key={index}>
-                                        <Table.Cell>{description}</Table.Cell>
-                                        <Table.Cell textAlign="center">
-                                            <Icon
-                                                name={!enabled ? 'close' : 'check'}
-                                            />
-                                        </Table.Cell>
-                                        <Table.Cell textAlign="center">
-                                            <ShowComponentIfAuthorized permission={[SCOPES.EDIT_USER_GROUPS]}>
-                                                <Link to={`/grupo-utilizador/edit/${id}`}>
-                                                    <Button color="yellow" icon>
-                                                        <Icon name="edit"/>
+                                    { id, description, enabled, removable },
+                                    index ) => (
+                                        <Table.Row key={index}>
+                                            <Table.Cell>{description}</Table.Cell>
+                                            <Table.Cell textAlign="center">
+                                                <Icon name={!enabled ? 'close' : 'check'} />
+                                            </Table.Cell>
+                                            <Table.Cell textAlign="center">
+                                                <ShowComponentIfAuthorized permission={[SCOPES.EDIT_USER_GROUPS]}>
+                                                    <Link to={`/grupo-utilizador/edit/${id}`}>
+                                                        <Button color="yellow" icon>
+                                                            <Icon name="edit"/>
+                                                        </Button>
+                                                    </Link>
+                                                </ShowComponentIfAuthorized>
+                                                <ShowComponentIfAuthorized permission={[SCOPES.DELETE_USER_GROUPS]}>
+                                                    <Button onClick={() => remove({id,name: description}) } color="red" icon disabled={!removable} >
+                                                        <Icon name="trash"/>
                                                     </Button>
-                                                </Link>
-                                            </ShowComponentIfAuthorized>
-                                            <ShowComponentIfAuthorized permission={[SCOPES.DELETE_USER_GROUPS]}>
-                                                <Button
-                                                    onClick={() => remove({
-                                                        id,
-                                                        name: description,
-                                                    })}
-                                                    color="red"
-                                                    icon
-                                                    disabled={!removable}
-                                                >
-                                                    <Icon name="trash"/>
-                                                </Button>
-                                            </ShowComponentIfAuthorized>
-                                        </Table.Cell>
-                                    </Table.Row>
-                                ),
+                                                </ShowComponentIfAuthorized>
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    )
                             )}
                         </Table.Body>
                     </Table>
                 </Card.Content>
             </Card>
-            <Modal
-                dimmer="blurring"
-                open={modalOpen}
-                onClose={handleModalClose}
-            >
+            <Modal dimmer="blurring" open={modalOpen} onClose={handleModalClose} >
                 <Modal.Header>Remover Grupo de Utilizador</Modal.Header>
-                <Modal.Content>
-                    Tem a certeza que deseja remover o grupo de utilizador
-                    {' '}
-                    <strong>{modalInfo?.name}</strong>
-                    ?
+                <Modal.Content>                    
+                    {'Tem a certeza que deseja remover o grupo de utilizador '} <strong>{modalInfo?.name}</strong> ?
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button negative onClick={handleModalClose}>
-                        Cancelar
-                    </Button>
-                    <Button positive onClick={handleRemoval}>
-                        Sim
-                    </Button>
+                    <Button negative onClick={handleModalClose}>Cancelar</Button>
+                    <Button positive onClick={handleRemoval}>Sim</Button>
                 </Modal.Actions>
             </Modal>
         </Container>
