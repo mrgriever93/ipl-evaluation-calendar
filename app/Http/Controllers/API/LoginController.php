@@ -42,8 +42,8 @@ class LoginController extends Controller
             if (!$user->enabled) {
                 return response()->json("Unauthorized.", Response::HTTP_UNAUTHORIZED);
             }
-// TODO @miguel.cerejo
-             /*if (isset($user->ldap)) {
+// TODO @miguel.cerejo LDAP
+             if (isset($user->ldap)) {
                  $groups = $user->ldap->title;
                  foreach ($groups as $group) {
                      if (Group::where('description', $group)->count() > 0) {
@@ -58,7 +58,7 @@ class LoginController extends Controller
                          }
                      }
                  }
-             }*/
+             }/**/
             $scopes = $user->permissions()->where('group_permissions.enabled', true)->groupBy('permissions.name')->pluck('permissions.name')->values()->toArray();
             $accessToken = $user->createToken('authToken', $scopes)->accessToken;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Ldap;
+namespace App\Ldap;
 
 use LdapRecord\Models\Model;
 
