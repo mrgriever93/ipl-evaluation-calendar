@@ -14,7 +14,7 @@ class Course extends Model
 {
     use HasFactory, Filterable, SoftDeletes;
 
-    protected $fillable = ["code", "name", "initials", "degree", "num_years", "coordinator_user_id", "school_id"];
+    protected $fillable = ["code", "name_pt", "name_en", "initials", "degree", "num_years", "coordinator_user_id", "school_id"];
 
     public function academicYears()
     {

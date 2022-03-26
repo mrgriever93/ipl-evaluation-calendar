@@ -11,7 +11,8 @@ class CourseUnitGroup extends Model
     use HasFactory, Filterable;
 
     protected $fillable = [
-        "description"
+        "description_pt",
+        "description_en"
     ];
 
     public function courseUnits()

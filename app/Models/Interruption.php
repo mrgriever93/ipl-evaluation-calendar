@@ -11,7 +11,7 @@ class Interruption extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ["interruption_type_id", "calendar_id", "start_date", "end_date", "description", "enabled"];
+    protected $fillable = ["interruption_type_id", "calendar_id", "start_date", "end_date", "description_pt", "description_en", "enabled"];
 
     public function calendar()
     {

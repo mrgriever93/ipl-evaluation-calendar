@@ -13,7 +13,8 @@ class EpochType extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        "name",
+        "name_pt",
+        "name_en"
     ];
 
     public function epochs() {

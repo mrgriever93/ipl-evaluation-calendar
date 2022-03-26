@@ -14,7 +14,8 @@ class CalendarChange extends Model
         "calendar_id",
         "calendar_phase_id",
         "temporary",
-        "observations",
+        "observations_pt",
+        "observations_en",
     ];
 
     public function calendar()

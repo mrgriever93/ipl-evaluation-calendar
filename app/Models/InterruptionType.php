@@ -16,8 +16,10 @@ class InterruptionType extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        "name",
-        "description",
+        "name_pt",
+        "name_en",
+        "description_pt",
+        "description_en",
         "enabled"
     ];
 }

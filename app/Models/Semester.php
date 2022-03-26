@@ -12,7 +12,8 @@ class Semester extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        "name",
+        "name_pt",
+        "name_en"
     ];
 
     public function epochTypes() {

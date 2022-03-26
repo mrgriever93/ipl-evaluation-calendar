@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Permission extends Model
 {
-    protected $fillable = ["name", "description"];
+    protected $fillable = ["name", "description_pt", "description_en"];
 
     public $timestamps = false;
 
@@ -17,7 +17,7 @@ class Permission extends Model
     {
         return $this->belongsTo(PermissionCategory::class);
     }
-    
+
     public function section()
     {
         return $this->belongsTo(PermissionSection::class);

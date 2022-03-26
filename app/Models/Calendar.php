@@ -17,7 +17,8 @@ class Calendar extends Model
     protected $fillable = [
         "calendar_phase_id",
         "semester",
-        "observations",
+        "observations_pt",
+        "observations_en",
         "temporary",
         "published",
         "created_by",
