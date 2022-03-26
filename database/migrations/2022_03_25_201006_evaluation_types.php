@@ -13,14 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('permissions', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('category_id');
-            $table->foreign('category_id')->references('id')->on('permission_categories');
-            $table->string('name');
-            $table->string('description');
-            $table->unsignedBigInteger('section_id');
-            $table->foreign('section_id')->references('id')->on('permission_sections');
+        Schema::create('evaluation_types', function (Blueprint $table) {
+            $table->unsignedBigInteger('id')->autoIncrement();
+            $table->string('code')->unique();
+            $table->string('description_pt');
+            $table->string('description_en');
+            $table->boolean('enabled')->default(true);
 
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
@@ -34,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('evaluation_types');
     }
 };

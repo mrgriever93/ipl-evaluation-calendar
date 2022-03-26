@@ -13,13 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('permission_categories', function (Blueprint $table) {
+        Schema::create('epochs', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
+            $table->unsignedBigInteger('calendar_id');
+            $table->unsignedBigInteger('epoch_type_id');
             $table->string('name');
-            $table->string('description');
+            $table->timestamp('start_date')->useCurrent();
+            $table->timestamp('end_date')->useCurrent();
+            $table->foreign('calendar_id')->references('id')->on('calendars');
+            $table->foreign('epoch_type_id')->references('id')->on('epoch_types');
 
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
+            $table->softDeletes();
         });
     }
 
@@ -30,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('permission_categories');
+        Schema::dropIfExists('epochs');
     }
 };
