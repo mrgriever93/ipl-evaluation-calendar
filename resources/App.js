@@ -7,6 +7,7 @@ import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import store from './redux/store';
 import 'react-toastify/dist/ReactToastify.css';
+import './global.css';
 
 import RoutesList from './routes';
 
