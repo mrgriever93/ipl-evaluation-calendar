@@ -1,6 +1,16 @@
 <?php
 
+use App\Http\Controllers\API\CalendarChangeController;
+use App\Http\Controllers\API\CalendarPhaseController;
+use App\Http\Controllers\API\EvaluationTypeController;
+use App\Http\Controllers\API\GroupController;
+use App\Http\Controllers\API\InterruptionTypeController;
+use App\Http\Controllers\API\LoginController;
+use App\Models\AcademicYear;
+use App\Models\Course;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 use App\Http\Controllers\API\AcademicYearController;
 use App\Http\Controllers\API\CalendarController;
@@ -26,125 +36,137 @@ use App\Http\Controllers\SchoolController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::get('/version', function () {
+    return 'v2';
+});
+
+Route::get('/v2/sync-courses', function () {
+    Course::importCoursesFromWebService(AcademicYear::where('active', true)->first()->code);
+});
 
 
-Route::post('/login', 'API\LoginController@login');
-Route::post('/logout', 'API\LoginController@logout');
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+
+Route::post('/login',   [LoginController::class, "login"]   ); //'API\LoginController@login');
+Route::post('/logout',  [LoginController::class, "logout"]  );
 
 /** NEW ENDPOINTS! **/
 
-Route::middleware('auth:api')->get('/calendar', 'API\CalendarController@index');
-Route::middleware('auth:api')->get('/calendar/{calendar}', 'API\CalendarController@show');
-Route::middleware('auth:api')->post('/calendar', 'API\CalendarController@store');
-Route::middleware('auth:api')->patch('/calendar/{calendar}', 'API\CalendarController@update');
-Route::middleware('auth:api')->delete('/calendar/{calendar}', 'API\CalendarController@destroy');
+Route::middleware('auth:api')->get('/calendar',                                 [CalendarController::class, 'index']            );
+Route::middleware('auth:api')->get('/calendar/{calendar}',                      [CalendarController::class, 'show']             );
+Route::middleware('auth:api')->post('/calendar',                                [CalendarController::class, 'store']            );
+Route::middleware('auth:api')->patch('/calendar/{calendar}',                    [CalendarController::class, 'update']           );
+Route::middleware('auth:api')->delete('/calendar/{calendar}',                   [CalendarController::class, 'destroy']          );
+
+Route::middleware('auth:api')->get('/calendar-history/{calendar}',              [CalendarChangeController::class, 'show']       );
 
 
-Route::middleware('auth:api')->get('/evaluation-types', 'API\EvaluationTypeController@list');
-Route::middleware('auth:api')->get('/evaluation-types/{id}', 'API\EvaluationTypeController@show');
-Route::middleware('auth:api')->delete('/evaluation-types/{evaluationType}', 'API\EvaluationTypeController@destroy');
-Route::middleware('auth:api')->post('/evaluation-types', 'API\EvaluationTypeController@store');
-Route::middleware('auth:api')->patch('/evaluation-types/{evaluationType}', 'API\EvaluationTypeController@update');
+Route::middleware('auth:api')->get('/evaluation-types',                         [EvaluationTypeController::class, 'list']       );
+Route::middleware('auth:api')->get('/evaluation-types/{id}',                    [EvaluationTypeController::class, 'show']       );
+Route::middleware('auth:api')->delete('/evaluation-types/{evaluationType}',     [EvaluationTypeController::class, 'destroy']    );
+Route::middleware('auth:api')->post('/evaluation-types',                        [EvaluationTypeController::class, 'store']      );
+Route::middleware('auth:api')->patch('/evaluation-types/{evaluationType}',      [EvaluationTypeController::class, 'update']     );
 
 
-Route::middleware('auth:api')->post('/interruption-types', 'API\InterruptionTypeController@store');
-Route::middleware('auth:api')->get('/interruption-types', 'API\InterruptionTypeController@index');
-Route::middleware('auth:api')->get('/interruption-types/{interruptionType}', 'API\InterruptionTypeController@show');
-Route::middleware('auth:api')->patch('/interruption-types/{interruptionType}', 'API\InterruptionTypeController@update');
-Route::middleware('auth:api')->delete('/interruption-types/{interruptionType}', 'API\InterruptionTypeController@destroy');
-
-Route::middleware('auth:api')->get('/calendar-history/{calendar}', 'API\CalendarChangeController@show');
+Route::middleware('auth:api')->post('/interruption-types',                      [InterruptionTypeController::class, 'store']    );
+Route::middleware('auth:api')->get('/interruption-types',                       [InterruptionTypeController::class, 'index']    );
+Route::middleware('auth:api')->get('/interruption-types/{interruptionType}',    [InterruptionTypeController::class, 'show']     );
+Route::middleware('auth:api')->patch('/interruption-types/{interruptionType}',  [InterruptionTypeController::class, 'update']   );
+Route::middleware('auth:api')->delete('/interruption-types/{interruptionType}', [InterruptionTypeController::class, 'destroy']  );
 
 
-Route::middleware('auth:api')->get('/user-group', 'API\GroupController@index');
-Route::middleware('auth:api')->get('/user-group/{group}', 'API\GroupController@show');
-Route::middleware('auth:api')->post('/user-group', 'API\GroupController@store');
-Route::middleware('auth:api')->patch('/user-group/{group}', 'API\GroupController@update');
-Route::middleware('auth:api')->delete('/user-group/{group}', 'API\GroupController@destroy');
-Route::middleware('auth:api')->get('/permissions/groups', 'API\GroupController@listPermissions');
+Route::middleware('auth:api')->get('/user-group',                               [GroupController::class, 'index']               );
+Route::middleware('auth:api')->get('/user-group/{group}',                       [GroupController::class, 'show']                );
+Route::middleware('auth:api')->post('/user-group',                              [GroupController::class, 'store']               );
+Route::middleware('auth:api')->patch('/user-group/{group}',                     [GroupController::class, 'update']              );
+Route::middleware('auth:api')->delete('/user-group/{group}',                    [GroupController::class, 'destroy']             );
 
-Route::middleware('auth:api')->delete('/calendar-phases/{calendarPhase}', 'API\CalendarPhaseController@destroy');
-Route::middleware('auth:api')->get('/calendar-phases', 'API\CalendarPhaseController@index');
-Route::middleware('auth:api')->patch('/calendar-phases/{calendarPhase}', 'API\CalendarPhaseController@update');
-Route::middleware('auth:api')->get('/calendar-phases/{calendarPhase}', 'API\CalendarPhaseController@show');
-Route::middleware('auth:api')->post('/calendar-phases', 'API\CalendarPhaseController@store');
+Route::middleware('auth:api')->get('/user-group/{group}/permissions',           [GroupController::class, 'groupPermissions']    );
+Route::middleware('auth:api')->get('/permissions/groups',                       [GroupController::class, 'listPermissions']     );     /* TO DELETE? */
+
+Route::middleware('auth:api')->delete('/calendar-phases/{calendarPhase}',       [CalendarPhaseController::class, 'destroy']     );
+Route::middleware('auth:api')->get('/calendar-phases',                          [CalendarPhaseController::class, 'index']       );
+Route::middleware('auth:api')->patch('/calendar-phases/{calendarPhase}',        [CalendarPhaseController::class, 'update']      );
+Route::middleware('auth:api')->get('/calendar-phases/{calendarPhase}',          [CalendarPhaseController::class, 'show']        );
+Route::middleware('auth:api')->post('/calendar-phases',                         [CalendarPhaseController::class, 'store']       );
 
 Route::middleware('auth:api')->group(function () {
-    Route::get('/users/{user}', [UserController::class, 'show']);
-    Route::get('/users', [UserController::class, 'index']);
-    Route::patch('/user/{user}', [UserController::class, 'update']);
+
+    Route::get('/users/{user}',                 [UserController::class, 'show']             );
+    Route::get('/users',                        [UserController::class, 'index']            );
+    Route::patch('/user/{user}',                [UserController::class, 'update']           );
 
 
-    Route::get('/available-methods/{calendar}', [CalendarController::class, 'getAvailableMethods']);
+    Route::get('/exams/{exam}',                 [ExamController::class, 'show']             );
+    Route::post('/exams',                       [ExamController::class,'store']             );
+    Route::patch('/exams/{exam}',               [ExamController::class, 'update']           );
+    Route::delete('/exams/{exam}',              [ExamController::class, 'destroy']          );
 
-    Route::post('/course-unit-groups', [CourseUnitGroupController::class, 'store']);
-    Route::delete('/course-unit-groups/{courseUnitGroup}', [CourseUnitGroupController::class, 'destroy']);
-    Route::patch('/course-unit-groups/{courseUnitGroup}', [CourseUnitGroupController::class, 'update']);
-    Route::get('/course-unit-groups', [CourseUnitGroupController::class, 'index']);
-    Route::get('/course-unit-groups/{courseUnitGroup}', [CourseUnitGroupController::class, 'show']);
+    Route::post('/comment',                     [ExamCommentController::class, 'store']     );
+    Route::post('/comment/{comment}/ignore',    [ExamCommentController::class, 'ignore']    );
+    Route::patch('/comment/{examComment}',      [ExamCommentController::class, 'update']    );
 
-    Route::get('/semesters', [CalendarController::class, 'listSemesters']);
+    Route::post('/academic-years',              [AcademicYearController::class, 'store']    );
+    Route::get('/academic-years',               [AcademicYearController::class, 'index']    );
+    Route::post('/academic-years/switch',       [AcademicYearController::class, 'switch']   );
 
-    Route::get('/courses', [CourseController::class, 'index']);
-    Route::get('/courses/{course}', [CourseController::class, 'show']);
-    Route::delete('/courses/{course}/student/{student}', [CourseController::class, 'removeStudent']);
-    Route::patch('/courses/{course}/student', [CourseController::class, 'addStudent']);
-    Route::delete('/courses/{course}', [CourseController::class, 'destroy']);
-    Route::patch('/courses/{course}', [CourseController::class, 'update']);
-    Route::patch('/courses/{course}/coordinator', [CourseController::class, 'assignCoordinator']);
+    Route::get('/schools',                      [SchoolController::class, 'index']          );
+    Route::get('/schools/{school}',             [SchoolController::class, 'show']           );
+    Route::patch('/schools/{school}',           [SchoolController::class, 'update']         );
+
+    Route::post('/methods',                     [MethodController::class, 'store']          );
+    Route::get('/methods',                      [MethodController::class, 'index']          );
+    Route::get('/methods/{method}',             [MethodController::class, 'show']           );
+    Route::patch('/methods/{method}',           [MethodController::class, 'update']         );
+    Route::delete('/methods/{method}',          [MethodController::class, 'destroy']        );
+
+    Route::post('/interruptions',                           [InterruptionController::class, 'store']                );
+    Route::patch('/interruptions/{interruption}',           [InterruptionController::class, 'update']               );
+    Route::delete('/interruptions/{interruption}',          [InterruptionController::class, 'destroy']              );
+
+    Route::get('/permissions',                              [PermissionController::class, 'index']                  );
+    Route::get('/permissions/calendar',                     [PermissionController::class, 'calendar']               );
+    Route::put('/permission',                               [PermissionController::class, 'store']                  );
+    Route::get('/permission/{type}',                        [PermissionController::class, 'list']                   );
+    Route::get('/permission/{type}/groups/{phaseId?}',      [PermissionController::class, 'listGroupPermissions']   );
+
+    Route::get('/courses',                                  [CourseController::class, 'index']                      );
+    Route::get('/courses/{course}',                         [CourseController::class, 'show']                       );
+    Route::delete('/courses/{course}/student/{student}',    [CourseController::class, 'removeStudent']              );
+    Route::patch('/courses/{course}/student',               [CourseController::class, 'addStudent']                 );
+    Route::delete('/courses/{course}',                      [CourseController::class, 'destroy']                    );
+    Route::patch('/courses/{course}',                       [CourseController::class, 'update']                     );
+    Route::patch('/courses/{course}/coordinator',           [CourseController::class, 'assignCoordinator']          );
+
+    Route::post('/course-unit-groups',                      [CourseUnitGroupController::class, 'store']             );
+    Route::delete('/course-unit-groups/{courseUnitGroup}',  [CourseUnitGroupController::class, 'destroy']           );
+    Route::patch('/course-unit-groups/{courseUnitGroup}',   [CourseUnitGroupController::class, 'update']            );
+    Route::get('/course-unit-groups',                       [CourseUnitGroupController::class, 'index']             );
+    Route::get('/course-unit-groups/{courseUnitGroup}',     [CourseUnitGroupController::class, 'show']              );
+
     
-    Route::delete('/branches/{branch}', [CourseController::class, 'deleteBranch']);
-    
-    Route::post('/methods', [MethodController::class, 'store']);
-    Route::get('/methods', [MethodController::class, 'index']);
-    Route::get('/methods/{method}', [MethodController::class, 'show']);
-    Route::patch('/methods/{method}', [MethodController::class, 'update']);
-    Route::delete('/methods/{method}', [MethodController::class, 'destroy']);
+    Route::get('/available-methods/{calendar}',     [CalendarController::class, 'getAvailableMethods']  );
+    Route::get('/semesters',                        [CalendarController::class, 'listSemesters']        );
+    Route::post('/calendar/{calendar}/publish',     [CalendarController::class, 'publish']              );
+    Route::delete('/branches/{branch}',             [CourseController::class, 'deleteBranch']           );
 
-    Route::post('/calendar/{calendar}/publish', [CalendarController::class, 'publish']);
-
-    Route::post('/academic-years', [AcademicYearController::class, 'store']);
-    Route::get('/academic-years', [AcademicYearController::class, 'index']);
-    Route::post('/academic-years/switch', [AcademicYearController::class, 'switch']);
-
-    Route::get('/schools', [SchoolController::class, 'index']);
-    Route::get('/schools/{school}', [SchoolController::class, 'show']);
-    Route::patch('/schools/{school}', [SchoolController::class, 'update']);
+    Route::get('/search/users',         [LdapController::class, 'searchUsers']      );
+    Route::get('/search/students',      [LdapController::class, 'searchStudents']   );
 
 
-    Route::get('/exams/{exam}', [ExamController::class, 'show']);
-    Route::post('/exams', [ExamController::class,'store']);
-    Route::patch('/exams/{exam}', [ExamController::class, 'update']);
-    Route::delete('/exams/{exam}', [ExamController::class, 'destroy']);
+    Route::get('/course-units',                             [CourseUnitController::class, 'index']                      );
+    Route::get('/course-units/{courseUnit}',                [CourseUnitController::class, 'show']                       );
+    Route::get('/course-units/{courseUnit}/branches',       [CourseUnitController::class, 'branches']                   );
+    Route::post('/course-units',                            [CourseUnitController::class, 'store']                      );
+    Route::patch('/course-units/{courseUnit}',              [CourseUnitController::class, 'update']                     );
+    Route::delete('/course-units/{courseUnit}',             [CourseUnitController::class, 'destroy']                    );
+    Route::get('/course-units/{courseUnit}/epochs',         [CourseUnitController::class, 'epochsForCourseUnit']        );
+    Route::get('/course-units/{courseUnit}/methods',        [CourseUnitController::class, 'methodsForCourseUnit']       );
+    Route::patch('/course-units/{courseUnit}/responsible',  [CourseUnitController::class, 'assignResponsible']          );
 
-    Route::post('/comment', [ExamCommentController::class, 'store']);
-    Route::post('/comment/{comment}/ignore', [ExamCommentController::class, 'ignore']);
-    Route::patch('/comment/{examComment}', [ExamCommentController::class, 'update']);
-
-    Route::post('/interruptions', [InterruptionController::class, 'store']);
-    Route::patch('/interruptions/{interruption}', [InterruptionController::class, 'update']);
-    Route::delete('/interruptions/{interruption}', [InterruptionController::class, 'destroy']);
-
-    Route::get('/permissions', [PermissionController::class, 'index']);
-    Route::get('/permissions/calendar', [PermissionController::class, 'calendar']);
-    Route::put('/permission', [PermissionController::class, 'store']);
-    Route::get('/permission/{type}', [PermissionController::class, 'list']);
-    Route::get('/permission/{type}/groups/{phaseId?}', [PermissionController::class, 'listGroupPermissions']);
-
-
-    Route::get('/search/users', [LdapController::class, 'searchUsers']);
-    Route::get('/search/students', [LdapController::class, 'searchStudents']);
-
-    Route::get('/course-units', [CourseUnitController::class, 'index']);
-    Route::get('/course-units/{courseUnit}', [CourseUnitController::class, 'show']);
-    Route::get('/course-units/{courseUnit}/branches', [CourseUnitController::class, 'branches']);
-    Route::post('/course-units', [CourseUnitController::class, 'store']);
-    Route::patch('/course-units/{courseUnit}', [CourseUnitController::class, 'update']);
-    Route::delete('/course-units/{courseUnit}', [CourseUnitController::class, 'destroy']);
-    Route::get('/course-units/{courseUnit}/epochs', [CourseUnitController::class, 'epochsForCourseUnit']);
-    Route::get('/course-units/{courseUnit}/methods', [CourseUnitController::class, 'methodsForCourseUnit']);
-    Route::patch('/course-units/{courseUnit}/responsible', [CourseUnitController::class, 'assignResponsible']);
-    
 });
 
 // TODO

@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\AcademicYear;
-use App\Branch;
-use App\Course;
+use App\Models\AcademicYear;
+use App\Models\Branch;
+use App\Models\Course;
+use App\Models\Group;
+use App\Models\InitialGroups;
+use App\Models\User;
 use App\Filters\CourseFilters;
-use App\Group;
 use App\Http\Requests\CourseRequest;
 use App\Http\Resources\CourseResource;
-use App\InitialGroups;
-use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -149,17 +149,17 @@ class CourseController extends Controller
     {
         if ($request->hasCookie('academic_year')) {
             $academicYear = AcademicYear::findOrFail($request->cookie('academic_year'));
-            
+
             $calendarsOfCourse = Course::ofAcademicYear($academicYear->id)->where('id', $course->id)->first()->calendars()->delete();
             /*foreach ($calendarsOfCourse as $calendar) {
                 $calendar->delete();
             }*/
-            
+
             $course->academicYears()->detach($academicYear->id);
             $count = Course::whereHas('academicYears', function (Builder $query) use($course) {
                 $query->where('course_id', $course->id);
             })->count();
-            
+
             if ($count == 0) {
                 $course->delete();
             }

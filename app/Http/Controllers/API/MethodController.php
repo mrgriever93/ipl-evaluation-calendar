@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Calendar;
-use App\CourseUnit;
-use App\CourseUnitGroup;
-use App\Epoch;
+use App\Models\Calendar;
+use App\Models\CourseUnit;
+use App\Models\CourseUnitGroup;
+use App\Models\Epoch;
+use App\Models\Method;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NewMethodRequest;
 use App\Http\Requests\UpdateMethodRequest;
 use App\Http\Resources\MethodResource;
-use App\Method;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -41,9 +42,9 @@ class MethodController extends Controller
                 $newMethod = Method::find($method['id']);
                 $newMethod->fill($method);
             }
-            
+
             $newMethod->save();
-            
+
             if ($courseUnit->course_unit_group_id) {
                 // if this course unit has a group ("agrupamento"), then
                 // navigate through all the unit courses in that group and
@@ -53,7 +54,7 @@ class MethodController extends Controller
 
                     $epochs = Epoch
                                 ::where('epoch_type_id', $method['epoch_type_id'])
-                                ->whereIn('calendar_id', 
+                                ->whereIn('calendar_id',
                                     Calendar::where('course_id', $courseUnit->course_id)->whereIn('semester', [$courseUnit->semester, 3])->get('id')
                                 )
                                 ->get()->pluck('id');
@@ -67,7 +68,7 @@ class MethodController extends Controller
 
                 $epochs = Epoch
                         ::where('epoch_type_id', $method['epoch_type_id'])
-                        ->whereIn('calendar_id', 
+                        ->whereIn('calendar_id',
                             Calendar::where('course_id', $courseUnit->course_id)->whereIn('semester', [$courseUnit->semester, 3])->get('id')
                         )
                         ->get()->pluck('id');

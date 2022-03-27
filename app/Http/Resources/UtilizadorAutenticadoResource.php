@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Dicionario;
+use App\Models\Dicionario;
 use App\Http\Resources\DicionarioResource;
 
 use Illuminate\Http\Resources\Json\JsonResource;

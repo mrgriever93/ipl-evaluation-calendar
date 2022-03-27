@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
-use App\Traducao;
-use App\Idioma;
+use App\Models\Traducao;
+use App\Models\Idioma;
 use \Config as Config;
 
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -17,10 +17,10 @@ class TipoInterrupcaoTraducaoResource extends JsonResource
         // Ensure you call the parent constructor
         parent::__construct($resource);
         $this->resource = $resource;
-        
+
         $this->idioma = $idioma;
     }
-    
+
     public function toArray($request)
     {
         $traducaoNome       = $this->nome;

@@ -2,21 +2,24 @@
 
 namespace App\Providers;
 
-use App\Calendar;
-use App\Policies\CalendarPolicy;
 use Carbon\Carbon;
-use Laravel\Passport\Passport;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+
+use App\Models\Calendar;
+use App\Policies\CalendarPolicy;
+use Laravel\Passport\Passport;
+
 
 class AuthServiceProvider extends ServiceProvider
 {
     /**
      * The policy mappings for the application.
      *
-     * @var array
+     * @var array<class-string, class-string>
      */
     protected $policies = [
+        // 'App' => 'App\Policies\ModelPolicy',
         Calendar::class => CalendarPolicy::class,
     ];
 
@@ -28,6 +31,7 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+
         Passport::tokensExpireIn(Carbon::now()->addDays(5));
         Passport::tokensCan([
             'create_calendar' => '',

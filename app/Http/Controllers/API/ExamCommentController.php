@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\ExamComment;
+use App\Models\ExamComment;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ExamCommentRequest;
 use Illuminate\Http\Request;

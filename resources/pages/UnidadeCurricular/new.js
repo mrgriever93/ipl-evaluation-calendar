@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Field, Form as FinalForm } from 'react-final-form';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import {
   Button,
@@ -24,7 +24,7 @@ import { useComponentIfAuthorized } from '../../components/ShowComponentIfAuthor
 import SCOPES from '../../utils/scopesConstants';
 
 const New = ({ match }) => {
-  const history = useHistory();
+  const history = useNavigate();
   const [courseUnitDetail, setCourseUnitDetail] = useState({});
   const [loading, setLoading] = useState(!!match.params?.id);
   const [isSaving, setIsSaving] = useState(false);
@@ -116,7 +116,7 @@ const New = ({ match }) => {
 
   useEffect(() => {
     if (!loading && match.params?.id && !courseUnitDetail) {
-      history.push('/unidade-curricular');
+      history('/unidade-curricular');
     }
   }, [match.params, loading, courseUnitDetail, history]);
 

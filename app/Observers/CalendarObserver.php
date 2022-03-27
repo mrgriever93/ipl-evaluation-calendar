@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Calendar;
+use App\Models\Calendar;
 use Illuminate\Support\Facades\Auth;
 
 class CalendarObserver

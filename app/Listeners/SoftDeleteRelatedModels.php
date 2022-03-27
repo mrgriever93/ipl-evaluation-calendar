@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\CalendarChange;
+use App\Models\CalendarChange;
 use App\Events\CalendarChanged;
 use App\Events\CalendarDeleted;
 

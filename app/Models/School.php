@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
+
+class School extends Model
+{
+    use HasFactory;
+    use HasRelationships;
+
+    protected $fillable = [
+        'code',
+        'name',
+        'base_link',
+        'index_course_code',
+        'index_course_name',
+        'index_course_unit_name',
+        'index_course_unit_curricular_year',
+        'index_course_unit_code',
+        'index_course_unit_teachers',
+        'query_param_academic_year',
+        'query_param_semester',
+        'gop_group_id',
+        'board_group_id',
+        'pedagogic_group_id'
+    ];
+
+    public $timestamps = false;
+
+    public function courses () {
+        return $this->hasMany(Course::class);
+    }
+
+    public function gopGroup() {
+        return $this->belongsTo(Group::class);
+    }
+
+    public function boardGroup() {
+        return $this->belongsTo(Group::class);
+    }
+
+    public function pedagogicGroup() {
+        return $this->belongsTo(Group::class);
+    }
+
+    public function courseUnits() {
+        return $this->hasManyThrough(CourseUnit::class, (new Course)->courseUnits());
+    }
+
+}

@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\AnoLetivo;
+use App\Models\AnoLetivo;
 use App\Http\Resources\AnoLetivoResource;
 
 use Illuminate\Http\Resources\Json\JsonResource;

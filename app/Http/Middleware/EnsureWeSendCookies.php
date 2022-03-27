@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\AcademicYear;
+use App\Models\AcademicYear;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
@@ -25,7 +25,7 @@ class EnsureWeSendCookies
                 if (AcademicYear::where('active', true)->get()->count() > 0) {
                     Cookie::queue('academic_year', AcademicYear::where('active', true)->first()->id, 120);
                 }
-            } 
+            }
             else {
                 Cookie::queue('academic_year', AcademicYear::find($request->cookie('academic_year'))->id, 120);
             }

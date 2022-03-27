@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Idioma;
+use App\Models\Idioma;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TraducaoResource extends JsonResource

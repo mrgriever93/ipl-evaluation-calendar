@@ -1,14 +1,22 @@
-import React from 'react';
-import { Redirect, Route, Switch } from 'react-router';
-import List from './list';
+import React from "react";
+import {Container, Tab} from "semantic-ui-react";
+import PermissoesGerais from "./partials/PermissoesGerais";
+import PermissoesCalendario from "./partials/PermissoesCalendario";
 
-const EvaluationType = ({ match }) => (
-  <Switch>
-    <Route path={`${match.path}/`} exact component={List} />
-    <Route path={`${match.path}/*`} component={List}>
-      <Redirect to="/404" />
-    </Route>
-  </Switch>
-);
+const Permissions = () => {
+    const panes = [
+        {menuItem: "Permissões Gerais", render: () => <PermissoesGerais/>},
+        {
+            menuItem: "Permissões do Calendário",
+            render: () => <PermissoesCalendario/>,
+        },
+    ];
 
-export default EvaluationType;
+    return (
+        <Container style={{marginTop: "2em"}}>
+            <Tab panes={panes} renderActiveOnly/>
+        </Container>
+    );
+};
+
+export default Permissions;

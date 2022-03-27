@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Course;
+use App\Models\Course;
 use App\Events\AcademicYearRegistered;
 
 class ImportCourses

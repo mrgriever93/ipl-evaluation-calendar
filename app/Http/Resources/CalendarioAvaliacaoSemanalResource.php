@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
-use App\Epoca;
-use App\Avaliacao;
+use App\Models\Epoca;
+use App\Models\Avaliacao;
 use App\Http\Resources\AvaliacaoResource;
 
 use Illuminate\Http\Resources\Json\JsonResource;

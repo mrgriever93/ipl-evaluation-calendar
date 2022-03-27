@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Calendar;
-use App\CalendarChange;
+use App\Models\Calendar;
+use App\Models\CalendarChange;
 use App\Http\Controllers\Controller;
 
 class CalendarChangeController extends Controller

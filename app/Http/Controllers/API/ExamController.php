@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Calendar;
-use App\Course;
-use App\CourseUnit;
-use App\CourseUnitGroup;
-use App\Epoch;
-use App\Exam;
+use App\Models\Calendar;
+use App\Models\Course;
+use App\Models\CourseUnit;
+use App\Models\CourseUnitGroup;
+use App\Models\Epoch;
+use App\Models\Exam;
+use App\Models\Method;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NewExamRequest;
 use App\Http\Resources\ExamResource;
-use App\Method;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
@@ -86,7 +86,7 @@ class ExamController extends Controller
                             ->calendar()
                             ->where('calendars.published', false)
                             ->count() > 0
-                            && 
+                            &&
                             Exam::where('method_id', $request->method_id)->where('epoch_id', $epoch->id)->count() === 0
                         ) {
                         $newExam = new Exam($request->all());
@@ -104,7 +104,7 @@ class ExamController extends Controller
             $newExam->save();
         }
 
-        
+
 
         return response()->json("Created", Response::HTTP_CREATED);
     }
@@ -156,7 +156,7 @@ class ExamController extends Controller
                 $examToUpdate->hour = $request->hour;
                 $examToUpdate->duration_minutes = $request->duration_minutes;
                 $examToUpdate->observations = $request->observations;
-                
+
                 $examToUpdate->save();
             }
         }

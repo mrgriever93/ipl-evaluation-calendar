@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
-use App\Epoca;
-use App\Avaliacao;
+use App\Models\Epoca;
+use App\Models\Avaliacao;
 use App\Http\Resources\AvaliacaoResource;
 
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -28,14 +28,14 @@ class CalendarioAvaliacaoResource extends JsonResource
             'epoca_recurso'                     => new EpocaResource($this->epocaRecurso),
             'epoca_especial'                    => new EpocaResource($this->epocaEspecial),
             //'interrupcoes'                      => InterrupcaoResource::collection($this->interrupcoes),
-            // TODO            
+            // TODO
             //'avaliacoes'                        => AvaliacaoResource::collection($this->avaliacoes),
-            // TODO            
+            // TODO
             //'metodos_avaliacao'                 => MetodoAvaliacaoResource::collection($this->avaliacoes),
             'utilizador_id_criador'             => $this->utilizador_id_criador,
             'utilizador_id_modificador'         => $this->utilizador_id_modificador,
             'created_at'                        => $this->created_at,
             'updated_at'                        => $this->updated_at,
         ];
-    } 
+    }
 }

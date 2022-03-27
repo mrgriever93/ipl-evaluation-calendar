@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\UnidadeCurricular;
+use App\Models\UnidadeCurricular;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UnidadesCurricularesByCursoResource extends JsonResource

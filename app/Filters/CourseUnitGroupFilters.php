@@ -2,9 +2,9 @@
 
 namespace App\Filters;
 
-use App\Course;
-use App\CourseUnit;
-use App\Epoch;
+use App\Models\Course;
+use App\Models\CourseUnit;
+use App\Models\Epoch;
 use Illuminate\Database\Eloquent\Builder;
 use tiagomichaelsousa\LaravelFilters\QueryFilters;
 

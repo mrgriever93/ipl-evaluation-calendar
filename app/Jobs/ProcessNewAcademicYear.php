@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\AcademicYear;
-use App\Course;
+use App\Models\AcademicYear;
+use App\Models\Course;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;

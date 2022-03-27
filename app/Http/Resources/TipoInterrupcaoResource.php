@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
-use App\Traducao;
-use App\Idioma;
+use App\Models\Traducao;
+use App\Models\Idioma;
 use \Config as Config;
 
 use Illuminate\Http\Resources\Json\JsonResource;

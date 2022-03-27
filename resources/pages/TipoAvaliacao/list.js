@@ -147,7 +147,7 @@ const List = ({ match }) => {
                   </Table.Cell>
                   <Table.Cell textAlign="center">
                     <ShowComponentIfAuthorized permission={[SCOPES.EDIT_EVALUATION_TYPES]}>
-                      <Link to={`${match.path}edit/${id}`}>
+                      <Link to={`/tipo-avaliacao/edit/${id}`}>
                         <Button color="yellow" icon>
                           <Icon name="edit" />
                         </Button>

@@ -1,24 +1,21 @@
 import React from 'react';
-import { Redirect, Route, Switch } from 'react-router';
+import {Navigate, Route, Routes} from 'react-router';
 import List from './list';
 import New from './new';
 import Phases from './phases';
 import Calendar from './calendar';
 
-const Calendario = ({ match }) => (
-  <Switch>
-    <Route path={`${match.path}/novo`} exact component={New} />
-    <Route path={`${match.path}/fases`} component={Phases} />
-    <Route
-      path={`${match.path}/:id(\\d+)`}
-      exact
-      component={Calendar}
-    />
-    <Route path={`${match.path}/`} exact component={List} />
-    <Route path={`${match.path}/*`} component={List}>
-      <Redirect to="/404" />
-    </Route>
-  </Switch>
-);
+const Calendario = ({match}) => {
+    console.log("calendario");
+    return (
+        <Routes>
+            <Route path={`/novo`} exact element={<New/>}/>
+            <Route path={`/fases`} element={<Phases/>}/>
+            <Route path={`/:id(\\d+)`} exact element={<Calendar/>}/>
+            <Route path={`/`} exact element={<List/>}/>
+            <Route path={`/*`} element={<Navigate replace to="/404"/>}/>
+        </Routes>
+    );
+};
 
 export default Calendario;

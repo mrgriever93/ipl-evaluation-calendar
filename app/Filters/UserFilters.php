@@ -2,8 +2,8 @@
 
 namespace App\Filters;
 
-use App\Group;
-use App\User;
+use App\Models\Group;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use tiagomichaelsousa\LaravelFilters\QueryFilters;

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Calendar;
-use App\Epoch;
-use App\Exam;
+use App\Models\Calendar;
+use App\Models\Epoch;
+use App\Models\Exam;
+use App\Models\Interruption;
+use App\Models\InterruptionType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NewInterruptionRequest;
-use App\Interruption;
-use App\InterruptionType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;

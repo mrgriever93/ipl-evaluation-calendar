@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Group;
+use App\Models\Group;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GroupRequest;
 use App\Http\Requests\NewGroupRequest;
@@ -72,6 +72,31 @@ class GroupController extends Controller
     }
 
     public function listPermissions() {
+        return GroupsResource::collection(Group::with('permissions')->orderBy('name')->get());
+    }
+
+    /**
+     * Get permissions of the specified group.
+     *
+     * @param  Group  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function groupPermissions(Group $group) {
+
+        /* Será algo tipo isto:
+         *
+         * SELECT p.description AS permissionDescription, ps.description_pt as permissionSectionName, g.id as groupId, g.description as groupDescription, coalesce(gp.enabled, 0) AS isEnabled
+         * FROM calendar_v2.permissions as p
+         * JOIN calendar_v2.permission_sections AS ps ON p.section_id = ps.id
+         * LEFT JOIN calendar_v2.group_permissions as gp ON p.id = gp.permission_id
+         * LEFT JOIN calendar_v2.groups as g ON gp.group_id = g.id
+         * WHERE (g.id = 10 OR g.id IS NULL);
+         *
+         * 
+         * 
+         * MAS n está a aparecer as permissões todas
+         */
+
         return GroupsResource::collection(Group::with('permissions')->orderBy('name')->get());
     }
 }
