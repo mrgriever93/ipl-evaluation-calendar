@@ -2,3 +2,10 @@
 .ui.menu {
     margin-top: 0;
 }
+
+.margin-top-none { margin-top: 0;    }
+.margin-top-s    { margin-top: 8px;  }
+.margin-top-base { margin-top: 16px; }
+.margin-top-m    { margin-top: 24px; }
+.margin-top-l    { margin-top: 32px; }
+.margin-top-xl   { margin-top: 40px; }

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Card, Dropdown, Icon, List, Segment, Tab } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import { errorConfig, successConfig } from '../../utils/toastConfig';
+import {useParams} from "react-router-dom";
 
 const GroupPermissions = () => {
     const [groups, setGroups] = useState([]);
@@ -15,9 +16,12 @@ const GroupPermissions = () => {
         group_id: groupId,
         enabled: added,
     });
+    // get URL params
+    let { id } = useParams();
+    let paramsId = id;
 
   useEffect(() => {
-        axios.get('/permission/general').then((res) => {
+        axios.get('/user-group/' + paramsId + '/permissions').then((res) => {
             const perms = res?.data?.permissions || [];
             const groupList = res?.data?.groups || [];
             setGroups(groupList);
@@ -87,7 +91,7 @@ const GroupPermissions = () => {
   };
 
   return (
-    <Tab.Pane>
+    <div className="margin-top-l">
       <Card.Group itemsPerRow="4">
         {permissionsWithGroups.map((perm) => (
           <Card>
@@ -143,7 +147,7 @@ const GroupPermissions = () => {
         ))}
       </Card.Group>
 
-    </Tab.Pane>
+    </div>
   );
 };
 
