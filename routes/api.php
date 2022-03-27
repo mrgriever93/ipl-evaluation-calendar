@@ -84,6 +84,7 @@ Route::middleware('auth:api')->post('/user-group',                              
 Route::middleware('auth:api')->patch('/user-group/{group}',                     [GroupController::class, 'update']              );
 Route::middleware('auth:api')->delete('/user-group/{group}',                    [GroupController::class, 'destroy']             );
 
+Route::middleware('auth:api')->get('/user-group/{group}/permissions',           [GroupController::class, 'groupPermissions']    );
 Route::middleware('auth:api')->get('/permissions/groups',                       [GroupController::class, 'listPermissions']     );     /* TO DELETE? */
 
 Route::middleware('auth:api')->delete('/calendar-phases/{calendarPhase}',       [CalendarPhaseController::class, 'destroy']     );
