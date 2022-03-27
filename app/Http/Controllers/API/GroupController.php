@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Resources\Admin\PermissionSectionsResource;
 use App\Models\Group;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GroupRequest;
 use App\Http\Requests\NewGroupRequest;
 use App\Http\Resources\GroupsResource;
+use App\Models\Permission;
+use App\Models\PermissionSection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -79,7 +82,7 @@ class GroupController extends Controller
      * Get permissions of the specified group.
      *
      * @param  Group  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function groupPermissions(Group $group) {
 
@@ -92,11 +95,10 @@ class GroupController extends Controller
          * LEFT JOIN calendar_v2.groups as g ON gp.group_id = g.id
          * WHERE (g.id = 10 OR g.id IS NULL);
          *
-         * 
-         * 
+         *
+         *
          * MAS n está a aparecer as permissões todas
          */
-
-        return GroupsResource::collection(Group::with('permissions')->orderBy('name')->get());
+        return PermissionSectionsResource::collection(PermissionSection::with('permissions')->orderBy('code')->get());
     }
 }

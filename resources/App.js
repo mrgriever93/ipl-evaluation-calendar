@@ -14,6 +14,7 @@ import RoutesList from './routes';
 axios.defaults.baseURL = 'http://localhost/api';
 
 axios.interceptors.request.use((config) => {
+    config.headers.lang = "pt";
     if (!config.url.includes('login')) {
         config.headers.Authorization = `Bearer ${localStorage.getItem('authToken')}`;
     }
