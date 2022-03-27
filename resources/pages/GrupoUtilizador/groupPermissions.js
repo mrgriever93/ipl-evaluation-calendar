@@ -87,7 +87,7 @@ const GroupPermissions = () => {
   };
 
   return (
-    <Tab.Pane>
+    <div className="margin-top-l">
       <Card.Group itemsPerRow="4">
         {permissionsWithGroups.map((perm) => (
           <Card>
@@ -143,7 +143,7 @@ const GroupPermissions = () => {
         ))}
       </Card.Group>
 
-    </Tab.Pane>
+    </div>
   );
 };
 
