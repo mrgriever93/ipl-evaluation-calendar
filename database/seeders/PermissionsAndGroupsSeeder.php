@@ -30,6 +30,82 @@ class PermissionsAndGroupsSeeder extends Seeder
     public function run()
     {
 
+        $schools = [
+            ["code" => "ESAD.CR",   "name" => "Escola Superior de Artes e Design - Caldas da Rainha"],
+            ["code" => "ESECS",     "name" => "Escola Superior de Educação e Ciências Sociais"],
+            ["code" => "ESSLEI",    "name" =>"Escola Superior de Saúde"],
+            [
+                "code" => "ESTG",
+                "name" => "Escola Superior de Tecnologia e Gestão",
+                "base_link" => "http://www.dei.estg.ipleiria.pt/intranet/horarios/ws/inscricoes/cursos_ucs.php",
+                "index_course_code" => "0",
+                "index_course_name" => "1",
+                "index_course_unit_name" => "3",
+                "index_course_unit_curricular_year" => "5",
+                "index_course_unit_code" => "2",
+                "index_course_unit_teachers"=> "4",
+                "query_param_academic_year"=> "anoletivo",
+                "query_param_semester" => "periodo"
+            ],
+            ["code" => "ESTM", "name" => "Escola Superior de Turismo e Tecnologia do Mar"],
+        ];
+
+        foreach ($schools as $school) {
+            $newSchool = new School($school);
+            $newSchool->save();
+        }
+
+        $userGroups = [
+            ["code" => "super_admin",                       "description_pt" => "Super Admin",                         "description_en" => "Super Admin"],
+            ["code" => "admin",                             "description_pt" => "Administrador de Sistema",            "description_en" => "System Admin"],
+            ["code" => "student",                           "description_pt" => "Estudante",                           "description_en" => "Student"],
+            ["code" => "comission",                         "description_pt" => "Comissão Científico-Pedagógica",      "description_en" => "Scientific-Pedagogical Commission"],
+            ["code" => "pedagogic",                         "description_pt" => "Conselho Pedagógico",                 "description_en" => "Pedagogical Council"],
+            ["code" => "coordinator",                       "description_pt" => "Coordenador de Curso",                "description_en" => "Course coordinator"],
+            ["code" => "board",                             "description_pt" => "Direção",                             "description_en" => "Management"],
+            ["code" => "gop",                               "description_pt" => "GOP",                                 "description_en" => "GOP"],
+            ["code" => "teacher",                           "description_pt" => "Docente",                             "description_en" => "Teacher"],
+            ["code" => "responsible_pedagogic",             "description_pt" => "Responsável Conselho Pedagógico",     "description_en" => "Responsible Pedagogical Council"],
+            ["code" => "responsible_course_unit",           "description_pt" => "Responsável Unidade Curricular",      "description_en" => "Responsible Curricular Unit"],
+            ["code" => "board_estg",                        "description_pt" => "Direção ESTG",                        "description_en" => "Management ESTG"],
+            ["code" => "gop_estg",                          "description_pt" => "GOP ESTG",                            "description_en" => "GOP ESTG"],
+            ["code" => "pedagogic_estg",                    "description_pt" => "Conselho Pedagógico ESTG",            "description_en" => "Pedagogical Council ESTG"],
+        ];
+
+        foreach ($userGroups as $userGroup) {
+            $newUserGroup = new Group();
+            $newUserGroup->name = $userGroup['code'];
+            $newUserGroup->description_pt = $userGroup['description_pt'];
+            $newUserGroup->description_en = $userGroup['description_en'];
+            $newUserGroup->enabled = true;
+            $newUserGroup->removable = ($userGroup['code'] == 'board_estg' || $userGroup['code'] == 'gop_estg' || $userGroup['code'] == 'pedagogic_estg') ? : false;
+            $newUserGroup->save();
+        }
+
+        $users = [
+            ["name" => "Administrador",             "email" => "admin@ipleiria.pt",             "group" => "super_admin"],
+            ["name" => "Administrador de Sistema",  "email" => "sys_admin@ipleiria.pt",         "group" => "admin"],
+            ["name" => "CCP",                       "email" => "ccp@ipleiria.pt",               "group" => "comission"],
+            ["name" => "CP",                        "email" => "cp@ipleiria.pt",                "group" => "pedagogic"],
+            ["name" => "CC",                        "email" => "cc@ipleiria.pt",                "group" => "coordinator"],
+            ["name" => "Direção",                   "email" => "direcao@ipleiria.pt",           "group" => "board"],
+            ["name" => "GOP",                       "email" => "gop@ipleiria.pt",               "group" => "gop"],
+            ["name" => "Docente",                   "email" => "docente@ipleiria.pt",           "group" => "teacher"],
+            ["name" => "Responsável CP",            "email" => "responsavel_cp@ipleiria.pt",    "group" => "responsible_pedagoci"],
+            ["name" => "Responsável UC",            "email" => "responsavel_uc@ipleiria.pt",    "group" => "responsible_course_unit"],
+        ];
+
+        foreach ($users as $user) {
+            $newUser = new User();
+            $newUser->name = $user['name'];
+            $newUser->email = $user['email'];
+            $newUser->password = bcrypt('password');
+            $newUser->protected = true;
+            $newUser->save();
+            $newUser->groups()->attach(Group::where('name', $user['group'])->get());
+            $newUser->save();
+        }
+
         $interruptionTypes = [
             ["pt" => "Natal",               "en" => "Christmas"],
             ["pt" => "Páscoa",              "en" => "Easter"],
@@ -44,7 +120,8 @@ class PermissionsAndGroupsSeeder extends Seeder
 
         foreach ($interruptionTypes as $interruptionType) {
             $newInterruptionType = new InterruptionType();
-            $newInterruptionType->name = $interruptionType["pt"];
+            $newInterruptionType->name_pt = $interruptionType["pt"];
+            $newInterruptionType->name_en = $interruptionType["en"];
             $newInterruptionType->description_pt = $interruptionType["pt"];
             $newInterruptionType->description_en = $interruptionType["en"];
             $newInterruptionType->save();
@@ -197,75 +274,10 @@ class PermissionsAndGroupsSeeder extends Seeder
             ["name" => "add_interruption",                 "section_code" => "calendar",        "description_pt" => "Adicionar interrupções",                          "description_en" => "Add interruption"],
         ];
 
-        $userGroups = [
-            ["code" => "super_admin",                       "description_pt" => "Super Admin",                         "description_en" => "Super Admin"],
-            ["code" => "admin",                             "description_pt" => "Administrador de Sistema",            "description_en" => "System Admin"],
-            ["code" => "student",                           "description_pt" => "Estudante",                           "description_en" => "Student"],
-            ["code" => "comission",                         "description_pt" => "Comissão Científico-Pedagógica",      "description_en" => "Scientific-Pedagogical Commission"],
-            ["code" => "pedagogic",                         "description_pt" => "Conselho Pedagógico",                 "description_en" => "Pedagogical Council"],
-            ["code" => "coordinator",                       "description_pt" => "Coordenador de Curso",                "description_en" => "Course coordinator"],
-            ["code" => "board",                             "description_pt" => "Direção",                             "description_en" => "Management"],
-            ["code" => "gop",                               "description_pt" => "GOP",                                 "description_en" => "GOP"],
-            ["code" => "teacher",                           "description_pt" => "Docente",                             "description_en" => "Teacher"],
-            ["code" => "responsible_pedagogic",             "description_pt" => "Responsável Conselho Pedagógico",     "description_en" => "Responsible Pedagogical Council"],
-            ["code" => "responsible_course_unit",           "description_pt" => "Responsável Unidade Curricular",      "description_en" => "Responsible Curricular Unit"],
-            ["code" => "board_estg",                        "description_pt" => "Direção ESTG",                        "description_en" => "Management ESTG"],
-            ["code" => "gop_estg",                          "description_pt" => "GOP ESTG",                            "description_en" => "GOP ESTG"],
-            ["code" => "pedagogic_estg",                    "description_pt" => "Conselho Pedagógico ESTG",            "description_en" => "Pedagogical Council ESTG"],
-        ];
-
-        $users = [
-            ["name" => "Administrador",             "email" => "admin@ipleiria.pt",             "group" => "super_admin"],
-            ["name" => "Administrador de Sistema",  "email" => "sys_admin@ipleiria.pt",         "group" => "admin"],
-            ["name" => "CCP",                       "email" => "ccp@ipleiria.pt",               "group" => "comission"],
-            ["name" => "CP",                        "email" => "cp@ipleiria.pt",                "group" => "pedagogic"],
-            ["name" => "CC",                        "email" => "cc@ipleiria.pt",                "group" => "coordinator"],
-            ["name" => "Direção",                   "email" => "direcao@ipleiria.pt",           "group" => "board"],
-            ["name" => "GOP",                       "email" => "gop@ipleiria.pt",               "group" => "gop"],
-            ["name" => "Docente",                   "email" => "docente@ipleiria.pt",           "group" => "teacher"],
-            ["name" => "Responsável CP",            "email" => "responsavel_cp@ipleiria.pt",    "group" => "responsible_pedagoci"],
-            ["name" => "Responsável UC",            "email" => "responsavel_uc@ipleiria.pt",    "group" => "responsible_course_unit"],
-        ];
-
-
-
-        $schools = [
-            ["code" => "ESAD.CR",   "name" => "Escola Superior de Artes e Design - Caldas da Rainha"],
-            ["code" => "ESECS",     "name" => "Escola Superior de Educação e Ciências Sociais"],
-            ["code" => "ESSLEI",    "name" =>"Escola Superior de Saúde"],
-            [
-                "code" => "ESTG",
-                "name" => "Escola Superior de Tecnologia e Gestão",
-                "base_link" => "http://www.dei.estg.ipleiria.pt/intranet/horarios/ws/inscricoes/cursos_ucs.php",
-                "index_course_code" => "0",
-                "index_course_name" => "1",
-                "index_course_unit_name" => "3",
-                "index_course_unit_curricular_year" => "5",
-                "index_course_unit_code" => "2",
-                "index_course_unit_teachers"=> "4",
-                "query_param_academic_year"=> "anoletivo",
-                "query_param_semester" => "periodo"
-            ],
-            ["code" => "ESTM", "name" => "Escola Superior de Turismo e Tecnologia do Mar"],
-        ];
-
-        foreach ($schools as $school) {
-            $newSchool = new School($school);
-            $newSchool->save();
-        }
-
-        foreach ($userGroups as $userGroup) {
-            $newUserGroup = new Group();
-            $newUserGroup->name = $userGroup['code'];
-            $newUserGroup->description_pt = $userGroup['description_pt'];
-            $newUserGroup->description_en = $userGroup['description_en'];
-            $newUserGroup->enabled = true;
-            $newUserGroup->removable = ($userGroup['code'] == 'board_estg' || $userGroup['code'] == 'gop_estg' || $userGroup['code'] == 'pedagogic_estg') ? : false;
-            $newUserGroup->save();
-        }
-
-
         $isGeneral = true;
+        $super_admin_id = Group::where('name', 'super_admin')->first()->id;
+        $phase_system_id = CalendarPhase::where('name', 'system')->first()->id;
+
         foreach ($newPermissions as $newPerm) {
             if ($newPerm["name"] == "add_comments") $isGeneral = false;
             $newPermission = new Permission();
@@ -278,34 +290,22 @@ class PermissionsAndGroupsSeeder extends Seeder
             if ($isGeneral) {
                 $newPermission->group()->attach(
                     [
-                        Group::where('name', 'super_admin')->first()->id
+                        $super_admin_id
                     ],
                     [
-                        'phase_id' => CalendarPhase::where('name', 'system')->first()->id,
+                        'phase_id' => $phase_system_id,
                         'enabled' => true,
                     ]
                 );
             }
         }
 
-
-        foreach ($users as $user) {
-            $newUser = new User();
-            $newUser->name = $user['name'];
-            $newUser->email = $user['email'];
-            $newUser->password = bcrypt('password');
-            $newUser->protected = true;
-            $newUser->save();
-            $newUser->groups()->attach(Group::where('name', $user['group'])->get());
-            $newUser->save();
-        }
-
         $epochTypes = [
-            ["pt" => "Época Periódica", "en" => "Periodic Season"],
-            ["pt" => "Época Normal", "en" => "Normal Season"],
-            ["pt" => "Época Recurso", "en" => "Resource season"],
-            ["pt" => "Época Especial", "en" => "Special season"],
-            ["pt" => "Época Especialíssima", "en" => "Very Special season"],
+            ["pt" => "Época Periódica",     "en" => "Periodic Season"],
+            ["pt" => "Época Normal",        "en" => "Normal Season"],
+            ["pt" => "Época Recurso",       "en" => "Resource Season"],
+            ["pt" => "Época Especial",      "en" => "Special Season"],
+            ["pt" => "Época Especialíssima", "en" => "Very Special Season"],
         ];
         foreach ($epochTypes as $epochType) {
             $newEpochType = new EpochType([
@@ -316,11 +316,12 @@ class PermissionsAndGroupsSeeder extends Seeder
         }
 
         $semesters = [
-            ["pt" => "1º Semestre", "en" => "1st Semester"],
-            ["pt" => "2º Semestre", "en" => "2nd Semester"],
-            ["pt" => "Especial", "en" => "Special"],
-            ["pt" => "Especialíssima", "en" => "Very Special"],
+            ["pt" => "1º Semestre",     "en" => "1st Semester"],
+            ["pt" => "2º Semestre",     "en" => "2nd Semester"],
+            ["pt" => "Especial",        "en" => "Special"],
+            ["pt" => "Especialíssima",  "en" => "Very Special"],
         ];
+
         foreach ($semesters as $semester) {
             $newSemester = new Semester([
                 'name_pt' => $semester["pt"],
