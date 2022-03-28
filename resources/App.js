@@ -5,6 +5,9 @@ import {Provider as StoreProvider} from 'react-redux';
 import {Dimmer, Loader} from "semantic-ui-react";
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
+
+import "./i18n";
+
 import store from './redux/store';
 
 import 'semantic-ui-css/semantic.min.css';
