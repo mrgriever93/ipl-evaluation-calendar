@@ -1,0 +1,20 @@
+{
+    "translation": {
+        "menu.Calendários": "Calendars",
+        "menu.Unidades Curriculares": "Curricular Units",
+        "menu.Agrupamentos": "Groupings",
+        "menu.Cursos": "Courses",
+        "menu.Configurações": "Settings",
+        "menu.Anos Letivos": "Academic Years",
+        "menu.Unidades de Ensino": "Teaching Units",
+        "menu.Fases Calendário": "Calendar Phases",
+        "menu.Tipos Interrupções": "Types Interrupts",
+        "menu.Tipos Avaliações": "Assessments Types",
+        "menu.Grupos Utilizador": "User groups",
+        "menu.Utilizadores": "Users",
+        "menu.Permissões": "Permissions",
+        "menu.Sobre": "About",
+        "menu.Anos Letivo": "Academic Year",
+        "menu.Sair": "Logout"
+    }
+}

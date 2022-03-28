@@ -1,5 +1,5 @@
 import { useRoutes, Navigate } from "react-router-dom";
-import React from "react";
+import React, {lazy} from "react";
 
 import Login from './pages/Auth/Login';
 import NotFoundPage from './pages/NotFound';
@@ -8,52 +8,49 @@ import Dashboard from './pages/Dashboard';
 import About from './pages/About';
 
 // Calendar pages
-import CalendarList from './pages/Calendario/list';
-import CalendarNew from './pages/Calendario/new';
-import CalendarDetail from './pages/Calendario/calendar';
-import PhasesNew from './pages/Calendario/Phases/new';
-import PhasesList from './pages/Calendario/Phases/list';
-// Curso Pages
-import CursoList from './pages/Curso/list';
-import CursoDetail from './pages/Curso/detail';
-//Idioma Pages
-import Idioma from './pages/Idioma';
-import IdiomaNew from './pages/Idioma/new';
-import IdiomaList from './pages/Idioma/list';
-//Utilizador Pages
-import Utilizador from './pages/Utilizador';
-import UtilizadorDetail from './pages/Utilizador/edit';
-import UtilizadorList from './pages/Utilizador/list';
-//Interrupacao Pages
-import Interrupcao from './pages/Interrupcao';
-import InterrupcaoNew from './pages/Interrupcao/new';
-import InterrupcaoList from './pages/Interrupcao/list';
-//TipoAvaliacao Pages
-import TipoAvaliacao from './pages/TipoAvaliacao';
-import TipoAvaliacaoNew from './pages/TipoAvaliacao/new';
-import TipoAvaliacaoList from './pages/TipoAvaliacao/list';
-//GrupoUtilizador Pages
-import GrupoUtilizador from './pages/GrupoUtilizador';
-import GrupoUtilizadorNew from './pages/GrupoUtilizador/new';
-import GrupoUtilizadorList from './pages/GrupoUtilizador/list';
-//Permissoes Pages
-import Permissoes from './pages/Permissoes';
-//AgrupamentoUnidadeCurricular Pages
-import AgrupamentoUnidadeCurricular from './pages/AgrupamentoUnidadeCurricular';
-import AgrupamentoUnidadeCurricularList from './pages/AgrupamentoUnidadeCurricular/list';
-import AgrupamentoUnidadeCurricularNew from './pages/AgrupamentoUnidadeCurricular/new';
-import AgrupamentoUnidadeCurricularMethods from './pages/AgrupamentoUnidadeCurricular/methods';
-//UnidadeCurricular Pages
-import UnidadeCurricular from './pages/UnidadeCurricular';
-import UnidadeCurricularList from './pages/UnidadeCurricular/list';
-import UnidadeCurricularNew from './pages/UnidadeCurricular/new';
-import UnidadeCurricularMethods from './pages/UnidadeCurricular/methods';
-//AnoLetivo Pages
-import AnoLetivo from './pages/AnoLetivo';
-//Escola Pages
-import Escola from './pages/Escola';
-import EscolaNew from './pages/Escola/new';
-import EscolaList from './pages/Escola/list';
+
+const CalendarList = lazy(() => import('./pages/Calendario/list'));
+const CalendarNew = lazy(() => import('./pages/Calendario/new'));
+const CalendarDetail = lazy(() => import('./pages/Calendario/calendar'));
+const PhasesNew = lazy(() => import('./pages/Calendario/Phases/new'));
+const PhasesList = lazy(() => import('./pages/Calendario/Phases/list'));
+    // Curso Pages
+const CursoList = lazy(() => import('./pages/Curso/list'));
+const CursoDetail = lazy(() => import('./pages/Curso/detail'));
+    //Utilizador Pages
+const Utilizador = lazy(() => import('./pages/Utilizador'));
+const UtilizadorDetail = lazy(() => import('./pages/Utilizador/edit'));
+const UtilizadorList = lazy(() => import('./pages/Utilizador/list'));
+    //Interrupacao Pages
+const Interrupcao = lazy(() => import('./pages/Interrupcao'));
+const InterrupcaoNew = lazy(() => import('./pages/Interrupcao/new'));
+const InterrupcaoList = lazy(() => import('./pages/Interrupcao/list'));
+    //TipoAvaliacao Pages
+const TipoAvaliacao = lazy(() => import('./pages/TipoAvaliacao'));
+const TipoAvaliacaoNew = lazy(() => import('./pages/TipoAvaliacao/new'));
+const TipoAvaliacaoList = lazy(() => import('./pages/TipoAvaliacao/list'));
+    //GrupoUtilizador Pages
+const GrupoUtilizador = lazy(() => import('./pages/GrupoUtilizador'));
+const GrupoUtilizadorNew = lazy(() => import('./pages/GrupoUtilizador/new'));
+const GrupoUtilizadorList = lazy(() => import('./pages/GrupoUtilizador/list'));
+    //Permissoes Pages
+const Permissoes = lazy(() => import('./pages/Permissoes'));
+    //AgrupamentoUnidadeCurricular Pages
+const AgrupamentoUnidadeCurricular = lazy(() => import('./pages/AgrupamentoUnidadeCurricular'));
+const AgrupamentoUnidadeCurricularList = lazy(() => import('./pages/AgrupamentoUnidadeCurricular/list'));
+const AgrupamentoUnidadeCurricularNew = lazy(() => import('./pages/AgrupamentoUnidadeCurricular/new'));
+const AgrupamentoUnidadeCurricularMethods = lazy(() => import('./pages/AgrupamentoUnidadeCurricular/methods'));
+    //UnidadeCurricular Pages
+const UnidadeCurricular = lazy(() => import('./pages/UnidadeCurricular'));
+const UnidadeCurricularList = lazy(() => import('./pages/UnidadeCurricular/list'));
+const UnidadeCurricularNew = lazy(() => import('./pages/UnidadeCurricular/new'));
+const UnidadeCurricularMethods = lazy(() => import('./pages/UnidadeCurricular/methods'));
+    //AnoLetivo Pages
+const AnoLetivo = lazy(() => import('./pages/AnoLetivo'));
+    //Escola Pages
+const Escola = lazy(() => import('./pages/Escola'));
+const EscolaNew = lazy(() => import('./pages/Escola/new'));
+const EscolaList = lazy(() => import('./pages/Escola/list'));
 
 //auth and roles
 import {useComponentIfAuthorized} from "./components/ShowComponentIfAuthorized";
@@ -146,16 +143,6 @@ const RouterList = (isLoggedIn) => {
                         { path: 'novo', exact: true, element: <EscolaNew />},
                         { path: 'edit/:id', exact: true, element: <EscolaNew />},
                         { path: '', exact: true, element: <EscolaList />},
-                        { path: '*', element: <NotFoundPage />}
-                    ],
-                },
-                {
-                    path: "/idioma",
-                    element: ( isAuthorized.CREATE_LANGUAGES || isAuthorized.EDIT_LANGUAGES || isAuthorized.TRANSLATE) ? <Idioma /> : <Navigate to="/no-permissions" />,
-                    children: [
-                        { path: 'novo', exact: true, element: <IdiomaNew />},
-                        { path: 'edit/:id', exact: true, element: <IdiomaNew />},
-                        { path: '', exact: true, element: <IdiomaList />},
                         { path: '*', element: <NotFoundPage />}
                     ],
                 },

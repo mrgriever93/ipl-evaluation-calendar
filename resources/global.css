@@ -1,10 +1,14 @@
-/* @import url("https://fonts.googleapis.com/css?family=Nunito+Sans"); */ 
+/* @import url("https://fonts.googleapis.com/css?family=Nunito+Sans"); */
 .ui.menu {
     margin-top: 0;
 }
 
 .ui.menu + .ui.container {
     padding-bottom: 56px;
+}
+
+.ui.menu .item.lang-dropdown{
+    text-transform: uppercase;
 }
 
 .margin-top-none { margin-top: 0;    }
