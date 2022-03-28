@@ -21,8 +21,7 @@ const LoginPage = () => {
 
     const onSubmit = (values) => {
         setLoading(true);
-        axios
-            .post('/login', {
+        axios.post('/login', {
                 email: values.email,
                 password: values.password,
                 remember_me: false,
@@ -33,9 +32,7 @@ const LoginPage = () => {
                     localStorage.setItem('authToken', data.accessToken);
                     const {scopes} = jwtDecode(data.accessToken);
                     localStorage.setItem('scopes', JSON.stringify(scopes));
-                    if (
-                        scopes?.length === 0
-                    ) {
+                    if (scopes?.length === 0) {
                         return (window.location = '/calendario/');
                     }
                     window.location = '/';
@@ -53,56 +50,34 @@ const LoginPage = () => {
     };
 
     return (
-        <Grid
-            textAlign="center"
-            style={{height: '100vh'}}
-            verticalAlign="middle"
-        >
+        <Grid textAlign="center" style={{height: '100vh'}} verticalAlign="middle">
             <Grid.Column style={{maxWidth: 450}}>
                 <Image src={logoSVG}/>
-                <Header as="h2" style={{color: '#1c1c1c'}} textAlign="center">
-                    Gestão de Calendários de Avaliação
-                </Header>
-                <Form
-                    onSubmit={onSubmit}
+                <Header as="h2" style={{color: '#1c1c1c'}} textAlign="center">Gestão de Calendários de Avaliação</Header>
+                <Form onSubmit={onSubmit}
                     render={({handleSubmit}) => (
                         <SemanticForm size="large" autoComplete="new-password">
                             <Segment>
                                 <Field name="email">
                                     {({input: usernameInput}) => (
-                                        <SemanticForm.Input
-                                            fluid
-                                            icon="user"
-                                            iconPosition="left"
-                                            placeholder="Email"
+                                        <SemanticForm.Input fluid icon="user" iconPosition="left" placeholder="Email"
                                             {...usernameInput}
                                         />
                                     )}
                                 </Field>
                                 <Field name="password">
                                     {({input: passwordInput}) => (
-                                        <SemanticForm.Input
-                                            fluid
-                                            icon="lock"
-                                            iconPosition="left"
-                                            placeholder="Password"
-                                            type="password"
-                                            name="password"
-                                            {...passwordInput}
-                                        />
+                                        <SemanticForm.Input fluid icon="lock" iconPosition="left" placeholder="Password"
+                                            type="password" name="password"{...passwordInput}/>
                                     )}
                                 </Field>
-                                <Button
-                                    onClick={handleSubmit}
+                                <Button onClick={handleSubmit}
                                     style={{
                                         backgroundColor: '#edaa00',
                                         color: 'white',
                                         cursor: 'pointer',
                                     }}
-                                    fluid
-                                    size="large"
-                                    loading={loading}
-                                >
+                                    fluid size="large" loading={loading}>
                                     Login
                                 </Button>
                             </Segment>
