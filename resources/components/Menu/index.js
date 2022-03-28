@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link, useNavigate} from 'react-router-dom';
-import {
-    Container, Image, Menu, Dropdown,
-} from 'semantic-ui-react';
+import {Container, Image, Menu, Dropdown} from 'semantic-ui-react';
 import axios from 'axios';
 import {logout, setAcademicYear} from '../../redux/app/actions';
 import logoSVG from '../../logo.svg';
@@ -24,16 +22,18 @@ import SCOPES, {
 import ShowComponentIfAuthorized from '../ShowComponentIfAuthorized';
 
 const HeaderMenu = () => {
-    const history = useNavigate();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const [academicYearsList, setAcademicYearsList] = useState([]);
+
+    const [selectedLanguage, setSelectedLanguage] = useState(localStorage.getItem('language'));
 
     const logoutUser = () => {
         axios.post('/logout').then(() => {
             localStorage.removeItem('authToken');
             localStorage.removeItem('username');
             dispatch(logout());
-            history('/login');
+            navigate('/login');
         });
     };
 
@@ -44,9 +44,14 @@ const HeaderMenu = () => {
             })
             .then(() => {
                 dispatch(setAcademicYear(academicYear));
-                history.go(0);
+                window.location.reload();
             });
     };
+    const changeLanguage = (lang) => {
+        localStorage.setItem('language', lang);
+        setSelectedLanguage(lang);
+        window.location.reload();
+    }
 
     useEffect(() => {
         axios.get('academic-years').then((response) => {
@@ -82,7 +87,7 @@ const HeaderMenu = () => {
                 </Menu.Item>
                 <Menu.Item as={Link} to="/calendario">Calendários</Menu.Item>
                 <ShowComponentIfAuthorized permission={[...COURSE_UNIT_SCOPES]}>
-                    <Dropdown item simple text="Unidades Curriculares">
+                    <Dropdown item text="Unidades Curriculares">
                         <Dropdown.Menu>
                             <Dropdown.Item as={Link} to="/unidade-curricular">Unidades Curriculares</Dropdown.Item>
                             <Dropdown.Item as={Link} to="/agrupamento-unidade-curricular">Agrupamentos</Dropdown.Item>
@@ -93,16 +98,13 @@ const HeaderMenu = () => {
                     <Menu.Item as={Link} to="/curso">Cursos</Menu.Item>
                 </ShowComponentIfAuthorized>
                 <ShowComponentIfAuthorized permission={[...CONFIG_SCOPES]}>
-                    <Dropdown item simple text="Configurações">
+                    <Dropdown item text="Configurações">
                         <Dropdown.Menu>
                             <ShowComponentIfAuthorized permission={[...ACADEMIC_YEAR_SCOPES]}>
                                 <Dropdown.Item as={Link} to="/ano-letivo">Anos Letivos</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...SCHOOLS_SCOPES]}>
                                 <Dropdown.Item as={Link} to="/escola">Unidades de Ensino</Dropdown.Item>
-                            </ShowComponentIfAuthorized>
-                            <ShowComponentIfAuthorized permission={[...LANGUAGE_SCOPES]}>
-                                <Dropdown.Item as={Link} to="/idioma">Idiomas</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...CALENDAR_PHASES_SCOPES]}>
                                 <Dropdown.Item as={Link} to="/calendario/fases">Fases Calendário</Dropdown.Item>
@@ -127,15 +129,17 @@ const HeaderMenu = () => {
                 </ShowComponentIfAuthorized>
                 <Menu.Item as={Link} to="/about">About</Menu.Item>
                 <Menu.Menu position="right">
+                    <Dropdown item closeOnChange={true} text={selectedLanguage} className='lang-dropdown'>
+                        <Dropdown.Menu>
+                            <Dropdown.Item onClick={()=>{changeLanguage('pt')}}>Português</Dropdown.Item>
+                            <Dropdown.Item onClick={()=>{changeLanguage('en')}}>English</Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
                     {academicYearsList?.length > 1 && (
                         <Dropdown item text="Ano letivo">
                             <Dropdown.Menu>
                                 {academicYearsList?.map((academicYear) => (
-                                    <Dropdown.Item key={academicYear?.code}
-                                        onClick={() => {
-                                            switchAcademicYear(academicYear);
-                                        }}
-                                    >
+                                    <Dropdown.Item key={academicYear?.code} onClick={()=>{switchAcademicYear(academicYear)}}>
                                         {academicYear?.display}
                                     </Dropdown.Item>
                                 ))}
