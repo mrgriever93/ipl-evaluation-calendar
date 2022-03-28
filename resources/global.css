@@ -3,9 +3,54 @@
     margin-top: 0;
 }
 
+.ui.menu + .ui.container {
+    padding-bottom: 56px;
+}
+
 .margin-top-none { margin-top: 0;    }
 .margin-top-s    { margin-top: 8px;  }
 .margin-top-base { margin-top: 16px; }
 .margin-top-m    { margin-top: 24px; }
 .margin-top-l    { margin-top: 32px; }
 .margin-top-xl   { margin-top: 40px; }
+
+
+.section {
+    margin-top: 24px;
+    position: relative;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+    padding-bottom: 4px;
+}
+
+.section-content {
+    border-top: 1px solid #ccc;
+    padding-top: 4px;
+    padding-bottom: 16px;
+}
+
+.section.sticky--section > .section-title {
+    background: #fff;
+    margin: 0 -8px;
+    padding: 24px 8px 8px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.section.sticky--section > .section-title:before {
+    border-bottom: 1px solid #ccc;
+    content: "";
+    left: 8px;
+    position: absolute;
+    right: 8px;
+    top: 100%;
+}
+
+.section.sticky--section > .section-content {
+    border: 0;
+    padding-bottom: 32px;
+}
