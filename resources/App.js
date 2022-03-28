@@ -6,7 +6,7 @@ import {Dimmer, Loader} from "semantic-ui-react";
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 
-import "./i18n";
+import "./locales/i18n";
 
 import store from './redux/store';
 
