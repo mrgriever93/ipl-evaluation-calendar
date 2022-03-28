@@ -2,39 +2,21 @@ import axios from 'axios';
 import _ from 'lodash';
 import moment from 'moment';
 import React, {useEffect, useMemo, useState} from 'react';
+import {useParams, useNavigate} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 import {Field, Form as FinalForm} from 'react-final-form';
-import {useNavigate} from 'react-router';
 import {DateInput, TimeInput} from 'semantic-ui-calendar-react-yz';
-import {
-    Accordion,
-    Button,
-    Card,
-    Container,
-    Divider,
-    Form,
-    Grid,
-    Header,
-    Icon,
-    List,
-    Modal,
-    Segment,
-    Table,
-    TextArea,
-    Popup,
-    Dropdown,
-    Comment,
-    Message,
-} from 'semantic-ui-react';
+import {Accordion, Button, Card, Container, Divider, Form, Grid, Header, Icon, List, Modal, Segment, Table, TextArea, Popup, Dropdown, Comment, Message} from 'semantic-ui-react';
 import styled, {css} from 'styled-components';
 import {AnimatePresence} from 'framer-motion';
 import {toast} from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+
 import PageLoader from '../../components/PageLoader';
 import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
 import SCOPES from '../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../utils/toastConfig';
-import {useParams} from "react-router-dom";
 
 const SweetAlertComponent = withReactContent(Swal);
 
@@ -45,33 +27,14 @@ const CellButton = styled.div`
     text-align: center;
     cursor: pointer;
     color: ${({color}) => color || 'transparent'};
-    ${({backgroundColor}) => (backgroundColor
-    ? css`
-                  background-color: ${backgroundColor};
-              `
-    : null)}
-    ${({fontSize}) => (fontSize
-    ? css`
-                  font-size: ${fontSize};
-              `
-    : css`
-                  line-height: 40px;
-              `)}
-        ${({margin}) => (margin
-    ? css`
-                  margin: ${margin};
-              `
-    : null)}
-            ${({isModified}) => (isModified
-    ? css`
-                  background-color: rgb(237, 170, 0);
-              `
-    : null)}
-  &:hover {
+    ${({backgroundColor}) => (backgroundColor ? css`background-color: ${backgroundColor};` : null)}
+    ${({fontSize}) => (fontSize ? css`font-size: ${fontSize};` : css`line-height: 40px;`)}
+    ${({margin}) => (margin ? css`margin: ${margin};` : null)}
+    ${({isModified}) => (isModified ? css`background-color: rgb(237, 170, 0);` : null)}
+    &:hover {
         background-color: #dee2e6;
         color: black;
-    }
-`;
+    }`;
 
 const LegendBox = styled.div`
     user-select: none;
@@ -89,12 +52,11 @@ const LegendBox = styled.div`
 `;
 
 const EditExamButton = styled.div`
-  position: absolute;
-  left: 5px;
-
-  &:hover {
-    color: #edaa00;
-  }
+    position: absolute;
+    left: 5px;
+    &:hover {
+        color: #edaa00;
+    }
 `;
 
 const RemoveExamButton = styled.div`
@@ -107,6 +69,7 @@ const RemoveExamButton = styled.div`
 
 const Calendar = () => {
     const history = useNavigate();
+    const { t } = useTranslation();
     // get URL params
     let { id } = useParams();
     let paramsId = id;
@@ -152,9 +115,9 @@ const Calendar = () => {
             comment: commentText,
         }).then((res) => {
             if (res.status === 201) {
-                toast('O comentário foi adicionado com sucesso!', successConfig);
+                toast(t('calendar.O comentário foi adicionado com sucesso!'), successConfig);
             } else {
-                toast('Ocorreu um erro ao adicionar o comentário!', errorConfig);
+                toast(t('calendar.Ocorreu um erro ao adicionar o comentário!'), errorConfig);
             }
         });
     };
@@ -169,7 +132,7 @@ const Calendar = () => {
         patchCalendar('temporary', newTemporaryStatus).then((response) => {
             if (response.status === 200) {
                 setIsTemporary(newTemporaryStatus);
-                toast('Estado do calendário atualizado!', successConfig);
+                toast(t('calendar.Estado do calendário atualizado!'), successConfig);
             }
         });
     };
@@ -181,7 +144,7 @@ const Calendar = () => {
                 setUpdatingCalendarPhase(false);
                 if (response.status === 200) {
                     setCalendarPhase(newCalendarPhase);
-                    toast('Fase do calendário atualizada!', successConfig);
+                    toast(t('calendar.Fase do calendário atualizada!'), successConfig);
                 }
             },
         );
@@ -190,9 +153,9 @@ const Calendar = () => {
     const ignoreComment = (commentId) => {
         axios.post(`/comment/${commentId}/ignore`).then((res) => {
             if (res.status === 200) {
-                toast('Comentário ignorado com sucesso!', successConfig);
+                toast(t('calendar.Comentário ignorado com sucesso!'), successConfig);
             } else {
-                toast('Ocorreu um erro ao ignorar o comentário!', successConfig);
+                toast(t('calendar.Ocorreu um erro ao ignorar o comentário!'), successConfig);
             }
         });
     };
@@ -201,7 +164,7 @@ const Calendar = () => {
         // check if URL params are just numbers or else redirects to previous page
         if(!/\d+/.test(paramsId)){
             history(-1);
-            toast('Ocorreu um erro ao carregar a informacao pretendida', errorConfig);
+            toast(t('calendar.Ocorreu um erro ao carregar a informacao pretendida'), errorConfig);
         }
         axios.get('/permissions/calendar').then((res) => {
             if (res.status === 200) {
@@ -305,11 +268,11 @@ const Calendar = () => {
 
     const removeInterruption = (interruptionId) => {
         SweetAlertComponent.fire({
-            title: 'Atenção!',
+            title: t('Atenção!'),
 
             html: 'Ao eliminar a interrupção, todo o período compreendido entre o ínicio e o fim desta interrupção, ficará aberto para avaliações!<br/><strong>Tem a certeza que deseja eliminar esta interrupção, em vez de editar?</strong>',
-            denyButtonText: 'Não',
-            confirmButtonText: 'Sim',
+            denyButtonText: t('Não'),
+            confirmButtonText: t('Sim'),
             showConfirmButton: true,
             showDenyButton: true,
             confirmButtonColor: '#21ba45',
@@ -322,9 +285,9 @@ const Calendar = () => {
                         setRemovingExam(null);
                         loadCalendar(calendarId);
                         if (res.status === 200) {
-                            toast('Interrupção eliminada com sucesso deste calendário!', successConfig);
+                            toast(t('calendar.Interrupção eliminada com sucesso deste calendário!'), successConfig);
                         } else {
-                            toast('Ocorreu um problema ao eliminar a interrupção deste calendário!', errorConfig);
+                            toast(t('calendar.Ocorreu um problema ao eliminar a interrupção deste calendário!'), errorConfig);
                         }
                     });
                 }
@@ -343,11 +306,11 @@ const Calendar = () => {
 
     const removeExam = (examId) => {
         SweetAlertComponent.fire({
-            title: 'Atenção!',
+            title: t('Atenção!'),
 
             html: 'Ao eliminar este exame, terá de adicioná-lo novamente em outra data a escolher!<br/><br/><strong>Tem a certeza que deseja eliminar este exame, em vez de editar?</strong>',
-            denyButtonText: 'Não',
-            confirmButtonText: 'Sim',
+            denyButtonText: t('Não'),
+            confirmButtonText: t('Sim'),
             showConfirmButton: true,
             showDenyButton: true,
             confirmButtonColor: '#21ba45',
@@ -661,22 +624,22 @@ const Calendar = () => {
                                                 {week}
                                             </Table.HeaderCell>
                                             <Table.HeaderCell width="2">
-                                                2ª Feira
+                                                {t('calendar.2ª Feira')}
                                             </Table.HeaderCell>
                                             <Table.HeaderCell width="2">
-                                                3ª Feira
+                                                {t('calendar.3ª Feira')}
                                             </Table.HeaderCell>
                                             <Table.HeaderCell width="2">
-                                                4ª Feira
+                                                {t('calendar.4ª Feira')}
                                             </Table.HeaderCell>
                                             <Table.HeaderCell width="2">
-                                                5ª Feira
+                                                {t('calendar.5ª Feira')}
                                             </Table.HeaderCell>
                                             <Table.HeaderCell width="2">
-                                                6ª Feira
+                                                {t('calendar.6ª Feira')}
                                             </Table.HeaderCell>
                                             <Table.HeaderCell width="2">
-                                                Sábado
+                                                {t('calendar.Sábado')}
                                             </Table.HeaderCell>
                                         </Table.Row>
                                         <Table.Row>
@@ -684,49 +647,21 @@ const Calendar = () => {
                                                 {year}
                                             </Table.HeaderCell>
                                             {weekDays.map((weekDay) => {
-                                                const day = days.find(
-                                                    (day) => day.weekDay === weekDay,
-                                                );
+                                                const day = days.find((day) => day.weekDay === weekDay);
                                                 const firstDayAvailable = moment(days[0].date);
-                                                const lastDayAvailable = moment(
-                                                    days[days.length - 1].date,
-                                                );
+                                                const lastDayAvailable = moment(days[days.length - 1].date);
                                                 if (!day?.date) {
-                                                    if (
-                                                        weekDay === 1
-                                                        || (lastDayAvailable.day()
-                                                            < 6
-                                                            && !alreadyAddedColSpan)
-                                                    ) {
+                                                    if (weekDay === 1 || (lastDayAvailable.day() < 6 && !alreadyAddedColSpan)) {
                                                         alreadyAddedColSpan = true;
-                                                        return (
-                                                            <Table.HeaderCell
-                                                                colSpan={
-                                                                    lastDayAvailable.day()
-                                                                    < 6
-                                                                        ? 6
-                                                                        - lastDayAvailable.day()
-                                                                        : firstDayAvailable.day()
-                                                                        - 1
-                                                                }
-                                                            />
-                                                        );
+                                                        return (<Table.HeaderCell colSpan={lastDayAvailable.day() < 6 ? 6 - lastDayAvailable.day() : firstDayAvailable.day() - 1}/>);
                                                     }
-                                                    if (
-                                                        !alreadyAddedColSpan
-                                                    ) {
-                                                        return (
-                                                            <Table.HeaderCell/>
-                                                        );
+                                                    if (!alreadyAddedColSpan) {
+                                                        return (<Table.HeaderCell/>);
                                                     }
                                                 } else if (day?.date) {
                                                     return (
                                                         <Table.HeaderCell textAlign="center">
-                                                            {moment(
-                                                                day.date,
-                                                            ).format(
-                                                                'DD-MM-YYYY',
-                                                            )}
+                                                            {moment(day.date).format('DD-MM-YYYY')}
                                                         </Table.HeaderCell>
                                                     );
                                                 }
@@ -735,157 +670,51 @@ const Calendar = () => {
                                         </Table.Row>
                                     </Table.Header>
                                     <Table.Body>
-                                        {courseYears.map(
-                                            (year, courseIndex) => {
+                                        {courseYears.map((year, courseIndex) => {
                                                 alreadyAddedColSpan = false;
                                                 return (
                                                     <Table.Row>
-                                                        <Table.Cell textAlign="center">
-                                                            {year}
-                                                            º Ano
-                                                        </Table.Cell>
+                                                        <Table.Cell textAlign="center">{year} º Ano</Table.Cell>
                                                         {weekDays.map(
                                                             (weekDay) => {
-                                                                const day = days.find(
-                                                                    (day) => day.weekDay === weekDay,
-                                                                );
-                                                                const firstDayAvailable = moment(
-                                                                    days[0]
-                                                                        .date,
-                                                                );
-                                                                const lastDayAvailable = moment(
-                                                                    days[
-                                                                    days.length - 1
-                                                                        ].date,
-                                                                );
-                                                                const {
-                                                                    interruption,
-                                                                } = day || {};
+                                                                const day = days.find((day) => day.weekDay === weekDay);
+                                                                const firstDayAvailable = moment(days[0].date);
+                                                                const lastDayAvailable = moment(days[days.length - 1].date);
+                                                                const {interruption,} = day || {};
                                                                 const isInterruption = !!interruption;
-                                                                if (
-                                                                    isInterruption
-                                                                    && courseIndex
-                                                                    === 0
-                                                                    && interruption.id
-                                                                    !== days.find(
-                                                                        (
-                                                                            day,
-                                                                        ) => day.weekDay
-                                                                            === weekDay
-                                                                            - 1,
-                                                                    )
-                                                                        ?.interruption
-                                                                        ?.id
-                                                                ) {
+                                                                if (isInterruption && courseIndex === 0 && interruption.id !== days.find((day) => day.weekDay === weekDay - 1)?.interruption?.id) {
                                                                     interruptionDays = 0;
                                                                     alreadyAddedRowSpan = false;
                                                                 }
-
-                                                                if (
-                                                                    (isInterruption
-                                                                        && alreadyAddedRowSpan
-                                                                        && courseIndex
-                                                                        > 0)
-                                                                    || (isInterruption
-                                                                        && interruptionDays++
-                                                                        >= day?.interruptionDays)
-                                                                ) {
+                                                                if ((isInterruption && alreadyAddedRowSpan && courseIndex > 0) || (isInterruption && interruptionDays++ >= day?.interruptionDays)) {
                                                                     return null;
                                                                 }
-                                                                if (
-                                                                    (year
-                                                                        === 1
-                                                                        && !day?.date)
-                                                                    || isInterruption
-                                                                ) {
-                                                                    if (
-                                                                        !isInterruption
-                                                                        && (weekDay
-                                                                            === 1
-                                                                            || (lastDayAvailable.day()
-                                                                                < 6
-                                                                                && !alreadyAddedColSpan))
-                                                                    ) {
+                                                                if ((year === 1 && !day?.date) || isInterruption) {
+                                                                    if (!isInterruption && (weekDay === 1 || (lastDayAvailable.day() < 6 && !alreadyAddedColSpan))) {
                                                                         alreadyAddedColSpan = true;
-                                                                        return (
-                                                                            <Table.Cell
-                                                                                colSpan={
-                                                                                    isInterruption
-                                                                                    && lastDayAvailable.day()
-                                                                                    < 6
-                                                                                        ? 6
-                                                                                        - lastDayAvailable.day()
-                                                                                        : firstDayAvailable.day()
-                                                                                        - 1
-                                                                                }
-                                                                                rowSpan={
-                                                                                    courseYears.length
-                                                                                }
-                                                                            />
-                                                                        );
+                                                                        return (<Table.Cell colSpan={isInterruption && lastDayAvailable.day() < 6 ? 6 - lastDayAvailable.day() : firstDayAvailable.day() - 1} rowSpan={courseYears.length}/>);
                                                                     }
-                                                                    if (
-                                                                        !alreadyAddedColSpan
-                                                                        || (isInterruption
-                                                                            && courseIndex
-                                                                            === 0)
-                                                                    ) {
+                                                                    if (!alreadyAddedColSpan || (isInterruption && courseIndex === 0)) {
                                                                         alreadyAddedRowSpan = true;
-
                                                                         return (
                                                                             <Table.Cell
                                                                                 textAlign="center"
-                                                                                style={
-                                                                                    isInterruption
-                                                                                        ? {
-                                                                                            backgroundColor:
-                                                                                                '#c9c9c9',
-                                                                                            fontWeight:
-                                                                                                'bold',
-                                                                                        }
-                                                                                        : null
-                                                                                }
+                                                                                style={isInterruption ? {backgroundColor: '#c9c9c9', fontWeight: 'bold'} : null}
                                                                                 rowSpan={courseYears.length}
-                                                                                colSpan={
-                                                                                    isInterruption
-                                                                                        ? day?.interruptionDays
-                                                                                        : null
-                                                                                }
+                                                                                colSpan={isInterruption ? day?.interruptionDays : null}
                                                                             >
                                                                                 <div>
-                                                                                    {isInterruption
-                                                                                        ? interruption.description
-                                                                                        : null}
+                                                                                    {isInterruption ? interruption.description : null}
                                                                                 </div>
                                                                             </Table.Cell>
                                                                         );
                                                                     }
-                                                                } else if (
-                                                                    day?.date
-                                                                ) {
-                                                                    const existingExamsAtThisDate = examList.filter(
-                                                                        (
-                                                                            exam,
-                                                                        ) => moment(
-                                                                            exam.date,
-                                                                        ).isSame(
-                                                                            moment(
-                                                                                day.date,
-                                                                            ),
-                                                                            'day',
-                                                                        ),
-                                                                    );
+                                                                } else if (day?.date) {
+                                                                    const existingExamsAtThisDate = examList.filter((exam) => moment(exam.date).isSame(moment(day.date), 'day'));
                                                                     let examsComponents = null;
-                                                                    if (
-                                                                        existingExamsAtThisDate?.length
-                                                                    ) {
-                                                                        examsComponents = existingExamsAtThisDate.map(
-                                                                            (
-                                                                                exam,
-                                                                            ) => {
-                                                                                if (
-                                                                                    exam.academic_year === year
-                                                                                ) {
+                                                                    if (existingExamsAtThisDate?.length) {
+                                                                        examsComponents = existingExamsAtThisDate.map((exam) => {
+                                                                                if (exam.academic_year === year) {
                                                                                     return (
                                                                                         <CellButton
                                                                                             key={exam.id}
@@ -895,80 +724,30 @@ const Calendar = () => {
                                                                                             fontSize="11px"
                                                                                             margin="0 0 10px 0"
                                                                                             onClick={() => {
-                                                                                                setExamInfoModal(
-                                                                                                    {
-                                                                                                        ...exam,
-                                                                                                        year,
-                                                                                                    },
-                                                                                                );
-                                                                                                setViewExamInformation(
-                                                                                                    true,
-                                                                                                );
+                                                                                                setExamInfoModal({...exam, year});
+                                                                                                setViewExamInformation(true);
                                                                                             }}
-                                                                                            isModified={differences?.includes(
-                                                                                                exam.id,
-                                                                                            )}
+                                                                                            isModified={differences?.includes(exam.id)}
                                                                                         >
-                                                                                            {removingExam === exam.id ?
-                                                                                                <Icon loading
-                                                                                                      name="spinner"/>
-                                                                                                : !isPublished
-                                                                                                && calendarPermissions.filter(
-                                                                                                    (x) => x.name === SCOPES.REMOVE_EXAMS
-                                                                                                        || x.name === SCOPES.EDIT_EXAMS,
-                                                                                                ).length > 0
-                                                                                                && (
-                                                                                                    <div style={{
-                                                                                                        position: 'relative',
-                                                                                                        height: '20px'
-                                                                                                    }}>
-                                                                                                        {calendarPermissions.filter(
-                                                                                                            (x) => x.name === SCOPES.EDIT_EXAMS,
-                                                                                                        ).length > 0 && (
-                                                                                                            <EditExamButton
-                                                                                                                onClick={() => {
-                                                                                                                    setExamInfoModal(
-                                                                                                                        {
-                                                                                                                            ...exam,
-                                                                                                                            year,
-                                                                                                                        },
-                                                                                                                    );
-                                                                                                                    setOpenExamModal(
-                                                                                                                        true,
-                                                                                                                    );
-                                                                                                                }}
-                                                                                                            >
-                                                                                                                <Icon
-                                                                                                                    name="edit"/>
+                                                                                            {removingExam === exam.id ? <Icon loading name="spinner"/> : !isPublished
+                                                                                                && calendarPermissions.filter((x) => x.name === SCOPES.REMOVE_EXAMS || x.name === SCOPES.EDIT_EXAMS).length > 0
+                                                                                                && (<div style={{position: 'relative', height: '20px'}}>
+                                                                                                        {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
+                                                                                                            <EditExamButton onClick={() => {
+                                                                                                                    setExamInfoModal({...exam, year},);
+                                                                                                                    setOpenExamModal(true);
+                                                                                                                }}>
+                                                                                                                <Icon name="edit"/>
                                                                                                             </EditExamButton>
                                                                                                         )}
-                                                                                                        {calendarPermissions.filter(
-                                                                                                            (x) => x.name === SCOPES.EDIT_EXAMS,
-                                                                                                        ).length > 0 && (
-                                                                                                            <RemoveExamButton
-                                                                                                                onClick={() => removeExam(exam.id)}
-                                                                                                            >
-                                                                                                                <Icon
-                                                                                                                    name="trash"/>
+                                                                                                        {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
+                                                                                                            <RemoveExamButton onClick={() => removeExam(exam.id)}>
+                                                                                                                <Icon name="trash"/>
                                                                                                             </RemoveExamButton>
                                                                                                         )}
                                                                                                     </div>
                                                                                                 )}
-                                                                                            {
-                                                                                                exam.hour
-                                                                                            }
-                                                                                            {' '}
-                                                                                            {
-                                                                                                exam
-                                                                                                    .course_unit
-                                                                                                    .initials
-                                                                                            }
-                                                                                            {' '}
-                                                                                            {
-                                                                                                exam
-                                                                                                    .method
-                                                                                                    .name
-                                                                                            }
+                                                                                            {exam.hour + ' ' +exam.course_unit.initials + ' ' +exam.method.name}
                                                                                         </CellButton>
                                                                                     );
                                                                                 }
@@ -978,52 +757,21 @@ const Calendar = () => {
                                                                     }
                                                                     return (
                                                                         <>
-                                                                            <Table.Cell
-                                                                                textAlign="center"
-                                                                                onContextMenu={(
-                                                                                    e,
-                                                                                ) => {
+                                                                            <Table.Cell textAlign="center" onContextMenu={(e,) => {
                                                                                     e.preventDefault();
-                                                                                    if (!isPublished
-                                                                                        && existingExamsAtThisDate?.length === 0
-                                                                                        && calendarPermissions
-                                                                                            .filter((x) => x.name === SCOPES.ADD_INTERRUPTION)
-                                                                                            .length > 0) {
-                                                                                        setModalInfo(
-                                                                                            {
-                                                                                                start_date: day.date,
-                                                                                            },
-                                                                                        );
-                                                                                        setOpenModal(
-                                                                                            true,
-                                                                                        );
-                                                                                        setLoadInterruptionTypes(
-                                                                                            true,
-                                                                                        );
+                                                                                    if (!isPublished && existingExamsAtThisDate?.length === 0 && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) {
+                                                                                        setModalInfo({start_date: day.date});
+                                                                                        setOpenModal(true);
+                                                                                        setLoadInterruptionTypes(true);
                                                                                     }
-                                                                                }}
-                                                                            >
-                                                                                {
-                                                                                    examsComponents
-                                                                                }
-                                                                                {!isPublished
-                                                                                    && calendarPermissions
-                                                                                        .filter((x) => x.name === SCOPES.ADD_EXAMS)
-                                                                                        .length > 0 && (
+                                                                                }}>
+                                                                                {examsComponents}
+                                                                                {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.ADD_EXAMS).length > 0 && (
                                                                                         <CellButton
                                                                                             onClick={() => {
-                                                                                                setExamInfoModal(
-                                                                                                    {
-                                                                                                        date: day.date,
-                                                                                                        year,
-                                                                                                        existingExamsAtThisDate,
-                                                                                                    },
-                                                                                                );
-                                                                                                setOpenExamModal(
-                                                                                                    true,
-                                                                                                );
-                                                                                            }}
-                                                                                        >
+                                                                                                setExamInfoModal({date: day.date, year, existingExamsAtThisDate});
+                                                                                                setOpenExamModal(true);
+                                                                                            }}>
                                                                                             Marcar
                                                                                         </CellButton>
                                                                                     )}
@@ -1048,119 +796,82 @@ const Calendar = () => {
                         <Segment>
                             <Card>
                                 <Card.Content>
-                                    <Card.Header>
-                                        Informações
-                                    </Card.Header>
+                                    <Card.Header>Informações</Card.Header>
                                 </Card.Content>
                                 <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
                                     <Card.Content>
                                         {!isPublished ? (
                                             <ShowComponentIfAuthorized permission={[SCOPES.PUBLISH_CALENDAR]}>
                                                 <p>
-                          <span>
-                            <Header as="h5">Publicar</Header>
-                            <Button color="teal" loading={publishLoading}
-                                    onClick={publishCalendar}>Publicar esta versão</Button>
-                          </span>
+                                                  <span>
+                                                    <Header as="h5">Publicar</Header>
+                                                    <Button color="teal" loading={publishLoading} onClick={publishCalendar}>Publicar esta versão</Button>
+                                                  </span>
                                                 </p>
                                             </ShowComponentIfAuthorized>
                                         ) : (
                                             <ShowComponentIfAuthorized permission={[SCOPES.CREATE_COPY]}>
                                                 <p>
-                          <span>
-                            <Header as="h5">Criar cópia editável</Header>
-                            <Button color="teal" loading={creatingCopy}
-                                    onClick={createCopy}>Criar um cópia desta versão</Button>
-                          </span>
+                                                  <span>
+                                                    <Header as="h5">Criar cópia editável</Header>
+                                                    <Button color="teal" loading={creatingCopy} onClick={createCopy}>Criar um cópia desta versão</Button>
+                                                  </span>
                                                 </p>
                                             </ShowComponentIfAuthorized>
                                         )}
-                                        {
-                                            !isPublished && calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0 ? (
+                                        {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0 ?
+                                            (
                                                 <p>
-                          <span>
-                            <Header as="h5">Fase:</Header>
-                            <Dropdown
-                                options={calendarPhases.filter((x) => x.name !== 'system' && x.name !== 'published')}
-                                selection
-                                search
-                                label="Fase do Calendário"
-                                loading={!calendarPhases.length || updatingCalendarPhase}
-                                onChange={(
-                                    e,
-                                    {value},
-                                ) => {
-                                    updateCalendarPhase(value);
-                                }}
-                                value={calendarPhase}
-                            />
-                          </span>
+                                                    <span>
+                                                        <Header as="h5">Fase:</Header>
+                                                        <Dropdown
+                                                            options={calendarPhases.filter((x) => x.name !== 'system' && x.name !== 'published')}
+                                                            selection
+                                                            search
+                                                            label="Fase do Calendário"
+                                                            loading={!calendarPhases.length || updatingCalendarPhase}
+                                                            onChange={(e, {value}) => {updateCalendarPhase(value);}}
+                                                            value={calendarPhase}
+                                                        />
+                                                    </span>
                                                 </p>
                                             ) : (
-                                                <ShowComponentIfAuthorized
-                                                    permission={[SCOPES.VIEW_ACTUAL_PHASE]}
-                                                >
+                                                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
                                                     <Header as="h5">Fase:</Header>
-                                                    <span>
-                            {
-                                calendarPhases.find((x) => x.key === calendarPhase)?.text
-                                || generalInfo
-                                    ?.phase
-                                    ?.description
-                            }
-                          </span>
+                                                    <span>{calendarPhases.find((x) => x.key === calendarPhase)?.text || generalInfo?.phase?.description}</span>
                                                 </ShowComponentIfAuthorized>
                                             )
                                         }
-
                                         <p>
-                      <span>
-                        <Header as="h5">Estado:</Header>
-                        <Button.Group>
-                          <Button
-                              compact
-                              onClick={() => updateCalendarStatus(
-                                  true,
-                              )}
-                              positive={isTemporary}
-                              disabled={isPublished || previousFromDefinitive}
-                          >
-                            Temporário
-                          </Button>
-                          <Button
-                              compact
-                              onClick={() => updateCalendarStatus(
-                                  false,
-                              )}
-                              positive={!isTemporary}
-                              disabled={isPublished || previousFromDefinitive}
-                          >
-                            Definitivo
-                          </Button>
-                        </Button.Group>
-                      </span>
+                                            <span>
+                                                <Header as="h5">Estado:</Header>
+                                                <Button.Group>
+                                                    <Button compact onClick={() => updateCalendarStatus(true)} positive={isTemporary} disabled={isPublished || previousFromDefinitive}>
+                                                        Temporário
+                                                    </Button>
+                                                    <Button compact onClick={() => updateCalendarStatus(false)} positive={!isTemporary} disabled={isPublished || previousFromDefinitive}>
+                                                        Definitivo
+                                                    </Button>
+                                                </Button.Group>
+                                            </span>
                                         </p>
                                         <p>
-                      <span>
-                        <Header as="h5">Ano Letivo:</Header>
-                        2019-20
-                      </span>
+                                            <span>
+                                                <Header as="h5">Ano Letivo:</Header>
+                                                2019-20
+                                            </span>
                                         </p>
                                         <p>
-                      <span>
-                        <Header as="h5">Curso: </Header>
-                          {generalInfo?.course?.name}
-                      </span>
+                                            <span>
+                                                <Header as="h5">Curso: </Header>
+                                                {generalInfo?.course?.name}
+                                            </span>
                                         </p>
                                         <p>
-                      <span>
-                        <Header as="h5">
-                          Última alteração:
-                        </Header>
-                          {moment(
-                              generalInfo?.calendar_last_update,
-                          ).format('DD MMMM, YYYY HH:mm')}
-                      </span>
+                                            <span>
+                                                <Header as="h5">Última alteração:</Header>
+                                                {moment(generalInfo?.calendar_last_update,).format('DD MMMM, YYYY HH:mm')}
+                                            </span>
                                         </p>
                                     </Card.Content>
                                 </ShowComponentIfAuthorized>
@@ -1169,32 +880,16 @@ const Calendar = () => {
                                     <List divided relaxed>
                                         {epochsList.map((epoch) => (
                                             <List.Item>
-                                                <List.Icon
-                                                    name="calendar alternate"
-                                                    size="large"
-                                                    verticalAlign="middle"
-                                                />
+                                                <List.Icon name="calendar alternate" size="large" verticalAlign="middle"/>
                                                 <List.Content>
-                                                    <List.Header>
-                                                        {epoch.name}
-                                                    </List.Header>
+                                                    <List.Header>{epoch.name}</List.Header>
                                                     <List.Description>
                                                         <b>Ínicio:</b>
-                                                        {' '}
-                                                        {moment(
-                                                            epoch.start_date,
-                                                        ).format(
-                                                            'DD MMMM, YYYY',
-                                                        )}
+                                                        {' '}{moment(epoch.start_date).format('DD MMMM, YYYY')}
                                                     </List.Description>
                                                     <List.Description>
                                                         <b>Fim:</b>
-                                                        {' '}
-                                                        {moment(
-                                                            epoch.end_date,
-                                                        ).format(
-                                                            'DD MMMM, YYYY',
-                                                        )}
+                                                        {' '}{moment(epoch.end_date).format('DD MMMM, YYYY')}
                                                     </List.Description>
                                                 </List.Content>
                                             </List.Item>
@@ -1202,127 +897,54 @@ const Calendar = () => {
                                     </List>
                                 </Card.Content>
                                 <Card.Content>
-                                    <Header as="h4">
-                                        Interrupções letivas
-                                    </Header>
+                                    <Header as="h4">Interrupções letivas</Header>
                                     <List divided relaxed>
-                                        {interruptionsList
-                                            .filter(
-                                                (x) => !x.isHoliday && x.start_date
-                                                    > _.min(
-                                                        epochsList.map(
-                                                            (x) => x.start_date,
-                                                        ),
-                                                    )
-                                                    && x.end_date
-                                                    < _.max(
-                                                        epochsList.map(
-                                                            (x) => x.end_date,
-                                                        ),
-                                                    ),
-                                            )
+                                        {interruptionsList.filter((x) => !x.isHoliday && x.start_date > _.min(epochsList.map((x) => x.start_date)) && x.end_date < _.max(epochsList.map((x) => x.end_date)))
                                             .map((interruption) => (
                                                 <List.Item>
-                                                    <List.Icon
-                                                        name="calendar alternate"
-                                                        size="large"
-                                                        verticalAlign="middle"
-                                                    />
+                                                    <List.Icon name="calendar alternate" size="large"/>
                                                     <List.Content>
-                                                        <List.Header>
-                                                            {
-                                                                interruption.description
-                                                            }
-                                                        </List.Header>
-                                                        {moment(
-                                                            interruption.start_date,
-                                                        ).isSame(
-                                                            moment(
-                                                                interruption.end_date,
-                                                            ),
-                                                        ) ? (
+                                                        <List.Header>{interruption.description}</List.Header>
+                                                        {moment(interruption.start_date).isSame(moment(interruption.end_date)) ?
+                                                            (
                                                             <>
-                                                                {' '}
                                                                 <List.Description>
                                                                     <b>Dia:</b>
-                                                                    {' '}
-                                                                    {moment(
-                                                                        interruption.start_date,
-                                                                    ).format(
-                                                                        'DD MMMM, YYYY',
-                                                                    )}
+                                                                    {' '}{moment(interruption.start_date).format('DD MMMM, YYYY')}
                                                                 </List.Description>
-                                                                {!isPublished
-                                                                    && calendarPermissions.filter(
-                                                                        (x) => x.name === SCOPES.EDIT_INTERRUPTION,
-                                                                    ).length > 0
-                                                                    && (
-                                                                        <Button
-                                                                            icon
-                                                                            color="yellow"
-                                                                            onClick={() => onEditInterruptionClick(interruption)}
-                                                                        >
+                                                                {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.EDIT_INTERRUPTION).length > 0 &&
+                                                                    (
+                                                                        <Button icon color="yellow" onClick={() => onEditInterruptionClick(interruption)}>
                                                                             <Icon name="edit"/>
                                                                         </Button>
                                                                     )}
-                                                                {
-                                                                    !isPublished
-                                                                    && calendarPermissions.filter(
-                                                                        (x) => x.name === SCOPES.REMOVE_INTERRUPTION,
-                                                                    ).length > 0
-                                                                    && (
-                                                                        <Button icon color="red"
-                                                                                onClick={() => removeInterruption(interruption.id)}>
+                                                                {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.REMOVE_INTERRUPTION).length > 0 &&
+                                                                    (
+                                                                        <Button icon color="red" onClick={() => removeInterruption(interruption.id)}>
                                                                             <Icon name="trash"/>
                                                                         </Button>
                                                                     )
                                                                 }
-
                                                             </>
                                                         ) : (
                                                             <>
                                                                 <List.Description>
-                                                                    <b>
-                                                                        Ínicio:
-                                                                    </b>
-                                                                    {' '}
-                                                                    {moment(
-                                                                        interruption.start_date,
-                                                                    ).format(
-                                                                        'DD MMMM, YYYY',
-                                                                    )}
+                                                                    <b>Ínicio:</b>
+                                                                    {' '}{moment(interruption.start_date).format('DD MMMM, YYYY')}
                                                                 </List.Description>
                                                                 <List.Description>
                                                                     <b>Fim:</b>
-                                                                    {' '}
-                                                                    {moment(
-                                                                        interruption.end_date,
-                                                                    ).format(
-                                                                        'DD MMMM, YYYY',
-                                                                    )}
+                                                                    {' '}{moment(interruption.end_date).format('DD MMMM, YYYY')}
                                                                 </List.Description>
-
-                                                                {!isPublished
-                                                                    && calendarPermissions.filter(
-                                                                        (x) => x.name === SCOPES.EDIT_INTERRUPTION,
-                                                                    ).length > 0
-                                                                    && (
-                                                                        <Button
-                                                                            icon
-                                                                            color="yellow"
-                                                                            onClick={() => onEditInterruptionClick(interruption)}
-                                                                        >
+                                                                {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.EDIT_INTERRUPTION).length > 0 &&
+                                                                    (
+                                                                        <Button icon color="yellow" onClick={() => onEditInterruptionClick(interruption)}>
                                                                             <Icon name="edit"/>
                                                                         </Button>
                                                                     )}
-                                                                {
-                                                                    !isPublished
-                                                                    && calendarPermissions.filter(
-                                                                        (x) => x.name === SCOPES.REMOVE_INTERRUPTION,
-                                                                    ).length > 0
-                                                                    && (
-                                                                        <Button icon color="red"
-                                                                                onClick={() => removeInterruption(interruption.id)}>
+                                                                {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.REMOVE_INTERRUPTION).length > 0 &&
+                                                                    (
+                                                                        <Button icon color="red" onClick={() => removeInterruption(interruption.id)}>
                                                                             <Icon name="trash"/>
                                                                         </Button>
                                                                     )
@@ -1339,17 +961,11 @@ const Calendar = () => {
                                 <Segment inverted>
                                     <Header as="h3">Ajuda</Header>
                                     <Accordion inverted>
-                                        <Accordion.Title
-                                            active={activeIndex === 0}
-                                            index={0}
-                                            onClick={handleFaqClick}
-                                        >
+                                        <Accordion.Title active={activeIndex === 0} index={0} onClick={handleFaqClick}>
                                             <Icon name="dropdown"/>
                                             Como marcar uma avaliação?
                                         </Accordion.Title>
-                                        <Accordion.Content
-                                            active={activeIndex === 0}
-                                        >
+                                        <Accordion.Content active={activeIndex === 0}>
                                             <p>
                                                 Para marcar uma avaliação, deve
                                                 procurar no calendário o dia
@@ -1360,17 +976,11 @@ const Calendar = () => {
                                                 necessárias.
                                             </p>
                                         </Accordion.Content>
-                                        <Accordion.Title
-                                            active={activeIndex === 1}
-                                            index={1}
-                                            onClick={handleFaqClick}
-                                        >
+                                        <Accordion.Title active={activeIndex === 1} index={1} onClick={handleFaqClick}>
                                             <Icon name="dropdown"/>
                                             Como marcar uma nova interrupção?
                                         </Accordion.Title>
-                                        <Accordion.Content
-                                            active={activeIndex === 1}
-                                        >
+                                        <Accordion.Content active={activeIndex === 1}>
                                             <p>
                                                 Para marcar uma nova interrupção,
                                                 deve procurar no calendário o dia de
@@ -1388,73 +998,40 @@ const Calendar = () => {
                     {/* </ShowComponentIfAuthorized> */}
                 </Grid.Row>
             </Grid>
-            <FinalForm
-                onSubmit={onSubmitInterruption}
-                initialValues={{
+            <FinalForm onSubmit={onSubmitInterruption} initialValues={{
                     id: modalInfo?.id || null,
-                    startDate: moment(modalInfo?.start_date).format(
-                        'DD MMMM, YYYY',
-                    ),
-                    endDate: modalInfo?.id ? moment(modalInfo?.end_date).format(
-                        'DD MMMM, YYYY',
-                    ) : null,
+                    startDate: moment(modalInfo?.start_date).format('DD MMMM, YYYY'),
+                    endDate: modalInfo?.id ? moment(modalInfo?.end_date).format('DD MMMM, YYYY') : null,
                     description: modalInfo?.id ? modalInfo?.description : null,
                     interruptionType: modalInfo?.id ? modalInfo?.interruption_type_id : null,
                 }}
                 render={({handleSubmit}) => (
-                    <Modal
-                        closeOnEscape
-                        closeOnDimmerClick
-                        open={openModal}
-                        onClose={() => setOpenModal(false)}
-                    >
+                    <Modal closeOnEscape closeOnDimmerClick open={openModal} onClose={() => setOpenModal(false)}>
                         <Modal.Header>
-                            {modalInfo?.id ? 'Editar' : 'Adicionar'}
-                            {' '}
-                            interrupção
+                            {modalInfo?.id ? 'Editar' : 'Adicionar'}{' '}interrupção
                         </Modal.Header>
                         <Modal.Content>
                             <Form>
                                 <p>Detalhes da interrupção</p>
                                 <Field name="description">
                                     {({input: descriptionInput}) => (
-                                        <Form.Input
-                                            label="Descrição"
-                                            placeholder="Descrição (opcional)"
-                                            {...descriptionInput}
-                                        />
+                                        <Form.Input label="Descrição" placeholder="Descrição (opcional)"{...descriptionInput}/>
                                     )}
                                 </Field>
                                 <Field name="interruptionType">
                                     {({input: interruptionTypeInput}) => (
-                                        <Form.Dropdown
-                                            options={interruptionTypes}
-                                            selection
-                                            search
-                                            loading={!interruptionTypes.length}
-                                            label="Tipo de interrupção"
-                                            value={interruptionTypeInput.value}
-                                            onChange={(e, {value}) => interruptionTypeInput.onChange(
-                                                value,
-                                            )}
+                                        <Form.Dropdown options={interruptionTypes} selection search loading={!interruptionTypes.length}
+                                            label="Tipo de interrupção" value={interruptionTypeInput.value}
+                                            onChange={(e, {value}) => interruptionTypeInput.onChange(value,)}
                                         />
                                     )}
                                 </Field>
                                 <Field name="startDate">
                                     {({input: startDateInput}) => (
                                         <Form.Field>
-                                            <DateInput
-                                                name="date"
-                                                iconPosition="left"
-                                                label="Data de Ínicio"
-                                                placeholder="Data de Ínicio"
-                                                dateFormat="DD MMMM, YYYY"
-                                                value={startDateInput.value}
-                                                onChange={(evt, {value}) => {
-                                                    startDateInput.onChange(
-                                                        value,
-                                                    );
-                                                }}
+                                            <DateInput name="date" iconPosition="left" label="Data de Ínicio" placeholder="Data de Ínicio"
+                                                dateFormat="DD MMMM, YYYY" value={startDateInput.value}
+                                                onChange={(evt, {value}) => {startDateInput.onChange(value);}}
                                             />
                                         </Form.Field>
                                     )}
@@ -1462,18 +1039,9 @@ const Calendar = () => {
                                 <Field name="endDate">
                                     {({input: endDateInput}) => (
                                         <Form.Field>
-                                            <DateInput
-                                                name="date"
-                                                iconPosition="left"
-                                                label="Data de Fim"
-                                                placeholder="Data de Fim"
-                                                dateFormat="DD MMMM, YYYY"
-                                                value={endDateInput.value}
-                                                onChange={(evt, {value}) => {
-                                                    endDateInput.onChange(
-                                                        value,
-                                                    );
-                                                }}
+                                            <DateInput name="date" iconPosition="left" label="Data de Fim" placeholder="Data de Fim"
+                                                dateFormat="DD MMMM, YYYY" value={endDateInput.value}
+                                                onChange={(evt, {value}) => {endDateInput.onChange(value);}}
                                             />
                                         </Form.Field>
                                     )}
@@ -1481,19 +1049,10 @@ const Calendar = () => {
                             </Form>
                         </Modal.Content>
                         <Modal.Actions>
-                            <Button
-                                onClick={() => setOpenModal(false)}
-                                negative
-                            >
+                            <Button onClick={() => setOpenModal(false)} negative>
                                 Cancelar
                             </Button>
-                            <Button
-                                onClick={handleSubmit}
-                                positive
-                                icon={!!modalInfo?.id}
-                                {...(modalInfo?.id && ({labelPosition: 'left'}))}
-                            >
-
+                            <Button onClick={handleSubmit} positive icon={!!modalInfo?.id}{...(modalInfo?.id && ({labelPosition: 'left'}))}>
                                 {modalInfo?.id && <Icon name="save"/>}
                                 {modalInfo?.id ? 'Gravar alterações' : 'Adicionar'}
                             </Button>
@@ -1501,16 +1060,8 @@ const Calendar = () => {
                     </Modal>
                 )}
             />
-
-            <Modal
-                closeOnEscape
-                closeOnDimmerClick
-                open={viewExamInformation}
-                onClose={() => setViewExamInformation(false)}
-            >
-                <Modal.Header>
-                    Detalhes da avaliação
-                </Modal.Header>
+            <Modal closeOnEscape closeOnDimmerClick open={viewExamInformation} onClose={() => setViewExamInformation(false)}>
+                <Modal.Header>Detalhes da avaliação</Modal.Header>
                 <Modal.Content>
                     <Grid divided="vertically">
                         <Grid.Row columns="2">
@@ -1522,9 +1073,7 @@ const Calendar = () => {
                                 </p>
                                 <p>
                                     <b>Data: </b>
-                                    {moment(examInfoModal?.date).format(
-                                        'DD MMMM, YYYY',
-                                    )}
+                                    {moment(examInfoModal?.date).format('DD MMMM, YYYY')}
                                 </p>
                                 <p>
                                     <b>Sala da avaliação: </b>
@@ -1534,11 +1083,9 @@ const Calendar = () => {
                                     <p>
                                         <b>Duração: </b>
                                         {examInfoModal?.duration_minutes}
-                                        {' '}
-                                        minutos
+                                        {' '} minutos
                                     </p>
                                 )}
-
                                 <p>
                                     <b>Hora de ínicio: </b>
                                     {examInfoModal?.hour}
@@ -1551,29 +1098,20 @@ const Calendar = () => {
                             <Grid.Column>
                                 <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS, SCOPES.ADD_COMMENTS]}>
                                     <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS]}>
-                                        <Button icon color={!showIgnoredComments ? 'green' : 'red'} labelPosition="left"
-                                                onClick={() => setShowIgnoredComments((cur) => !cur)}>
+                                        <Button icon color={!showIgnoredComments ? 'green' : 'red'} labelPosition="left" onClick={() => setShowIgnoredComments((cur) => !cur)}>
                                             <Icon name={`eye ${showIgnoredComments ? 'slash' : ''}`}/>
                                             {!showIgnoredComments ? 'Mostrar' : 'Esconder'}
                                             {' '}
                                             ignorados
                                         </Button>
                                     </ShowComponentIfAuthorized>
-
                                     <Comment.Group>
                                         <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS]}>
-
-                                            <Header as="h3" dividing>
-                                                Comentários
-                                            </Header>
-
+                                            <Header as="h3" dividing>Comentários</Header>
                                             {examInfoModal?.comments?.filter((x) => (showIgnoredComments ? true : !x.ignored))?.map((comment) => (
                                                 <Comment>
-                                                    <Comment.Avatar
-                                                        src={`https://avatars.dicebear.com/api/human/${comment.user.id}.svg?w=50&h=50&mood[]=sad&mood[]=happy`}/>
-                                                    <Comment.Content
-                                                        style={comment.ignored ? {backgroundColor: 'lightgrey'} : {}}
-                                                    >
+                                                    <Comment.Avatar src={`https://avatars.dicebear.com/api/human/${comment.user.id}.svg?w=50&h=50&mood[]=sad&mood[]=happy`}/>
+                                                    <Comment.Content style={comment.ignored ? {backgroundColor: 'lightgrey'} : {}}>
                                                         <Comment.Author as="a">{comment.user.name}</Comment.Author>
                                                         <Comment.Metadata>
                                                             <div>{comment.date}</div>
@@ -1581,22 +1119,14 @@ const Calendar = () => {
                                                         <Comment.Text>
                                                             {comment.comment}
                                                             {comment.ignored ? (
-                                                                <div style={{
-                                                                    position: 'absolute',
-                                                                    top: '5px',
-                                                                    right: '5px',
-                                                                    userSelect: 'none',
-                                                                }}
-                                                                >
+                                                                <div style={{position: 'absolute', top: '5px', right: '5px', userSelect: 'none'}}>
                                                                     Comentário ignorado
                                                                 </div>
                                                             ) : ''}
                                                         </Comment.Text>
                                                         <Comment.Actions>
                                                             {!comment.ignored && (
-                                                                <Comment.Action
-                                                                    onClick={() => ignoreComment(comment.id)}
-                                                                >
+                                                                <Comment.Action onClick={() => ignoreComment(comment.id)}>
                                                                     Ignorar
                                                                 </Comment.Action>
                                                             )}
@@ -1609,34 +1139,24 @@ const Calendar = () => {
                                             <ShowComponentIfAuthorized permission={[SCOPES.ADD_COMMENTS]}>
                                                 <Form reply>
                                                     <Form.TextArea onChange={(ev, {value}) => setCommentText(value)}/>
-                                                    <Button onClick={() => addComment(examInfoModal?.id)}
-                                                            content="Adicionar comentário" labelPosition="left"
-                                                            icon="edit" primary/>
+                                                    <Button onClick={() => addComment(examInfoModal?.id)} content="Adicionar comentário" labelPosition="left" icon="edit" primary/>
                                                 </Form>
                                             </ShowComponentIfAuthorized>
                                         )}
-
                                     </Comment.Group>
-
                                 </ShowComponentIfAuthorized>
-
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>
-
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button
-                        onClick={() => setViewExamInformation(false)}
-                        negative
-                    >
+                    <Button onClick={() => setViewExamInformation(false)} negative>
                         Fechar
                     </Button>
                 </Modal.Actions>
             </Modal>
 
-            <FinalForm
-                onSubmit={onSubmitExam}
+            <FinalForm onSubmit={onSubmitExam}
                 initialValues={{
                     id: examInfoModal?.id || undefined,
                     date: moment(examInfoModal?.date).format('DD MMMM, YYYY'),
@@ -1646,14 +1166,7 @@ const Calendar = () => {
                     observations: examInfoModal?.id ? examInfoModal?.observations : null,
                 }}
                 render={({handleSubmit}) => (
-                    <Modal
-                        closeOnEscape
-                        closeOnDimmerClick
-                        open={openExamModal}
-                        onClose={() => {
-                            setOpenExamModal(false);
-                        }}
-                    >
+                    <Modal closeOnEscape closeOnDimmerClick open={openExamModal} onClose={() => {setOpenExamModal(false);}}>
                         <Modal.Header>
                             {examInfoModal?.id ? 'Editar' : 'Marcar'}
                             {' '}
@@ -1670,26 +1183,16 @@ const Calendar = () => {
                                 <p>
                                     <b>Data: </b>
                                     {changeData ? (
-                                        <DateInput
-                                            value={moment(examInfoModal?.date).format(
-                                                'DD MMMM, YYYY',
-                                            )}
-                                            onChange={(evt,
-                                                       {value}) => {
-                                                setExamInfoModal((current) => ({
-                                                    ...current,
-                                                    date: moment(value, 'DD-MM-YYYY'),
-                                                }));
+                                        <DateInput value={moment(examInfoModal?.date).format('DD MMMM, YYYY')}
+                                            onChange={(evt, {value}) => {
+                                                setExamInfoModal((current) => ({...current, date: moment(value, 'DD-MM-YYYY')}));
                                                 setChangeData(false);
                                             }}
                                         />
-                                    ) : moment(examInfoModal?.date).format(
-                                        'DD MMMM, YYYY',
-                                    )}
+                                    ) : moment(examInfoModal?.date).format('DD MMMM, YYYY')}
                                 </p>
                                 <p>
-                                    <Button color="yellow" icon labelPosition="left"
-                                            onClick={() => setChangeData(true)}>
+                                    <Button color="yellow" icon labelPosition="left" onClick={() => setChangeData(true)}>
                                         <Icon name="calendar alternate"/>
                                         Alterar data
                                     </Button>
@@ -1701,30 +1204,17 @@ const Calendar = () => {
                                             <Field name="epoch">
                                                 {({input: epochInput}) => (
                                                     <Form.Dropdown
-                                                        options={epochsList
-                                                            .filter((epoch) => moment(
-                                                                examInfoModal?.date,
-                                                            ).isBetween(
-                                                                moment(
-                                                                    epoch.start_date,
-                                                                ),
-                                                                moment(epoch.end_date), undefined,
-                                                                '[]',
-                                                            ))
+                                                        options={epochsList.filter((epoch) => moment(examInfoModal?.date).isBetween(moment(epoch.start_date), moment(epoch.end_date), undefined, '[]',))
                                                             ?.map((epoch) => ({
                                                                 key: epoch.id,
                                                                 value: epoch.id,
                                                                 text: epoch.name,
                                                             }))}
-                                                        selection
-                                                        search
-                                                        label="Época"
+                                                        selection search label="Época"
                                                         onChange={(e, {value}) => {
                                                             setCourseUnits([]);
                                                             setSelectedEpoch(value);
-                                                            setLoadRemainingCourseUnits(
-                                                                true,
-                                                            );
+                                                            setLoadRemainingCourseUnits(true);
                                                             epochInput.onChange(value);
                                                         }}
                                                     />
@@ -1733,38 +1223,18 @@ const Calendar = () => {
                                             {noMethods
                                                 && (
                                                     <Message negative>
-                                                        <Message.Header>Não foram encontradas unidades
-                                                            curriculares</Message.Header>
-                                                        <p>Não foram encontradas unidades curriculares com métodos de
-                                                            avaliação atríbuidos para esta época de avaliação.</p>
+                                                        <Message.Header>Não foram encontradas unidades curriculares</Message.Header>
+                                                        <p>Não foram encontradas unidades curriculares com métodos de avaliação atríbuidos para esta época de avaliação.</p>
                                                     </Message>
                                                 )}
                                             <Field name="courseUnit">
                                                 {({input: courseUnitInput}) => (
-                                                    <Form.Dropdown
-                                                        options={courseUnits}
-                                                        selection
-                                                        search
-                                                        disabled={!courseUnits?.length}
-                                                        loading={
-                                                            courseUnits !== undefined
-                                                                ? !courseUnits.length
-                                                                : false
-                                                        }
+                                                    <Form.Dropdown options={courseUnits} selection search disabled={!courseUnits?.length}
+                                                        loading={courseUnits !== undefined ? !courseUnits.length : false}
                                                         label="Unidade Curricular"
-                                                        onChange={(
-                                                            e,
-                                                            {value, options},
-                                                        ) => {
+                                                        onChange={(e, {value, options}) => {
                                                             setMethodList(
-                                                                options
-                                                                    .find(
-                                                                        (courseUnit) => courseUnit.value === value,
-                                                                    )
-                                                                    .methods.map(
-                                                                    ({
-                                                                         id, name, minimum, weight,
-                                                                     }) => ({
+                                                                options.find((courseUnit) => courseUnit.value === value).methods.map(({id, name, minimum, weight}) => ({
                                                                         key: id,
                                                                         value: id,
                                                                         text: `${name} / Min. ${minimum} / Peso: ${parseInt(weight, 10)}%`,
@@ -1778,16 +1248,8 @@ const Calendar = () => {
                                             </Field>
                                             <Field name="method">
                                                 {({input: methodInput}) => (
-                                                    <Form.Dropdown
-                                                        options={methodList}
-                                                        selection
-                                                        search
-                                                        disabled={!methodList?.length}
-                                                        loading={
-                                                            methodList !== undefined
-                                                                ? !methodList.length
-                                                                : false
-                                                        }
+                                                    <Form.Dropdown options={methodList} selection search disabled={!methodList?.length}
+                                                        loading={methodList !== undefined ? !methodList.length : false}
                                                         label="Método de Avaliação"
                                                         onChange={(e, {value}) => methodInput.onChange(value)}
                                                     />
@@ -1797,66 +1259,36 @@ const Calendar = () => {
                                     )}
                                 <Field name="room" defaultValue={examInfoModal?.id ? examInfoModal?.room : null}>
                                     {({input: roomInput}) => (
-                                        <Form.Input
-                                            label="Sala"
-                                            placeholder="Sala da avaliação (opcional)"
-                                            {...roomInput}
-                                            initialValue={examInfoModal?.room}
-                                        />
+                                        <Form.Input label="Sala" placeholder="Sala da avaliação (opcional)"{...roomInput} initialValue={examInfoModal?.room}/>
                                     )}
                                 </Field>
                                 <Field name="durationMinutes">
                                     {({input: durationMinutesInput}) => (
-                                        <Form.Input
-                                            label="Duração"
-                                            placeholder="Duração em minutos (opcional)"
-                                            type="number"
-                                            step="1"
-                                            {...durationMinutesInput}
-                                        />
+                                        <Form.Input label="Duração" placeholder="Duração em minutos (opcional)" type="number" step="1"{...durationMinutesInput}/>
                                     )}
                                 </Field>
                                 <Field name="hour">
                                     {({input: hourInput}) => (
                                         <Form.Field>
-                                            <TimeInput
-                                                name="hour"
-                                                iconPosition="left"
-                                                label="Hora de ínicio"
-                                                placeholder="Hora de ínicio"
-                                                timeFormat="24"
-                                                value={hourInput.value}
-                                                onChange={(evt, {value}) => {
-                                                    hourInput.onChange(value);
-                                                }}
-                                            />
+                                            <TimeInput name="hour" iconPosition="left" label="Hora de ínicio" placeholder="Hora de ínicio" timeFormat="24" value={hourInput.value}
+                                                       onChange={(evt, {value}) => {
+                                                           hourInput.onChange(value);
+                                                       }}/>
                                         </Form.Field>
                                     )}
                                 </Field>
                                 <Field name="observations">
                                     {({input: observationsInput}) => (
-                                        <Form.Input
-                                            control={TextArea}
-                                            label="Observações"
-                                            placeholder="Observações (opcional)"
-                                            {...observationsInput}
-                                        />
+                                        <Form.Input control={TextArea} label="Observações"{...observationsInput}/>
                                     )}
                                 </Field>
                             </Form>
                         </Modal.Content>
                         <Modal.Actions>
-                            <Button
-                                onClick={() => setOpenExamModal(false)}
-                                negative
-                            >
+                            <Button onClick={() => setOpenExamModal(false)} negative>
                                 Cancelar
                             </Button>
-                            <Button
-                                onClick={handleSubmit}
-                                positive
-                                loading={savingExam}
-                            >
+                            <Button onClick={handleSubmit} positive loading={savingExam}>
                                 {!examInfoModal?.id ? 'Marcar Avaliação' : 'Gravar alterações'}
                             </Button>
                         </Modal.Actions>
@@ -1866,5 +1298,4 @@ const Calendar = () => {
         </Container>
     );
 };
-
 export default Calendar;
