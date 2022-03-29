@@ -15,6 +15,25 @@
         "menu.Permissões": "Permissões",
         "menu.Sobre": "Sobre",
         "menu.Ano letivo": "Ano letivo",
-        "menu.Sair": "Sair"
+        "menu.Sair": "Sair",
+
+        "A carregar dados": "A carregar dados",
+        "Criar novo": "Criar novo",
+        "Cancelar": "Cancelar",
+        "Sim": "Sim",
+        "Não": "Não",
+        "Descrição": "Descrição",
+        "Ativo": "Ativo",
+        "Ações": "Ações",
+        "Sem resultados": "Sem resultados",
+
+        "ano_letivo.Anos letivos": "Anos letivos",
+        "ano_letivo.Tem a certeza que deseja remover o Ano letivo": "Tem a certeza que deseja remover o Ano letivo",
+        "ano_letivo.Remover Ano letivo": "Remover Ano letivo",
+        "ano_letivo.O novo ano letivo foi aberto com sucesso!": "O novo ano letivo foi aberto com sucesso!",
+        "ano_letivo.Ocorreu um problema ao abrir um novo ano letivo!": "Ocorreu um problema ao abrir um novo ano letivo!",
+        "ano_letivo.Abrir novo ano letivo": "Abrir novo ano letivo",
+        "ano_letivo.Ao abrir um novo ano letivo, este ficará ativo por defeito para todos os utilizadores!": "Ao abrir um novo ano letivo, este ficará ativo por defeito para todos os utilizadores!",
+        "ano_letivo.Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?": "Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?"
     }
 }
