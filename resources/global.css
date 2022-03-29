@@ -18,6 +18,12 @@
 .margin-top-l    { margin-top: 32px; }
 .margin-top-xl   { margin-top: 40px; }
 
+.padding-x-none { padding-left: 0;    padding-right: 0;    }
+.padding-x-s    { padding-left: 8px;  padding-right: 8px;  }
+.padding-x-base { padding-left: 16px; padding-right: 16px; }
+.padding-x-m    { padding-left: 24px; padding-right: 24px; }
+.padding-x-l    { padding-left: 32px; padding-right: 32px; }
+.padding-x-xl   { padding-left: 40px; padding-right: 40px; }
 
 .section {
     margin-top: 24px;

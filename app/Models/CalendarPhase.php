@@ -13,11 +13,11 @@ class CalendarPhase extends Model
 
     public function permissions()
     {
-        $this->belongsToMany(Permission::class);
+        return $this->belongsToMany(Permission::class, 'permissions');
     }
 
     public function calendars()
     {
-        $this->hasMany(Calendar::class);
+        return $this->hasMany(Calendar::class);
     }
 }

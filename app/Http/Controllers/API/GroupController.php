@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Resources\Admin\PermissionSectionsByPhaseResource;
 use App\Http\Resources\Admin\PermissionSectionsResource;
+use App\Models\CalendarPhase;
 use App\Models\Group;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GroupRequest;
@@ -88,5 +90,9 @@ class GroupController extends Controller
         return PermissionSectionsResource::collection(PermissionSection::with(['permissions' => function ($query) {
                                                                             $query->where('category_id', '1'); /* Filter by general category */
                                                                         }])->orderBy('code')->get());
+    }
+
+    public function groupCalendarPermissions(Group $group) {
+        return PermissionSectionsByPhaseResource::collection(CalendarPhase::with('permissions')->get());
     }
 }
