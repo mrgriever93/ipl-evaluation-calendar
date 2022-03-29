@@ -13,3 +13,9 @@
 .ui.menu .item.lang-dropdown{
     text-transform: uppercase;
 }
+.resize-container {
+    min-height: calc(100vh - 330px);
+}
+.footer {
+    height: 223px;
+}
