@@ -93,6 +93,26 @@ class GroupController extends Controller
     }
 
     public function groupCalendarPermissions(Group $group) {
-        return PermissionSectionsByPhaseResource::collection(CalendarPhase::with('permissions')->get());
+        /* Group N +
+         * phases
+         *  > sections
+         *      >   permissions
+         */
+        $phases = CalendarPhase::all();
+        foreach ($phases as $key => $phase){
+            $phases[$key]["sections"] = PermissionSectionsResource::collection(
+                PermissionSection::whereHas('permissions', function ($query) {
+                        $query->where('category_id', '2');
+                    })
+                    ->with(['permissions' => function ($query) {
+                        $query->where('category_id', '2'); /* Filter by general category */
+                    }])
+                    ->orderBy('code')
+                    ->get()
+            );
+        }
+        return PermissionSectionsByPhaseResource::collection($phases);
+
+        //return PermissionSectionsByPhaseResourceCalendarPhase::with('permissions')->get());
     }
 }

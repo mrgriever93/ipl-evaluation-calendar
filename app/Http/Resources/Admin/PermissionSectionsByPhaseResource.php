@@ -10,8 +10,8 @@ class PermissionSectionsByPhaseResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'label'         => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
-            'permissions'   => PermissionsPhaseResource::collection($this->permissions),
+            'label'     => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
+            'sections'  => $this->sections
         ];
     }
 }
