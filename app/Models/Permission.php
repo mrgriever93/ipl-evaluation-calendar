@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Permission extends Model
 {
-    protected $fillable = ["name", "description_pt", "description_en"];
+    protected $fillable = ["name", "section_id", "description_pt", "description_en"];
 
     public $timestamps = false;
 
