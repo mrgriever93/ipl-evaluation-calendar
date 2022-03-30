@@ -1,30 +1,20 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Header, Grid, Checkbox, Tab } from 'semantic-ui-react';
+import {Header, Grid, Checkbox, Tab, Loader, Dimmer} from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import { errorConfig, successConfig } from '../../utils/toastConfig';
 import {useParams} from "react-router-dom";
 
 const GroupPermissions = () => {
+    // get URL params
+    let { id } = useParams();
+    let paramsId = id;
+
     const [state, setState] = useState({
         groupPermissions: [],
         calendarGroupPermissions: [],
     });
-    // const [groupPermissions, setGroupPermissions] = useState([]);
-    // const [permissionsWithGroups, setPermissionsWithGroups] = useState([]);
-    // const [savingPermissions, setSavingPermissions] = useState([]);
-    // const [removingGroups, setRemovingGroups] = useState([]);
-    
 
-    // const updateGroupPermissions = (added, permissionId, groupId) => axios.put('/permission', {
-    //     permission_id: permissionId,
-    //     group_id: groupId,
-    //     enabled: added,
-    // });
-
-    // get URL params
-    let { id } = useParams();
-    let paramsId = id;
 
     useEffect(() => {
         axios.get('/user-group/' + paramsId + '/permissions').then((res) => {
@@ -33,7 +23,6 @@ const GroupPermissions = () => {
                 calendarGroupPermissions: prevState.calendarGroupPermissions,
                 groupPermissions: permissionSections
             }));
-            console.log(state.groupPermissions);
         });
 
         axios.get('/user-group/' + paramsId + '/calendar-permissions').then((res) => {
@@ -42,26 +31,23 @@ const GroupPermissions = () => {
                 groupPermissions: prevState.groupPermissions,
                 calendarGroupPermissions: permissionPhases
             }));
-            console.log(state.calendarGroupPermissions);
         });
     }, []);
 
-    
-
-    const updateGroupPermissions = (isEnabled, permissionId, groupId) => {
-        isEnabled.isActive = !isEnabled.isActive;
-        // WIP
-        console.log('permissions: ', isEnabled);
-        console.log('section: ', permissionId);
-        console.log('groupId: ', paramsId);
-
-        // groupId = paramsId ^^;
-
-        // axios.put('/permission', {
-        //     permission_id: permissionId,
-        //     group_id: groupId,
-        //     enabled: isEnabled,
-        // });
+    const updateGroupPermissions = (isEnabled, permissionId, phaseId) => {
+        const request = {
+            permission_id: permissionId,
+            group_id: paramsId,
+            phase_id: phaseId,
+            enabled: isEnabled
+        };
+        axios.put('/permission', request).then(response =>{
+            if (response.status === 200 || response.status === 201) {
+                toast('Permissao atualizada com sucesso', successConfig);
+            } else {
+                toast('Existiu um problema ao gravar as alterações!', errorConfig);
+            }
+        });
     };
 
     const panes = [
@@ -79,13 +65,14 @@ const GroupPermissions = () => {
                                         <div className='section-content'>
                                             {section.permissions.map((permission, indexP) => (
                                                 <div className='margin-top-base' key={indexP}>
-                                                    <Checkbox toggle label={permission.description} checked={permission.isActive} onChange={ (e, data) => updateGroupPermissions(permission, section, '12321') } />
+                                                    <Checkbox toggle label={permission.description} defaultChecked={permission.isActive}
+                                                              onChange={ (e, data) => {updateGroupPermissions(data.checked, permission.permission_id, 12); permission.isActive = data.checked;}} />
                                                 </div>
                                             ))}
                                         </div>
-                                    </div> 
+                                    </div>
                                 </Grid.Column>
-                            )) } 
+                            ))}
                         </Grid.Row>
                     </Grid>
                 </div>
@@ -98,7 +85,7 @@ const GroupPermissions = () => {
                         { state.calendarGroupPermissions.map( (phase, phaseIndex) => (
                             <div className='section sticky--section margin-top-l' key={phaseIndex}>
                                 <div className='section-title'>
-                                    <Header as='h3'>{phase.label}</Header>                    
+                                    <Header as='h3'>{phase.label}</Header>
                                 </div>
                                 <div className='section-content'>
                                     <Grid columns={3} >
@@ -110,11 +97,12 @@ const GroupPermissions = () => {
                                                         <div className='section-content'>
                                                             { section.permissions.map( (perm, permIndex) => (
                                                                 <div className='margin-top-base' key={permIndex}>
-                                                                    <Checkbox toggle label={perm.description} checked={perm.isActive} onChange={(e, data) => console.log("oi", perm.id)} />
+                                                                    <Checkbox toggle label={perm.description} defaultChecked={perm.isActive}
+                                                                              onChange={ (e, data) => { updateGroupPermissions(data.checked, perm.permission_id, phase.phase_id); perm.isActive = data.checked}} />
                                                                 </div>
                                                             ))}
                                                         </div>
-                                                    </div> 
+                                                    </div>
                                                 </Grid.Column>
                                             ))}
                                         </Grid.Row>
@@ -130,9 +118,15 @@ const GroupPermissions = () => {
 
     return (
         <>
-            { (state.groupPermissions.length > 0) && (
-                <div className='margin-top-l'>                    
+            { state.groupPermissions.length > 0 ? (
+                <div className='margin-top-l'>
                     <Tab panes={panes} renderActiveOnly/>
+                </div>
+            ) : (
+                <div className='margin-top-l'>
+                    <Dimmer active inverted>
+                        <Loader indeterminate>A carregar Permissoes</Loader>
+                    </Dimmer>
                 </div>
             )}
         </>
