@@ -48,13 +48,19 @@ const GroupPermissions = () => {
 
     
 
-    const updateGroupPermissions = (added, permissionId, groupId) => {
-        added.isActive = true;
-        console.log(added, permissionId, groupId);
+    const updateGroupPermissions = (isEnabled, permissionId, groupId) => {
+        isEnabled.isActive = !isEnabled.isActive;
+        // WIP
+        console.log('permissions: ', isEnabled);
+        console.log('section: ', permissionId);
+        console.log('groupId: ', paramsId);
+
+        // groupId = paramsId ^^;
+
         // axios.put('/permission', {
         //     permission_id: permissionId,
         //     group_id: groupId,
-        //     enabled: added,
+        //     enabled: isEnabled,
         // });
     };
 
