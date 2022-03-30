@@ -2,10 +2,13 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {Header, Grid, Checkbox, Tab, Loader, Dimmer} from 'semantic-ui-react';
 import { toast } from 'react-toastify';
-import { errorConfig, successConfig } from '../../utils/toastConfig';
 import {useParams} from "react-router-dom";
+import {useTranslation} from "react-i18next";
+
+import { errorConfig, successConfig } from '../../utils/toastConfig';
 
 const GroupPermissions = () => {
+    const { t } = useTranslation();
     // get URL params
     let { id } = useParams();
     let paramsId = id;
@@ -43,15 +46,15 @@ const GroupPermissions = () => {
         };
         axios.put('/permission', request).then(response =>{
             if (response.status === 200 || response.status === 201) {
-                toast('Permissao atualizada com sucesso', successConfig);
+                toast(t('Permissao atualizada com sucesso'), successConfig);
             } else {
-                toast('Existiu um problema ao gravar as alterações!', errorConfig);
+                toast(t('Existiu um problema ao gravar as alterações!'), errorConfig);
             }
         });
     };
 
     const panes = [
-        {menuItem: "Permissões Gerais", render: () => (
+        {menuItem: t("Permissões Gerais"), render: () => (
             <Tab.Pane>
                 <div className='padding-s-base'>
                     <Grid columns={3} >
@@ -79,7 +82,7 @@ const GroupPermissions = () => {
             </Tab.Pane>
         )},
         {
-            menuItem: "Permissões do Calendário", render: () => (
+            menuItem: t("Permissões do Calendário"), render: () => (
                 <Tab.Pane>
                     <div className='padding-s-base'>
                         { state.calendarGroupPermissions.map( (phase, phaseIndex) => (
@@ -125,7 +128,7 @@ const GroupPermissions = () => {
             ) : (
                 <div className='margin-top-l'>
                     <Dimmer active inverted>
-                        <Loader indeterminate>A carregar Permissoes</Loader>
+                        <Loader indeterminate>{t("A carregar Permissoes")}</Loader>
                     </Dimmer>
                 </div>
             )}
