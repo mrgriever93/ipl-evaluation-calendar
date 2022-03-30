@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
 import {toast} from 'react-toastify';
+import {useTranslation} from "react-i18next";
 import {successConfig} from '../../utils/toastConfig';
 import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
 import SCOPES from '../../utils/scopesConstants';
@@ -14,13 +15,14 @@ const Wrapper = styled.div`
     }
 `;
 
-const columns = [
-    {name: 'Descrição'},
-    {name: 'Ativo?', align: 'center'},
-    {name: 'Ações', align: 'center'},
-];
 
-const List = ({match}) => {
+const List = () => {
+    const { t } = useTranslation();
+    const columns = [
+        {name: t('Descrição')},
+        {name: t('Ativo?'), align: 'center'},
+        {name: t('Ações'), align: 'center'},
+    ];
     const [filteredResults, setFilteredResults] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [modalInfo, setModalInfo] = useState();
@@ -29,7 +31,7 @@ const List = ({match}) => {
 
     const loadUserGroups = useCallback(() => {
         setIsLoading(true);
-        
+
         axios.get('/user-group').then((response) => {
             setIsLoading(false);
             if (response.status === 200) {
@@ -37,7 +39,7 @@ const List = ({match}) => {
             }
         });
     }, []);
-    
+
     useEffect(() => {
         loadUserGroups();
     }, []);
@@ -69,7 +71,7 @@ const List = ({match}) => {
     const handleRemoval = () => {
         axios.delete(`/user-group/${modalInfo.id}`).then((res) => {
             if (res.status === 200) {
-                toast('Grupo de utilizador removido com sucesso!', successConfig);
+                toast(t("Grupo de utilizador removido com sucesso!"), successConfig);
             }
             loadUserGroups();
         });
@@ -82,14 +84,14 @@ const List = ({match}) => {
                 <Card.Content>
                     { isLoading && (
                         <Dimmer active inverted>
-                            <Loader indeterminate>A carregar os grupos</Loader>
+                            <Loader indeterminate>{t("A carregar os grupos")}</Loader>
                         </Dimmer>
                     )}
                     <Wrapper>
-                        <Header as="span">Grupos de Utilizador</Header>
+                        <Header as="span">{t("Grupos de Utilizador")}</Header>
                         <ShowComponentIfAuthorized permission={[SCOPES.CREATE_USER_GROUPS]}>
                             <Link to="/grupo-utilizador/novo">
-                                <Button floated="right" color="green">Novo</Button>
+                                <Button floated="right" color="green">{t("Novo")}</Button>
                             </Link>
                         </ShowComponentIfAuthorized>
                     </Wrapper>
@@ -97,7 +99,7 @@ const List = ({match}) => {
                 <Card.Content>
                     <Form>
                         <Form.Group widths="2">
-                            <Form.Input label="Pesquisar" placeholder="Pesquisar grupos de utilizador..." onChange={handleSearch} />
+                            <Form.Input label={t("Pesquisar")} placeholder={t("Pesquisar grupos de utilizador...")} onChange={handleSearch} />
                         </Form.Group>
                     </Form>
                 </Card.Content>
@@ -142,13 +144,13 @@ const List = ({match}) => {
                 </Card.Content>
             </Card>
             <Modal dimmer="blurring" open={modalOpen} onClose={handleModalClose} >
-                <Modal.Header>Remover Grupo de Utilizador</Modal.Header>
-                <Modal.Content>                    
-                    {'Tem a certeza que deseja remover o grupo de utilizador '} <strong>{modalInfo?.name}</strong> ?
+                <Modal.Header>{t("Remover Grupo de Utilizador")}</Modal.Header>
+                <Modal.Content>
+                                {t("Tem a certeza que deseja remover o grupo de utilizador")} <strong>{modalInfo?.name}</strong> ?
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button negative onClick={handleModalClose}>Cancelar</Button>
-                    <Button positive onClick={handleRemoval}>Sim</Button>
+                    <Button negative onClick={handleModalClose}>{t("Cancelar")}</Button>
+                    <Button positive onClick={handleRemoval}>{t("Sim")}</Button>
                 </Modal.Actions>
             </Modal>
         </Container>
