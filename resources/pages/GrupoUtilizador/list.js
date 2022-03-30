@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import { Card, Container, Table, Form, Button, Header, Icon, Modal, Dimmer, Loader } from 'semantic-ui-react';
+import {Card, Container, Table, Form, Button, Header, Icon, Modal, Dimmer, Loader, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
@@ -28,6 +28,7 @@ const List = () => {
     const [modalInfo, setModalInfo] = useState();
     const [userGroups, setUserGroups] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [searchInfo, setSearchInfo] = useState("");
 
     const loadUserGroups = useCallback(() => {
         setIsLoading(true);
@@ -50,8 +51,12 @@ const List = () => {
                 (x) => x.name.toLowerCase().includes(searchTerm.toLowerCase())
                     || x.description.toLowerCase().includes(searchTerm.toLowerCase()),
             );
+
             if (filtered.length) {
+                setSearchInfo("");
                 setFilteredResults(filtered);
+            } else {
+                setSearchInfo(searchTerm.length > 0 ? t("Sem resultados para esta pesquisa") : "");
             }
         },
         [userGroups],
@@ -101,6 +106,11 @@ const List = () => {
                         <Form.Group widths="2">
                             <Form.Input label={t("Pesquisar")} placeholder={t("Pesquisar grupos de utilizador...")} onChange={handleSearch} />
                         </Form.Group>
+                        { searchInfo.length> 0 && (
+                            <Message negative>
+                                <Message.Header>{searchInfo}</Message.Header>
+                            </Message>
+                        )}
                     </Form>
                 </Card.Content>
                 <Card.Content>

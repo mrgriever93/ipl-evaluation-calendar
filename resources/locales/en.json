@@ -49,6 +49,7 @@
         "Novo": "New",
         "Guardar": "Save",
         "Criar": "Create",
-        "Pesquisar": "Search"
+        "Pesquisar": "Search",
+        "Sem resultados para esta pesquisa": "No results for this search"
     }
 }
