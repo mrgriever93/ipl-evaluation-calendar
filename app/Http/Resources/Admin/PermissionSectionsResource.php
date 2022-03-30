@@ -10,7 +10,7 @@ class PermissionSectionsResource extends JsonResource
     {
         return [
             'label'         => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
-            'permissions'   => GroupPermissionsResource::collection($this->permissions),
+            'permissions'   => GroupPermissionsResource::collection($this->perm),
         ];
     }
 }

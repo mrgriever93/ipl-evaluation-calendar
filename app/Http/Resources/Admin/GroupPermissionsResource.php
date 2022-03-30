@@ -9,9 +9,9 @@ class GroupPermissionsResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'                        => $this->id,
+            'permission_id'             => $this->id,
             'description'               => ($request->lang == "en" ? $this->description_en : $this->description_pt),
-            'isActive'                  => false,//$this->group()->relation()->exists(),
+            'isActive'                  => !is_null($this->hasPermission),
         ];
     }
 }
