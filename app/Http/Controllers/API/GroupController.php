@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Resources\Admin\Edit\GroupEditResource;
 use App\Http\Resources\Admin\PermissionSectionsByPhaseResource;
 use App\Http\Resources\Admin\PermissionSectionsResource;
 use App\Models\CalendarPhase;
@@ -48,7 +49,7 @@ class GroupController extends Controller
      */
     public function show(Group $group)
     {
-        return new GroupsResource($group);
+        return new GroupEditResource($group);
     }
 
     /**
@@ -73,10 +74,6 @@ class GroupController extends Controller
     public function destroy(Group $group)
     {
         $group->delete();
-    }
-
-    public function listPermissions() {
-        return GroupsResource::collection(Group::with('permissions')->orderBy('name')->get());
     }
 
     /**
