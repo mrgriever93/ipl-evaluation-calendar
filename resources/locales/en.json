@@ -50,6 +50,7 @@
         "Guardar": "Save",
         "Criar": "Create",
         "Pesquisar": "Search",
-        "Sem resultados para esta pesquisa": "No results for this search"
+        "Sem resultados para esta pesquisa": "No results for this search",
+        "A carregar registos...": "Loading records..."
     }
 }
