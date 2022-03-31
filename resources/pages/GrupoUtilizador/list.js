@@ -85,12 +85,14 @@ const List = () => {
                             <Loader indeterminate>{t("A carregar os grupos")}</Loader>
                         </Dimmer>
                     )}
-                    <Header as="span">{t("Grupos de Utilizador")}</Header>
-                    <ShowComponentIfAuthorized permission={[SCOPES.CREATE_USER_GROUPS]}>
-                        <Link to="/grupo-utilizador/novo">
-                            <Button floated="right" color="green">{t("Novo")}</Button>
-                        </Link>
-                    </ShowComponentIfAuthorized>
+                    <div>
+                        <Header as="span">{t("Grupos de Utilizador")}</Header>
+                        <ShowComponentIfAuthorized permission={[SCOPES.CREATE_USER_GROUPS]}>
+                            <Link to="/grupo-utilizador/novo">
+                                <Button floated="right" color="green">{t("Novo")}</Button>
+                            </Link>
+                        </ShowComponentIfAuthorized>
+                    </div>
                 </Card.Content>
                 <Card.Content>
                     <Form>

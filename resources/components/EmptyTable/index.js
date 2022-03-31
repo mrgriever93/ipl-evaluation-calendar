@@ -13,7 +13,7 @@ const EmptyTable = ({onBtnClick, colspan, label, permissions, isLoading = false}
                     (
                         <div className={"margin-y-l"}>{t("A carregar registos...")}</div>
                     ) : (
-                        <Wrapper>
+                        <>
                             <Header as='h2' color='red' className={"margin-y-l"} disabled>
                                 {label}
                             </Header>
@@ -28,7 +28,7 @@ const EmptyTable = ({onBtnClick, colspan, label, permissions, isLoading = false}
                                     <Button color="green" content={t("Novo")} icon='plus' labelPosition='right' onClick={onBtnClick}/>
                                 </ShowComponentIfAuthorized>
                             </div>
-                        </Wrapper>
+                        </>
                     )
                 }
             </Table.Cell>
