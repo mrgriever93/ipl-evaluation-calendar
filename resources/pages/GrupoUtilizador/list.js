@@ -1,22 +1,16 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Card, Container, Table, Form, Button, Header, Icon, Modal, Dimmer, Loader, Message} from 'semantic-ui-react';
-import styled from 'styled-components';
-import {Link} from 'react-router-dom';
+import {Card, Container, Table, Form, Button, Header, Icon, Modal, Dimmer, Loader} from 'semantic-ui-react';
+import {Link, useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import {toast} from 'react-toastify';
 import {useTranslation} from "react-i18next";
 import {successConfig} from '../../utils/toastConfig';
 import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
 import SCOPES from '../../utils/scopesConstants';
-
-const Wrapper = styled.div`
-    .header {
-        display: inline;
-    }
-`;
-
+import EmptyTable from "../../components/EmptyTable";
 
 const List = () => {
+    const navigate = useNavigate();
     const { t } = useTranslation();
     const columns = [
         {name: t('Descrição')},
@@ -82,9 +76,8 @@ const List = () => {
         });
         handleModalClose();
     };
-
     return (
-        <Container style={{marginTop: '2em'}}>
+        <Container>
             <Card fluid>
                 <Card.Content>
                     { isLoading && (
@@ -92,25 +85,18 @@ const List = () => {
                             <Loader indeterminate>{t("A carregar os grupos")}</Loader>
                         </Dimmer>
                     )}
-                    <Wrapper>
-                        <Header as="span">{t("Grupos de Utilizador")}</Header>
-                        <ShowComponentIfAuthorized permission={[SCOPES.CREATE_USER_GROUPS]}>
-                            <Link to="/grupo-utilizador/novo">
-                                <Button floated="right" color="green">{t("Novo")}</Button>
-                            </Link>
-                        </ShowComponentIfAuthorized>
-                    </Wrapper>
+                    <Header as="span">{t("Grupos de Utilizador")}</Header>
+                    <ShowComponentIfAuthorized permission={[SCOPES.CREATE_USER_GROUPS]}>
+                        <Link to="/grupo-utilizador/novo">
+                            <Button floated="right" color="green">{t("Novo")}</Button>
+                        </Link>
+                    </ShowComponentIfAuthorized>
                 </Card.Content>
                 <Card.Content>
                     <Form>
                         <Form.Group widths="2">
                             <Form.Input label={t("Pesquisar")} placeholder={t("Pesquisar grupos de utilizador...")} onChange={handleSearch} />
                         </Form.Group>
-                        { searchInfo.length> 0 && (
-                            <Message negative>
-                                <Message.Header>{searchInfo}</Message.Header>
-                            </Message>
-                        )}
                     </Form>
                 </Card.Content>
                 <Card.Content>
@@ -123,32 +109,34 @@ const List = () => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {(filteredResults?.length ? filteredResults : userGroups )?.map(
+                            { (searchInfo.length> 0 && filteredResults?.length) || isLoading ?
+                                (<EmptyTable isLoading={isLoading} onBtnClick={() => navigate("/grupo-utilizador/novo")} colspan={3} label={searchInfo} permissions={[SCOPES.CREATE_USER_GROUPS]}/>) :
                                 (
-                                    { id, description, enabled, removable },
-                                    index ) => (
-                                        <Table.Row key={index}>
-                                            <Table.Cell>{description}</Table.Cell>
-                                            <Table.Cell textAlign="center">
-                                                <Icon name={!enabled ? 'close' : 'check'} />
-                                            </Table.Cell>
-                                            <Table.Cell textAlign="center">
-                                                <ShowComponentIfAuthorized permission={[SCOPES.EDIT_USER_GROUPS]}>
-                                                    <Link to={`/grupo-utilizador/edit/${id}`}>
-                                                        <Button color="yellow" icon>
-                                                            <Icon name="edit"/>
-                                                        </Button>
-                                                    </Link>
-                                                </ShowComponentIfAuthorized>
-                                                <ShowComponentIfAuthorized permission={[SCOPES.DELETE_USER_GROUPS]}>
-                                                    <Button onClick={() => remove({id,name: description}) } color="red" icon disabled={!removable} >
-                                                        <Icon name="trash"/>
-                                                    </Button>
-                                                </ShowComponentIfAuthorized>
-                                            </Table.Cell>
-                                        </Table.Row>
-                                    )
-                            )}
+                                    (filteredResults?.length ? filteredResults : userGroups )?.map(({ id, description, enabled, removable }, index ) => (
+                                                <Table.Row key={index}>
+                                                    <Table.Cell>{description}</Table.Cell>
+                                                    <Table.Cell textAlign="center">
+                                                        <Icon name={!enabled ? 'close' : 'check'} />
+                                                    </Table.Cell>
+                                                    <Table.Cell textAlign="center">
+                                                        <ShowComponentIfAuthorized permission={[SCOPES.EDIT_USER_GROUPS]}>
+                                                            <Link to={`/grupo-utilizador/edit/${id}`}>
+                                                                <Button color="yellow" icon>
+                                                                    <Icon name="edit"/>
+                                                                </Button>
+                                                            </Link>
+                                                        </ShowComponentIfAuthorized>
+                                                        <ShowComponentIfAuthorized permission={[SCOPES.DELETE_USER_GROUPS]}>
+                                                            <Button onClick={() => remove({id,name: description}) } color="red" icon disabled={!removable} >
+                                                                <Icon name="trash"/>
+                                                            </Button>
+                                                        </ShowComponentIfAuthorized>
+                                                    </Table.Cell>
+                                                </Table.Row>
+                                            )
+                                        )
+                                )
+                            }
                         </Table.Body>
                     </Table>
                 </Card.Content>
