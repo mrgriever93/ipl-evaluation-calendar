@@ -26,6 +26,7 @@
         "Grupo de utilizador ativo?":  "Grupo de utilizador ativo?",
         "Grupo atualizado com sucesso": "Grupo atualizado com sucesso",
         "Grupo criado com sucesso": "Grupo criado com sucesso",
+        "Grupo duplicado com sucesso": "Grupo duplicado com sucesso",
         "Existiu um problema ao gravar as alterações!": "Existiu um problema ao gravar as alterações!",
         "Permissao atualizada com sucesso": "Permissao atualizada com sucesso",
         "Permissões Gerais": "Permissões Gerais",
@@ -49,6 +50,7 @@
         "Novo": "Novo",
         "Guardar": "Guardar",
         "Criar": "Criar",
+        "Duplicar": "Duplicar",
         "Pesquisar": "Pesquisar",
         "Sem resultados para esta pesquisa": "Sem resultados para esta pesquisa",
         "A carregar registos...": "A carregar registos..."

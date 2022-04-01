@@ -26,6 +26,7 @@
         "Grupo de utilizador ativo?":  "User group active?",
         "Grupo atualizado com sucesso": "Group updated with success",
         "Grupo criado com sucesso": "Group created with success",
+        "Grupo duplicado com sucesso": "Group cloned with success",
         "Existiu um problema ao gravar as alterações!": "There was a problem saving the alterations!",
         "Permissao atualizada com sucesso": "Permission updated with success",
         "Permissões Gerais": "General Permissions",
@@ -49,6 +50,7 @@
         "Novo": "New",
         "Guardar": "Save",
         "Criar": "Create",
+        "Duplicar": "Clone",
         "Pesquisar": "Search",
         "Sem resultados para esta pesquisa": "No results for this search",
         "A carregar registos...": "Loading records..."

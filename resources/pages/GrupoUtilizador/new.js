@@ -63,8 +63,16 @@ const New = () => {
         });
     };
 
+    const handleCloneGroup = () => {
+        toast(t('Grupo duplicado com sucesso'), successConfig);
+    };
+
+
     return (
-        <Container style={{ marginTop: '2em' }}>
+        <Container>
+            <div className="margin-bottom-s margin-top-base">
+                <Link to="/grupo-utilizador"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
+            </div>
             <FinalForm onSubmit={onSubmit} initialValues={initialValues} render={({ handleSubmit }) => (
                 <Form>
                     <Card fluid>
@@ -101,14 +109,14 @@ const New = () => {
                             </Field>
                         </Card.Content>
                         <Card.Content>
-                            <Link to="/grupo-utilizador">
-                                <Button icon labelPosition="left" color="teal" >
-                                    <Icon name="left arrow" /> {t('Voltar à lista')}
-                                </Button>
-                            </Link>
                             <Button onClick={handleSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} >
                                 <Icon name={isEditMode ? 'save' : 'plus'} /> {isEditMode ? t('Guardar') : t('Criar')}
                             </Button>
+                            {isEditMode && (
+                                <Button onClick={handleCloneGroup} color="yellow" icon labelPosition="left" floated="right" >
+                                    <Icon name='clone outline'/> { t('Duplicar') }
+                                </Button>
+                            )}
                         </Card.Content>
                     </Card>
                 </Form>
