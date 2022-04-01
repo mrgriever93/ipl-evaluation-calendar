@@ -52,8 +52,10 @@ class PermissionController extends Controller
      */
     public function store(PermissionRequest $request)
     {
-        $isAlreadyRegistered = GroupPermission::where('group_id', '=', $request['group_id'])
-            ->where('permission_id', '=', $request['permission_id']);
+        $isAlreadyRegistered = GroupPermission::where([
+            'group_id' => $request['group_id'],
+            'permission_id' => $request['permission_id']
+        ]);
 
         if ($request['phase_id']) {
             $isAlreadyRegistered->where('phase_id', '=', $request['phase_id']);

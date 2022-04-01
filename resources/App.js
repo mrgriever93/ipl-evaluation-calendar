@@ -2,7 +2,6 @@ import React, {useEffect, Suspense} from 'react';
 import {ToastContainer} from 'react-toastify';
 import {useNavigate} from 'react-router-dom';
 import {Provider as StoreProvider} from 'react-redux';
-import {Dimmer, Loader} from "semantic-ui-react";
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 
@@ -15,6 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './global.css';
 
 import RoutesList from './routes';
+import PageLoader from "./components/PageLoader";
 
 axios.defaults.baseURL = 'http://localhost/api';
 
@@ -66,11 +66,7 @@ function App() {
     return (
         <StoreProvider store={store}>
             <ToastContainer/>
-            <Suspense fallback={
-                <Dimmer active={true} page inverted>
-                    <Loader>Loading</Loader>
-                </Dimmer>
-            }>
+            <Suspense fallback={<PageLoader />}>
                 <RoutesList isLoggedIn={authToken}/>
             </Suspense>
         </StoreProvider>
