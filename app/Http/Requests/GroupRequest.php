@@ -16,7 +16,8 @@ class GroupRequest extends FormRequest
     {
         return [
             "name" => "required|string",
-            "description" => "required|string",
+            "description_pt" => "required|string",
+            "description_en" => "required|string",
             "enabled" => "boolean"
         ];
     }

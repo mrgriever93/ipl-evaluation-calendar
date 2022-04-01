@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Resources\Admin\Edit\GroupEditResource;
+use App\Http\Resources\Admin\PermissionSectionsByPhaseResource;
 use App\Http\Resources\Admin\PermissionSectionsResource;
+use App\Models\CalendarPhase;
 use App\Models\Group;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GroupRequest;
-use App\Http\Requests\NewGroupRequest;
 use App\Http\Resources\GroupsResource;
 use App\Models\Permission;
 use App\Models\PermissionSection;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class GroupController extends Controller
 {
@@ -47,7 +49,7 @@ class GroupController extends Controller
      */
     public function show(Group $group)
     {
-        return new GroupsResource($group);
+        return new GroupEditResource($group);
     }
 
     /**
@@ -74,31 +76,74 @@ class GroupController extends Controller
         $group->delete();
     }
 
-    public function listPermissions() {
-        return GroupsResource::collection(Group::with('permissions')->orderBy('name')->get());
-    }
-
     /**
      * Get permissions of the specified group.
      *
-     * @param  Group  $id
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @param Group $group
+     * @return PermissionSectionsResource
      */
     public function groupPermissions(Group $group) {
-
-        /* Será algo tipo isto:
-         *
-         * SELECT p.description AS permissionDescription, ps.description_pt as permissionSectionName, g.id as groupId, g.description as groupDescription, coalesce(gp.enabled, 0) AS isEnabled
-         * FROM calendar_v2.permissions as p
-         * JOIN calendar_v2.permission_sections AS ps ON p.section_id = ps.id
-         * LEFT JOIN calendar_v2.group_permissions as gp ON p.id = gp.permission_id
-         * LEFT JOIN calendar_v2.groups as g ON gp.group_id = g.id
-         * WHERE (g.id = 10 OR g.id IS NULL);
-         *
-         *
-         *
-         * MAS n está a aparecer as permissões todas
-         */
-        return PermissionSectionsResource::collection(PermissionSection::with('permissions')->orderBy('code')->get());
+        return $this->getPermissions( 1, $group->id, 12);
     }
+
+    public function groupCalendarPermissions(Group $group){
+        $phases = CalendarPhase::all();
+        foreach ($phases as $key_phase => $phase){
+            $phases[$key_phase]["sections"] = $this->getPermissions( 2, $group->id, $phase->id);
+        }
+        return PermissionSectionsByPhaseResource::collection($phases);
+    }
+
+
+    /**
+     * This will get all the permissions associated
+     * with a group, and filtered by phase_id and category_id
+     *
+     * @param $sections
+     * @param $categoryId
+     * @param $groupId
+     * @param $phaseId
+     * @return PermissionSectionsResource
+     */
+    private function getPermissions( $categoryId, $groupId, $phaseId) {
+        $sections = PermissionSection::whereHas('permissions', function ($query) use ($categoryId) {
+            $query->where('category_id', $categoryId);
+        })->orderBy('code')->get();
+
+        foreach ($sections as $section) {
+            $permList= Permission::selectRaw('permissions.*, group_permissions.enabled as hasPermission')
+                ->leftJoin('group_permissions', function ($join) use ($groupId, $phaseId) {
+                    $join->on('group_permissions.permission_id', '=', 'permissions.id');
+                    $join->on('group_permissions.group_id', '=', DB::raw($groupId));
+                    $join->on('group_permissions.phase_id', '=', DB::raw($phaseId));
+                })->where([
+                    'section_id' => $section['id'],
+                    'category_id' => $categoryId
+                ])->get();
+
+            $section['perm'] = $permList;
+        }
+        return PermissionSectionsResource::collection($sections);
+    }
+
+
+
+    /**
+     * Duplicate the specified group.
+     *
+     * @param Group $group
+     * @return              SOMETHING HERE
+     */
+    public function cloneGroup(Group $group) {
+
+
+        // TODO: @Miguel, fazes isto melhor q eu xD
+
+        // $newGroup = new Group($group->id();
+        // $newGroup->save();
+
+    return response()->json("Created!", Response::HTTP_FORBIDDEN /*HTTP_CREATED*/);
+    }
+
+    
 }

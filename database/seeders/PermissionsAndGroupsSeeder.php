@@ -236,9 +236,6 @@ class PermissionsAndGroupsSeeder extends Seeder
             ["name" => "create_interruption_types",        "section_code" => "interruption",    "description_pt" => "Criar tipos de interrupções",                     "description_en" => "Create types of interruptions"],
             ["name" => "edit_interruption_types",          "section_code" => "interruption",    "description_pt" => "Editar tipos de interrupções",                    "description_en" => "Edit types of interruptions"],
             ["name" => "delete_interruption_types",        "section_code" => "interruption",    "description_pt" => "Eliminar tipos de interrupções",                  "description_en" => "Delete types of interruptions"],
-                // for each phase
-                ["name" => "edit_interruption",            "section_code" => "interruption",    "description_pt" => "Editar interrupções",                             "description_en" => "Edit interruptions"],
-                ["name" => "remove_interruption",          "section_code" => "interruption",    "description_pt" => "Remover interrupções",                            "description_en" => "Remove interruptions"],
 
             ["name" => "create_calendar_phases",           "section_code" => "calendar_phases", "description_pt" => "Criar fases de calendário",                       "description_en" => "Create calendar phases"],
             ["name" => "edit_calendar_phases",             "section_code" => "calendar_phases", "description_pt" => "Editar fases de calendário",                      "description_en" => "Edit calendar phases"],
@@ -268,10 +265,12 @@ class PermissionsAndGroupsSeeder extends Seeder
             // for each phase
             ["name" => "add_comments",                     "section_code" => "calendar",        "description_pt" => "Adicionar comentários",                           "description_en" => "Add comments"],
             ["name" => "change_calendar_phase",            "section_code" => "calendar",        "description_pt" => "Mudar fase de calendário",                        "description_en" => "Change calendar phase"],
-            ["name" => "add_exams",                        "section_code" => "calendar",        "description_pt" => "Adicionar avaliações",                            "description_en" => "Add exams"],
-            ["name" => "edit_exams",                       "section_code" => "calendar",        "description_pt" => "Editar avaliações",                               "description_en" => "Edit exams"],
-            ["name" => "remove_exams",                     "section_code" => "calendar",        "description_pt" => "Remover avaliações",                              "description_en" => "Remove exams"],
-            ["name" => "add_interruption",                 "section_code" => "calendar",        "description_pt" => "Adicionar interrupções",                          "description_en" => "Add interruption"],
+            ["name" => "add_exams",                        "section_code" => "evaluation",      "description_pt" => "Adicionar avaliações",                            "description_en" => "Add exams"],
+            ["name" => "edit_exams",                       "section_code" => "evaluation",      "description_pt" => "Editar avaliações",                               "description_en" => "Edit exams"],
+            ["name" => "remove_exams",                     "section_code" => "evaluation",      "description_pt" => "Remover avaliações",                              "description_en" => "Remove exams"],
+            ["name" => "add_interruption",                 "section_code" => "interruption",    "description_pt" => "Adicionar interrupções",                          "description_en" => "Add interruption"],
+            ["name" => "edit_interruption",                "section_code" => "interruption",    "description_pt" => "Editar interrupções",                             "description_en" => "Edit interruptions"],
+            ["name" => "remove_interruption",              "section_code" => "interruption",    "description_pt" => "Remover interrupções",                            "description_en" => "Remove interruptions"],
         ];
 
         $isGeneral = true;

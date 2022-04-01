@@ -15,4 +15,16 @@ class PermissionSection extends Model
     {
         return $this->hasMany(Permission::class, 'section_id');
     }
+
+    public function permissionsGeneral()
+    {
+        return $this->hasMany(Permission::class, 'section_id');
+        //$query->where('category_id', '1');
+    }
+    public function permissionsCalendar()
+    {
+        return $this->hasMany(Permission::class, 'section_id');
+        //$query->where('category_id', '2');
+    }
+
 }
