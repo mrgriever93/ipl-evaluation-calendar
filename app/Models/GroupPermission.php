@@ -11,6 +11,8 @@ class GroupPermission extends Model
 
     protected $fillable = ["group_id", "permission_id", "phase_id", "enabled"];
 
+    protected $table = "group_permissions";
+
     public function permission()
     {
         return $this->hasOne(Permission::class, 'id', "permission_id");
@@ -26,4 +28,8 @@ class GroupPermission extends Model
         return $this->hasOne(Group::class);
     }
 
+    public function groupPermissions()
+    {
+        return $this->belongsTo(Group::class);
+    }
 }
