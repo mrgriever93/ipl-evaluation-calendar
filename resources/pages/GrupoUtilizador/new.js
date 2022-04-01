@@ -64,9 +64,20 @@ const New = () => {
     };
 
     const handleCloneGroup = () => {
-        toast(t('Grupo duplicado com sucesso'), successConfig);
-    };
+        axios.get(`/user-group/${paramsId}/clone`).then( (res) => {
+            
+            if (res.status === 201) {
+                toast(t('Grupo duplicado com sucesso'), successConfig);
 
+                if( res.data.id) {
+                    window.navigate("/grupo-utilizador/edit/"+res.data.id);
+                }
+            }
+            else {
+                toast(t('Existiu um problema ao gravar as alterações!'), errorConfig);
+            }
+        });
+    };
 
     return (
         <Container>

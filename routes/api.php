@@ -94,6 +94,7 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/user-group/{group}',                    'destroy'                 );
         Route::get('/user-group/{group}/permissions',           'groupPermissions'        );
         Route::get('/user-group/{group}/calendar-permissions',  'groupCalendarPermissions');
+        Route::get('/user-group/{group}/clone',                 'cloneGroup'              );
         Route::get('/permissions/groups',                       'listPermissions'         );     /* TO DELETE? */
     });
 

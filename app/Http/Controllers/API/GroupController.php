@@ -125,4 +125,25 @@ class GroupController extends Controller
         }
         return PermissionSectionsResource::collection($sections);
     }
+
+
+
+    /**
+     * Duplicate the specified group.
+     *
+     * @param Group $group
+     * @return              SOMETHING HERE
+     */
+    public function cloneGroup(Group $group) {
+
+
+        // TODO: @Miguel, fazes isto melhor q eu xD
+
+        // $newGroup = new Group($group->id();
+        // $newGroup->save();
+
+    return response()->json("Created!", Response::HTTP_FORBIDDEN /*HTTP_CREATED*/);
+    }
+
+    
 }
