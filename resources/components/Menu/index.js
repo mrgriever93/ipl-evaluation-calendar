@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link, useNavigate} from 'react-router-dom';
-import {
-    Container, Image, Menu, Dropdown,
-} from 'semantic-ui-react';
+import {Container, Image, Menu, Dropdown} from 'semantic-ui-react';
 import axios from 'axios';
+import {useTranslation} from "react-i18next";
 import {logout, setAcademicYear} from '../../redux/app/actions';
 import logoSVG from '../../logo.svg';
 import SCOPES, {
@@ -24,29 +23,12 @@ import SCOPES, {
 import ShowComponentIfAuthorized from '../ShowComponentIfAuthorized';
 
 const HeaderMenu = () => {
-    const history = useNavigate();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
+    const { t, i18n } = useTranslation();
     const [academicYearsList, setAcademicYearsList] = useState([]);
 
-    const logoutUser = () => {
-        axios.post('/logout').then(() => {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('username');
-            dispatch(logout());
-            history('/login');
-        });
-    };
-
-    const switchAcademicYear = (academicYear) => {
-        axios
-            .post('academic-years/switch', {
-                switch_to: academicYear.id,
-            })
-            .then(() => {
-                dispatch(setAcademicYear(academicYear));
-                history.go(0);
-            });
-    };
+    const [selectedLanguage, setSelectedLanguage] = useState(localStorage.getItem('language'));
 
     useEffect(() => {
         axios.get('academic-years').then((response) => {
@@ -70,6 +52,33 @@ const HeaderMenu = () => {
         });
     }, []);
 
+    const logoutUser = () => {
+        axios.post('/logout').then(() => {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('username');
+            dispatch(logout());
+            navigate('/login');
+        });
+    };
+
+    const switchAcademicYear = (academicYear) => {
+        axios
+            .post('academic-years/switch', {
+                switch_to: academicYear.id,
+            })
+            .then(() => {
+                dispatch(setAcademicYear(academicYear));
+                window.location.reload();
+            });
+    };
+
+    const changeLanguage = (lang) => {
+        localStorage.setItem('language', lang);
+        setSelectedLanguage(lang);
+        i18n.changeLanguage(lang);
+        window.location.reload();
+    }
+
     const selectedAcademicYear = useSelector((state) => state.app.academicYear);
 
     return (
@@ -80,62 +89,61 @@ const HeaderMenu = () => {
                         <Image src={logoSVG} width="100px"/>
                     </Link>
                 </Menu.Item>
-                <Menu.Item as={Link} to="/calendario">Calendários</Menu.Item>
+                <Menu.Item as={Link} to="/calendario">{t('menu.Calendários')}</Menu.Item>
                 <ShowComponentIfAuthorized permission={[...COURSE_UNIT_SCOPES]}>
-                    <Dropdown item simple text="Unidades Curriculares">
+                    <Dropdown item text={t('menu.Unidades Curriculares')}>
                         <Dropdown.Menu>
-                            <Dropdown.Item as={Link} to="/unidade-curricular">Unidades Curriculares</Dropdown.Item>
-                            <Dropdown.Item as={Link} to="/agrupamento-unidade-curricular">Agrupamentos</Dropdown.Item>
+                            <Dropdown.Item as={Link} to="/unidade-curricular">{t('menu.Unidades Curriculares')}</Dropdown.Item>
+                            <Dropdown.Item as={Link} to="/agrupamento-unidade-curricular">{t('menu.Agrupamentos')}</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
                 </ShowComponentIfAuthorized>
                 <ShowComponentIfAuthorized permission={[...COURSE_SCOPES]}>
-                    <Menu.Item as={Link} to="/curso">Cursos</Menu.Item>
+                    <Menu.Item as={Link} to="/curso">{t('menu.Cursos')}</Menu.Item>
                 </ShowComponentIfAuthorized>
                 <ShowComponentIfAuthorized permission={[...CONFIG_SCOPES]}>
-                    <Dropdown item simple text="Configurações">
+                    <Dropdown item text={t('menu.Configurações')}>
                         <Dropdown.Menu>
                             <ShowComponentIfAuthorized permission={[...ACADEMIC_YEAR_SCOPES]}>
-                                <Dropdown.Item as={Link} to="/ano-letivo">Anos Letivos</Dropdown.Item>
+                                <Dropdown.Item as={Link} to="/ano-letivo">{t('menu.Anos Letivos')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...SCHOOLS_SCOPES]}>
-                                <Dropdown.Item as={Link} to="/escola">Unidades de Ensino</Dropdown.Item>
-                            </ShowComponentIfAuthorized>
-                            <ShowComponentIfAuthorized permission={[...LANGUAGE_SCOPES]}>
-                                <Dropdown.Item as={Link} to="/idioma">Idiomas</Dropdown.Item>
+                                <Dropdown.Item as={Link} to="/escola">{t('menu.Unidades de Ensino')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...CALENDAR_PHASES_SCOPES]}>
-                                <Dropdown.Item as={Link} to="/calendario/fases">Fases Calendário</Dropdown.Item>
+                                <Dropdown.Item as={Link} to="/calendario/fases">{t('menu.Fases Calendário')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...INTERRUPTION_TYPES_SCOPES,]}>
-                                <Dropdown.Item as={Link} to="/interrupcao/">Tipos Interrupções</Dropdown.Item>
+                                <Dropdown.Item as={Link} to="/interrupcao/">{t('menu.Tipos Interrupções')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...EVALUATION_TYPE_SCOPES]}>
-                                <Dropdown.Item as={Link} to="/tipo-avaliacao">Tipos Avaliações</Dropdown.Item>
+                                <Dropdown.Item as={Link} to="/tipo-avaliacao">{t('menu.Tipos Avaliações')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...USER_GROUPS_SCOPES]}>
-                                <Dropdown.Item as={Link} to="/grupo-utilizador">Grupos Utilizador</Dropdown.Item>
+                                <Dropdown.Item as={Link} to="/grupo-utilizador">{t('menu.Grupos Utilizador')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...USER_SCOPES]}>
-                                <Dropdown.Item as={Link} to="/utilizador/">Utilizadores</Dropdown.Item>
+                                <Dropdown.Item as={Link} to="/utilizador/">{t('menu.Utilizadores')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...PERMISSIONS_SCOPES]}>
-                                <Dropdown.Item as={Link} to="/permissoes/">Permissões</Dropdown.Item>
+                                <Dropdown.Item as={Link} to="/permissoes/">{t('menu.Permissões')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                         </Dropdown.Menu>
                     </Dropdown>
                 </ShowComponentIfAuthorized>
-                <Menu.Item as={Link} to="/about">About</Menu.Item>
+                <Menu.Item as={Link} to="/about">{t('menu.Sobre')}</Menu.Item>
                 <Menu.Menu position="right">
+                    <Dropdown item closeOnChange={true} text={selectedLanguage} className='lang-dropdown'>
+                        <Dropdown.Menu>
+                            <Dropdown.Item onClick={()=>{changeLanguage('pt')}}>Português</Dropdown.Item>
+                            <Dropdown.Item onClick={()=>{changeLanguage('en')}}>English</Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
                     {academicYearsList?.length > 1 && (
-                        <Dropdown item text="Ano letivo">
+                        <Dropdown item text={t('menu.Ano letivo')}>
                             <Dropdown.Menu>
                                 {academicYearsList?.map((academicYear) => (
-                                    <Dropdown.Item key={academicYear?.code}
-                                        onClick={() => {
-                                            switchAcademicYear(academicYear);
-                                        }}
-                                    >
+                                    <Dropdown.Item key={academicYear?.code} onClick={()=>{switchAcademicYear(academicYear)}}>
                                         {academicYear?.display}
                                     </Dropdown.Item>
                                 ))}
@@ -144,7 +152,7 @@ const HeaderMenu = () => {
                     )}
                     <Menu.Item>{selectedAcademicYear?.display}</Menu.Item>
                     <Menu.Item onClick={logoutUser}>
-                        {localStorage.getItem('username') + ' '}| Logout
+                        {localStorage.getItem('username') + ' '}| {t('menu.Sair')}
                     </Menu.Item>
                 </Menu.Menu>
             </Container>

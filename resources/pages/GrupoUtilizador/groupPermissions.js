@@ -1,154 +1,139 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Dropdown, Icon, List, Segment, Tab } from 'semantic-ui-react';
+import {Header, Grid, Checkbox, Tab, Loader, Dimmer} from 'semantic-ui-react';
 import { toast } from 'react-toastify';
-import { errorConfig, successConfig } from '../../utils/toastConfig';
 import {useParams} from "react-router-dom";
+import {useTranslation} from "react-i18next";
+
+import { errorConfig, successConfig } from '../../utils/toastConfig';
 
 const GroupPermissions = () => {
-    const [groups, setGroups] = useState([]);
-    const [permissionsWithGroups, setPermissionsWithGroups] = useState([]);
-    const [savingPermissions, setSavingPermissions] = useState([]);
-    const [removingGroups, setRemovingGroups] = useState([]);
-
-    const updateGroupPermissions = (added, permissionId, groupId) => axios.put('/permission', {
-        permission_id: permissionId,
-        group_id: groupId,
-        enabled: added,
-    });
+    const { t } = useTranslation();
     // get URL params
     let { id } = useParams();
     let paramsId = id;
 
-  useEffect(() => {
+    const [state, setState] = useState({
+        groupPermissions: [],
+        calendarGroupPermissions: [],
+    });
+
+
+    useEffect(() => {
         axios.get('/user-group/' + paramsId + '/permissions').then((res) => {
-            const perms = res?.data?.permissions || [];
-            const groupList = res?.data?.groups || [];
-            setGroups(groupList);
-
-            const permWithGroups = perms.map((permission) => {
-                const filteredGroupsWithPermission = groupList.filter(
-                (x) => x.permissions.find((y) => y.id === permission.id),
-                );
-                if (!permission.groups) {
-                permission.groups = [];
-                }
-                if (filteredGroupsWithPermission?.length > 0) {
-                permission.groups.push(...filteredGroupsWithPermission);
-                }
-                return permission;
-            });
-            setPermissionsWithGroups(permWithGroups);
+            let permissionSections = res.data.data || [];
+            setState( prevState => ({
+                calendarGroupPermissions: prevState.calendarGroupPermissions,
+                groupPermissions: permissionSections
+            }));
         });
-  }, []);
 
-  const addGroupToPermission = (newGroupId, permissionId) => {
-    setSavingPermissions((current) => [...current, { permissionId, groupId: newGroupId }]);
-    const copy = [...permissionsWithGroups];
+        axios.get('/user-group/' + paramsId + '/calendar-permissions').then((res) => {
+            let permissionPhases = res.data.data || [];
+            setState( prevState => ({
+                groupPermissions: prevState.groupPermissions,
+                calendarGroupPermissions: permissionPhases
+            }));
+        });
+    }, []);
 
-    copy.find(
-      (x) => x.id === permissionId,
-    ).groups.push(groups.find((x) => x.id === newGroupId));
+    const updateGroupPermissions = (isEnabled, permissionId, phaseId) => {
+        const request = {
+            permission_id: permissionId,
+            group_id: paramsId,
+            phase_id: phaseId,
+            enabled: isEnabled
+        };
+        axios.put('/permission', request).then(response =>{
+            if (response.status === 200 || response.status === 201) {
+                toast(t('Permissao atualizada com sucesso'), successConfig);
+            } else {
+                toast(t('Existiu um problema ao gravar as alterações!'), errorConfig);
+            }
+        });
+    };
 
-    setPermissionsWithGroups(copy);
-    updateGroupPermissions(true, permissionId, newGroupId).then((res) => {
-      if (res.status >= 200 && res.status <= 300) {
-        toast('Permissão adicionada ao grupo com sucesso!', successConfig);
-        setSavingPermissions((current) => [
-          ...current.filter((x) => x.permissionId !== permissionId && x.groupId !== newGroupId),
-        ]);
-      } else {
-        toast('Erro ao adicionar a permissão ao grupo!', errorConfig);
-      }
-    });
-  };
+    const panes = [
+        {menuItem: t("Permissões Gerais"), render: () => (
+            <Tab.Pane>
+                <div className='padding-s-base'>
+                    <Grid columns={3} >
+                        <Grid.Row>
+                            { state.groupPermissions.map( (section, index) => (
+                                <Grid.Column key={index}>
+                                    <div className='section'>
+                                        <div className='section-title'>
+                                            {section.label}
+                                        </div>
+                                        <div className='section-content'>
+                                            {section.permissions.map((permission, indexP) => (
+                                                <div className='margin-top-base' key={indexP}>
+                                                    <Checkbox toggle label={permission.description} defaultChecked={permission.isActive}
+                                                              onChange={ (e, data) => {updateGroupPermissions(data.checked, permission.permission_id, 12); permission.isActive = data.checked;}} />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </Grid.Column>
+                            ))}
+                        </Grid.Row>
+                    </Grid>
+                </div>
+            </Tab.Pane>
+        )},
+        {
+            menuItem: t("Permissões do Calendário"), render: () => (
+                <Tab.Pane>
+                    <div className='padding-s-base'>
+                        { state.calendarGroupPermissions.map( (phase, phaseIndex) => (
+                            <div className='section sticky--section' key={phaseIndex}>
+                                <div className='section-title'>
+                                    <Header as='h3'>{phase.label}</Header>
+                                </div>
+                                <div className='section-content'>
+                                    <Grid columns={3} >
+                                        <Grid.Row>
+                                            { phase.sections.map( (section, sectionIndex) => (
+                                                <Grid.Column key={sectionIndex}>
+                                                    <div className='section'>
+                                                        <div className='section-title'>{section.label}</div>
+                                                        <div className='section-content'>
+                                                            { section.permissions.map( (perm, permIndex) => (
+                                                                <div className='margin-top-base' key={permIndex}>
+                                                                    <Checkbox toggle label={perm.description} defaultChecked={perm.isActive}
+                                                                              onChange={ (e, data) => { updateGroupPermissions(data.checked, perm.permission_id, phase.phase_id); perm.isActive = data.checked}} />
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                </Grid.Column>
+                                            ))}
+                                        </Grid.Row>
+                                    </Grid>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </Tab.Pane>
+            ),
+        },
+    ];
 
-  const removePermissionOfGroup = (index, permissionId, groupId) => {
-    setRemovingGroups((current) => [...current, { permissionId, index }]);
-    const copy = [...permissionsWithGroups];
-    updateGroupPermissions(
-      false,
-      permissionId,
-      groupId,
-    ).then((res) => {
-      if (res.status >= 200 && res.status <= 300) {
-        toast('Permissão removida ao grupo com sucesso!', successConfig);
-        setRemovingGroups((current) => [
-          ...current.filter((x) => x.permissionId !== permissionId && x.index !== index),
-        ]);
-
-        const groupsOfPermission = copy.find(
-          (x) => x.id === permissionId,
-        );
-
-        groupsOfPermission
-          .groups.splice(groupsOfPermission.groups.map((x) => x.id).indexOf(groupId), 1);
-        setPermissionsWithGroups(copy);
-      } else {
-        toast('Erro ao remover a permissão ao grupo!', errorConfig);
-      }
-    });
-  };
-
-  return (
-    <div className="margin-top-l">
-      <Card.Group itemsPerRow="4">
-        {permissionsWithGroups.map((perm) => (
-          <Card>
-            <Card.Content header={perm.description} />
-            <Card.Content>
-              Grupos:
-              <Dropdown
-                renderLabel="Selecione um grupo"
-                fluid
-                search
-                options={
-                  groups.filter((grp) => !perm.groups?.includes(grp))
-                    .map(({ id, description }) => ({ key: id, value: id, text: description }))
-                }
-                selection
-                onChange={(evt, { value: newGroup }) => addGroupToPermission(newGroup, perm.id)}
-              />
-              <Segment style={{ width: '100%' }}>
-                <List divided verticalAlign="middle">
-                  {perm.groups.length === 0 && 'Nenhum grupo adicionado!'}
-                  {perm.groups.map((group, index) => (
-                    <List.Item key={index}>
-                      <List.Content floated="right">
-                        <Button
-                          color={
-                            savingPermissions.find(
-                              (x) => x.permissionId === perm.id && x.groupId === group.id,
-                            ) ? 'green' : 'red'
-                          }
-                          icon
-                          onClick={() => removePermissionOfGroup(index, perm.id, group.id)}
-                          loading={
-                            savingPermissions.find(
-                              (x) => x.permissionId === perm.id && x.groupId === group.id,
-                            )
-                            || removingGroups.find(
-                              (x) => x.permissionId === perm.id && x.index === index,
-                            )
-                          }
-                        >
-                          <Icon name="trash" />
-                        </Button>
-                      </List.Content>
-                      <List.Content>
-                        {group.description}
-                      </List.Content>
-                    </List.Item>
-                  ))}
-                </List>
-              </Segment>
-            </Card.Content>
-          </Card>
-        ))}
-      </Card.Group>
-
-    </div>
-  );
+    return (
+        <>
+            { state.groupPermissions.length > 0 ? (
+                <div className='margin-top-l'>
+                    <Tab panes={panes} renderActiveOnly/>
+                </div>
+            ) : (
+                <div className='margin-top-l'>
+                    <Dimmer active inverted>
+                        <Loader indeterminate>{t("A carregar Permissoes")}</Loader>
+                    </Dimmer>
+                </div>
+            )}
+        </>
+    );
 };
 
 export default GroupPermissions;

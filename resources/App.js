@@ -1,20 +1,31 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, Suspense} from 'react';
 import {ToastContainer} from 'react-toastify';
 import {useNavigate} from 'react-router-dom';
 import {Provider as StoreProvider} from 'react-redux';
-import 'semantic-ui-css/semantic.min.css';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
+
+import "./locales/i18n";
+
 import store from './redux/store';
+
+import 'semantic-ui-css/semantic.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import './global.css';
 
 import RoutesList from './routes';
+import PageLoader from "./components/PageLoader";
 
 axios.defaults.baseURL = 'http://localhost/api';
 
+let selectedLanguage = localStorage.getItem('language');
+if(selectedLanguage === null){
+    selectedLanguage = "pt";
+    localStorage.setItem('language', selectedLanguage);
+}
+
 axios.interceptors.request.use((config) => {
-    config.headers.lang = "pt";
+    config.headers.lang = selectedLanguage;
     if (!config.url.includes('login')) {
         config.headers.Authorization = `Bearer ${localStorage.getItem('authToken')}`;
     }
@@ -55,7 +66,9 @@ function App() {
     return (
         <StoreProvider store={store}>
             <ToastContainer/>
-            <RoutesList isLoggedIn={authToken}/>
+            <Suspense fallback={<PageLoader />}>
+                <RoutesList isLoggedIn={authToken}/>
+            </Suspense>
         </StoreProvider>
     );
 }
