@@ -86,7 +86,7 @@ const GroupPermissions = () => {
                 <Tab.Pane>
                     <div className='padding-s-base'>
                         { state.calendarGroupPermissions.map( (phase, phaseIndex) => (
-                            <div className='section sticky--section margin-top-l' key={phaseIndex}>
+                            <div className='section sticky--section' key={phaseIndex}>
                                 <div className='section-title'>
                                     <Header as='h3'>{phase.label}</Header>
                                 </div>

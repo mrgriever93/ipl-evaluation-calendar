@@ -7,16 +7,12 @@ const EmptyTable = ({onBtnClick, colspan, label, permissions, isLoading = false}
     const { t } = useTranslation();
     return (
         <Table.Row key="empty-table">
-            <Table.Cell colSpan={colspan} textAlign="center" className={"padding-xl empty-table-row"}>
-                {
-                    isLoading ?
-                    (
+            <Table.Cell colSpan={colspan} className={"empty-table-row"}>
+                { isLoading ? (
                         <div className={"margin-y-l"}>{t("A carregar registos...")}</div>
                     ) : (
-                        <>
-                            <Header as='h2' color='red' className={"margin-y-l"} disabled>
-                                {label}
-                            </Header>
+                        <div className='empty-table-row-content'>
+                            <Header as='h2' className={"margin-y-l"}>{label}</Header>
                             <div className={"margin-bottom-xl"}>
                                 <Icon.Group size='huge'>
                                     <Icon size='large' color='grey' name='clipboard outline' className={"margin-none"}/>
@@ -25,10 +21,10 @@ const EmptyTable = ({onBtnClick, colspan, label, permissions, isLoading = false}
                             </div>
                             <div>
                                 <ShowComponentIfAuthorized permission={permissions}>
-                                    <Button color="green" content={t("Novo")} icon='plus' labelPosition='right' onClick={onBtnClick}/>
+                                    <Button color="green" content={t("Novo")} onClick={onBtnClick}/>
                                 </ShowComponentIfAuthorized>
                             </div>
-                        </>
+                        </div>
                     )
                 }
             </Table.Cell>

@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Card, Container, Table, Form, Button, Header, Icon, Modal, Dimmer, Loader} from 'semantic-ui-react';
+import {Card, Container, Table, Form, Button, Header, Icon, Modal, Dimmer, Loader } from 'semantic-ui-react';
 import {Link, useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import {toast} from 'react-toastify';
@@ -14,8 +14,8 @@ const List = () => {
     const { t } = useTranslation();
     const columns = [
         {name: t('Descrição')},
-        {name: t('Ativo?'), align: 'center'},
-        {name: t('Ações'), align: 'center'},
+        {name: t('Ativo?'), align: 'center', style: {width: '15%'} },
+        {name: t('Ações'),  align: 'center', style: {width: '15%'} },
     ];
     const [filteredResults, setFilteredResults] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
@@ -76,6 +76,7 @@ const List = () => {
         });
         handleModalClose();
     };
+
     return (
         <Container>
             <Card fluid>
@@ -106,7 +107,7 @@ const List = () => {
                         <Table.Header>
                             <Table.Row>
                                 {columns.map((col, index) => (
-                                    <Table.HeaderCell key={index} textAlign={col.align} >{col.name} </Table.HeaderCell>
+                                    <Table.HeaderCell key={index} textAlign={col.align} style={ col.style } >{col.name} </Table.HeaderCell>
                                 ))}
                             </Table.Row>
                         </Table.Header>

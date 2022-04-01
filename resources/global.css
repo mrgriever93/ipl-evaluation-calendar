@@ -118,6 +118,7 @@
 .padding-bottom-xl   { padding-bottom: var(--space-xl);   }
 .padding-bottom-xxl  { padding-bottom: var(--space-xxl);  }
 
+/* Custom Component > Section */
 .section {
     margin-top: 24px;
     position: relative;
@@ -130,9 +131,13 @@
 }
 
 .section-content {
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #ddd;
     padding-top: 4px;
     padding-bottom: 16px;
+}
+
+.section.sticky--section {
+    margin-top: 0;
 }
 
 .section.sticky--section > .section-title {
@@ -155,15 +160,39 @@
 
 .section.sticky--section > .section-content {
     border: 0;
-    padding-bottom: 32px;
+    padding-bottom: 24px;
 }
 
-.empty-table-row i.icons .icon:first-child{
+.section.sticky--section > .section-content .section-title {
+    font-size: 14px;
+    color: #767676;
+}
+
+.section.sticky--section > .section-content .section-content {
+    border-color: #eee;
+}
+
+/* Custom Component > Empty Table */
+.empty-table-row-content {
+    background: #fafafa;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    margin: 12px;
+    padding: 40px;
+    text-align: center;
+}
+
+.empty-table-row h2.ui.header {
+    margin: 0 0 24px;
+}
+
+.empty-table-row i.icons .icon:first-child {
     margin: 0;
 }
-.empty-table-row i.icons .icon:last-child{
+
+.empty-table-row i.icons .icon:last-child {
     margin-top: 9px;
-    opacity: 0.7;
+    opacity: .7;
 }
 
 .inline-header {
