@@ -10,8 +10,8 @@ class CalendarPhaseResource extends JsonResource
     {
         return [
             'id'          => $this->id,
-            'name'        => $this->name,
-            'description' => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
+            'name'        => $this->code,
+            'description' => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
             'removable'   => $this->removable,
             'enabled'     => $this->enabled,
         ];

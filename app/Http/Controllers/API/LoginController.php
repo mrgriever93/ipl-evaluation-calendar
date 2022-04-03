@@ -59,7 +59,7 @@ class LoginController extends Controller
                    }
                }
            }*/
-            $scopes = $user->permissions()->where('group_permissions.enabled', true)->groupBy('permissions.name')->pluck('permissions.name')->values()->toArray();
+            $scopes = $user->permissions()->where('group_permissions.enabled', true)->groupBy('permissions.code')->pluck('permissions.code')->values()->toArray();
             $accessToken = $user->createToken('authToken', $scopes)->accessToken;
 
             return response()->json([

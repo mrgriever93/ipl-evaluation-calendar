@@ -16,13 +16,6 @@ use Illuminate\Http\Response;
 
 class InterruptionController extends Controller
 {
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(NewInterruptionRequest $request)
     {
         $newInterruption = new Interruption($request->all());
@@ -55,14 +48,6 @@ class InterruptionController extends Controller
         $interruption->fill($request->all());
         $interruption->save();
     }
-
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  Interruption  $interruption
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Interruption $interruption)
     {
         $interruption->delete();

@@ -19,22 +19,11 @@ use Illuminate\Http\Response;
 
 class ExamController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(NewExamRequest $request)
     {
         $epoch = $request->epoch_id;
@@ -109,24 +98,11 @@ class ExamController extends Controller
         return response()->json("Created", Response::HTTP_CREATED);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show(Exam $exam)
     {
         return new ExamResource($exam::with('courseUnit')->find($exam->id));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(NewExamRequest $request, Exam $exam)
     {
         $allHaveSameGroup = null;
@@ -162,12 +138,6 @@ class ExamController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  Exam  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Exam $exam)
     {
         foreach ($exam->method->courseUnits as $courseUnit) {

@@ -10,7 +10,7 @@ class GroupPermissionsResource extends JsonResource
     {
         return [
             'permission_id'             => $this->id,
-            'description'               => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
+            'description'               => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
             'isActive'                  => $this->hasPermission == 1,
         ];
     }

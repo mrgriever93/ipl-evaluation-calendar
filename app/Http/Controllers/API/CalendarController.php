@@ -40,24 +40,12 @@ use PhpParser\ErrorHandler\Collecting;
 
 class CalendarController extends Controller
 {
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request, CalendarFilters $filters)
     {
         $calendars = Calendar::with(['course', 'phase'])->filter($filters);
         return CalendarResource::collection($calendars->ofAcademicYear($request->cookie('academic_year'))->orderBy('previous_calendar_id')->get());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(NewCalendarRequest $request)
     {
         $courses = $request->courses;
@@ -176,24 +164,11 @@ class CalendarController extends Controller
             return AvailableCourseUnitsResource::collection($response);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  Calendar  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show(Calendar $calendar)
     {
         return new CalendarResource($calendar->load(['epochs', 'interruptions']));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(UpdateCalendarRequest $request, Calendar $calendar)
     {
         $calendar->fill($request->all())->save();
@@ -201,12 +176,6 @@ class CalendarController extends Controller
         CalendarChanged::dispatch($calendar);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  Calendar  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Calendar $calendar)
     {
         $calendar->delete();
@@ -249,7 +218,7 @@ class CalendarController extends Controller
             $clone->save();
         }
         if (!$calendar->published) {
-            $calendar->calendar_phase_id = CalendarPhase::where('name', "Published")->first()->id;
+            $calendar->calendar_phase_id = CalendarPhase::where('code', "published")->first()->id;
             $calendar->published = true;
             $calendar->save();
             CalendarPublished::dispatch($calendar);

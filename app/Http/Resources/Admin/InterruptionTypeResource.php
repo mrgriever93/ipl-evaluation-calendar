@@ -10,8 +10,8 @@ class InterruptionTypeResource extends JsonResource
     {
         return [
             'id'          => $this->id,
-            'name'        => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
-            'description' => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
+            'name'        => $this->code,
+            'description' => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
             'enabled'     => $this->enabled,
         ];
     }

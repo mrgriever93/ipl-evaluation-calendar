@@ -11,7 +11,7 @@ class PermissionSectionsByPhaseResource extends JsonResource
     {
         return [
             'phase_id'  => $this->id,
-            'label'     => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
+            'label'     => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
             'sections'  => $this->sections
         ];
     }

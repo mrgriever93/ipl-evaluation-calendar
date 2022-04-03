@@ -24,32 +24,21 @@ use Illuminate\Support\Facades\Auth;
 
 class PermissionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         return Auth::user()
             ->permissions()
             ->where('group_permissions.enabled', true)
-            ->groupBy('permissions.name')->pluck('permissions.name')->values()->toArray();
+            ->groupBy('permissions.code')->pluck('permissions.code')->values()->toArray();
     }
 
     public function calendar() {
-        return CalendarPermissionsResource::collection(GroupPermission::where('phase_id', '!=', CalendarPhase::where('name', 'system')->first()->id)
+        return CalendarPermissionsResource::collection(GroupPermission::where('phase_id', '!=', CalendarPhase::where('code', 'system')->first()->id)
                         ->where('enabled', true)
                         ->whereIn('group_id', Auth::user()->groups->pluck('id'))
                         ->get());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\PermissionRequest  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(PermissionRequest $request)
     {
         $isAlreadyRegistered = GroupPermission::where([
@@ -70,7 +59,7 @@ class PermissionController extends Controller
                     $request['group_id']
                 ],
                 [
-                    'phase_id' => $request['phase_id'] ?? CalendarPhase::where('name', 'System')->first()->id,
+                    'phase_id' => $request['phase_id'] ?? CalendarPhase::where('code', 'system')->first()->id,
                     'enabled' => $request['enabled'],
                 ]
             );
@@ -90,15 +79,11 @@ class PermissionController extends Controller
         $isCalendarPermissions = $type === 'calendar';
         if ($isCalendarPermissions) {
             $operator = '=';
-            $phases = CalendarPhase::whereNotIn('name', ['system', 'published'])->get();
+            $phases = CalendarPhase::whereNotIn('code', ['system', 'published'])->get();
         }
 
-        $category = PermissionCategory::where('name', '=', 'calendar')->first('id');
+        $category = PermissionCategory::where('code', '=', 'calendar')->first('id');
         $permissions = Permission::where('category_id', $operator, $category->id)->get();
-
-
-
-
 
         return response()->json([
             'permissions' => PermissionsResource::collection($permissions),
@@ -123,7 +108,7 @@ class PermissionController extends Controller
             $operator = '=';
         }
 
-        $category = PermissionCategory::where('name', '=', 'calendar')->first('id');
+        $category = PermissionCategory::where('code', '=', 'calendar')->first('id');
 
         $groupsPermissions = GroupPermission::whereHas('permission', function ($query) use ($operator, $category) {
             $query->where('category_id', $operator, $category->id);
@@ -137,46 +122,20 @@ class PermissionController extends Controller
     }
 
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //

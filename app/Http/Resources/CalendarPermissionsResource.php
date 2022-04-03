@@ -10,7 +10,7 @@ class CalendarPermissionsResource extends JsonResource
     {
         return [
             'phase_id' => $this->phase_id,
-            'name'     => $this->permission->name,
+            'name'     => $this->permission->code,
         ];
     }
 }

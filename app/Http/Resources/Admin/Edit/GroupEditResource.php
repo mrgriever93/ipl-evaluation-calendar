@@ -10,9 +10,9 @@ class GroupEditResource extends JsonResource
     {
         return [
             'id'                        => $this->id,
-            'name'                      => $this->name,
-            'description_pt'            => $this->description_pt,
-            'description_en'            => $this->description_en,
+            'name'                      => $this->code,
+            'description_pt'            => $this->name_pt,
+            'description_en'            => $this->name_en,
             'removable'                 => $this->when($this->whenLoaded('permissions', false), $this->removable),
             'enabled'                   => $this->when($this->whenLoaded('permissions', false), $this->enabled),
         ];
