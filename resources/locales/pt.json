@@ -39,6 +39,7 @@
         "Remover Grupo de Utilizador":  "Remover Grupo de Utilizador",
         "Tem a certeza que deseja remover o grupo de utilizador": "Tem a certeza que deseja remover o grupo de utilizador",
         "Grupo de utilizador removido com sucesso!": "Grupo de utilizador removido com sucesso!",
+        "Ohh! Não foi possível encontrar grupos de utilizador!": "Ohh! Não foi possível encontrar Grupos de Utilizador!",
         "Descrição": "Descrição",
         "Ativo?": "Ativo?",
         "Ações": "Ações",
@@ -52,7 +53,6 @@
         "Criar": "Criar",
         "Duplicar": "Duplicar",
         "Pesquisar": "Pesquisar",
-        "Sem resultados para esta pesquisa": "Sem resultados para esta pesquisa",
         "A carregar registos...": "A carregar registos...",
 
 
