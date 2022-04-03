@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Permission extends Model
 {
-    protected $fillable = ["code", "name_pt", "name_en"];
+    protected $fillable = ["code", "section_id", "name_pt", "name_en"];
 
     public $timestamps = false;
 
@@ -27,6 +27,7 @@ class Permission extends Model
     {
         return $this->belongsToMany(Group::class, 'group_permissions');
     }
+
     public function phase()
     {
         return $this->belongsToMany(CalendarPhase::class, 'group_permissions','phase_id', 'phase_id');

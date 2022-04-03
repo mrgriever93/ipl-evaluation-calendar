@@ -14,7 +14,7 @@
         "menu.Utilizadores": "Utilizadores",
         "menu.Permissões": "Permissões",
         "menu.Sobre": "Sobre",
-        "menu.Anos letivo": "Anos letivo",
+        "menu.Ano letivo": "Ano letivo",
         "menu.Sair": "Sair",
 
         "A carregar o grupo":  "A carregar o grupo",
@@ -39,6 +39,7 @@
         "Remover Grupo de Utilizador":  "Remover Grupo de Utilizador",
         "Tem a certeza que deseja remover o grupo de utilizador": "Tem a certeza que deseja remover o grupo de utilizador",
         "Grupo de utilizador removido com sucesso!": "Grupo de utilizador removido com sucesso!",
+        "Ohh! Não foi possível encontrar grupos de utilizador!": "Ohh! Não foi possível encontrar Grupos de Utilizador!",
         "Descrição": "Descrição",
         "Ativo?": "Ativo?",
         "Ações": "Ações",
@@ -52,7 +53,28 @@
         "Criar": "Criar",
         "Duplicar": "Duplicar",
         "Pesquisar": "Pesquisar",
-        "Sem resultados para esta pesquisa": "Sem resultados para esta pesquisa",
-        "A carregar registos...": "A carregar registos..."
+        "A carregar registos...": "A carregar registos...",
+
+
+
+        
+        "A carregar dados": "A carregar dados",
+        "Criar novo": "Criar novo",
+        "Cancelar": "Cancelar",
+        "Sim": "Sim",
+        "Não": "Não",
+        "Descrição": "Descrição",
+        "Ativo": "Ativo",
+        "Ações": "Ações",
+        "Sem resultados": "Sem resultados",
+
+        "ano_letivo.Anos letivos": "Anos letivos",
+        "ano_letivo.Tem a certeza que deseja remover o Ano letivo": "Tem a certeza que deseja remover o Ano letivo",
+        "ano_letivo.Remover Ano letivo": "Remover Ano letivo",
+        "ano_letivo.O novo ano letivo foi aberto com sucesso!": "O novo ano letivo foi aberto com sucesso!",
+        "ano_letivo.Ocorreu um problema ao abrir um novo ano letivo!": "Ocorreu um problema ao abrir um novo ano letivo!",
+        "ano_letivo.Abrir novo ano letivo": "Abrir novo ano letivo",
+        "ano_letivo.Ao abrir um novo ano letivo, este ficará ativo por defeito para todos os utilizadores!": "Ao abrir um novo ano letivo, este ficará ativo por defeito para todos os utilizadores!",
+        "ano_letivo.Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?": "Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?"
     }
 }

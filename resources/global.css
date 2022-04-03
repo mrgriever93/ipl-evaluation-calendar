@@ -22,6 +22,18 @@
     text-transform: uppercase;
 }
 
+.inline-header {
+    display: inline;
+}
+
+.resize-container {
+    min-height: calc(100vh - 330px);
+}
+
+.footer {
+    height: 223px;
+}
+
 .ui.button.loading {
     pointer-events: none !important; /* to make sure you can't click twice on the same button, while it's loading */
 }
@@ -198,13 +210,4 @@
 .empty-table-row i.icons .icon:last-child {
     margin-top: 9px;
     opacity: .7;
-}
-
-.inline-header {
-    display: inline;
-}
-
-/* Overwrite Semantic Ui css */
-.ui.table td.padding-xl{
-    padding: var(--space-xl);
 }

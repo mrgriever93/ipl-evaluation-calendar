@@ -22,7 +22,7 @@ import SCOPES, {
 } from '../../utils/scopesConstants';
 import ShowComponentIfAuthorized from '../ShowComponentIfAuthorized';
 
-const HeaderMenu = () => {
+const HeaderMenu = ({languageChanger}) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { t, i18n } = useTranslation();
@@ -76,7 +76,8 @@ const HeaderMenu = () => {
         localStorage.setItem('language', lang);
         setSelectedLanguage(lang);
         i18n.changeLanguage(lang);
-        window.location.reload();
+        languageChanger(lang);
+        //window.location.reload();
     }
 
     const selectedAcademicYear = useSelector((state) => state.app.academicYear);

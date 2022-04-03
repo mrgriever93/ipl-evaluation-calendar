@@ -98,3 +98,6 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
         
         $> npm run dev          // compile once
 
+7) Plugins
+
+   [Translations](https://react.i18next.com/)

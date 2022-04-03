@@ -4,7 +4,7 @@ import React, {lazy} from "react";
 import Login from './pages/Auth/Login';
 import NotFoundPage from './pages/NotFound';
 import NoPermissionsPage from './pages/NoPermissions';
-import Dashboard from './pages/Dashboard';
+import Layout from './pages/Layout';
 import About from './pages/About';
 
 // Calendar pages
@@ -79,7 +79,7 @@ const isAuthorized = useComponentIfAuthorized([
 const RouterList = (isLoggedIn) => {
     return useRoutes([
         {
-            element: isLoggedIn ? <Dashboard /> : <Navigate to="/no-permissions" />,
+            element: isLoggedIn ? <Layout /> : <Navigate to="/no-permissions" />,
             children: [
                 { path:"/", exact: true, element: <CalendarList /> },
                 { path:"/about", exact:true, element:<About />},

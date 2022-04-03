@@ -1,10 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {
-    Card, Container, Table, Button, Icon, Modal, Header, Dimmer, Loader,
-} from 'semantic-ui-react';
+import {Card, Container, Table, Button, Icon, Modal, Header, Dimmer, Loader, Checkbox} from 'semantic-ui-react';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
-import styled from 'styled-components';
+import {useTranslation} from "react-i18next";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import {toast} from 'react-toastify';
@@ -15,22 +13,31 @@ import {successConfig, errorConfig} from '../../utils/toastConfig';
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const Wrapper = styled.div`
-    .header {
-        display: inline;
-    }
-`;
 
-const AnoLetivo = ({match}) => {
+const AnoLetivo = () => {
+    const { t } = useTranslation();
     const [modalOpen, setModalOpen] = useState(false);
     const [modalInfo, setModalInfo] = useState();
     const [academicYearsList, setAcademicYearsList] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const [newYearSelected, setNewYearSelected] = useState();
     const columns = [
         {name: 'ID'},
-        {name: 'Descrição'},
-        {name: 'Ativo', textAlign: 'center'},
-        {name: 'Ações'}];
+        {name: t('Descrição')},
+        {name: t('Ativo'), textAlign: 'center'},
+        {name: t('Ações')}
+    ];
+    const academicYears = [
+        moment(new Date()).add(-2, 'year').format('YYYY') + "-" + moment(new Date()).add(-1, 'year').format('YY'),
+        moment(new Date()).add(-1, 'year').format('YYYY') + "-" +  moment(new Date()).format('YY'),
+        moment(new Date()).format('YYYY') + "-" +  moment(new Date()).add(1, 'year').format('YY'),
+        moment(new Date()).add(1, 'year').format('YYYY') + "-" +  moment(new Date()).add(2, 'year').format('YY'),
+        moment(new Date()).add(2, 'year').format('YYYY') + "-" +  moment(new Date()).add(3, 'year').format('YY')
+    ];
+
+
+    const currentAcademicYear = moment(new Date()).format('YYYY') + moment(new Date()).add(1, 'year').format('YY');
 
     useEffect(() => {
         axios.get('academic-years').then((response) => {
@@ -54,11 +61,24 @@ const AnoLetivo = ({match}) => {
     };
 
     const openNewAcademicYear = () => {
+        const title = moment(new Date()).format('YYYY') + '-' + moment(new Date()).add(1, 'year').format('YY');
+
+        let finalHTML = t('ano_letivo.Ao abrir um novo ano letivo, este ficará ativo por defeito para todos os utilizadores!');
+        finalHTML += '<br/><strong>' + t('ano_letivo.Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?') + '</strong>';
+        finalHTML += '<br/><br/>'; //<h1 title>' + title + '</h1>
+
+        academicYears.forEach((element) => {
+            finalHTML +=`<div class="field"><div class="ui radio checkbox">`;
+            finalHTML +=`    <input type="radio" class="hidden" tabIndex="0" value="${element}" id="radio_year_${element}" name="radio_year"/>`;
+            finalHTML +=`    <label for="radio_year_${element}">${element}</label>`;
+            finalHTML +=`</div></div>`;
+        });
+
         SweetAlertComponent.fire({
-            title: 'Abrir novo ano letivo',
-            html: `Ao abrir um novo ano letivo, este ficará ativo por defeito para todos os utilizadores!<br/><strong>Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?<h1>${moment(new Date()).format('YYYY')}-${moment(new Date()).add(1, 'year').format('YY')}</h1></strong>`,
-            denyButtonText: 'Não',
-            confirmButtonText: 'Sim',
+            title: t('ano_letivo.Abrir novo ano letivo'),
+            html: finalHTML,
+            denyButtonText: t('Não'),
+            confirmButtonText: t('Sim'),
             showConfirmButton: true,
             showDenyButton: true,
             confirmButtonColor: '#21ba45',
@@ -71,104 +91,84 @@ const AnoLetivo = ({match}) => {
                         display: `${moment(new Date()).format('YYYY')}-${moment(new Date()).add(1, 'year').format('YY')}`,
                     }).then((res) => {
                         if (res.status === 201) {
-                            toast('O novo ano letivo foi aberto com sucesso!', successConfig);
+                            toast(t('ano_letivo.O novo ano letivo foi aberto com sucesso!'), successConfig);
                         } else {
-                            toast('Ocorreu um problema ao abrir um novo ano letivo!', errorConfig);
+                            toast(t('ano_letivo.Ocorreu um problema ao abrir um novo ano letivo!'), errorConfig);
                         }
                     });
                 }
             });
     };
-
     return (
-        <Container style={{marginTop: '2em'}}>
+        <Container>
             <Card fluid>
                 <Card.Content>
                     {loading && (
                         <Dimmer active inverted>
-                            <Loader indeterminate>A carregar os anos letivos</Loader>
+                            <Loader indeterminate>{t('A carregar dados')}</Loader>
                         </Dimmer>
                     )}
-                    <Wrapper>
-                        <Header as="span">Anos letivos</Header>
-                        <ShowComponentIfAuthorized
-                            permission={[SCOPES.CREATE_ACADEMIC_YEARS]}
-                        >
-                            {!loading && !academicYearsList?.find((x) => x.code === `${moment(new Date()).format('YYYY')}${moment(new Date()).add(1, 'year').format('YY')}`) && (
-                                <Button floated="right" color="green" onClick={openNewAcademicYear}>
-                                    Criar novo
-                                </Button>
-                            )}
-                        </ShowComponentIfAuthorized>
-                    </Wrapper>
+                    <Header as="span">{t('ano_letivo.Anos letivos')}</Header>
+                    <ShowComponentIfAuthorized permission={[SCOPES.CREATE_ACADEMIC_YEARS]}>
+                        {!loading && !academicYearsList?.find((x) => x.code === currentAcademicYear) && (
+                            <Button floated="right" color="green" onClick={openNewAcademicYear}>
+                                {t('Criar novo')}
+                            </Button>
+                        )}
+                    </ShowComponentIfAuthorized>
                 </Card.Content>
                 <Card.Content>
                     <Table celled fixed>
                         <Table.Header>
                             <Table.Row>
-                                {columns.map(({name, textAlign}) => (
-                                    <Table.HeaderCell textAlign={textAlign}>{name}</Table.HeaderCell>
+                                {columns.map(({name, textAlign}, index) => (
+                                    <Table.HeaderCell key={index} textAlign={textAlign}>{name}</Table.HeaderCell>
                                 ))}
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {academicYearsList.map(({id, code, active}) => (
+                            {academicYearsList.length > 0 ? academicYearsList.map(({id, code, active}) => (
                                 <Table.Row key={id}>
                                     <Table.Cell>{id}</Table.Cell>
                                     <Table.Cell>{code}</Table.Cell>
                                     <Table.Cell textAlign="center">
-                                        <Icon
-                                            name={active ? 'checkmark' : 'close'}
-                                        />
+                                        <Icon name={active ? 'checkmark' : 'close'}/>
                                     </Table.Cell>
                                     <Table.Cell textAlign="center">
-                                        {false && (
-                                            <ShowComponentIfAuthorized permission={[SCOPES.EDIT_ACADEMIC_YEARS]}>
-                                                <Link to={`/ano-letivo/edit/${id}`}>
-                                                    <Button color="yellow" icon>
-                                                        <Icon name="edit"/>
-                                                    </Button>
-                                                </Link>
-                                            </ShowComponentIfAuthorized>
-                                        )}
+                                        <ShowComponentIfAuthorized permission={[SCOPES.EDIT_ACADEMIC_YEARS]}>
+                                            <Link to={`/ano-letivo/edit/${id}`}>
+                                                <Button color="yellow" icon>
+                                                    <Icon name="edit"/>
+                                                </Button>
+                                            </Link>
+                                        </ShowComponentIfAuthorized>
                                         <ShowComponentIfAuthorized permission={[SCOPES.DELETE_ACADEMIC_YEARS]}>
-                                            <Button
-                                                onClick={() => remove({
-                                                    id,
-                                                    code,
-                                                })}
-                                                color="red"
-                                                icon
-                                                disabled={active}
-                                            >
+                                            <Button onClick={() => remove({id, code})} color="red" icon disabled={active}>
                                                 <Icon name="trash"/>
                                             </Button>
                                         </ShowComponentIfAuthorized>
                                     </Table.Cell>
                                 </Table.Row>
-                            ))}
+                            )) :
+                                (
+                                    <Table.Row>
+                                        <Table.Cell colSpan='4' textAlign="center">
+                                            {t('Sem resultados')}
+                                        </Table.Cell>
+                                    </Table.Row>
+                                )}
                         </Table.Body>
                     </Table>
                 </Card.Content>
             </Card>
-            <Modal
-                dimmer="blurring"
-                open={modalOpen}
-                onClose={handleModalClose}
-            >
-                <Modal.Header>Remover Ano letivo</Modal.Header>
+            <Modal dimmer="blurring" open={modalOpen} onClose={handleModalClose}>
+                <Modal.Header>{t('ano_letivo.Remover Ano letivo')}</Modal.Header>
                 <Modal.Content>
-                    Tem a certeza que deseja remover o Ano letivo
-                    <strong>{modalInfo?.code}</strong>
-                    ?
+                    {t('ano_letivo.Tem a certeza que deseja remover o Ano letivo')}<strong>{modalInfo?.code}</strong>?
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button negative onClick={handleModalClose}>
-                        Cancelar
-                    </Button>
-                    <Button positive onClick={handleRemoval}>
-                        Sim
-                    </Button>
+                    <Button negative onClick={handleModalClose}>{t('Cancelar')}</Button>
+                    <Button positive onClick={handleRemoval}>{t('Sim')}</Button>
                 </Modal.Actions>
             </Modal>
         </Container>
