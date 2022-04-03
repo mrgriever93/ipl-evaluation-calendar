@@ -22,9 +22,9 @@ const Utilizador = lazy(() => import('./pages/Utilizador'));
 const UtilizadorDetail = lazy(() => import('./pages/Utilizador/edit'));
 const UtilizadorList = lazy(() => import('./pages/Utilizador/list'));
     //Interrupacao Pages
-const Interrupcao = lazy(() => import('./pages/Interrupcao'));
-const InterrupcaoNew = lazy(() => import('./pages/Interrupcao/new'));
-const InterrupcaoList = lazy(() => import('./pages/Interrupcao/list'));
+const Interrupcao = lazy(() => import('./pages/TipoInterrupcao'));
+const InterrupcaoNew = lazy(() => import('./pages/TipoInterrupcao/new'));
+const InterrupcaoList = lazy(() => import('./pages/TipoInterrupcao/list'));
     //TipoAvaliacao Pages
 const TipoAvaliacao = lazy(() => import('./pages/TipoAvaliacao'));
 const TipoAvaliacaoNew = lazy(() => import('./pages/TipoAvaliacao/new'));
@@ -156,7 +156,7 @@ const RouterList = (isLoggedIn) => {
                     ],
                 },
                 {
-                    path: "/interrupcao",
+                    path: "/tipo-interrupcao",
                     element: (isAuthorized.CREATE_INTERRUPTION_TYPES || isAuthorized.EDIT_INTERRUPTION_TYPES || isAuthorized.DELETE_INTERRUPTION_TYPES) ? <Interrupcao /> : <Navigate to="/no-permissions" />,
                     children: [
                         { path: 'novo', exact: true, element: <InterrupcaoNew />},

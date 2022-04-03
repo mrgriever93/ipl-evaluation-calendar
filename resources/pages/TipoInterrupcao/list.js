@@ -98,7 +98,7 @@ const List = ({match}) => {
                     <Wrapper>
                         <Header as="span">Tipos de Interrupções</Header>
                         <ShowComponentIfAuthorized permission={[SCOPES.CREATE_INTERRUPTION_TYPES]}>
-                            <Link to="/interrupcao/novo">
+                            <Link to="/tipo-interrupcao/novo">
                                 <Button floated="right" color="green">
                                     Nova
                                 </Button>

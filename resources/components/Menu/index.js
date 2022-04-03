@@ -114,7 +114,7 @@ const HeaderMenu = () => {
                                 <Dropdown.Item as={Link} to="/calendario/fases">{t('menu.Fases Calendário')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...INTERRUPTION_TYPES_SCOPES,]}>
-                                <Dropdown.Item as={Link} to="/interrupcao/">{t('menu.Tipos Interrupções')}</Dropdown.Item>
+                                <Dropdown.Item as={Link} to="/tipo-interrupcao/">{t('menu.Tipos Interrupções')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...EVALUATION_TYPE_SCOPES]}>
                                 <Dropdown.Item as={Link} to="/tipo-avaliacao">{t('menu.Tipos Avaliações')}</Dropdown.Item>

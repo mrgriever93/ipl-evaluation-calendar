@@ -71,16 +71,16 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::controller(EvaluationTypeController::class)->group(function () {
-        Route::get('/evaluation-types',                         'list'   );
+        Route::get('/evaluation-types',                         'index'   );
         Route::get('/evaluation-types/{id}',                    'show'   );
         Route::delete('/evaluation-types/{evaluationType}',     'destroy');
         Route::post('/evaluation-types',                        'store'  );
         Route::patch('/evaluation-types/{evaluationType}',      'update' );
     });
 
-    Route::controller(EvaluationTypeController::class)->group(function () {
-        Route::post('/interruption-types',                      'store'  );
+    Route::controller(InterruptionTypeController::class)->group(function () {
         Route::get('/interruption-types',                       'index'  );
+        Route::post('/interruption-types',                      'store'  );
         Route::get('/interruption-types/{interruptionType}',    'show'   );
         Route::patch('/interruption-types/{interruptionType}',  'update' );
         Route::delete('/interruption-types/{interruptionType}', 'destroy');

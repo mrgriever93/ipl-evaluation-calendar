@@ -4,9 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InterruptionTypeRequest;
-use App\Http\Resources\InterruptionTypeResource;
+use App\Http\Resources\Admin\InterruptionTypeResource;
 use App\Models\InterruptionType;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class InterruptionTypeController extends Controller

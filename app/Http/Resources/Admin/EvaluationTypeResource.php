@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Admin;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,10 +15,10 @@ class EvaluationTypeResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'code' => $this->code,
-            'description' => $this->description,
-            'enabled' => $this->enabled
+            'id'          => $this->id,
+            'code'        => $this->code,
+            'description' => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
+            'enabled'     => $this->enabled
         ];
     }
 }

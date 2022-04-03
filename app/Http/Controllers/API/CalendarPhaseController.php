@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\CalendarPhase;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CalendarPhaseRequest;
-use App\Http\Resources\CalendarPhaseResource;
-use Illuminate\Http\Request;
+use App\Http\Resources\Admin\CalendarPhaseResource;
+use App\Models\CalendarPhase;
 use Illuminate\Http\Response;
 
 class CalendarPhaseController extends Controller
