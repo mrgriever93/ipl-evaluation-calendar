@@ -29,6 +29,7 @@ const List = () => {
             setIsLoading(false);
             if (response.status === 200) {
                 setUserGroups(response?.data?.data);
+                setFilteredResults(response?.data?.data);
             }
         });
     }, []);
@@ -72,17 +73,14 @@ const List = () => {
         <Container>
             <Card fluid>
                 <Card.Content>
-                    { isLoading && (
-                        <Dimmer active inverted>
-                            <Loader indeterminate>{t("A carregar os grupos")}</Loader>
-                        </Dimmer>
-                    )}
-                    <div>
+                    <div className='card-header-alignment'>
                         <Header as="span">{t("Grupos de Utilizador")}</Header>
                         <ShowComponentIfAuthorized permission={[SCOPES.CREATE_USER_GROUPS]}>
-                            <Link to="/grupo-utilizador/novo">
-                                <Button floated="right" color="green">{t("Novo")}</Button>
-                            </Link>
+                            { !isLoading && (
+                                <Link to="/grupo-utilizador/novo">
+                                    <Button floated="right" color="green">{t("Novo")}</Button>
+                                </Link>
+                            )}
                         </ShowComponentIfAuthorized>
                     </div>
                 </Card.Content>
@@ -106,7 +104,7 @@ const List = () => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            { (filteredResults?.length ? filteredResults : userGroups )?.map(({ id, description, enabled, removable }, index ) => (
+                            { filteredResults?.map(({ id, description, enabled, removable }, index ) => (
                                 <Table.Row key={index}>
                                     <Table.Cell>{description}</Table.Cell>
                                     <Table.Cell textAlign="center">

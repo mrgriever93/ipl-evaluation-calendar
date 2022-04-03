@@ -11,7 +11,6 @@ import store from './redux/store';
 
 import 'semantic-ui-css/semantic.min.css';
 import 'react-toastify/dist/ReactToastify.css';
-import './global.css';
 
 import RoutesList from './routes';
 import PageLoader from "./components/PageLoader";
