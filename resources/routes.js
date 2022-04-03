@@ -34,7 +34,7 @@ const GrupoUtilizador = lazy(() => import('./pages/GrupoUtilizador'));
 const GrupoUtilizadorNew = lazy(() => import('./pages/GrupoUtilizador/new'));
 const GrupoUtilizadorList = lazy(() => import('./pages/GrupoUtilizador/list'));
     //Permissoes Pages
-const Permissoes = lazy(() => import('./pages/Permissoes'));
+// const Permissoes = lazy(() => import('./pages/Permissoes'));
     //AgrupamentoUnidadeCurricular Pages
 const AgrupamentoUnidadeCurricular = lazy(() => import('./pages/AgrupamentoUnidadeCurricular'));
 const AgrupamentoUnidadeCurricularList = lazy(() => import('./pages/AgrupamentoUnidadeCurricular/list'));
@@ -185,10 +185,10 @@ const RouterList = (isLoggedIn) => {
                         { path: '*', element: <NotFoundPage />}
                     ],
                 },
-                {
-                    path: "/permissoes",
-                    element: (isAuthorized.CHANGE_PERMISSIONS) ? <Permissoes /> : <Navigate to="/no-permissions" />,
-                },
+                // {
+                //     path: "/permissoes",
+                //     element: (isAuthorized.CHANGE_PERMISSIONS) ? <Permissoes /> : <Navigate to="/no-permissions" />,
+                // },
             ],
         },
         { path: "/login", element: <Login /> },

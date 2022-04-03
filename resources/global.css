@@ -34,6 +34,9 @@
     height: 223px;
 }
 
+.ui.button.loading {
+    pointer-events: none !important; /* to make sure you can't click twice on the same button, while it's loading */
+}
 
 /*
  * Margin values

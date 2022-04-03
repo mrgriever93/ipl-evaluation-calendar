@@ -44,7 +44,12 @@ class Group extends Model
 
     public function permissions()
     {
-        return $this->belongsToMany(Permission::class, 'group_permissions')->withPivot(['phase_id', 'enabled']);
+        return $this->belongsToMany( Permission::class, 'group_permissions')->withPivot(['phase_id', 'enabled']);
+    }
+
+    public function associatedPermissions()
+    {
+        return $this->hasMany(GroupPermission::class);
     }
 
     public function scopeCoordinator($query)
@@ -92,5 +97,27 @@ class Group extends Model
 
     public function scopeIsStudent($query) {
         return $query->where('name', InitialGroups::STUDENT);
+    }
+
+    /*
+     * Clone Group with permissions
+     * */
+    /**
+     * Get the comments for the blog post.
+     */
+    public function cloneGroupWithPermissions()
+    {
+        $clone = $this->replicate();
+        $clone->name = $this->name . '_copy';
+        $clone->description_pt =  'Cópia de ' . $this->description_pt;
+        $clone->description_en = 'Copy of ' . $this->description_en;
+        $clone->removable = true;
+        $clone->push();
+        foreach($this->associatedPermissions as $permission)
+        {
+            $clone->associatedPermissions()->create($permission->toArray());
+        }
+        $clone->save();
+        return $clone;
     }
 }
