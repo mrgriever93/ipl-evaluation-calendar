@@ -109,8 +109,8 @@ class Group extends Model
     {
         $clone = $this->replicate();
         $clone->name = $this->name . '_copy';
-        $clone->description_pt = $this->description_pt . ' copia';
-        $clone->description_en = $this->description_en . ' copy';
+        $clone->description_pt =  'Cópia de ' . $this->description_pt;
+        $clone->description_en = 'Copy of ' . $this->description_en;
         $clone->removable = true;
         $clone->push();
         foreach($this->associatedPermissions as $permission)
