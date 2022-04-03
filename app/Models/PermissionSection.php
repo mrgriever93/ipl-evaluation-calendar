@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PermissionSection extends Model
 {
-    protected $fillable = ["code", "description_pt", "description_en"];
+    protected $fillable = ["code", "name_pt", "name_en"];
 
     /**
      * Get the Permissions for the Category.

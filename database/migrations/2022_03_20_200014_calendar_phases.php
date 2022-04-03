@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('calendar_phases', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
-            $table->string('name');
-            $table->string('description_pt');
-            $table->string('description_en');
+            $table->string('code');
+            $table->string('name_pt');
+            $table->string('name_en');
             $table->boolean('enabled')->default(true);
             $table->boolean('removable')->default(true);
 

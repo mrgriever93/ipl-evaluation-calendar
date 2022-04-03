@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('evaluation_types', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
             $table->string('code')->unique();
-            $table->string('description_pt');
-            $table->string('description_en');
+            $table->string('name_pt');
+            $table->string('name_en');
             $table->boolean('enabled')->default(true);
 
             $table->timestamp('created_at')->useCurrent();

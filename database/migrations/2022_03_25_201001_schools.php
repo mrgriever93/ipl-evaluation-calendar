@@ -17,7 +17,8 @@ return new class extends Migration
         Schema::create('schools', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
             $table->string('code')->unique();
-            $table->string('name');
+            $table->string('name_pt');
+            $table->string('name_en');
             $table->unsignedBigInteger('gop_group_id')->nullable();
             $table->unsignedBigInteger('board_group_id')->nullable();
             $table->unsignedBigInteger('pedagogic_group_id')->nullable();

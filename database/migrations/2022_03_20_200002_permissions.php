@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('permission_categories');
-            $table->string('name');
-            $table->string('description_pt');
-            $table->string('description_en');
+            $table->string('code');
+            $table->string('name_pt');
+            $table->string('name_en');
             $table->unsignedBigInteger('section_id');
             $table->foreign('section_id')->references('id')->on('permission_sections');
 

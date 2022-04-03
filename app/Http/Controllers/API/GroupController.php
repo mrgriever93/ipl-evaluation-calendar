@@ -24,7 +24,7 @@ class GroupController extends Controller
      */
     public function index()
     {
-        return GroupsResource::collection(Group::orderBy('name')->get());
+        return GroupsResource::collection(Group::orderBy('code')->get());
     }
 
     /**
