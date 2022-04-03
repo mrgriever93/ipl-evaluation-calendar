@@ -12,7 +12,7 @@ import GroupPermissions from './groupPermissions';
 
 const New = () => {
     const { t } = useTranslation();
-    const history = useNavigate();
+    const navigate = useNavigate();
     // get URL params
     let { id } = useParams();
     let paramsId = id;
@@ -34,9 +34,9 @@ const New = () => {
 
     useEffect(() => {
         if (!loading && paramsId && !userGroup) {
-            history('/grupo-utilizador');
+            navigate('/grupo-utilizador');
         }
-    }, [paramsId, loading, userGroup, history]);
+    }, [paramsId, loading, userGroup, navigate]);
 
     const initialValues = useMemo(() => {
         const { id, name, description_pt, description_en, enabled = true } = userGroup;
@@ -64,13 +64,13 @@ const New = () => {
     };
 
     const handleCloneGroup = () => {
+        setIsSaving(true);
         axios.get(`/user-group/${paramsId}/clone`).then( (res) => {
-            
+            setIsSaving(false);
             if (res.status === 201) {
                 toast(t('Grupo duplicado com sucesso'), successConfig);
-
                 if( res.data.id) {
-                    window.navigate("/grupo-utilizador/edit/"+res.data.id);
+                    navigate("/grupo-utilizador/edit/" + res.data.id);
                 }
             }
             else {
@@ -124,7 +124,7 @@ const New = () => {
                                 <Icon name={isEditMode ? 'save' : 'plus'} /> {isEditMode ? t('Guardar') : t('Criar')}
                             </Button>
                             {isEditMode && (
-                                <Button onClick={handleCloneGroup} color="yellow" icon labelPosition="left" floated="right" >
+                                <Button onClick={handleCloneGroup} color="yellow" icon labelPosition="left" floated="right" loading={isSaving} >
                                     <Icon name='clone outline'/> { t('Duplicar') }
                                 </Button>
                             )}

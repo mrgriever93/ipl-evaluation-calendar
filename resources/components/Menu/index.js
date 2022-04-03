@@ -125,9 +125,9 @@ const HeaderMenu = () => {
                             <ShowComponentIfAuthorized permission={[...USER_SCOPES]}>
                                 <Dropdown.Item as={Link} to="/utilizador/">{t('menu.Utilizadores')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
-                            <ShowComponentIfAuthorized permission={[...PERMISSIONS_SCOPES]}>
+                            {/* <ShowComponentIfAuthorized permission={[...PERMISSIONS_SCOPES]}>
                                 <Dropdown.Item as={Link} to="/permissoes/">{t('menu.Permissões')}</Dropdown.Item>
-                            </ShowComponentIfAuthorized>
+                            </ShowComponentIfAuthorized> */}
                         </Dropdown.Menu>
                     </Dropdown>
                 </ShowComponentIfAuthorized>
