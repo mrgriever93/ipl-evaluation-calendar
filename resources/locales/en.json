@@ -9,7 +9,7 @@
         "menu.Unidades de Ensino": "Teaching Units",
         "menu.Fases Calendário": "Calendar Phases",
         "menu.Tipos Interrupções": "Types Interrupts",
-        "menu.Tipos Avaliações": "Assessments Types",
+        "menu.Tipos Avaliações": "Evaluation Types",
         "menu.Grupos Utilizador": "User groups",
         "menu.Utilizadores": "Users",
         "menu.Permissões": "Permissions",
@@ -68,14 +68,25 @@
         "Ohh! Não foi possível encontrar Tipos de Avaliação!": "Ohh! It wasn't possible to find Evaluation Types!",
         "Remover Tipo de Avaliação":  "Delete Evaluation Type",
         "Tem a certeza que deseja remover o tipo de avaliação": "Are you sure you want to delete this evaluation type",
-        "Tipo de Avaliação removido com sucesso!": "Evaluation type deleted with success!",
+        "Tipo de Avaliação removido com sucesso!": "Evaluation Type deleted with success!",
         "Não foi possível remover o Tipo de Avaliação!": "There was a problem removing the Evaluation Type!",
         "Tipo de Avaliação atualizado com sucesso": "Evaluation Type updated with success",
         "Tipo de Avaliação criado com sucesso": "Evaluation Type created with success",
-
         "Editar Tipo de Avaliação": "Edit Evaluation Type",
         "Novo Tipo de Avaliação":  "New Evaluation Type",
 
+
+        "Tipos de Interrupções": "Interruptions Types",
+        "Pesquisar tipo de Interrupção...": "Search interruption type...",
+        "Ohh! Não foi possível encontrar Tipos de Interrupção!": "Ohh! It wasn't possible to find Interruption Types!",
+        "Remover Tipo de Interrupção":  "Delete Interruption Type",
+        "Tem a certeza que deseja remover o Tipo de Interrupção": "Are you sure you want to delete this Interruption Type",
+        "Tipo de Interrupção removido com sucesso!": "Interruption Type deleted with success!",
+        "Não foi possível remover o Tipo de Interrupção!": "There was a problem removing the Interruption Type!",
+        "Tipo de Interrupção atualizado com sucesso": "Interruption Type updated with success",
+        "Tipo de Interrupção criado com sucesso": "Interruption Type created with success",
+        "Editar Tipo de Interrupção": "Edit Interruption Type",
+        "Novo Tipo de Interrupção":  "New Interruption Type",
 
         
         "Descrição": "Description",

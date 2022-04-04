@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Card, Checkbox, Container, Dimmer, Form, Icon, Loader } from 'semantic-ui-react';
 import { Field, Form as FinalForm } from 'react-final-form';
-import {useParams, useNavigate} from "react-router-dom";
+import { useParams, useNavigate} from "react-router-dom";
 import _ from 'lodash';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
