@@ -21,3 +21,5 @@ mix.js("resources/index.js", "public/js").react();
 mix.webpackConfig({
     watchOptions: { ignored: /node_modules/ },
 });
+
+mix.disableSuccessNotifications();
