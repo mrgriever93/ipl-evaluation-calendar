@@ -1,18 +1,22 @@
 import React from 'react';
 import {useTranslation} from "react-i18next";
-import moment from "moment";
 
-const YearSelector = (yearChange) => {
+const YearSelector = ({yearChange, existingYears}) => {
     const { t } = useTranslation();
-    const academicYears = [
-        moment(new Date()).add(-2, 'year').format('YYYY') + "-" + moment(new Date()).add(-1, 'year').format('YY'),
-        moment(new Date()).add(-1, 'year').format('YYYY') + "-" + moment(new Date()).format('YY'),
-        moment(new Date()).format('YYYY') + "-" + moment(new Date()).add(1, 'year').format('YY'),
-        moment(new Date()).add(1, 'year').format('YYYY') + "-" + moment(new Date()).add(2, 'year').format('YY'),
-        moment(new Date()).add(2, 'year').format('YYYY') + "-" + moment(new Date()).add(3, 'year').format('YY')
+
+    const currYear = new Date().getFullYear();
+    let academicYears = [
+        (currYear - 2) + "-" + (currYear - 1).toString().substring(2),
+        (currYear - 1) + "-" + currYear.toString().substring(2),
+        currYear + "-" + (currYear + 1).toString().substring(2),
+        (currYear + 1) + "-" + (currYear + 2).toString().substring(2),
+        (currYear + 2) + "-" + (currYear + 3).toString().substring(2),
     ];
+    if( Object.keys(existingYears).length > 0 ) {
+        academicYears = academicYears.filter((element) => !existingYears.some(e => e.display === element));
+    }
     const handleYearChange = (event) => {
-        yearChange.yearChange(event.target.value);
+        yearChange(event.target.value);
     }
 
     return (
