@@ -11,7 +11,7 @@ class AcademicYearResource extends JsonResource
         return [
             'id'    => $this->id,
             'code'  => $this->code,
-            'selected' => $request->hasCookie('academic_year') ? $this->id == $request->cookie('academic_year') : $this->active,
+            'selected' => $this->selected,//$request->hasCookie('academic_year') ? $this->id == $request->cookie('academic_year') : $this->active,
             'display' => $this->display,
             'active' => $this->active,
         ];
