@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Card, Container, Table, Form, Button, Header, Icon, Modal, Dimmer, Loader } from 'semantic-ui-react';
+import {Card, Container, Table, Form, Button, Header, Icon, Modal } from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
 import {toast} from 'react-toastify';
@@ -17,9 +17,9 @@ const List = () => {
         {name: t('Ações'),  align: 'center', style: {width: '15%'} },
     ];
     const [filteredResults, setFilteredResults] = useState([]);
+    const [userGroups, setUserGroups] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [modalInfo, setModalInfo] = useState();
-    const [userGroups, setUserGroups] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const loadUserGroups = useCallback(() => {
@@ -63,6 +63,8 @@ const List = () => {
         axios.delete(`/user-group/${modalInfo.id}`).then((res) => {
             if (res.status === 200) {
                 toast(t("Grupo de utilizador removido com sucesso!"), successConfig);
+            } else {
+                toast(t("Não foi possível remover o Grupo de utilizador!"), errorConfig);
             }
             loadUserGroups();
         });
@@ -119,7 +121,7 @@ const List = () => {
                                             </Link>
                                         </ShowComponentIfAuthorized>
                                         <ShowComponentIfAuthorized permission={[SCOPES.DELETE_USER_GROUPS]}>
-                                            <Button onClick={() => remove({id,name: description}) } color="red" icon disabled={!removable} >
+                                            <Button onClick={() => remove({id, name: description}) } color="red" icon disabled={!removable} >
                                                 <Icon name="trash"/>
                                             </Button>
                                         </ShowComponentIfAuthorized>
@@ -131,9 +133,10 @@ const List = () => {
                     )}
                 </Card.Content>
             </Card>
+
             <Modal dimmer="blurring" open={modalOpen} onClose={handleModalClose} >
                 <Modal.Header>{t("Remover Grupo de Utilizador")}</Modal.Header>
-                <Modal.Content>{t("Tem a certeza que deseja remover o grupo de utilizador")} <strong>{modalInfo?.name}</strong> ?</Modal.Content>
+                <Modal.Content>{t("Tem a certeza que deseja remover o grupo de utilizador")} <strong>{modalInfo?.description}</strong> ?</Modal.Content>
                 <Modal.Actions>
                     <Button negative onClick={handleModalClose}>{t("Cancelar")}</Button>
                     <Button positive onClick={handleRemoval}>{t("Sim")}</Button>
