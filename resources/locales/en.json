@@ -67,6 +67,11 @@
         "Tem a certeza que deseja remover o tipo de avaliação": "Are you sure you want to delete this evaluation type",
         "Tipo de Avaliação removido com sucesso!": "Evaluation type deleted with success!",
         "Não foi possível remover o Tipo de Avaliação!": "There was a problem removing the Evaluation Type!",
+        "Tipo de Avaliação atualizado com sucesso": "Evaluation Type updated with success",
+        "Tipo de Avaliação criado com sucesso": "Evaluation Type created with success",
+
+        "Editar Tipo de Avaliação": "Edit Evaluation Type",
+        "Novo Tipo de Avaliação":  "New Evaluation Type",
 
 
         

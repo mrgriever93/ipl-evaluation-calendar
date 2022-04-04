@@ -19,9 +19,10 @@ class EvaluationTypeRequest extends FormRequest
     public function rules()
     {
         $rules =  [
-            'code'         => 'string|max:120',
-            'description'  => 'string|max:255',
-            'enabled'      => 'required|boolean',
+            'code'      => 'string|max:120',
+            'name_pt'   => 'string|max:255',
+            'name_en'   => 'string|max:255',
+            'enabled'   => 'required|boolean',
         ];
 
         return $rules;

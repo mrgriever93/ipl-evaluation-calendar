@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EvaluationTypeRequest;
-use App\Http\Requests\NewEvaluationTypeRequest;
+use App\Http\Resources\Admin\Edit\EvaluationTypeDetailResource;
 use App\Http\Resources\Admin\EvaluationTypeResource;
 use App\Models\EvaluationType;
 use Illuminate\Http\Response;
@@ -26,7 +26,7 @@ class EvaluationTypeController extends Controller
 
     public function show($id)
     {
-        return new EvaluationTypeResource(EvaluationType::findOrFail($id));
+        return new EvaluationTypeDetailResource(EvaluationType::findOrFail($id));
     }
 
     public function update(EvaluationTypeRequest $request, EvaluationType $evaluationType)
