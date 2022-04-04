@@ -57,7 +57,7 @@
 
 
 
-        
+
         "A carregar dados": "A carregar dados",
         "Criar novo": "Criar novo",
         "Cancelar": "Cancelar",
@@ -75,6 +75,11 @@
         "ano_letivo.Ocorreu um problema ao abrir um novo ano letivo!": "Ocorreu um problema ao abrir um novo ano letivo!",
         "ano_letivo.Abrir novo ano letivo": "Abrir novo ano letivo",
         "ano_letivo.Ao abrir um novo ano letivo, este ficará ativo por defeito para todos os utilizadores!": "Ao abrir um novo ano letivo, este ficará ativo por defeito para todos os utilizadores!",
-        "ano_letivo.Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?": "Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?"
+        "ano_letivo.Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?": "Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?",
+        "Selecionado": "Selecionado",
+        "ano_letivo.Ano letivo atualizado com sucesso!": "Ano letivo atualizado com sucesso!",
+        "ano_letivo.Ocorreu um problema ao atualizar o ano letivo!" : "Ocorreu um problema ao atualizar o ano letivo!",
+        "É o ano que irá estar selecionado automáticamente para o utilizador! Apenas um pode estar selecionado de cada vez.": "É o ano que irá estar selecionado automáticamente para o utilizador! Apenas um pode estar selecionado de cada vez.",
+        "Anos letivos disponivies para os utilizadores selecionarem.": "Anos letivos disponivies para os utilizadores selecionarem."
     }
 }
