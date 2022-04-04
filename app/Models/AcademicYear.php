@@ -10,7 +10,7 @@ class AcademicYear extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ["code", "display", "active"];
+    protected $fillable = ["code", "display", "active", "selected"];
 
     public $timestamps = false;
 

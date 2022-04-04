@@ -31,24 +31,48 @@ class AcademicYearController extends Controller
     {
         try {
             DB::beginTransaction();
-            AcademicYear::query()->update(['active' => false]);
+            //AcademicYear::query()->update(['active' => false, 'selected' => false]);
 
-            $newAcademicYear = new AcademicYear($request->all());
-            $newAcademicYear->save();
+            $oldYear = AcademicYear::withTrashed()
+                ->where('code', $request->code)
+                ->first();
+
+            if($oldYear){
+                $oldYear->restore();
+            } else {
+                $newAcademicYear = new AcademicYear($request->all());
+                $newAcademicYear->active = false;
+                $newAcademicYear->selected = false;
+                $newAcademicYear->save();
+            }
             DB::commit();
         } catch (Exception $ex) {
             DB::rollBack();
             return response()->json("An error has occurred! {$ex->getMessage()}", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        ProcessNewAcademicYear::dispatchAfterResponse($newAcademicYear);
+        // TODO @miguel.cerejo
+        // This will fetch the courses for this new year
+        //ProcessNewAcademicYear::dispatchAfterResponse($newAcademicYear);
 
         return response()->json("Created!", Response::HTTP_CREATED);
     }
 
-    public function show($id)
+    public function active($id)
     {
-        //
+        $year = AcademicYear::find($id);
+        $year->active = !$year->active;
+        $year->save();
+        return response()->json("Updated!", Response::HTTP_OK);
+    }
+
+    public function selected($id)
+    {
+        AcademicYear::where('selected', true)->update(['selected' => false]);
+        $year = AcademicYear::find($id);
+        $year->selected = !$year->selected;
+        $year->save();
+        return response()->json("Updated!", Response::HTTP_OK);
     }
 
     public function update(Request $request, $id)
@@ -58,6 +82,7 @@ class AcademicYearController extends Controller
 
     public function destroy($id)
     {
-        //
+        AcademicYear::find($id)->delete();
+        return response()->json("Deleted!", Response::HTTP_OK);
     }
 }

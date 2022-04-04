@@ -46,6 +46,7 @@
         "A carregar dados": "Loading data",
         "Criar novo": "Create new",
         "Ativo": "Active",
+        "Selecionado": "Selected",
         "Sem resultados": "No results",
 
         "ano_letivo.Anos letivos": "Academic years",
@@ -56,8 +57,10 @@
         "ano_letivo.Abrir novo ano letivo": "Create a new academic year",
         "ano_letivo.Ao abrir um novo ano letivo, este ficará ativo por defeito para todos os utilizadores!": "Creating a new academic year, it will be the one by default to the users!",
         "ano_letivo.Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?": "Are you sure you want to create a new academic year with the following code?",
-
-
+        "ano_letivo.Ano letivo atualizado com sucesso!": "Academic year updated with success!",
+        "ano_letivo.Ocorreu um problema ao atualizar o ano letivo!" : "There was a problem updating the academic year!",
+        "É o ano que irá estar selecionado automáticamente para o utilizador! Apenas um pode estar selecionado de cada vez.": "It is the year that will be automatically selected for the user! Only one can be selected at a time.",
+        "Anos letivos disponivies para os utilizadores selecionarem.": "Academic years available for users to select.",
 
         
         "Tipos de Avaliação": "Evaluation Types",

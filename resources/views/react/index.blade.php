@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="/css/main.css" />
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <div id="root"></div>
-        <script src="/js/index.js"></script>
+        <script src="{{ mix('js/index.js') }}"></script>
     </body>
 
 </html>
