@@ -101,3 +101,14 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 7) Plugins
 
    [Translations](https://react.i18next.com/)
+
+
+8) Links
+
+   https://laravel-mix.com/
+   
+    https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE
+
+   https://bobbyhadz.com/blog/javascript-remove-object-from-array-by-value
+
+    
