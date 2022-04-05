@@ -2,24 +2,31 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Resources\Generic\AcademicYearMenuResource;
 use App\Models\AcademicYear;
-use App\Events\AcademicYearRegistered;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AcademicYearRequest;
 use App\Http\Requests\AcademicYearSwitchRequest;
 use App\Http\Resources\AcademicYearResource;
 use App\Jobs\ProcessNewAcademicYear;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 
 class AcademicYearController extends Controller
 {
     public function index()
     {
-        return AcademicYearResource::collection(AcademicYear::all());
+        return AcademicYearResource::collection(AcademicYear::all()->sortBy('display'));
+    }
+
+    /**
+     * This will return a list of active academic years
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
+    public function menu()
+    {
+        return AcademicYearMenuResource::collection(AcademicYear::where('active', true)->get()->sortBy('display'));
     }
 
     public function switch(AcademicYearSwitchRequest $request)
@@ -36,13 +43,13 @@ class AcademicYearController extends Controller
             $oldYear = AcademicYear::withTrashed()
                 ->where('code', $request->code)
                 ->first();
-
+            $numYears = AcademicYear::all()->count();
             if($oldYear){
                 $oldYear->restore();
             } else {
                 $newAcademicYear = new AcademicYear($request->all());
-                $newAcademicYear->active = false;
-                $newAcademicYear->selected = false;
+                $newAcademicYear->active = $numYears == 0;
+                $newAcademicYear->selected = $numYears == 0;
                 $newAcademicYear->save();
             }
             DB::commit();
@@ -55,7 +62,7 @@ class AcademicYearController extends Controller
         // This will fetch the courses for this new year
         //ProcessNewAcademicYear::dispatchAfterResponse($newAcademicYear);
 
-        return response()->json("Created!", Response::HTTP_CREATED);
+        return (AcademicYearResource::collection(AcademicYear::all()->sortBy('display')))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
     public function active($id)
@@ -72,17 +79,12 @@ class AcademicYearController extends Controller
         $year = AcademicYear::find($id);
         $year->selected = !$year->selected;
         $year->save();
-        return response()->json("Updated!", Response::HTTP_OK);
-    }
-
-    public function update(Request $request, $id)
-    {
-        //
+        return (AcademicYearResource::collection(AcademicYear::all()->sortBy('display')))->response()->setStatusCode(Response::HTTP_OK);
     }
 
     public function destroy($id)
     {
         AcademicYear::find($id)->delete();
-        return response()->json("Deleted!", Response::HTTP_OK);
+        return (AcademicYearResource::collection(AcademicYear::all()->sortBy('display')))->response()->setStatusCode(Response::HTTP_OK);
     }
 }
