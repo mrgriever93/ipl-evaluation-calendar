@@ -177,7 +177,7 @@ const RouterList = (isLoggedIn) => {
                 },
                 {
                     path: "/grupo-utilizador",
-                    element: (isAuthorized.EDIT_USER_GROUPS || isAuthorized.CREATE_USER_GROUPS || isAuthorized.DELETE_USER_GROUPS) ? <GrupoUtilizador /> : <Navigate to="/no-permissions" />,
+                    element: (isAuthorized.CHANGE_PERMISSIONS || isAuthorized.EDIT_USER_GROUPS || isAuthorized.CREATE_USER_GROUPS || isAuthorized.DELETE_USER_GROUPS) ? <GrupoUtilizador /> : <Navigate to="/no-permissions" />,
                     children: [
                         { path: 'novo', exact: true, element: <GrupoUtilizadorNew />},
                         { path: 'edit/:id', exact: true, element: <GrupoUtilizadorNew />},

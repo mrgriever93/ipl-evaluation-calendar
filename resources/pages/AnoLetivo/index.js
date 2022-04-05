@@ -22,7 +22,6 @@ const AnoLetivo = () => {
     const [loading, setLoading] = useState(true);
 
     const columns = [
-        {name: 'ID',                style: {width: '15%'}},
         {name: t('Descrição')},
         {name: t('Ativo'),          textAlign: 'center', popup: <Popup trigger={<Icon name="info circle" />} content={t('Anos letivos disponivies para os utilizadores selecionarem.')} position='top center'/>},
         {name: t('Selecionado'),    textAlign: 'center', popup: <Popup trigger={<Icon name="info circle" />} content={t('É o ano que irá estar selecionado automáticamente para o utilizador! Apenas um pode estar selecionado de cada vez.')} position='top center'/>},
@@ -161,15 +160,18 @@ const AnoLetivo = () => {
                             <Table.Body>
                                 { academicYearsList.map(({id, active, selected, display, code, isActiveLoading, isSelectedLoading}) => (
                                     <Table.Row key={id}>
-                                        <Table.Cell>{id}</Table.Cell>
                                         <Table.Cell><b>{display}</b> <small>({code})</small></Table.Cell>
                                         <Table.Cell textAlign="center">
-                                            { isActiveLoading && (<Icon loading name='spinner'/>)}
-                                            <Checkbox toggle defaultChecked={active} onChange={() => handleYearActive(id)} />
+                                            <ShowComponentIfAuthorized permission={[SCOPES.EDIT_ACADEMIC_YEARS]} renderIfNotAllowed={<Checkbox toggle disabled defaultChecked={active}/>}>
+                                                { isActiveLoading && (<Icon loading name='spinner'/>)}
+                                                <Checkbox toggle defaultChecked={active} onChange={() => handleYearActive(id)} />
+                                            </ShowComponentIfAuthorized>
                                         </Table.Cell>
                                         <Table.Cell textAlign="center">
-                                            { isSelectedLoading && (<Icon loading name='spinner'/>)}
-                                            <Checkbox toggle defaultChecked={selected} disabled={selected} onChange={() => handleYearSelected(id)} />
+                                            <ShowComponentIfAuthorized permission={[SCOPES.EDIT_ACADEMIC_YEARS]} renderIfNotAllowed={<Checkbox toggle disabled defaultChecked={selected}/>}>
+                                                { isSelectedLoading && (<Icon loading name='spinner'/>)}
+                                                <Checkbox toggle defaultChecked={selected} disabled={selected} onChange={() => handleYearSelected(id)} />
+                                            </ShowComponentIfAuthorized>
                                         </Table.Cell>
                                         <Table.Cell textAlign="center">
                                             <ShowComponentIfAuthorized permission={[SCOPES.DELETE_ACADEMIC_YEARS]}>
