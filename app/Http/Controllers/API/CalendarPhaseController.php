@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CalendarPhaseRequest;
+use App\Http\Resources\Admin\Edit\CalendarPhaseDetailResource;
 use App\Http\Resources\Admin\CalendarPhaseResource;
 use App\Models\CalendarPhase;
 use Illuminate\Http\Response;
@@ -25,7 +26,7 @@ class CalendarPhaseController extends Controller
 
     public function show(CalendarPhase $calendarPhase)
     {
-        return new CalendarPhaseResource($calendarPhase);
+        return new CalendarPhaseDetailResource($calendarPhase);
     }
 
     public function update(CalendarPhaseRequest $request, CalendarPhase $calendarPhase)

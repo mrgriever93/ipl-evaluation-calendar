@@ -101,6 +101,7 @@
         "Editar Fase do calendário": "Edit calendar phase",
         "Nova fase do calendário":  "New calendar phase",
 
+        "Ocorreu um erro ao carregar a informacao pretendida": "Something went wrong while trying to fetch data",
         
         "Descrição": "Description",
         "Ativo?": "Active?",

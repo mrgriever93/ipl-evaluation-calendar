@@ -16,9 +16,10 @@ class CalendarPhaseRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => "required|string",
-            "description" => "required|string",
-            "enabled" => "sometimes|boolean"
+            'code'      => 'required|string',
+            'name_pt'   => 'required|string',
+            'name_en'   => 'required|string',
+            "enabled"   => "sometimes|boolean"
         ];
     }
 }
