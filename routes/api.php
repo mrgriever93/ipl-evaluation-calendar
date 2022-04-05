@@ -132,6 +132,7 @@ Route::middleware('auth:api')->group(function () {
     Route::controller(AcademicYearController::class)->group(function () {
         Route::post('/academic-years',              'store' );
         Route::get('/academic-years',               'index' );
+        Route::get('/academic-years/menu',          'menu' );
         Route::post('/academic-years/switch',       'switch');
         Route::delete('/academic-year/{id}',        'destroy');
         Route::post('/academic-year/{id}/active',   'active');
