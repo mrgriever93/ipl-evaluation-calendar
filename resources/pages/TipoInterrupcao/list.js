@@ -41,7 +41,7 @@ const List = () => {
     const filterResults = useCallback(
         (searchTerm) => {
             const filtered = interruptionList.filter(
-                (x) => x.description.toLowerCase().includes(searchTerm.toLowerCase()) || x.name.toLowerCase().includes(searchTerm.toLowerCase()),
+                (x) => x.description.toLowerCase().includes(searchTerm.toLowerCase()) || x.code.toLowerCase().includes(searchTerm.toLowerCase()),
             );
             setFilteredResults(filtered);
         },
@@ -124,7 +124,7 @@ const List = () => {
                                             </Link>
                                         </ShowComponentIfAuthorized>
                                         <ShowComponentIfAuthorized permission={[SCOPES.DELETE_INTERRUPTION_TYPES]}>
-                                            <Button onClick={() => remove({id, name: description}) } color="red" icon disabled={!removable} >
+                                            <Button onClick={() => remove({id, description}) } color="red" icon disabled={!removable} >
                                                 <Icon name="trash"/>
                                             </Button>
                                         </ShowComponentIfAuthorized>

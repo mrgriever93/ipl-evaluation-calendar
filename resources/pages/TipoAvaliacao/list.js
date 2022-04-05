@@ -124,7 +124,7 @@ const List = () => {
                                             </Link>
                                         </ShowComponentIfAuthorized>
                                         <ShowComponentIfAuthorized permission={[SCOPES.DELETE_EVALUATION_TYPES]}>
-                                            <Button onClick={() => remove({id, name: description}) } color="red" icon disabled={!removable} >
+                                            <Button onClick={() => remove({id, description}) } color="red" icon disabled={!removable} >
                                                 <Icon name="trash"/>
                                             </Button>
                                         </ShowComponentIfAuthorized>
