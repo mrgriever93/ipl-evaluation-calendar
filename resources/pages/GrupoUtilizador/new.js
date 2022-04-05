@@ -9,6 +9,8 @@ import { toast } from 'react-toastify';
 import {useTranslation} from "react-i18next";
 import { errorConfig, successConfig } from '../../utils/toastConfig';
 import GroupPermissions from './groupPermissions';
+import SCOPES from '../../utils/scopesConstants';
+import ShowComponentIfAuthorized from "../../components/ShowComponentIfAuthorized";
 
 const New = () => {
     const { t } = useTranslation();
@@ -132,7 +134,9 @@ const New = () => {
                     </Card>
                 </Form>
             )} />
-            {  isEditMode && <GroupPermissions /> }
+            <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_PERMISSIONS]}>
+                { isEditMode && <GroupPermissions /> }
+            </ShowComponentIfAuthorized>
         </Container>
     );
 };

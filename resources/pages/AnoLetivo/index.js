@@ -164,12 +164,16 @@ const AnoLetivo = () => {
                                         <Table.Cell>{id}</Table.Cell>
                                         <Table.Cell><b>{display}</b> <small>({code})</small></Table.Cell>
                                         <Table.Cell textAlign="center">
-                                            { isActiveLoading && (<Icon loading name='spinner'/>)}
-                                            <Checkbox toggle defaultChecked={active} onChange={() => handleYearActive(id)} />
+                                            <ShowComponentIfAuthorized permission={[SCOPES.EDIT_ACADEMIC_YEARS]} renderIfNotAllowed={<Checkbox toggle disabled defaultChecked={active}/>}>
+                                                { isActiveLoading && (<Icon loading name='spinner'/>)}
+                                                <Checkbox toggle defaultChecked={active} onChange={() => handleYearActive(id)} />
+                                            </ShowComponentIfAuthorized>
                                         </Table.Cell>
                                         <Table.Cell textAlign="center">
-                                            { isSelectedLoading && (<Icon loading name='spinner'/>)}
-                                            <Checkbox toggle defaultChecked={selected} disabled={selected} onChange={() => handleYearSelected(id)} />
+                                            <ShowComponentIfAuthorized permission={[SCOPES.EDIT_ACADEMIC_YEARS]} renderIfNotAllowed={<Checkbox toggle disabled defaultChecked={selected}/>}>
+                                                { isSelectedLoading && (<Icon loading name='spinner'/>)}
+                                                <Checkbox toggle defaultChecked={selected} disabled={selected} onChange={() => handleYearSelected(id)} />
+                                            </ShowComponentIfAuthorized>
                                         </Table.Cell>
                                         <Table.Cell textAlign="center">
                                             <ShowComponentIfAuthorized permission={[SCOPES.DELETE_ACADEMIC_YEARS]}>
