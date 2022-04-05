@@ -87,6 +87,19 @@
         "Tipo de Interrupção criado com sucesso": "Interruption Type created with success",
         "Editar Tipo de Interrupção": "Edit Interruption Type",
         "Novo Tipo de Interrupção":  "New Interruption Type",
+        
+        
+        "Fases do Calendário": "Calendar Phases",
+        "Pesquisar fase do calendário...": "Search calendar phase...",
+        "Ohh! Não foi possível encontrar a fase do calendário!": "Ohh! It wasn't possible to find a calendar phase!",
+        "Remover a fase do calendário":  "Delete calendar phase",
+        "Tem a certeza que deseja remover a fase do calendário": "Are you sure you want to delete this calendar phase",
+        "Fase do calendário removido com sucesso!": "Calendar phase deleted with success!",
+        "Não foi possível remover a fase do calendário!": "There was a problem removing the calendar phase!",
+        "Fase do calendário atualizado com sucesso": "Calendar phase updated with success",
+        "Fase do calendário criado com sucesso": "Calendar phase created with success",
+        "Editar Fase do calendário": "Edit calendar phase",
+        "Nova fase do calendário":  "New calendar phase",
 
         
         "Descrição": "Description",
