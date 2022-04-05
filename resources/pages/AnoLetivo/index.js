@@ -44,10 +44,11 @@ const AnoLetivo = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const remove = (userGroup) => {
-        setModalInfo(userGroup);
+    const remove = (id, code) => {
+        setModalInfo({id, code});
         setModalOpen(true);
     };
+
 
     const handleModalClose = () => setModalOpen(false);
 
@@ -58,30 +59,41 @@ const AnoLetivo = () => {
             setLoading(false);
             if (res.status === 200) {
                 toast(t('ano_letivo.Ano letivo atualizado com sucesso!'), successConfig);
-                const toDeleteIndex = academicYearsList.findIndex((el) => el.id === modalInfo.id);
-                academicYearsList.splice(toDeleteIndex, 1);
+                setAcademicYearsList(res?.data?.data);
             } else {
                 toast(t('ano_letivo.Ocorreu um problema ao atualizar o ano letivo!'), errorConfig);
             }
         });
     };
 
-    const handleYearSelected = (code) => {
-        setLoading(true);
-        axios.post('/academic-year/' + code.id + "/selected").then((res) => {
-            if (res.status === 200) {
-                toast(t('ano_letivo.Ano letivo atualizado com sucesso!'), successConfig);
-            } else {
-                toast(t('ano_letivo.Ocorreu um problema ao atualizar o ano letivo!'), errorConfig);
-            }
-            getAcademicYearsList();
-        });
+    const handleYearSelected = (id) => {
+        const toUpdateSelectedIndex = academicYearsList.findIndex((el) => el.id === id);
+        const toUpdateUnSelectedIndex = academicYearsList.findIndex((el) => el.selected);
+        if(toUpdateSelectedIndex !== toUpdateUnSelectedIndex && toUpdateSelectedIndex > -1 && toUpdateUnSelectedIndex > -1){
+            setLoading(true);
+            axios.post('/academic-year/' + id + "/selected").then((res) => {
+                setLoading(false);
+                if (res.status === 200) {
+                    setAcademicYearsList(res?.data?.data);
+                    toast(t('ano_letivo.Ano letivo atualizado com sucesso!'), successConfig);
+                } else {
+                    toast(t('ano_letivo.Ocorreu um problema ao atualizar o ano letivo!'), errorConfig);
+                }
+                //getAcademicYearsList();
+            });
+        } else {
+            alert("There is always one selected");
+        }
     };
 
-    const handleYearActive = (code) => {
-        axios.post('/academic-year/' + code.id + "/active").then((res) => {
+    const handleYearActive = (id) => {
+        const toUpdateSelectedIndex = academicYearsList.findIndex((el) => el.id === id);
+        academicYearsList[toUpdateSelectedIndex].isActiveLoading = true;
+        axios.post('/academic-year/' + id + "/active").then((res) => {
             if (res.status === 200) {
                 toast(t('ano_letivo.Ano letivo atualizado com sucesso!'), successConfig);
+                academicYearsList[toUpdateSelectedIndex].isActiveLoading = false;
+                academicYearsList[toUpdateSelectedIndex].active = !academicYearsList[toUpdateSelectedIndex].active;
             } else {
                 toast(t('ano_letivo.Ocorreu um problema ao atualizar o ano letivo!'), errorConfig);
             }
@@ -103,6 +115,7 @@ const AnoLetivo = () => {
             denyButtonColor: '#db2828',
         }).then((result) => {
                 if (result.isConfirmed) {
+                    setLoading(true);
                     const codeYear = selectedYear.replace('-', '');
                     axios.post('/academic-years', {
                         code: codeYear,
@@ -110,7 +123,8 @@ const AnoLetivo = () => {
                     }).then((res) => {
                         if (res.status === 201) {
                             toast(t('ano_letivo.O novo ano letivo foi aberto com sucesso!'), successConfig);
-                            handleGetList();
+                            setAcademicYearsList(res?.data?.data);
+                            setLoading(false);
                         } else {
                             toast(t('ano_letivo.Ocorreu um problema ao abrir um novo ano letivo!'), errorConfig);
                         }
@@ -145,19 +159,21 @@ const AnoLetivo = () => {
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
-                                { academicYearsList.map(({id, code, active, selected}) => (
+                                { academicYearsList.map(({id, active, selected, display, code, isActiveLoading, isSelectedLoading}) => (
                                     <Table.Row key={id}>
                                         <Table.Cell>{id}</Table.Cell>
-                                        <Table.Cell>{code}</Table.Cell>
+                                        <Table.Cell><b>{display}</b> <small>({code})</small></Table.Cell>
                                         <Table.Cell textAlign="center">
-                                            <Checkbox toggle defaultChecked={active === 1} onChange={() => handleYearActive({id, code})} />
+                                            { isActiveLoading && (<Icon loading name='spinner'/>)}
+                                            <Checkbox toggle defaultChecked={active} onChange={() => handleYearActive(id)} />
                                         </Table.Cell>
                                         <Table.Cell textAlign="center">
-                                            <Checkbox toggle defaultChecked={selected === 1} disabled={selected === 1} onChange={() => handleYearSelected({id, code})} />
+                                            { isSelectedLoading && (<Icon loading name='spinner'/>)}
+                                            <Checkbox toggle defaultChecked={selected} disabled={selected} onChange={() => handleYearSelected(id)} />
                                         </Table.Cell>
                                         <Table.Cell textAlign="center">
                                             <ShowComponentIfAuthorized permission={[SCOPES.DELETE_ACADEMIC_YEARS]}>
-                                                <Button onClick={() => remove({id, code})} color="red" icon disabled={selected === 1}>
+                                                <Button onClick={() => remove(id, code)} color="red" icon disabled={selected}>
                                                     <Icon name="trash"/>
                                                 </Button>
                                             </ShowComponentIfAuthorized>

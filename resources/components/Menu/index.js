@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link, useNavigate} from 'react-router-dom';
-import {Container, Image, Menu, Dropdown} from 'semantic-ui-react';
+import {Container, Image, Menu, Dropdown, Icon} from 'semantic-ui-react';
 import axios from 'axios';
 import {useTranslation} from "react-i18next";
 import {logout, setAcademicYear} from '../../redux/app/actions';
@@ -31,13 +31,9 @@ const HeaderMenu = ({languageChanger}) => {
     const [selectedLanguage, setSelectedLanguage] = useState(localStorage.getItem('language'));
 
     useEffect(() => {
-        axios.get('academic-years').then((response) => {
+        axios.get('academic-years/menu').then((response) => {
             if (response.status >= 200 && response.status < 300) {
-                dispatch(
-                    setAcademicYear(
-                        response?.data?.data?.find((year) => year.selected),
-                    ),
-                );
+                dispatch(setAcademicYear(response?.data?.data?.find((year) => year.selected),),);
                 setAcademicYearsList(response?.data?.data);
             }
         });
@@ -62,8 +58,7 @@ const HeaderMenu = ({languageChanger}) => {
     };
 
     const switchAcademicYear = (academicYear) => {
-        axios
-            .post('academic-years/switch', {
+        axios.post('academic-years/switch', {
                 switch_to: academicYear.id,
             })
             .then(() => {
@@ -77,7 +72,6 @@ const HeaderMenu = ({languageChanger}) => {
         setSelectedLanguage(lang);
         i18n.changeLanguage(lang);
         languageChanger(lang);
-        //window.location.reload();
     }
 
     const selectedAcademicYear = useSelector((state) => state.app.academicYear);
@@ -141,17 +135,16 @@ const HeaderMenu = ({languageChanger}) => {
                         </Dropdown.Menu>
                     </Dropdown>
                     {academicYearsList?.length > 1 && (
-                        <Dropdown item text={t('menu.Ano letivo')}>
+                        <Dropdown item text={selectedAcademicYear?.display}>
                             <Dropdown.Menu>
                                 {academicYearsList?.map((academicYear) => (
                                     <Dropdown.Item key={academicYear?.code} onClick={()=>{switchAcademicYear(academicYear)}}>
-                                        {academicYear?.display}
+                                        {academicYear?.display} { (academicYear.default ? <Icon name={"calendar check outline"}/> : "") }
                                     </Dropdown.Item>
                                 ))}
                             </Dropdown.Menu>
                         </Dropdown>
                     )}
-                    <Menu.Item>{selectedAcademicYear?.display}</Menu.Item>
                     <Menu.Item onClick={logoutUser}>
                         {localStorage.getItem('username') + ' '}| {t('menu.Sair')}
                     </Menu.Item>
