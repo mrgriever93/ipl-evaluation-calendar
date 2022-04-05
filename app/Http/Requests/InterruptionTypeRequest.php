@@ -14,10 +14,13 @@ class InterruptionTypeRequest extends FormRequest
 
     public function rules()
     {
-        return [
-            "name"          => "required|string",
-            "description"   => "required|string",
-            "enabled"       => "sometimes|boolean"
+        $rules =  [
+            'code'      => 'string|max:120',
+            'name_pt'   => 'string|max:255',
+            'name_en'   => 'string|max:255',
+            'enabled'   => 'required|boolean',
         ];
+
+        return $rules;
     }
 }
