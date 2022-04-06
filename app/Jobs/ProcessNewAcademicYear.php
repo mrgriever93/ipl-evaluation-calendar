@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Models\AcademicYear;
 use App\Services\ExternalImports;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -23,7 +22,7 @@ class ProcessNewAcademicYear implements ShouldQueue, ShouldBeUnique
      *
      * @return void
      */
-    public function __construct(AcademicYear $academicYearCode, int $semester)
+    public function __construct(int $academicYearCode, int $semester)
     {
         $this->academicYearCode = $academicYearCode;
         $this->semester = $semester;

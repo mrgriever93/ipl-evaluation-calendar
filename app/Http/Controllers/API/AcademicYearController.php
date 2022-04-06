@@ -12,6 +12,7 @@ use App\Jobs\ProcessNewAcademicYear;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AcademicYearController extends Controller
 {
@@ -80,13 +81,16 @@ class AcademicYearController extends Controller
 
     public function sync($id, $semester)
     {
-        if($semester != 1 || $semester != 2) {
-            return false;
+        $semester = intval($semester);
+        if( $semester != 1 && $semester != 2) {
+            return response()->json("error on semester value!", Response::HTTP_BAD_REQUEST);
         }
         $year = AcademicYear::findOrFail($id);
 
+        // TODO Validate response, it returns 200 but will wait for response anyway
         ProcessNewAcademicYear::dispatchAfterResponse($year->code, $semester);
-        return response()->json("Updated!", Response::HTTP_OK);
+
+        return response()->json("Syncing!", Response::HTTP_OK);
     }
 
     public function destroy($id)
