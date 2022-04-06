@@ -10,6 +10,7 @@ import SCOPES from '../../utils/scopesConstants';
 import {successConfig, errorConfig} from '../../utils/toastConfig';
 import EmptyTable from "../../components/EmptyTable";
 import YearSelector from "./yearSelector";
+import moment from "moment";
 
 const SweetAlertComponent = withReactContent(Swal);
 
@@ -101,7 +102,7 @@ const AnoLetivo = () => {
         });
     };
     const syncSemester = (id, semester) => {
-        axios.post('/academic-year/' + id + "/sync/" + semester).then((res) => {
+        axios.get('/academic-year/' + id + "/sync/" + semester).then((res) => {
             if (res.status === 200) {
                 toast(t('ano_letivo.Ano letivo atualizado com sucesso!'), successConfig);
             } else {
@@ -182,8 +183,8 @@ const AnoLetivo = () => {
                                                 <Checkbox toggle defaultChecked={selected} disabled={selected} onChange={() => handleYearSelected(id)} />
                                             </ShowComponentIfAuthorized>
                                         </Table.Cell>
-                                        <Table.Cell>{ s1_sync ? s1_sync : 'N/A' } <Button color="olive"onClick={() => syncSemester(id, 1)}><Icon name={'sync'}/> Sync</Button></Table.Cell>
-                                        <Table.Cell>{ s2_sync ? s2_sync : 'N/A' } <Button color="olive" onClick={() => syncSemester(id, 2)}><Icon name={'sync'}/> Sync</Button></Table.Cell>
+                                        <Table.Cell>{ s1_sync ? moment(s1_sync).fromNow() : 'N/A' } <Button color="olive"onClick={() => syncSemester(id, 1)}><Icon name={'sync'}/> Sync</Button></Table.Cell>
+                                        <Table.Cell>{ s2_sync ? moment(s2_sync).fromNow() : 'N/A' } <Button color="olive" onClick={() => syncSemester(id, 2)}><Icon name={'sync'}/> Sync</Button></Table.Cell>
                                         <Table.Cell textAlign="center">
                                             <ShowComponentIfAuthorized permission={[SCOPES.DELETE_ACADEMIC_YEARS]}>
                                                 <Button onClick={() => remove(id, code)} color="red" icon disabled={selected}>

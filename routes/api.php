@@ -7,7 +7,7 @@ use App\Http\Controllers\API\GroupController;
 use App\Http\Controllers\API\InterruptionTypeController;
 use App\Http\Controllers\API\LoginController;
 use App\Models\AcademicYear;
-use App\Models\Course;
+use App\Services\ExternalImports;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -54,7 +54,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::get('/v2/sync-courses', function () {
         $month = date('m');
-        Course::importCoursesFromWebService(AcademicYear::where('selected', true)->first()->code, ($month > 1 && $month < 7? 2 : 1));
+        ExternalImports::importCoursesFromWebService(AcademicYear::where('selected', true)->first()->code, ($month > 1 && $month < 7? 2 : 1));
     });
 
     Route::controller(CalendarController::class)->group(function () {
@@ -138,7 +138,7 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/academic-year/{id}',                'destroy');
         Route::post('/academic-year/{id}/active',           'active');
         Route::post('/academic-year/{id}/selected',         'selected');
-        Route::post('/academic-year/{id}/sync/{semester}',  'sync')->where(['id' => '[0-9]+', 'semester' => '[1-2]']);;
+        Route::get('/academic-year/{id}/sync/{semester}',   'sync')->where(['id' => '[0-9]+', 'semester' => '[1-2]']);;
     });
 
     Route::controller(SchoolController::class)->group(function () {
