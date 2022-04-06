@@ -125,9 +125,11 @@ class ExternalImports
                                     $foundUser = User::where("email", $userEmail)->first();
                                     if (is_null($foundUser)) {
                                         // if the user is not created, it will create a new record for the user.
+                                        // TODO Uncomment on server
                                         //$ldapUser = (clone $LdapConnection)->whereContains('mailNickname', $username)->orWhereContains('mail', $userEmail)->first('cn');
                                         $foundUser = User::create([
                                             "email" => $userEmail,
+                                            // TODO Uncomment on server
                                             "name" => '',//$ldapUser['cn'][0],
                                             "password" => "",
                                         ]);
