@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\AcademicYear;
-use App\Models\Course;
+use App\Services\ExternalImports;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -15,16 +15,18 @@ class ProcessNewAcademicYear implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $academicYear;
+    protected $academicYearCode;
+    protected $semester;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(AcademicYear $academicYear)
+    public function __construct(AcademicYear $academicYearCode, int $semester)
     {
-        $this->academicYear = $academicYear;
+        $this->academicYearCode = $academicYearCode;
+        $this->semester = $semester;
     }
 
     /**
@@ -34,6 +36,6 @@ class ProcessNewAcademicYear implements ShouldQueue, ShouldBeUnique
      */
     public function handle()
     {
-        Course::importCoursesFromWebService($this->academicYear->code);
+        ExternalImports::importCoursesFromWebService($this->academicYearCode, $this->semester);
     }
 }

@@ -102,9 +102,6 @@ class Group extends Model
     /*
      * Clone Group with permissions
      * */
-    /**
-     * Get the comments for the blog post.
-     */
     public function cloneGroupWithPermissions()
     {
         $clone = $this->replicate();

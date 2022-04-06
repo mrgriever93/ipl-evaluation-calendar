@@ -2,8 +2,8 @@
 
 namespace App\Listeners;
 
-use App\Models\Course;
 use App\Events\AcademicYearRegistered;
+use App\Services\ExternalImports;
 
 class ImportCourses
 {
@@ -25,6 +25,7 @@ class ImportCourses
      */
     public function handle(AcademicYearRegistered $event)
     {
-        Course::importCoursesFromWebService($event->academicYear->code);
+        $month = date('m');
+        ExternalImports::importCoursesFromWebService($event->academicYear->code, ($month > 1 && $month < 7? 2 : 1));
     }
 }
