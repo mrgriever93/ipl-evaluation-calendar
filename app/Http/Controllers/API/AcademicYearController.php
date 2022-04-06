@@ -58,10 +58,6 @@ class AcademicYearController extends Controller
             return response()->json("An error has occurred! {$ex->getMessage()}", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        // TODO @miguel.cerejo
-        // This will fetch the courses for this new year
-        //ProcessNewAcademicYear::dispatchAfterResponse($newAcademicYear);
-
         return (AcademicYearResource::collection(AcademicYear::all()->sortBy('display')))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
@@ -80,6 +76,17 @@ class AcademicYearController extends Controller
         $year->selected = !$year->selected;
         $year->save();
         return (AcademicYearResource::collection(AcademicYear::all()->sortBy('display')))->response()->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function sync($id, $semester)
+    {
+        if($semester != 1 || $semester != 2) {
+            return false;
+        }
+        $year = AcademicYear::findOrFail($id);
+
+        ProcessNewAcademicYear::dispatchAfterResponse($year->code, $semester);
+        return response()->json("Updated!", Response::HTTP_OK);
     }
 
     public function destroy($id)

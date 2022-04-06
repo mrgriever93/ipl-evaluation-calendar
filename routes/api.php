@@ -53,7 +53,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/calendar-history/{calendar}',   [CalendarChangeController::class, 'show']);
 
     Route::get('/v2/sync-courses', function () {
-        Course::importCoursesFromWebService(AcademicYear::where('active', true)->first()->code);
+        $month = date('m');
+        Course::importCoursesFromWebService(AcademicYear::where('selected', true)->first()->code, ($month > 1 && $month < 7? 2 : 1));
     });
 
     Route::controller(CalendarController::class)->group(function () {
@@ -130,13 +131,14 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::controller(AcademicYearController::class)->group(function () {
-        Route::post('/academic-years',              'store' );
-        Route::get('/academic-years',               'index' );
-        Route::get('/academic-years/menu',          'menu' );
-        Route::post('/academic-years/switch',       'switch');
-        Route::delete('/academic-year/{id}',        'destroy');
-        Route::post('/academic-year/{id}/active',   'active');
-        Route::post('/academic-year/{id}/selected', 'selected');
+        Route::post('/academic-years',                      'store' );
+        Route::get('/academic-years',                       'index' );
+        Route::get('/academic-years/menu',                  'menu' );
+        Route::post('/academic-years/switch',               'switch');
+        Route::delete('/academic-year/{id}',                'destroy');
+        Route::post('/academic-year/{id}/active',           'active');
+        Route::post('/academic-year/{id}/selected',         'selected');
+        Route::post('/academic-year/{id}/sync/{semester}',  'sync')->where(['id' => '[0-9]+', 'semester' => '[1-2]']);;
     });
 
     Route::controller(SchoolController::class)->group(function () {
