@@ -112,3 +112,6 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
    https://bobbyhadz.com/blog/javascript-remove-object-from-array-by-value
 
     
+9) Best practices
+
+   https://github.com/alexeymezenin/laravel-best-practices
