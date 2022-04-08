@@ -71,7 +71,7 @@ const New = ({match}) => {
     };
 
     return (
-        <Container style={{marginTop: '2em'}}>
+        <Container>
             <FinalForm
                 onSubmit={onSubmit}
                 initialValues={initialValues}

@@ -114,7 +114,7 @@ const CalendarList = ({match}) => {
     ];
 
     return (
-        <Container style={{marginTop: '2em'}}>
+        <Container>
             {messageVisible && (
                 <MessageFading
                     onDismiss={() => setMessageVisible(false)}

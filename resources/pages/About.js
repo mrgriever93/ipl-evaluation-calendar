@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 
 const About = () => {
     return (
-        <Container style={{marginTop: '2em'}}>
+        <Container>
             <Segment className="footer" inverted vertical style={{margin: '5em 0em 0em', padding: '5em 0em'}}>
                 <Container textAlign="center">
                     <Grid divided inverted stackable>
