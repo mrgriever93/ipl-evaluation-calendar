@@ -117,7 +117,6 @@ const HeaderMenu = () => {
                         </Dropdown.Menu>
                     </Dropdown>
                 </ShowComponentIfAuthorized>
-                <Menu.Item as={Link} to="/about">{t('menu.Sobre')}</Menu.Item>
                 <Menu.Menu position="right">
                     {academicYearsList?.length > 1 && (
                         <Dropdown item text={selectedAcademicYear?.display}>
