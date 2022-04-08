@@ -26,8 +26,8 @@ const AnoLetivo = () => {
         {name: t('Descrição')},
         {name: t('Ativo'),          textAlign: 'center', popup: <Popup trigger={<Icon name="info circle" />} content={t('Anos letivos disponivies para os utilizadores selecionarem.')} position='top center'/>},
         {name: t('Selecionado'),    textAlign: 'center', popup: <Popup trigger={<Icon name="info circle" />} content={t('É o ano que irá estar selecionado automáticamente para o utilizador! Apenas um pode estar selecionado de cada vez.')} position='top center'/>},
-        {name: 'S1 Sync'},
-        {name: 'S2 Sync'},
+        {name: 'S1 Sync',           popup: <Popup trigger={<Icon name="info circle" />} content={t('Quando os 2 semestres estao sincronizados, o ano letivo poderá ser ativado.')} position='top center'/>},
+        {name: 'S2 Sync',           popup: <Popup trigger={<Icon name="info circle" />} content={t('Quando os 2 semestres estao sincronizados, o ano letivo poderá ser ativado.')} position='top center'/>},
         {name: t('Ações'),          style: {width: '15%'}}
     ];
 
@@ -174,7 +174,8 @@ const AnoLetivo = () => {
                                         <Table.Cell textAlign="center">
                                             <ShowComponentIfAuthorized permission={[SCOPES.EDIT_ACADEMIC_YEARS]} renderIfNotAllowed={<Checkbox toggle disabled defaultChecked={active}/>}>
                                                 { isActiveLoading && (<Icon loading name='spinner'/>)}
-                                                <Checkbox toggle defaultChecked={active} onChange={() => handleYearActive(id)} />
+                                                { /* TODO - Only be able to activate, if 2 syncs are done at least once */ }
+                                                <Checkbox toggle defaultChecked={active} disabled={!(s1_sync && s2_sync)} onChange={() => handleYearActive(id)} />
                                             </ShowComponentIfAuthorized>
                                         </Table.Cell>
                                         <Table.Cell textAlign="center">
@@ -183,8 +184,8 @@ const AnoLetivo = () => {
                                                 <Checkbox toggle defaultChecked={selected} disabled={selected} onChange={() => handleYearSelected(id)} />
                                             </ShowComponentIfAuthorized>
                                         </Table.Cell>
-                                        <Table.Cell>{ s1_sync ? moment(s1_sync).fromNow() : 'N/A' } <Button color="olive"onClick={() => syncSemester(id, 1)}><Icon name={'sync'}/> Sync</Button></Table.Cell>
-                                        <Table.Cell>{ s2_sync ? moment(s2_sync).fromNow() : 'N/A' } <Button color="olive" onClick={() => syncSemester(id, 2)}><Icon name={'sync'}/> Sync</Button></Table.Cell>
+                                        <Table.Cell><Button icon color="olive" onClick={() => syncSemester(id, 1)}><Icon name={'sync'}/></Button> { s1_sync ? moment(s1_sync).fromNow() : 'N/A' }</Table.Cell>
+                                        <Table.Cell><Button icon color="olive" onClick={() => syncSemester(id, 2)}><Icon name={'sync'}/></Button> { s2_sync ? moment(s2_sync).fromNow() : 'N/A' }</Table.Cell>
                                         <Table.Cell textAlign="center">
                                             <ShowComponentIfAuthorized permission={[SCOPES.DELETE_ACADEMIC_YEARS]}>
                                                 <Button onClick={() => remove(id, code)} color="red" icon disabled={selected}>
