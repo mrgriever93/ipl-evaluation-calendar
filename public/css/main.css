@@ -12,16 +12,23 @@
     --space-l:      32px;
     --space-xl:     40px;
     --space-xxl:    50px;
-    
+
     --background-color: #F3F6F8;
 }
-
+html, body {
+    height: 100%;
+    margin: 0;
+}
 body {
     background: var(--background-color);
 }
-
+.app-content{
+    min-height: 100%;
+    padding-bottom: 175px;
+}
 .ui.menu {
     margin-top: 0;
+    margin-bottom: 30px;
 }
 
 .ui.menu + .ui.container {
@@ -32,16 +39,22 @@ body {
     text-transform: uppercase;
 }
 
-.inline-header {
+.display-inline {
     display: inline;
 }
 
-.resize-container {
-    min-height: calc(100vh - 330px);
+.footer.ui.inverted.vertical.segment{
+    height: 145px;
+    margin-top: -145px;
+    padding: 3em 0 4em;
+    width: 100%;
 }
 
-.footer {
-    height: 223px;
+.footer .ui.link.list.list .active.item.dropdown{
+    rgba(255,255,255,.1);
+}
+.footer .ui.inverted.link.list .item .dropdown > .menu .item{
+    color: rgba(0,0,0,.87);
 }
 
 .ui.button.loading {
@@ -232,4 +245,8 @@ body {
 .card-header-alignment .ui.header {
     font-size: 28px;
     margin: var(--space-none);
+}
+
+.ui.form .field>.selection.dropdown {
+    min-width: 4em;
 }

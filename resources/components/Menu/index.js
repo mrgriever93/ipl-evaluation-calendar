@@ -22,13 +22,11 @@ import SCOPES, {
 } from '../../utils/scopesConstants';
 import ShowComponentIfAuthorized from '../ShowComponentIfAuthorized';
 
-const HeaderMenu = ({languageChanger}) => {
+const HeaderMenu = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const [academicYearsList, setAcademicYearsList] = useState([]);
-
-    const [selectedLanguage, setSelectedLanguage] = useState(localStorage.getItem('language'));
 
     useEffect(() => {
         axios.get('academic-years/menu').then((response) => {
@@ -66,13 +64,6 @@ const HeaderMenu = ({languageChanger}) => {
                 window.location.reload();
             });
     };
-
-    const changeLanguage = (lang) => {
-        localStorage.setItem('language', lang);
-        setSelectedLanguage(lang);
-        i18n.changeLanguage(lang);
-        languageChanger(lang);
-    }
 
     const selectedAcademicYear = useSelector((state) => state.app.academicYear);
 
@@ -128,12 +119,6 @@ const HeaderMenu = ({languageChanger}) => {
                 </ShowComponentIfAuthorized>
                 <Menu.Item as={Link} to="/about">{t('menu.Sobre')}</Menu.Item>
                 <Menu.Menu position="right">
-                    <Dropdown item closeOnChange={true} text={selectedLanguage} className='lang-dropdown'>
-                        <Dropdown.Menu>
-                            <Dropdown.Item onClick={()=>{changeLanguage('pt')}}>Português</Dropdown.Item>
-                            <Dropdown.Item onClick={()=>{changeLanguage('en')}}>English</Dropdown.Item>
-                        </Dropdown.Menu>
-                    </Dropdown>
                     {academicYearsList?.length > 1 && (
                         <Dropdown item text={selectedAcademicYear?.display}>
                             <Dropdown.Menu>
