@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\School;
 use App\Http\Requests\SchoolRequest;
-use App\Http\Resources\SchoolResource;
-use Illuminate\Http\Request;
+use App\Http\Resources\Admin\SchoolResource;
+use App\Http\Resources\Generic\SchoolListResource;
+use App\Models\School;
 
 class SchoolController extends Controller
 {
@@ -17,6 +17,16 @@ class SchoolController extends Controller
     public function index()
     {
         return SchoolResource::collection(School::all());
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function list()
+    {
+        return SchoolListResource::collection(School::all());
     }
 
     /**
