@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Generic\CourseResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CalendarGeneralInfoResource extends JsonResource

@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Generic;
 
+use App\Http\Resources\MethodResource;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseUnitResource extends JsonResource
@@ -9,8 +11,9 @@ class CourseUnitResource extends JsonResource
     public function toArray($request)
     {
         return [
+
             'id' => $this->id,
-            'name' => $this->name,
+            'name' => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
             'initials' => $this->initials,
             'methods' => MethodResource::collection($this->whenLoaded('methods')),
             'group_name' => $this->group->description ?? null,

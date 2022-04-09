@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Generic;
 
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseResource extends JsonResource
@@ -22,19 +23,20 @@ class CourseResource extends JsonResource
 
     public function toArray($request)
     {
+
         return [
             'id' => $this->id,
             'code' => $this->code,
             'initials' => $this->initials,
-            'display_name' => $this->name . " (" . $this->code . ")",
-            'name' => $this->name,
+            'display_name' => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt) . " (" . $this->code . ")",
+            'name' => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
             'duration' => $this->num_years,
             'level' => $this->getLevel($this->degree),
             'school' => $this->whenLoaded('school'),
             'coordinator' => $this->coordinatorUser,
             'branches' => $this->branches,
             'course_units' => CourseUnitResource::collection($this->courseUnits),
-            'students' => UserResource::collection($this->students) 
+            'students' => UserResource::collection($this->students)
         ];
     }
 }
