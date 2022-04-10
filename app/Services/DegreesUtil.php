@@ -11,8 +11,19 @@
 
 namespace App\Services;
 
-class Utils
+class DegreesUtil
 {
+
+    public static function getDegreesList($lang)
+    {
+        $list = [
+            [ "value" => 5, "text" => "TeSP"],
+            [ "value" => 6, "text" => ($lang == "pt" ? "Licenciatura" : "Undergraduate")],
+            [ "value" => 7, "text" => ($lang == "pt" ? "Mestrado" : "Master")],
+            [ "value" => 8, "text" => ($lang == "pt" ? "Doutoramento" : "PhD")],
+        ];
+        return $list;
+    }
 
     public static function getDegreeLabel($id)
     {
