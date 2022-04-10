@@ -11,6 +11,7 @@ use App\Models\Branch;
 use App\Models\Course;
 use App\Models\Group;
 use App\Models\User;
+use App\Services\DegreesUtil;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -33,6 +34,11 @@ class CourseController extends Controller
         $courseList->filter($filters);
 
         return CourseListResource::collection($courseList->paginate($perPage));
+    }
+
+    public function listDegrees(Request $request)
+    {
+        return response()->json(DegreesUtil::getDegreesList($request->header("lang")), Response::HTTP_OK);
     }
 
     public function removeStudent(Course $course, User $student) {

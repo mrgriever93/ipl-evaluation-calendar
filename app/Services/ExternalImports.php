@@ -83,7 +83,7 @@ class ExternalImports
                                 "school_id" => $school->id,
                                 "name_pt" => $info[$school->index_course_name],
                                 "name_en" => $info[$school->index_course_name], // this will duplicate the value as default, to prevent empty states
-                                "degree" => Utils::getDegreeId($info[$school->index_course_name])
+                                "degree" => DegreesUtil::getDegreeId($info[$school->index_course_name])
                             ]
                         );
                         // https://laravel.com/docs/9.x/eloquent-relationships#syncing-associations

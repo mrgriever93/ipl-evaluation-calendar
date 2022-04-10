@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Generic;
 
 use App\Http\Resources\UserResource;
-use App\Services\Utils;
+use App\Services\DegreesUtil;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseResource extends JsonResource
@@ -19,7 +19,7 @@ class CourseResource extends JsonResource
             'name_pt' => $this->name_pt,
             'name_en' => $this->name_en,
             'duration' => $this->num_years,
-            'level' => Utils::getDegreeLabel($this->degree),
+            'level' => DegreesUtil::getDegreeLabel($this->degree),
             'school' => $this->whenLoaded('school'),
             'coordinator' => $this->coordinatorUser,
             'branches' => $this->branches,
