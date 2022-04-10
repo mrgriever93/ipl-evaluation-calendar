@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Filters\CourseFilters;
 use App\Http\Requests\CourseRequest;
+use App\Http\Resources\Generic\CourseListResource;
 use App\Http\Resources\Generic\CourseResource;
 use App\Models\AcademicYear;
 use App\Models\Branch;
@@ -18,8 +19,6 @@ class CourseController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index(Request $request, CourseFilters $filters)
     {
@@ -28,9 +27,12 @@ class CourseController extends Controller
         if( request('school') ){
             $courseList->where('school_id', request('semester'));
         }
+        if( request('degree') ){
+            $courseList->where('degree', request('degree'));
+        }
         $courseList->filter($filters);
 
-        return CourseResource::collection($courseList->paginate($perPage));
+        return CourseListResource::collection($courseList->paginate($perPage));
     }
 
     public function removeStudent(Course $course, User $student) {
@@ -41,7 +43,6 @@ class CourseController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function show(Course $course)
     {
@@ -51,9 +52,7 @@ class CourseController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function update(CourseRequest $request, Course $course)
     {

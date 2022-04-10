@@ -2,21 +2,20 @@ import axios from 'axios';
 import _ from 'lodash';
 import React, {useEffect, useMemo, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
-import {
-    Container, Card, Icon, Table, Form, Button, Search, Modal, List, Header, Image, Grid,
-} from 'semantic-ui-react';
+import {Container, Card, Icon, Table, Form, Button, Modal, List, Header, Image, Grid} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import {Field, Form as FinalForm} from 'react-final-form';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+
 import {useComponentIfAuthorized} from '../../components/ShowComponentIfAuthorized';
-import SCOPES, {COURSE_SCOPES} from '../../utils/scopesConstants';
+import SCOPES from '../../utils/scopesConstants';
 import {successConfig, errorConfig} from '../../utils/toastConfig';
 import IplLogo from '../../../public/images/ipl.png';
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const Detail = ({match}) => {
+const Detail = () => {
     const history = useNavigate();
     // get URL params
     let { id } = useParams();
@@ -163,22 +162,8 @@ const Detail = ({match}) => {
     };
 
     const initialValues = useMemo(() => {
-        const {
-            code,
-            name,
-            initials,
-            level,
-            duration,
-            coordinator,
-        } = courseDetail || {};
-        return {
-            code,
-            name,
-            initials,
-            level,
-            duration,
-            coordinator: coordinator?.id,
-        };
+        const {code, name_pt, name_en, initials, level, duration, coordinator} = courseDetail || {};
+        return {code, name_pt, name_en, initials, level, duration, coordinator: coordinator?.id};
     }, [courseDetail]);
 
     const addStudent = () => {
@@ -204,20 +189,15 @@ const Detail = ({match}) => {
                             <Card.Content>
                                 <Card.Header>
                                     Curso: {' ' + courseDetail?.name}
-                                    <Button floated="right" color="green" onClick={handleSubmit}>Guardar curso</Button>
+                                    <Button floated="right" color="green" onClick={handleSubmit} icon labelPosition="left"><Icon name="save"/>Guardar curso</Button>
                                 </Card.Header>
                             </Card.Content>
                             <Card.Content>
                                 <Form>
-                                    <Form.Group>
+                                    <Form.Group widths="4">
                                         <Field name="code">
                                             {({input: codeInput}) => (
                                                 <Form.Input disabled={loading || !hasPermissionToEdit} label="Código"{...codeInput}/>
-                                            )}
-                                        </Field>
-                                        <Field name="name">
-                                            {({input: nameInput}) => (
-                                                <Form.Input disabled={loading || !hasPermissionToEdit} label="Nome"{...nameInput}/>
                                             )}
                                         </Field>
                                         <Field name="initials">
@@ -227,34 +207,25 @@ const Detail = ({match}) => {
                                         </Field>
                                         <Field name="level">
                                             {({input: levelInput}) => (
-                                                <Form.Dropdown
-                                                    disabled={loading || !hasPermissionToEdit}
-                                                    label="Grau de Ensino"
-                                                    selection
-                                                    search
+                                                <Form.Dropdown disabled={loading || !hasPermissionToEdit} label="Grau de Ensino" selection search
                                                     options={[
                                                         {
-                                                            key: null,
                                                             value: null,
                                                             text: 'Selecione o grau de ensino',
                                                         },
                                                         {
-                                                            key: 5,
                                                             value: 5,
                                                             text: 'TeSP',
                                                         },
                                                         {
-                                                            key: 6,
                                                             value: 6,
                                                             text: 'Licenciatura',
                                                         },
                                                         {
-                                                            key: 7,
                                                             value: 7,
                                                             text: 'Mestrado',
                                                         },
                                                         {
-                                                            key: 8,
                                                             value: 8,
                                                             text: 'Doutoramento',
                                                         },
@@ -268,6 +239,18 @@ const Detail = ({match}) => {
                                         <Field name="duration">
                                             {({input: durationInput}) => (
                                                 <Form.Input disabled={loading || !hasPermissionToEdit} label="Número de anos"{...durationInput}/>
+                                            )}
+                                        </Field>
+                                    </Form.Group>
+                                    <Form.Group widths="3">
+                                        <Field name="name_pt">
+                                            {({input: namePtInput}) => (
+                                                <Form.Input disabled={loading || !hasPermissionToEdit} label="Nome PT"{...namePtInput}/>
+                                            )}
+                                        </Field>
+                                        <Field name="name_en">
+                                            {({input: nameEnInput}) => (
+                                                <Form.Input disabled={loading || !hasPermissionToEdit} label="Nome EN"{...nameEnInput}/>
                                             )}
                                         </Field>
                                     </Form.Group>
@@ -310,9 +293,6 @@ const Detail = ({match}) => {
                                     <Grid.Column width="8">
                                         <Grid.Row>
                                             <Header>Ramos</Header>
-                                            <Button color="green" onClick={() => setAdditionalBranches((current) => [...current, {order: current.length}])}>
-                                                Adicionar ramo
-                                            </Button>
                                         </Grid.Row>
                                         <br/>
                                         <Grid.Row>
@@ -353,14 +333,18 @@ const Detail = ({match}) => {
                                                 ))}
                                             </List>
                                         </Grid.Row>
+                                        <br/>
+                                        <Grid.Row>
+                                            <Button color="green" onClick={() => setAdditionalBranches((current) => [...current, {order: current.length}])}>
+                                                Adicionar ramo
+                                            </Button>
+                                        </Grid.Row>
                                     </Grid.Column>
                                 </Grid>
                             </Card.Content>
                             <Card.Content extra>
                                 <Header>
-                                    <Icon name="user"/>
-                                    {' '}
-                                    Alunos
+                                    <Icon name="user"/> Alunos
                                 </Header>
                                 <Button color="green" onClick={() => setOpenModal(true)}>Adicionar aluno</Button>
                                 <Table striped color="green">
@@ -388,11 +372,9 @@ const Detail = ({match}) => {
                                 </Table>
                             </Card.Content>
                             <Card.Content extra>
-                                <div>
-                                    <Icon name="book"/>
-                                    {' '}
-                                    Unidades Curriculares
-                                </div>
+                                <Header>
+                                    <Icon name="book"/> Unidades Curriculares
+                                </Header>
                                 {Object.keys(courseUnits).map((year) => (
                                     <Table striped color="green">
                                         <Table.Header>

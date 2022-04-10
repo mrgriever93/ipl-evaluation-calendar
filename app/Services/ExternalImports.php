@@ -37,7 +37,6 @@ class ExternalImports
         }
     }
 
-
     public static function importCoursesFromWebService(int $academicYearCode, int $semester)
     {
         set_time_limit(0);
@@ -83,7 +82,8 @@ class ExternalImports
                             [
                                 "school_id" => $school->id,
                                 "name_pt" => $info[$school->index_course_name],
-                                "name_en" => $info[$school->index_course_name] // this will duplicate the value as default, to prevent empty states
+                                "name_en" => $info[$school->index_course_name], // this will duplicate the value as default, to prevent empty states
+                                "degree" => Utils::getDegreeId($info[$school->index_course_name])
                             ]
                         );
                         // https://laravel.com/docs/9.x/eloquent-relationships#syncing-associations
