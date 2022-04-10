@@ -172,6 +172,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::controller(CourseController::class)->group(function () {
         Route::get('/courses',                               'index'            );
+        Route::get('/courses/degrees',                       'listDegrees'      );
         Route::get('/courses/{course}',                      'show'             );
         Route::delete('/courses/{course}/student/{student}', 'removeStudent'    );
         Route::patch('/courses/{course}/student',            'addStudent'       );
