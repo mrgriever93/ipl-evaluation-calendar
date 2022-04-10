@@ -22,11 +22,12 @@ const CoursesList = () => {
     const [removingCourse, setRemovingCourse] = useState(undefined);
     const [searchTerm, setSearchTerm] = useState();
     const [perPage, setPerPage] = useState(10);
-    const [school, setSchool] = useState(0);
+    const [school, setSchool] = useState();
 
     useEffect(() => {
         axios.get('/schools-list').then((response) => {
             if (response.status >= 200 && response.status < 300) {
+                response.data.data.unshift({value: '', text: 'All Schools'});
                 setSchoolsList(response.data.data);
             }
         });
@@ -36,7 +37,7 @@ const CoursesList = () => {
     useEffect(() => {
         fetchCourses();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchTerm, perPage]);
+    }, [searchTerm, school, perPage]);
 
     const fetchCourses = (page = 1) => {
         setLoading(true);
@@ -116,18 +117,19 @@ const CoursesList = () => {
                         <Header as="span">Cursos</Header>
                     </div>
                 </Card.Content>
+                <Card.Content>
+                    <Form>
+                        <Form.Group>
+                            <Form.Input width={6} label="Pesquisar curso..." placeholder="Pesquisar curso..." onChange={(e, {value}) => _.debounce(setSearchTerm(value), 500)}/>
+                            <Form.Dropdown width={6} selection value={school} options={schoolsList} label="Escolas" placeholder="All Schools" loading={loading} onChange={filterBySchool}/>
+                            <Form.Field width={3} />
+                            <Form.Dropdown width={1} selection value={perPage} options={perPageOptions} label="Per Page" loading={loading} onChange={filterByPerPage}/>
+                        </Form.Group>
+                    </Form>
+                </Card.Content>
                 { !loading && courseList.length > 0 ? (
                     <>
-                        <Card.Content>
-                            <Form>
-                                <Form.Group>
-                                    <Form.Input width={6} label="Pesquisar curso..." placeholder="Pesquisar curso..." onChange={(e, {value}) => _.debounce(setSearchTerm(value), 500)}/>
-                                    <Form.Dropdown width={6} selection value={school} options={schoolsList} label="Escolas" placeholder="Escolas" loading={loading} onChange={filterBySchool}/>
-                                    <Form.Field width={3} />
-                                    <Form.Dropdown width={1} selection value={perPage} options={perPageOptions} label="Per Page" loading={loading} onChange={filterByPerPage}/>
-                                </Form.Group>
-                            </Form>
-                        </Card.Content>
+
                         <Card.Content>
                             <Table celled fixed>
                                 <Table.Header>
@@ -147,7 +149,7 @@ const CoursesList = () => {
                                                 <Table.Cell>{level}</Table.Cell>
                                                 <Table.Cell>{duration}</Table.Cell>
                                                 <Table.Cell>
-                                                    <Link to={`../curso/${id}`}>
+                                                    <Link to={`/curso/${id}`}>
                                                         <Button color="green" icon>
                                                             <Icon name="eye"/>
                                                         </Button>
@@ -162,9 +164,10 @@ const CoursesList = () => {
                                     ))}
                                 </Table.Body>
                             </Table>
+                            { paginationInfo && (<div> From <b>{ paginationInfo.from }</b> to  <b>{ paginationInfo.to }</b> of <b>{ paginationInfo.total }</b> results</div>)}
                             {
                                 paginationInfo && paginationInfo.current_page !== paginationInfo.last_page && (
-                                    <Pagination defaultActivePage={1} totalPages={paginationInfo.last_page} onPageChange={loading}
+                                    <Pagination defaultActivePage={1} totalPages={paginationInfo.last_page} onPageChange={loadCourses}
                                                 ellipsisItem={{ content: <Icon name='ellipsis horizontal' />, icon: true }}
                                                 prevItem={{ content: <Icon name='angle left' />, icon: true }}
                                                 nextItem={{ content: <Icon name='angle right' />, icon: true }}
