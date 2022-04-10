@@ -21,14 +21,14 @@ const List = () => {
     const [perPage, setPerPage] = useState(10);
     const [filterGroups, setFilterGroups] = useState([]);
 
-    const fetchUserList = useCallback((page = 1, search, groups, resultsQuant) => {
+    const fetchUserList = useCallback((page = 1, search, groups, per_page) => {
         if (search) setSearching(true);
         setLoading(true);
 
         let searchLink = `/users?page=${page}`;
         searchLink += `${search ? `&search=${search}` : ''}`;
         searchLink += `${groups?.length ? `&groups=${JSON.stringify(groups)}` : ''}`;
-        searchLink += '&per_page=' + resultsQuant;
+        searchLink += '&per_page=' + per_page;
 
         axios.get(searchLink)
             .then((response) => {
@@ -85,10 +85,10 @@ const List = () => {
     const filterByGroup = (e, {value}) => {
         setFilterGroups(value);
     };
-    const filterByQuant = (e, {value}) => {
+    const filterByPerPage = (e, {value}) => {
         setPerPage(value);
     };
-    const pageQuants = [
+    const perPageOptions = [
         {value:10, text: 10},
         {value:25, text: 25},
         {value:50, text: 50},
@@ -116,7 +116,7 @@ const List = () => {
                                 />
                             </Form.Field>
                             <Form.Field width={1} />
-                            <Form.Dropdown width={1} selection options={pageQuants} label="Per Page" loading={loadingGroups} onChange={filterByQuant}/>
+                            <Form.Dropdown width={1} selection value={perPage} options={perPageOptions} label="Per Page" loading={loadingGroups} onChange={filterByPerPage}/>
                         </Form.Group>
                     </Form>
                 </Card.Content>

@@ -2,26 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Filters\CourseFilters;
+use App\Http\Requests\CourseRequest;
+use App\Http\Resources\Generic\CourseResource;
 use App\Models\AcademicYear;
 use App\Models\Branch;
 use App\Models\Course;
 use App\Models\Group;
-use App\Models\InitialGroups;
 use App\Models\User;
-use App\Filters\CourseFilters;
-use App\Http\Requests\CourseRequest;
-use App\Http\Resources\CourseResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class CourseController extends Controller
 {
-
-    public function deleteBranch(Branch $branch) {
-        $branch->delete();
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -29,12 +23,14 @@ class CourseController extends Controller
      */
     public function index(Request $request, CourseFilters $filters)
     {
-        return CourseResource::collection(
-            Course::with('school')
-                ->ofAcademicYear($request->cookie('academic_year'))
-                ->filter($filters)
-                ->paginate(10)
-        );
+        $perPage = request('per_page', 10);
+        $courseList = Course::with('school')->ofAcademicYear($request->cookie('academic_year'));
+        if( request('school') ){
+            $courseList->where('school_id', request('semester'));
+        }
+        $courseList->filter($filters);
+
+        return CourseResource::collection($courseList->paginate($perPage));
     }
 
     public function removeStudent(Course $course, User $student) {
@@ -137,6 +133,10 @@ class CourseController extends Controller
                 }
             }
         }
+    }
+
+    public function deleteBranch(Branch $branch) {
+        $branch->delete();
     }
 
     /**

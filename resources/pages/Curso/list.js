@@ -1,50 +1,52 @@
 import React, {useEffect, useState} from 'react';
-import {
-    Card,
-    Container,
-    Dimmer,
-    Form,
-    Loader,
-    Pagination,
-    Table,
-    Button,
-    Icon,
-    Header,
-} from 'semantic-ui-react';
+import {Card, Container, Dimmer, Form, Loader, Pagination, Table, Button, Icon, Header} from 'semantic-ui-react';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
-import {useSelector} from 'react-redux';
-import styled from 'styled-components';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import {toast} from 'react-toastify';
-import ShowComponentIfAuthorized, {useComponentIfAuthorized} from '../../components/ShowComponentIfAuthorized';
-import SCOPES, {COURSE_SCOPES} from '../../utils/scopesConstants';
+import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
+import SCOPES from '../../utils/scopesConstants';
 import {successConfig, errorConfig} from '../../utils/toastConfig';
+import EmptyTable from "../../components/EmptyTable";
+import {useTranslation} from "react-i18next";
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const Wrapper = styled.div`
-.header {
-  display: inline;
-}
-`;
-
-const List = ({match}) => {
+const CoursesList = () => {
+    const { t } = useTranslation();
     const [courseList, setCourseList] = useState([]);
+    const [schoolsList, setSchoolsList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [paginationInfo, setPaginationInfo] = useState({});
     const [removingCourse, setRemovingCourse] = useState(undefined);
     const [searchTerm, setSearchTerm] = useState();
+    const [perPage, setPerPage] = useState(10);
+    const [school, setSchool] = useState(0);
+
+    useEffect(() => {
+        axios.get('/schools-list').then((response) => {
+            if (response.status >= 200 && response.status < 300) {
+                setSchoolsList(response.data.data);
+            }
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         fetchCourses();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchTerm]);
+    }, [searchTerm, perPage]);
 
     const fetchCourses = (page = 1) => {
         setLoading(true);
-        axios.get(`/courses?page=${page}${searchTerm ? `&search=${searchTerm}` : ''}`).then((response) => {
+
+        let searchLink = `/courses?page=${page}`;
+        searchLink += `${searchTerm ? `&search=${searchTerm}` : ''}`;
+        searchLink += `${school ? `&school=${school}` : ''}`;
+        searchLink += '&per_page=' + perPage;
+
+        axios.get(searchLink).then((response) => {
             if (response.status >= 200 && response.status < 300) {
                 setCourseList(response.data.data);
                 setPaginationInfo(response.data.meta);
@@ -64,9 +66,21 @@ const List = ({match}) => {
         'Numero de Anos',
         'Ações',
     ];
-    const syncCursos = () => {
 
+    const filterByPerPage = (e, {value}) => {
+        setPerPage(value);
     };
+    const perPageOptions = [
+        {value:10, text: 10},
+        {value:25, text: 25},
+        {value:50, text: 50},
+        {value:100, text: 100}
+    ];
+
+    const filterBySchool = (e, {value}) => {
+        setSchool(value);
+    };
+
     const remove = (courseId) => {
         SweetAlertComponent.fire({
             title: 'Atenção!',
@@ -98,96 +112,76 @@ const List = ({match}) => {
         <Container>
             <Card fluid>
                 <Card.Content>
-                    <Wrapper>
+                    <div>
                         <Header as="span">Cursos</Header>
-                    </Wrapper>
+                    </div>
                 </Card.Content>
-                <Card.Content>
-                    <Form>
-                        <Form.Group widths="2">
-                            <Form.Input placeholder="Pesquisar curso..."
-                                        onChange={(e, {value}) => _.debounce(setSearchTerm(value), 500)}/>
-                        </Form.Group>
-                        <Button color="green" icon onClick={() => syncCursos()}>
-                            <Icon name="eye"/>
-                            Sync Cursos
-                        </Button>
-                    </Form>
-                </Card.Content>
-                <Card.Content>
-                    <Table celled fixed>
-                        <Table.Header>
-                            <Table.Row>
-                                {columns.map((col) => (
-                                    <Table.HeaderCell key={"table_header_" + col}>{col}</Table.HeaderCell>
-                                ))}
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            {courseList.map(
-                                ({
-                                     id,
-                                     school,
-                                     code,
-                                     name,
-                                     initials,
-                                     level,
-                                     duration,
-                                 }) => (
-                                    <Table.Row key={code}>
-                                        <Table.Cell>{school.code}</Table.Cell>
-                                        <Table.Cell>{code}</Table.Cell>
-                                        <Table.Cell>{name}</Table.Cell>
-                                        <Table.Cell>{initials}</Table.Cell>
-                                        <Table.Cell>{level}</Table.Cell>
-                                        <Table.Cell>{duration}</Table.Cell>
-                                        <Table.Cell>
-                                            <Link
-                                                to={`../curso/${id}`}
-                                            >
-                                                <Button color="green" icon>
-                                                    <Icon name="eye"/>
-                                                </Button>
-                                            </Link>
-                                            <ShowComponentIfAuthorized
-                                                permission={[SCOPES.DELETE_COURSES]}
-                                            >
-                                                <Button
-                                                    onClick={() => remove(id)}
-                                                    color="red"
-                                                    icon
-                                                    loading={removingCourse === id}
-                                                >
-                                                    <Icon name="trash"/>
-                                                </Button>
-                                            </ShowComponentIfAuthorized>
-                                        </Table.Cell>
+                { !loading && courseList.length > 0 ? (
+                    <>
+                        <Card.Content>
+                            <Form>
+                                <Form.Group>
+                                    <Form.Input width={6} label="Pesquisar curso..." placeholder="Pesquisar curso..." onChange={(e, {value}) => _.debounce(setSearchTerm(value), 500)}/>
+                                    <Form.Dropdown width={6} selection value={school} options={schoolsList} label="Escolas" placeholder="Escolas" loading={loading} onChange={filterBySchool}/>
+                                    <Form.Field width={3} />
+                                    <Form.Dropdown width={1} selection value={perPage} options={perPageOptions} label="Per Page" loading={loading} onChange={filterByPerPage}/>
+                                </Form.Group>
+                            </Form>
+                        </Card.Content>
+                        <Card.Content>
+                            <Table celled fixed>
+                                <Table.Header>
+                                    <Table.Row>
+                                        {columns.map((col) => (
+                                            <Table.HeaderCell key={"table_header_" + col}>{col}</Table.HeaderCell>
+                                        ))}
                                     </Table.Row>
-                                ),
+                                </Table.Header>
+                                <Table.Body>
+                                    {courseList.map(({id, school, code, name, initials, level, duration}) => (
+                                            <Table.Row key={code}>
+                                                <Table.Cell>{school.code}</Table.Cell>
+                                                <Table.Cell>{code}</Table.Cell>
+                                                <Table.Cell>{name}</Table.Cell>
+                                                <Table.Cell>{initials}</Table.Cell>
+                                                <Table.Cell>{level}</Table.Cell>
+                                                <Table.Cell>{duration}</Table.Cell>
+                                                <Table.Cell>
+                                                    <Link to={`../curso/${id}`}>
+                                                        <Button color="green" icon>
+                                                            <Icon name="eye"/>
+                                                        </Button>
+                                                    </Link>
+                                                    <ShowComponentIfAuthorized permission={[SCOPES.DELETE_COURSES]}>
+                                                        <Button onClick={() => remove(id)} color="red" icon loading={removingCourse === id}>
+                                                            <Icon name="trash"/>
+                                                        </Button>
+                                                    </ShowComponentIfAuthorized>
+                                                </Table.Cell>
+                                            </Table.Row>
+                                    ))}
+                                </Table.Body>
+                            </Table>
+                            {
+                                paginationInfo && paginationInfo.current_page !== paginationInfo.last_page && (
+                                    <Pagination defaultActivePage={1} totalPages={paginationInfo.last_page} onPageChange={loading}
+                                                ellipsisItem={{ content: <Icon name='ellipsis horizontal' />, icon: true }}
+                                                prevItem={{ content: <Icon name='angle left' />, icon: true }}
+                                                nextItem={{ content: <Icon name='angle right' />, icon: true }}
+                                                firstItem={null} lastItem={null} />
+                                )
+                            }
+                            {loading && (
+                                <Dimmer active inverted>
+                                    <Loader indeterminate>A carregar os cursos</Loader>
+                                </Dimmer>
                             )}
-                        </Table.Body>
-                    </Table>
-                    {paginationInfo && paginationInfo.current_page
-                        !== paginationInfo.last_page && (
-                            <Pagination
-                                secondary
-                                pointing
-                                fluid
-                                defaultActivePage={1}
-                                activePage={paginationInfo.current_page}
-                                totalPages={paginationInfo.last_page}
-                                onPageChange={loadCourses}
-                            />
-                        )}
-                    {loading && (
-                        <Dimmer active inverted>
-                            <Loader indeterminate>A carregar os cursos</Loader>
-                        </Dimmer>
-                    )}
-                </Card.Content>
+                        </Card.Content>
+                    </>
+                    ) : ( <EmptyTable isLoading={loading} label={t('Sem resultados')}/> ) }
             </Card>
         </Container>
     );
 };
 
-export default List;
+export default CoursesList;
