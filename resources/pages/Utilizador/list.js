@@ -7,6 +7,8 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
 import SCOPES from '../../utils/scopesConstants';
+import FilterOptionPerPage from "../../components/Filters/PerPage";
+import FilterOptionUserGroups from "../../components/Filters/UserGroups";
 
 const SweetAlertComponent = withReactContent(Swal);
 
@@ -14,37 +16,49 @@ const List = () => {
     const [userList, setUserList] = useState([]);
     const [paginationInfo, setPaginationInfo] = useState({});
     const [loading, setLoading] = useState(true);
-    const [loadingGroups, setLoadingGroups] = useState(true);
-    const [userGroups, setUserGroups] = useState([]);
+    // Filters
     const [searching, setSearching] = useState(false);
     const [searchTerm, setSearchTerm] = useState();
     const [perPage, setPerPage] = useState(10);
-    const [filterGroups, setFilterGroups] = useState([]);
+    const [userGroups, setUserGroups] = useState([]);
 
-    const fetchUserList = useCallback((page = 1, search, groups, resultsQuant) => {
-        if (search) setSearching(true);
+    // Table columns
+    const columns = [
+        {name: 'User ID'},
+        {name: 'Email'},
+        {name: 'Nome'},
+        {name: 'Ativo?', textAlign: 'center'},
+        {name: 'Ações'},
+    ];
+
+    useEffect(() => {
+        fetchUserList(1, searchTerm, userGroups, perPage);
+    }, [searchTerm, userGroups, perPage]);
+
+    const fetchUserList = useCallback((page = 1, search, groups, per_page) => {
+        if (search) {
+            setSearching(true);
+        }
         setLoading(true);
 
         let searchLink = `/users?page=${page}`;
         searchLink += `${search ? `&search=${search}` : ''}`;
         searchLink += `${groups?.length ? `&groups=${JSON.stringify(groups)}` : ''}`;
-        searchLink += '&per_page=' + resultsQuant;
+        searchLink += '&per_page=' + per_page;
 
         axios.get(searchLink)
             .then((response) => {
                 setLoading(false);
-                if (search)
+                if (search) {
                     setSearching(false);
+                }
                 setPaginationInfo(response.data.meta);
                 setUserList(response?.data?.data);
             });
     }, []);
 
+    // Handle Pagination
     const loadUsers = (evt, {activePage}) => fetchUserList(activePage);
-
-    useEffect(() => {
-        fetchUserList(1, searchTerm, filterGroups, perPage);
-    }, [searchTerm, filterGroups, perPage]);
 
     const setUserEnabled = (userId, enabled) => {
         axios.patch(`/user/${userId}`, {enabled})
@@ -65,35 +79,6 @@ const List = () => {
         setSearchTerm(value);
     };
 
-    useEffect(() => {
-        axios.get('/user-group').then((response) => {
-            if (response.status === 200) {
-                setLoadingGroups(false);
-                setUserGroups(response?.data?.data?.map(({id, description}) => ({key: id, value: id, text: description})));
-            }
-        });
-    }, []);
-
-    const columns = [
-        {name: 'User ID'},
-        {name: 'Email'},
-        {name: 'Nome'},
-        {name: 'Ativo?', textAlign: 'center'},
-        {name: 'Ações'},
-    ];
-
-    const filterByGroup = (e, {value}) => {
-        setFilterGroups(value);
-    };
-    const filterByQuant = (e, {value}) => {
-        setPerPage(value);
-    };
-    const pageQuants = [
-        {value:10, text: 10},
-        {value:25, text: 25},
-        {value:50, text: 50},
-        {value:100, text: 100}
-    ];
     return (
         <Container>
             <Card fluid>
@@ -105,18 +90,8 @@ const List = () => {
                                 <label>Utilizador</label>
                                 <Input fluid loading={searching} placeholder="Pesquisar utilizador..." onChange={_.debounce(searchUser, 900)}/>
                             </Form.Field>
-
-                            <Form.Field width={7}>
-                                <Form.Dropdown options={userGroups}
-                                    selection search
-                                    multiple clearable
-                                    label="Grupo de Utilizador"
-                                    loading={loadingGroups}
-                                    onChange={filterByGroup}
-                                />
-                            </Form.Field>
-                            <Form.Field width={1} />
-                            <Form.Dropdown width={1} selection options={pageQuants} label="Per Page" loading={loadingGroups} onChange={filterByQuant}/>
+                            <FilterOptionUserGroups widthSize={7} eventHandler={(value) => setUserGroups(value)} />
+                            <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                         </Form.Group>
                     </Form>
                 </Card.Content>

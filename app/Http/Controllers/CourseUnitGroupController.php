@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Filters\CourseUnitGroupFilters;
+use App\Http\Requests\CourseUnitGroupRequest;
+use App\Http\Resources\CourseUnitGroupResource;
 use App\Models\Calendar;
 use App\Models\CourseUnit;
 use App\Models\CourseUnitGroup;
 use App\Models\Epoch;
-use App\Filters\CourseUnitGroupFilters;
-use App\Http\Requests\CourseUnitGroupRequest;
-use App\Http\Resources\CourseUnitGroupResource;
-use App\Http\Resources\CourseUnitResource;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class CourseUnitGroupController extends Controller

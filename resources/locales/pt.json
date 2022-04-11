@@ -41,8 +41,8 @@
         "Grupo de utilizador removido com sucesso!": "Grupo de utilizador removido com sucesso!",
         "Não foi possível remover o Grupo de utilizador!": "Não foi possível remover o Grupo de utilizador!",
         "Ohh! Não foi possível encontrar grupos de utilizador!": "Ohh! Não foi possível encontrar Grupos de Utilizador!",
-        
-        
+
+
         "A carregar registos...": "A carregar registos...",
         "A carregar dados": "A carregar dados",
         "Criar novo": "Criar novo",
@@ -57,13 +57,13 @@
         "ano_letivo.Ocorreu um problema ao abrir um novo ano letivo!": "Ocorreu um problema ao abrir um novo ano letivo!",
         "ano_letivo.Abrir novo ano letivo": "Abrir novo ano letivo",
         "ano_letivo.Ao abrir um novo ano letivo, este ficará ativo por defeito para todos os utilizadores!": "Ao abrir um novo ano letivo, este ficará ativo por defeito para todos os utilizadores!",
-        "ano_letivo.Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?": "Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?",      
+        "ano_letivo.Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?": "Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?",
         "ano_letivo.Ano letivo atualizado com sucesso!": "Ano letivo atualizado com sucesso!",
         "ano_letivo.Ocorreu um problema ao atualizar o ano letivo!" : "Ocorreu um problema ao atualizar o ano letivo!",
         "É o ano que irá estar selecionado automáticamente para o utilizador! Apenas um pode estar selecionado de cada vez.": "É o ano que irá estar selecionado automáticamente para o utilizador! Apenas um pode estar selecionado de cada vez.",
         "Anos letivos disponivies para os utilizadores selecionarem.": "Anos letivos disponivies para os utilizadores selecionarem.",
 
-        
+
         "Tipos de Avaliação": "Tipos de Avaliação",
         "Pesquisar tipo de avaliação...": "Pesquisar tipo de avaliação...",
         "Ohh! Não foi possível encontrar Tipos de Avaliação!": "Ohh! Não foi possível encontrar Tipos de Avaliação!",
@@ -76,7 +76,7 @@
         "Editar Tipo de Avaliação": "Editar Tipo de Avaliação",
         "Novo Tipo de Avaliação":  "Novo Tipo de Avaliação",
 
-        
+
         "Tipos de Interrupções": "Tipos de Interrupções",
         "Pesquisar tipo de interrupção...": "Pesquisar tipo de interrupção...",
         "Ohh! Não foi possível encontrar Tipos de Interrupção!": "Ohh! Não foi possível encontrar Tipos de Interrupção!",
@@ -89,7 +89,7 @@
         "Editar Tipo de Interrupção": "Editar Tipo de Interrupção",
         "Novo Tipo de Interrupção":  "Novo Tipo de Interrupção",
 
-        
+
         "Fases do Calendário": "Fases do Calendário",
         "Pesquisar fase do calendário...": "Pesquisar fase do calendário...",
         "Ohh! Não foi possível encontrar a fase do calendário!": "Ohh! Não foi possível encontrar a fase do calendário!",
@@ -115,6 +115,12 @@
         "Guardar": "Guardar",
         "Criar": "Criar",
         "Duplicar": "Duplicar",
-        "Pesquisar": "Pesquisar"
+        "Pesquisar": "Pesquisar",
+
+        "Por Página": "Por Página",
+        "Grau de ensino": "Grau de ensino",
+        "Escolas": "Escolas",
+        "Todas as Escolas": "Todas as Escolas",
+        "Grupo de Utilizador": "Grupo de Utilizador"
     }
 }
