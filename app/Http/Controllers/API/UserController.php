@@ -14,7 +14,8 @@ class UserController extends Controller
 
     public function index(UserFilters $filters)
     {
-        return UserResource::collection(User::filter($filters)->paginate(10));
+        $perPage = request('per_page', 10);
+        return UserResource::collection(User::filter($filters)->paginate($perPage));
     }
 
     public function store(Request $request)

@@ -10,6 +10,7 @@ import SCOPES from '../../utils/scopesConstants';
 import {successConfig, errorConfig} from '../../utils/toastConfig';
 import EmptyTable from "../../components/EmptyTable";
 import YearSelector from "./yearSelector";
+import moment from "moment";
 
 const SweetAlertComponent = withReactContent(Swal);
 
@@ -25,6 +26,8 @@ const AnoLetivo = () => {
         {name: t('Descrição')},
         {name: t('Ativo'),          textAlign: 'center', popup: <Popup trigger={<Icon name="info circle" />} content={t('Anos letivos disponivies para os utilizadores selecionarem.')} position='top center'/>},
         {name: t('Selecionado'),    textAlign: 'center', popup: <Popup trigger={<Icon name="info circle" />} content={t('É o ano que irá estar selecionado automáticamente para o utilizador! Apenas um pode estar selecionado de cada vez.')} position='top center'/>},
+        {name: 'S1 Sync',           popup: <Popup trigger={<Icon name="info circle" />} content={t('Quando os 2 semestres estao sincronizados, o ano letivo poderá ser ativado.')} position='top center'/>},
+        {name: 'S2 Sync',           popup: <Popup trigger={<Icon name="info circle" />} content={t('Quando os 2 semestres estao sincronizados, o ano letivo poderá ser ativado.')} position='top center'/>},
         {name: t('Ações'),          style: {width: '15%'}}
     ];
 
@@ -98,9 +101,16 @@ const AnoLetivo = () => {
             }
         });
     };
-    function handleGetList() {
-        getAcademicYearsList();
+    const syncSemester = (id, semester) => {
+        axios.get('/academic-year/' + id + "/sync/" + semester).then((res) => {
+            if (res.status === 200) {
+                toast(t('ano_letivo.Ano letivo atualizado com sucesso!'), successConfig);
+            } else {
+                toast(t('ano_letivo.Ocorreu um problema ao atualizar o ano letivo!'), errorConfig);
+            }
+        });
     }
+
     const openNewAcademicYear = () => {
         let selectedYear = "";
         SweetAlertComponent.fire({
@@ -158,13 +168,14 @@ const AnoLetivo = () => {
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
-                                { academicYearsList.map(({id, active, selected, display, code, isActiveLoading, isSelectedLoading}) => (
+                                { academicYearsList.map(({id, active, selected, display, code, isActiveLoading, isSelectedLoading, s1_sync, s2_sync}) => (
                                     <Table.Row key={id}>
                                         <Table.Cell><b>{display}</b> <small>({code})</small></Table.Cell>
                                         <Table.Cell textAlign="center">
                                             <ShowComponentIfAuthorized permission={[SCOPES.EDIT_ACADEMIC_YEARS]} renderIfNotAllowed={<Checkbox toggle disabled defaultChecked={active}/>}>
                                                 { isActiveLoading && (<Icon loading name='spinner'/>)}
-                                                <Checkbox toggle defaultChecked={active} onChange={() => handleYearActive(id)} />
+                                                { /* TODO - Only be able to activate, if 2 syncs are done at least once */ }
+                                                <Checkbox toggle defaultChecked={active} disabled={!(s1_sync && s2_sync)} onChange={() => handleYearActive(id)} />
                                             </ShowComponentIfAuthorized>
                                         </Table.Cell>
                                         <Table.Cell textAlign="center">
@@ -173,6 +184,8 @@ const AnoLetivo = () => {
                                                 <Checkbox toggle defaultChecked={selected} disabled={selected} onChange={() => handleYearSelected(id)} />
                                             </ShowComponentIfAuthorized>
                                         </Table.Cell>
+                                        <Table.Cell><Button icon color="olive" onClick={() => syncSemester(id, 1)}><Icon name={'sync'}/></Button> { s1_sync ? moment(s1_sync).fromNow() : 'N/A' }</Table.Cell>
+                                        <Table.Cell><Button icon color="olive" onClick={() => syncSemester(id, 2)}><Icon name={'sync'}/></Button> { s2_sync ? moment(s2_sync).fromNow() : 'N/A' }</Table.Cell>
                                         <Table.Cell textAlign="center">
                                             <ShowComponentIfAuthorized permission={[SCOPES.DELETE_ACADEMIC_YEARS]}>
                                                 <Button onClick={() => remove(id, code)} color="red" icon disabled={selected}>

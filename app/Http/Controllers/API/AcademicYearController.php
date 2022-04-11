@@ -12,6 +12,7 @@ use App\Jobs\ProcessNewAcademicYear;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AcademicYearController extends Controller
 {
@@ -58,10 +59,6 @@ class AcademicYearController extends Controller
             return response()->json("An error has occurred! {$ex->getMessage()}", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        // TODO @miguel.cerejo
-        // This will fetch the courses for this new year
-        //ProcessNewAcademicYear::dispatchAfterResponse($newAcademicYear);
-
         return (AcademicYearResource::collection(AcademicYear::all()->sortBy('display')))->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
@@ -80,6 +77,20 @@ class AcademicYearController extends Controller
         $year->selected = !$year->selected;
         $year->save();
         return (AcademicYearResource::collection(AcademicYear::all()->sortBy('display')))->response()->setStatusCode(Response::HTTP_OK);
+    }
+
+    public function sync($id, $semester)
+    {
+        $semester = intval($semester);
+        if( $semester != 1 && $semester != 2) {
+            return response()->json("error on semester value!", Response::HTTP_BAD_REQUEST);
+        }
+        $year = AcademicYear::findOrFail($id);
+
+        // TODO Validate response, it returns 200 but will wait for response anyway
+        ProcessNewAcademicYear::dispatchAfterResponse($year->code, $semester);
+
+        return response()->json("Syncing!", Response::HTTP_OK);
     }
 
     public function destroy($id)

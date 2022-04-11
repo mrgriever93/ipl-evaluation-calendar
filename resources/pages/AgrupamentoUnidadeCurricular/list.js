@@ -90,7 +90,7 @@ const List = ({ match }) => {
   ];
 
   return (
-    <Container style={{ marginTop: '2em' }}>
+    <Container>
       <Card fluid>
         <Card.Content>
           {isLoading && (

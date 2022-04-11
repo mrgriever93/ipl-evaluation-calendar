@@ -3,7 +3,7 @@
 namespace App\Console;
 
 use App\Models\AcademicYear;
-use App\Models\Course;
+use App\Services\ExternalImports;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -19,7 +19,8 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->call(function () {
-            Course::importCoursesFromWebService(AcademicYear::where('active', true));
+            $month = date('m');
+            ExternalImports::importCoursesFromWebService(AcademicYear::where('selected', true)->first()->code, ($month > 1 && $month < 7? 2 : 1));
         })->dailyAt(3);
     }
 
