@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Filters\CourseFilters;
 use App\Http\Requests\CourseRequest;
+use App\Http\Resources\Generic\CourseFullDetailResource;
 use App\Http\Resources\Generic\CourseListResource;
+use App\Http\Resources\Generic\BranchesResource;
 use App\Http\Resources\Generic\CourseResource;
+use App\Http\Resources\Generic\CourseUnitListResource;
+use App\Http\Resources\Generic\UserSearchResource;
 use App\Models\AcademicYear;
 use App\Models\Branch;
 use App\Models\Course;
@@ -53,6 +57,43 @@ class CourseController extends Controller
     public function show(Course $course)
     {
         return new CourseResource($course);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     */
+    public function showFull(Course $course)
+    {
+        return new CourseFullDetailResource($course);
+    }
+
+    public function branchesList(Course $course)
+    {
+        return BranchesResource::collection($course->branches()->get());
+    }
+
+    public function branchesUpdate(Course $course)
+    {
+        return response()->json("Branch updated", Response::HTTP_OK);
+    }
+
+    public function getStudents(Course $course)
+    {
+        return UserSearchResource::collection($course->students()->get());
+    }
+
+    public function getUnits(Course $course){
+        return CourseUnitListResource::collection($course->courseUnits()->get());
+    }
+
+    public function addUnit(Course $course){
+        return response()->json("Unit added", Response::HTTP_OK);
+    }
+
+    public function removeUnit(Course $course){
+        return response()->json("Unit removed", Response::HTTP_OK);
     }
 
     /**

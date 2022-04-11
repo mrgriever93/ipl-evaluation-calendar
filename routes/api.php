@@ -174,8 +174,18 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/courses',                               'index'            );
         Route::get('/courses/degrees',                       'listDegrees'      );
         Route::get('/courses/{course}',                      'show'             );
-        Route::delete('/courses/{course}/student/{student}', 'removeStudent'    );
+
+        Route::get('/courses/{course}/branches',             'branchesList'     );
+        Route::patch('/courses/{course}/branches',           'branchesUpdate'   );
+
+        Route::get('/courses/{course}/units',                'getUnits'      );
+        Route::patch('/courses/{course}/units',              'addUnit'       );
+        Route::delete('/courses/{course}/unit/{unit}',       'removeUnit'    );
+
+        Route::get('/courses/{course}/students',             'getStudents'      );
         Route::patch('/courses/{course}/student',            'addStudent'       );
+        Route::delete('/courses/{course}/student/{student}', 'removeStudent'    );
+
         Route::delete('/courses/{course}',                   'destroy'          );
         Route::patch('/courses/{course}',                    'update'           );
         Route::patch('/courses/{course}/coordinator',        'assignCoordinator');
