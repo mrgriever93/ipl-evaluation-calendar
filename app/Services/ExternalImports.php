@@ -93,8 +93,10 @@ class ExternalImports
                         $branch = Branch::firstOrCreate(
                             ["course_id" => $course->id],
                             [
-                                "name" => "Tronco Comum",
-                                "initials" => "TComum"
+                                "name_pt"       => "Tronco Comum",
+                                "name_en"       => "Common Branch",
+                                "initials_pt"   => "TComum",
+                                "initials_en"   => "CBranch",
                             ]
                         );
                         // Retrieve CourseUnit by code or create it if it doesn't exist...

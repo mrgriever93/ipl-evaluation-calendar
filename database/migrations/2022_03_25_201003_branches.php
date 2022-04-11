@@ -16,8 +16,10 @@ return new class extends Migration
         Schema::create('branches', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
             $table->unsignedBigInteger('course_id');
-            $table->string('name');
-            $table->string('initials');
+            $table->string('name_pt');
+            $table->string('name_en');
+            $table->string('initials_pt');
+            $table->string('initials_en');
             $table->foreign('course_id')->references('id')->on('courses');
 
             $table->timestamp('created_at')->useCurrent();
