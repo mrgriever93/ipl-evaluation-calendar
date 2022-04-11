@@ -68,7 +68,6 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/available-methods/{calendar}',        'getAvailableMethods'  );
         Route::get('/semesters',                           'listSemesters'        );
         Route::post('/calendar/{calendar}/publish',        'publish'              );
-        Route::delete('/branches/{branch}',                'deleteBranch'         );
     });
 
     Route::controller(EvaluationTypeController::class)->group(function () {
@@ -143,6 +142,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::controller(SchoolController::class)->group(function () {
         Route::get('/schools',                  'index' );
+        Route::get('/schools-list',             'list' );
         Route::get('/schools/{school}',         'show'  );
         Route::patch('/schools/{school}',       'update');
     });
@@ -171,9 +171,21 @@ Route::middleware('auth:api')->group(function () {
 
     Route::controller(CourseController::class)->group(function () {
         Route::get('/courses',                               'index'            );
+        Route::get('/courses/degrees',                       'listDegrees'      );
         Route::get('/courses/{course}',                      'show'             );
-        Route::delete('/courses/{course}/student/{student}', 'removeStudent'    );
+
+        Route::get('/courses/{course}/branches',             'branchesList'     );
+        Route::post('/courses/{course}/branch',              'branchAdd'        );
+        Route::delete('/courses/{course}/branch/{branch}',   'deleteBranch'     );
+
+        Route::get('/courses/{course}/units',                'getUnits'         );
+        Route::patch('/courses/{course}/units',              'addUnit'          );
+        Route::delete('/courses/{course}/unit/{unit}',       'removeUnit'       );
+
+        Route::get('/courses/{course}/students',             'getStudents'      );
         Route::patch('/courses/{course}/student',            'addStudent'       );
+        Route::delete('/courses/{course}/student/{student}', 'removeStudent'    );
+
         Route::delete('/courses/{course}',                   'destroy'          );
         Route::patch('/courses/{course}',                    'update'           );
         Route::patch('/courses/{course}/coordinator',        'assignCoordinator');

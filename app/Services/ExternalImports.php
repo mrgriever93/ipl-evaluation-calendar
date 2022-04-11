@@ -37,10 +37,10 @@ class ExternalImports
         }
     }
 
-
     public static function importCoursesFromWebService(int $academicYearCode, int $semester)
     {
         set_time_limit(0);
+        $isServer = env('APP_SERVER', false);
         Log::channel('courses_sync')->info('Start "importCoursesFromWebService" sync for Year code (' . $academicYearCode . ') and semester (' . $semester . ')');
         try{
             //validate if the semester is 1 or 2
@@ -83,7 +83,8 @@ class ExternalImports
                             [
                                 "school_id" => $school->id,
                                 "name_pt" => $info[$school->index_course_name],
-                                "name_en" => $info[$school->index_course_name] // this will duplicate the value as default, to prevent empty states
+                                "name_en" => $info[$school->index_course_name], // this will duplicate the value as default, to prevent empty states
+                                "degree" => DegreesUtil::getDegreeId($info[$school->index_course_name])
                             ]
                         );
                         // https://laravel.com/docs/9.x/eloquent-relationships#syncing-associations
@@ -92,8 +93,10 @@ class ExternalImports
                         $branch = Branch::firstOrCreate(
                             ["course_id" => $course->id],
                             [
-                                "name" => "Tronco Comum",
-                                "initials" => "TComum"
+                                "name_pt"       => "Tronco Comum",
+                                "name_en"       => "Common Branch",
+                                "initials_pt"   => "TComum",
+                                "initials_en"   => "CBranch",
                             ]
                         );
                         // Retrieve CourseUnit by code or create it if it doesn't exist...
@@ -125,7 +128,6 @@ class ExternalImports
                                     $foundUser = User::where("email", $userEmail)->first();
                                     if (is_null($foundUser)) {
                                         // if the user is not created, it will create a new record for the user.
-                                        $isServer = env('APP_SERVER', false);
                                         if($isServer){
                                             $ldapUser = (clone $LdapConnection)->whereContains('mailNickname', $username)->orWhereContains('mail', $userEmail)->first('cn');
                                         }
@@ -160,7 +162,7 @@ class ExternalImports
                 $academicYear->s2_sync = Carbon::now();
                 $academicYear->save();
             }
-        }catch(\Exception $e){
+        } catch(\Exception $e){
             Log::channel('courses_sync')->error('There was an error syncing. ', $e);
         }
         Log::channel('courses_sync')->info('End "importCoursesFromWebService" sync for Year code (' . $academicYearCode . ') and semester (' . $semester . ')');

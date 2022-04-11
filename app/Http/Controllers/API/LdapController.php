@@ -22,6 +22,9 @@ class LdapController extends Controller
     }
 
     public function searchStudents(Request $request) {
+        if(!env('APP_SERVER')) {
+            return response()->json([]);
+        }
         $query = $this->connection->query()->setDn('OU=Estudantes,dc=ipleiria,dc=pt');
         $records = $query->whereContains('displayName', $request->q)->orWhereContains('mail', $request->q)->orWhereContains('cn', $request->q)->get();
 
@@ -44,7 +47,9 @@ class LdapController extends Controller
     }
 
     public function searchUsers(Request $request) {
-
+        if(!env('APP_SERVER')) {
+            return response()->json([]);
+        }
         $query = $this->connection->query()->setDn('OU=Docentes,OU=Funcionarios,dc=ipleiria,dc=pt');
 
         $records = $query->whereContains('displayName', $request->q)->orWhereContains('cn', $request->q)->get();

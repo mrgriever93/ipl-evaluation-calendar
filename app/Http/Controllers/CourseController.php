@@ -2,50 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use App\Filters\CourseFilters;
+use App\Http\Requests\CourseRequest;
+use App\Http\Resources\Generic\CourseFullDetailResource;
+use App\Http\Resources\Generic\CourseListResource;
+use App\Http\Resources\Generic\BranchesResource;
+use App\Http\Resources\Generic\CourseResource;
+use App\Http\Resources\Generic\CourseUnitListResource;
+use App\Http\Resources\Generic\UserSearchResource;
 use App\Models\AcademicYear;
 use App\Models\Branch;
 use App\Models\Course;
 use App\Models\Group;
-use App\Models\InitialGroups;
 use App\Models\User;
-use App\Filters\CourseFilters;
-use App\Http\Requests\CourseRequest;
-use App\Http\Resources\CourseResource;
+use App\Services\DegreesUtil;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class CourseController extends Controller
 {
-
-    public function deleteBranch(Branch $branch) {
-        $branch->delete();
-    }
-
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index(Request $request, CourseFilters $filters)
     {
-        return CourseResource::collection(
-            Course::with('school')
-                ->ofAcademicYear($request->cookie('academic_year'))
-                ->filter($filters)
-                ->paginate(10)
-        );
-    }
+        $perPage = request('per_page', 10);
+        $courseList = Course::with('school')->ofAcademicYear($request->cookie('academic_year'));
+        if( request('school') ){
+            $courseList->where('school_id', request('semester'));
+        }
+        if( request('degree') ){
+            $courseList->where('degree', request('degree'));
+        }
+        $courseList->filter($filters);
 
-    public function removeStudent(Course $course, User $student) {
-        $student->courses()->detach($course->id);
+        return CourseListResource::collection($courseList->paginate($perPage));
     }
 
     /**
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function show(Course $course)
     {
@@ -53,11 +51,19 @@ class CourseController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     */
+    public function showFull(Course $course)
+    {
+        return new CourseFullDetailResource($course);
+    }
+
+    /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function update(CourseRequest $request, Course $course)
     {
@@ -66,13 +72,10 @@ class CourseController extends Controller
         if ($request->has('coordinator_user_id')) {
             $this->assignCoordinatorUserToCourse($request->coordinator_user_id, $course);
         }
-
-        $this->createOrUpdateBranches($request->branches, $course);
-
         $course->save();
     }
 
-    public function assignCoordinator (Request $request, Course $course) {
+    public function assignCoordinator(Request $request, Course $course) {
         $coordinatorUser = User::where('email', $request->coordinator_user_email)->first();
 
         if (is_null($coordinatorUser)) {
@@ -89,24 +92,6 @@ class CourseController extends Controller
         $course->save();
     }
 
-    public function addStudent(Request $request, Course $course) {
-        $student = User::where('email', $request->user_email)->first();
-
-        if (is_null($student)) {
-            $student = User::create([
-                "email" => $request->user_email,
-                "name" => $request->user_name,
-                "password" => "",
-            ]);
-        }
-
-        if ($student->groups()->isStudent()->get()->count() == 0) {
-            $student->groups()->syncWithoutDetaching(Group::isStudent()->get());
-        }
-
-        $student->courses()->syncWithoutDetaching($course->id);
-    }
-
     private function assignCoordinatorUserToCourse($user, $course)
     {
         if (isset($user)) {
@@ -118,24 +103,6 @@ class CourseController extends Controller
             $course->coordinatorUser()->associate($coordinatorUser);
         } else {
             $course->coordinatorUser()->associate(null);
-        }
-    }
-
-    private function createOrUpdateBranches($branches, $course)
-    {
-        if (isset($branches)) {
-
-            foreach ($branches as $branch) {
-                if (isset($branch->id)) {
-                    $existingBranch = Branch::find($branch->id);
-                    $existingBranch->update($branch);
-                    $existingBranch->course()->associate($course);
-                } else {
-                    $newBranch = new Branch($branch);
-                    $newBranch->course()->associate($course);
-                    $newBranch->save();
-                }
-            }
         }
     }
 
@@ -166,5 +133,122 @@ class CourseController extends Controller
         } else {
             return response()->json("The academic year is not being passed!", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+    }
+
+    /*
+     * List Degrees Logic
+     * TODO: move this code to other place
+     */
+
+    public function listDegrees(Request $request)
+    {
+        return response()->json(DegreesUtil::getDegreesList($request->header("lang")), Response::HTTP_OK);
+    }
+
+    /*
+     * Students Logic
+     * TODO: move this code to other place
+     */
+    public function getStudents(Course $course)
+    {
+        return UserSearchResource::collection($course->students()->get());
+    }
+
+    public function addStudent(Request $request, Course $course) {
+        $student = User::where('email', $request->user_email)->first();
+
+        if (is_null($student)) {
+            $student = User::create([
+                "email" => $request->user_email,
+                "name" => $request->user_name,
+                "password" => "",
+            ]);
+        }
+
+        if ($student->groups()->isStudent()->get()->count() == 0) {
+            $student->groups()->syncWithoutDetaching(Group::isStudent()->get());
+        }
+
+        $student->courses()->syncWithoutDetaching($course->id);
+    }
+
+    public function removeStudent(Course $course, User $student) {
+        $student->courses()->detach($course->id);
+    }
+
+    /*
+     * Units Logic
+     * TODO: move this code to other place
+     */
+    public function getUnits(Course $course){
+        return CourseUnitListResource::collection($course->courseUnits()->get());
+    }
+
+    public function addUnit(Course $course){
+        return response()->json("Unit added", Response::HTTP_OK);
+    }
+
+    public function removeUnit(Course $course){
+        return response()->json("Unit removed", Response::HTTP_OK);
+    }
+
+
+    /*
+     * Branches Logic
+     * TODO: move this code to other place
+     */
+    public function branchesList(Course $course)
+    {
+        return BranchesResource::collection($course->branches()->get());
+    }
+
+    public function branchAdd(Request $request, Course $course){
+        if( empty($request->name_pt) || empty($request->initials_pt) || empty($request->name_en) || empty($request->initials_en) ){
+            return response()->json("Values not defined", Response::HTTP_BAD_REQUEST);
+        }
+        $this->createOrUpdateSingleBranch(
+            [
+                "name_pt" => $request->name_pt,
+                "initials_pt" => $request->initials_pt,
+                "name_en" => $request->name_en,
+                "initials_en" => $request->initials_en
+            ], $course);
+
+        return $this->branchesList($course);
+    }
+
+    private function createOrUpdateBranches($branches, $course)
+    {
+        if (isset($branches)) {
+            foreach ($branches as $branch) {
+                if (isset($branch->id)) {
+                    $existingBranch = Branch::find($branch->id);
+                    $existingBranch->update($branch);
+                    $existingBranch->course()->associate($course);
+                } else {
+                    $newBranch = new Branch($branch);
+                    $newBranch->course()->associate($course);
+                    $newBranch->save();
+                }
+            }
+        }
+    }
+
+    private function createOrUpdateSingleBranch($branch, $course)
+    {
+        return Branch::firstOrCreate(
+            [
+                'course_id'     => $course->id,
+                'name_pt'       => $branch['name_pt'],
+                'name_en'       => $branch['name_en'],
+                'initials_pt'   => $branch['initials_pt'],
+                'initials_en'   => $branch['initials_en'],
+            ]
+        );
+    }
+
+    public function deleteBranch(Course $course, Branch $branch) {
+        $branch->delete();
+        return $this->branchesList($course);
     }
 }

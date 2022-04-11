@@ -2,41 +2,30 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\CalendarChanged;
+use App\Events\CalendarDeleted;
+use App\Events\CalendarPublished;
+use App\Filters\CalendarFilters;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\NewCalendarRequest;
+use App\Http\Requests\PublishCalendarRequest;
+use App\Http\Requests\UpdateCalendarRequest;
+use App\Http\Resources\AvailableCourseUnitsResource;
+use App\Http\Resources\CalendarResource;
+use App\Http\Resources\SemesterResource;
 use App\Models\Calendar;
 use App\Models\CalendarPhase;
 use App\Models\Course;
 use App\Models\CourseUnit;
 use App\Models\Epoch;
-use App\Models\Exam;
-use App\Models\InitialGroups;
 use App\Models\Interruption;
 use App\Models\InterruptionType;
-use App\Models\Method;
 use App\Models\Semester;
-
-use App\Http\Controllers\Controller;
-use App\Events\CalendarChanged;
-use App\Events\CalendarDeleted;
-use App\Events\CalendarPublished;
-use App\Filters\CalendarFilters;
-use App\Http\Requests\NewCalendarRequest;
-use App\Http\Requests\PublishCalendarRequest;
-use App\Http\Requests\UpdateCalendarRequest;
-use App\Http\Resources\AvailableCourseUnitsResource;
-use App\Http\Resources\AvailableMethodsResource;
-use App\Http\Resources\CalendarResource;
-use App\Http\Resources\CourseUnitResource;
-use App\Http\Resources\SemesterResource;
 use Carbon\Carbon;
-use Dotenv\Util\Str;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str as SupportStr;
-use PhpParser\ErrorHandler\Collecting;
 
 class CalendarController extends Controller
 {
