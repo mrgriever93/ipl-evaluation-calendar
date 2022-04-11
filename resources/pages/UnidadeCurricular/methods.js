@@ -154,7 +154,7 @@ const Methods = ({ match }) => {
   };
 
   return (
-    <Container style={{ marginTop: '2em' }}>
+    <Container>
 
       <Card fluid>
         <Card.Content header={`Métodos de avaliação para a Unidade Curricular: ${courseUnit || ''}`} />

@@ -184,7 +184,7 @@ const NewCalendar = () => {
     };
 
     return (
-        <Container style={{marginTop: '2em'}}>
+        <Container>
             <FinalForm onSubmit={onSubmit} initialValues={formInitialValues} key={'form_new_calendar'}
                 render={({handleSubmit}) => (
                     <Card fluid>

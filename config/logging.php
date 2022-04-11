@@ -60,6 +60,13 @@ return [
             'level' => env('LOG_LEVEL', 'debug'),
         ],
 
+
+        'courses_sync' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/courses_sync.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),

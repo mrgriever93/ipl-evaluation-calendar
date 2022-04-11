@@ -21,6 +21,9 @@ return new class extends Migration
             $table->boolean('active')->default(true);
             $table->boolean('selected')->default(true);
 
+            $table->timestamp('s1_sync')->nullable();
+            $table->timestamp('s2_sync')->nullable();
+
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
             $table->softDeletes();
