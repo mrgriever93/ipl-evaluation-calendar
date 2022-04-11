@@ -31,13 +31,13 @@ const CoursesList = () => {
 
     // Table columns
     const columns = [
-        {name: 'Unidade de Ensino'},
-        {name: 'Código'},
+        {name: 'Unidade de Ensino', style: {width: '15%'} },
+        {name: 'Código', style: {width: '10%'} },
         {name: 'Nome'},
-        {name: 'Sigla'},
-        {name: 'Grau de Ensino'},
-        {name: 'Numero de Anos'},
-        {name: t('Ações'),  align: 'center', style: {width: '15%'} },
+        //{name: 'Sigla'},
+        {name: 'Grau de Ensino', style: {width: '15%'}},
+        //{name: 'Numero de Anos'},
+        {name: t('Ações'),  align: 'center', style: {width: '10%'} },
     ];
 
     useEffect(() => {
@@ -111,58 +111,54 @@ const CoursesList = () => {
                     </Form>
                 </Card.Content>
                 { !loading && courseList.length > 0 ? (
-                    <>
-                        <Card.Content>
-                            <Table celled fixed>
-                                <Table.Header>
-                                    <Table.Row>
-                                        {columns.map((col, index) => (
-                                            <Table.HeaderCell key={index} textAlign={col.align} style={ col.style } >{col.name} </Table.HeaderCell>
-                                        ))}
-                                    </Table.Row>
-                                </Table.Header>
-                                <Table.Body>
-                                    {courseList.map(({id, school, code, name, initials, level, duration}) => (
-                                        <Table.Row key={code}>
-                                            <Table.Cell>{school}</Table.Cell>
-                                            <Table.Cell>{code}</Table.Cell>
-                                            <Table.Cell>{name}</Table.Cell>
-                                            <Table.Cell>{initials}</Table.Cell>
-                                            <Table.Cell>{level}</Table.Cell>
-                                            <Table.Cell>{duration}</Table.Cell>
-                                            <Table.Cell>
-                                                <Link to={`/curso/${id}`}>
-                                                    <Button color="green" icon>
-                                                        <Icon name="eye"/>
-                                                    </Button>
-                                                </Link>
-                                                <ShowComponentIfAuthorized permission={[SCOPES.DELETE_COURSES]}>
-                                                    <Button onClick={() => remove(id)} color="red" icon loading={removingCourse === id}>
-                                                        <Icon name="trash"/>
-                                                    </Button>
-                                                </ShowComponentIfAuthorized>
-                                            </Table.Cell>
-                                        </Table.Row>
+                    <Card.Content>
+                        <Table celled fixed>
+                            <Table.Header>
+                                <Table.Row>
+                                    {columns.map((col, index) => (
+                                        <Table.HeaderCell key={index} textAlign={col.align} style={ col.style } >{col.name} </Table.HeaderCell>
                                     ))}
-                                </Table.Body>
-                            </Table>
-                            { paginationInfo && (<div> From <b>{ paginationInfo.from }</b> to  <b>{ paginationInfo.to }</b> of <b>{ paginationInfo.total }</b> results</div>)}
-                            {
-                                paginationInfo && paginationInfo.current_page !== paginationInfo.last_page && (
-                                    <Pagination defaultActivePage={1} totalPages={paginationInfo.last_page} onPageChange={loadCourses}
-                                                ellipsisItem={{ content: <Icon name='ellipsis horizontal' />, icon: true }}
-                                                prevItem={{ content: <Icon name='angle left' />, icon: true }}
-                                                nextItem={{ content: <Icon name='angle right' />, icon: true }}
-                                                firstItem={null} lastItem={null} />
-                                )
-                            }
-                            {loading && (
-                                <Dimmer active inverted>
-                                    <Loader indeterminate>A carregar os cursos</Loader>
-                                </Dimmer>
-                            )}
-                        </Card.Content>
-                    </>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {courseList.map(({id, school, code, name, initials, level, duration, has_issues}) => (
+                                    <Table.Row key={code} warning={has_issues}>
+                                        <Table.Cell>{school}</Table.Cell>
+                                        <Table.Cell>{code}</Table.Cell>
+                                        <Table.Cell>
+                                            {has_issues ? <Icon name='warning sign' /> : ''}{name}
+                                        </Table.Cell>
+                                        {/*<Table.Cell>{initials}</Table.Cell>*/}
+                                        <Table.Cell>{level}</Table.Cell>
+                                        {/*<<Table.Cell>{duration}</Table.Cell>*/}
+                                        <Table.Cell textAlign="center">
+                                            <Link to={`/curso/${id}`}>
+                                                <Button color="green" icon>
+                                                    <Icon name="eye"/>
+                                                </Button>
+                                            </Link>
+                                            <ShowComponentIfAuthorized permission={[SCOPES.DELETE_COURSES]}>
+                                                <Button onClick={() => remove(id)} color="red" icon loading={removingCourse === id}>
+                                                    <Icon name="trash"/>
+                                                </Button>
+                                            </ShowComponentIfAuthorized>
+                                        </Table.Cell>
+                                    </Table.Row>
+                                ))}
+                            </Table.Body>
+                        </Table>
+                        { paginationInfo && (<div> From <b>{ paginationInfo.from }</b> to  <b>{ paginationInfo.to }</b> of <b>{ paginationInfo.total }</b> results</div>)}
+                        {
+                            paginationInfo && paginationInfo.current_page !== paginationInfo.last_page && (
+                                <Pagination defaultActivePage={1} totalPages={paginationInfo.last_page} onPageChange={loadCourses} firstItem={null} lastItem={null} />
+                            )
+                        }
+                        {loading && (
+                            <Dimmer active inverted>
+                                <Loader indeterminate>A carregar os cursos</Loader>
+                            </Dimmer>
+                        )}
+                    </Card.Content>
                     ) : ( <EmptyTable isLoading={loading} label={t('Sem resultados')}/> ) }
             </Card>
         </Container>

@@ -3,23 +3,11 @@
 namespace App\Http\Resources\Generic;
 
 use App\Http\Resources\UserResource;
+use App\Services\DegreesUtil;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseListResource extends JsonResource
 {
-    private function getLevel($levelNumber)
-    {
-        switch ($levelNumber) {
-            case "5":
-                return "TeSP";
-            case "6":
-                return "Licenciatura";
-            case "7":
-                return "Mestrado";
-            case "8":
-                return "Doutoramento";
-        }
-    }
 
     public function toArray($request)
     {
@@ -30,7 +18,8 @@ class CourseListResource extends JsonResource
             'initials' => $this->initials,
             'name' => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
             'duration' => $this->num_years,
-            'level' => $this->getLevel($this->degree),
+            'has_issues' => $this->responsible_user_id == null,
+            'level' => DegreesUtil::getDegreeLabel($this->degree),
             'school' => $this->whenLoaded('school')->code
         ];
     }
