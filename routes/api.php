@@ -176,11 +176,11 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/courses/{course}',                      'show'             );
 
         Route::get('/courses/{course}/branches',             'branchesList'     );
-        Route::patch('/courses/{course}/branches',           'branchesUpdate'   );
+        Route::post('/courses/{course}/branches',            'branchAdd'        );
 
-        Route::get('/courses/{course}/units',                'getUnits'      );
-        Route::patch('/courses/{course}/units',              'addUnit'       );
-        Route::delete('/courses/{course}/unit/{unit}',       'removeUnit'    );
+        Route::get('/courses/{course}/units',                'getUnits'         );
+        Route::patch('/courses/{course}/units',              'addUnit'          );
+        Route::delete('/courses/{course}/unit/{unit}',       'removeUnit'       );
 
         Route::get('/courses/{course}/students',             'getStudents'      );
         Route::patch('/courses/{course}/student',            'addStudent'       );
