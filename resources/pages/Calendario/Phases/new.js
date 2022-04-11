@@ -23,12 +23,13 @@ const New = () => {
     const [isRemovable, setIsRemovable] = useState(true);
 
     useEffect(() => {
-        // check if URL params are just numbers or else redirects to previous page
-        if(!/\d+/.test(paramsId)){
-            navigate(-1);
-            toast(t("Ocorreu um erro ao carregar a informacao pretendida"), errorConfig);
-        }
         if (paramsId) {
+            // check if URL params are just numbers or else redirects to previous page
+            if(!/\d+/.test(paramsId)){
+                navigate(-1);
+                toast(t("Ocorreu um erro ao carregar a informacao pretendida"), errorConfig);
+            }
+
             axios.get(`/calendar-phases/${paramsId}`).then((res) => {
                 if (res.status === 200) {
                     setLoading(false);
@@ -57,7 +58,7 @@ const New = () => {
         const axiosFn = isNew ? axios.post : axios.patch;
 
         axiosFn(`/calendar-phases/${!isNew ? id : ''}`, {
-             ...(isRemovable ? code : null), name_pt, name_en, enabled 
+             code: (isRemovable ? code : null), name_pt, name_en, enabled 
         }).then((res) => {
             setIsSaving(false);
 
