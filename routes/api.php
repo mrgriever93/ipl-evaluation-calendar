@@ -68,7 +68,6 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/available-methods/{calendar}',        'getAvailableMethods'  );
         Route::get('/semesters',                           'listSemesters'        );
         Route::post('/calendar/{calendar}/publish',        'publish'              );
-        Route::delete('/branches/{branch}',                'deleteBranch'         );
     });
 
     Route::controller(EvaluationTypeController::class)->group(function () {
@@ -176,7 +175,8 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/courses/{course}',                      'show'             );
 
         Route::get('/courses/{course}/branches',             'branchesList'     );
-        Route::post('/courses/{course}/branches',            'branchAdd'        );
+        Route::post('/courses/{course}/branch',              'branchAdd'        );
+        Route::delete('/courses/{course}/branch/{branch}',   'deleteBranch'     );
 
         Route::get('/courses/{course}/units',                'getUnits'         );
         Route::patch('/courses/{course}/units',              'addUnit'          );

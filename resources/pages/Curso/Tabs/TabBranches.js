@@ -1,28 +1,25 @@
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
-import {Card, Form, Button, List, Header, Image, Grid, Tab} from 'semantic-ui-react';
+import {Form, Button, List, Grid, Tab, Modal, Header} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
 import {successConfig, errorConfig} from '../../../utils/toastConfig';
-import IplLogo from '../../../../public/images/ipl.png';
-
 const SweetAlertComponent = withReactContent(Swal);
 
-const CourseTabsBranches = ({ courseId, isLoading }) => {
+const CourseTabsBranches = ({ courseId }) => {
+    const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [loadingRequest, setLoadingRequest] = useState(false);
     const [branches, setBranches] = useState([]);
-    const [additionalBranches, setAdditionalBranches] = useState([]);
+    const [newBranch, setNewBranch] = useState({name_pt: '', initials_pt: '', name_en: '', initials_en: ''});
 
     const loadCourseBranches = () => {
         setLoading(true);
-        isLoading = true;
-        setAdditionalBranches([]);
         axios.get(`/courses/${courseId}/branches`).then((res) => {
-            setLoading(false);
-            isLoading = false;
             setBranches(res.data.data);
+            setLoading(false);
         });
     };
 
@@ -30,20 +27,24 @@ const CourseTabsBranches = ({ courseId, isLoading }) => {
         loadCourseBranches();
     }, [courseId]);
 
-    const onSaveBranches = () => {
-        axios.patch(`/courses/${courseId}/branches`, {
-            branches: [...additionalBranches.map((branch) => ({
-                name: branch.name,
-                initials: branch.name,
-            }))],
-        }).then((res) => {
+    const addNewBranch = () => {
+        setLoadingRequest(true);
+        axios.post(`/courses/${courseId}/branch`, newBranch).then((res) => {
             if (res.status === 200) {
-                toast('Curso atualizado com sucesso!', successConfig);
+                setBranches(res.data.data);
+                toast('Ramo adicionado com sucesso!', successConfig);
+                setOpenModal(false);
+                setNewBranch({name_pt: '', initials_pt: '', name_en: '', initials_en: ''});
+                setLoadingRequest(false);
             } else {
-                toast('Ocorreu um erro ao gravar o curso!', errorConfig);
+                toast('Ocorreu um erro ao gravar o ramo!', errorConfig);
             }
         });
     };
+    const closeModal = () => {
+        setOpenModal(false);
+        setNewBranch({name_pt: '', initials_pt: '', name_en: '', initials_en: ''});
+    }
 
     const removeBranch = (branchId) => {
         SweetAlertComponent.fire({
@@ -57,9 +58,11 @@ const CourseTabsBranches = ({ courseId, isLoading }) => {
             denyButtonColor: '#db2828',
         }).then((result) => {
                 if (result.isConfirmed) {
-                    axios.delete(`/branches/${branchId}`).then((res) => {
+                    setLoadingRequest(true);
+                    axios.delete(`/courses/${courseId}/branch/${branchId}`).then((res) => {
                         if (res.status === 200) {
-                            loadCourseDetail();
+                            setBranches(res.data.data);
+                            setLoadingRequest(false);
                             toast('Ramo eliminado com sucesso!', successConfig);
                         } else {
                             toast('Ocorreu um problema ao eliminar este ramo!', errorConfig);
@@ -70,56 +73,86 @@ const CourseTabsBranches = ({ courseId, isLoading }) => {
     };
 
     return (
-        <Tab.Pane loading={loading} key='tab_branches'>
+        <Tab.Pane loading={loading} key='tab_branches_content'>
             {!loading && (
-                <Grid padded="vertically">
-                    <Grid.Column width="8">
-                        <Grid.Row>
-                            <List>
-                                {branches?.map((branch) => (
-                                    <List.Item key={branch.id}>
-                                        <List.Content floated="right">
-                                            <Button color="red" onClick={() => removeBranch(branch.id)}>
-                                                Remover
-                                            </Button>
-                                        </List.Content>
-                                        <Image avatar src={IplLogo}/>
-                                        <List.Content>
-                                            {branch.name}
-                                        </List.Content>
-                                    </List.Item>
-                                ))}
-                                {additionalBranches.map((branch) => (
-                                    <List.Item key={branch.id}>
-                                        <List.Content floated="right">
-                                            <Button color="red"
-                                                    onClick={() => setAdditionalBranches(
-                                                        (current) => [...current.filter((x) => x.order !== branch.order)],
-                                                    )}>
-                                                Remover
-                                            </Button>
-                                        </List.Content>
-                                        <Image avatar src={IplLogo}/>
-                                        <List.Content>
-                                            <Form.Input placeholder="Nome do novo ramo"
-                                                        onChange={(e, {value}) => setAdditionalBranches((current) => [...current.filter((x) => x.order !== branch.order), {
-                                                            order: branch.order,
-                                                            name: value
-                                                        }])}
-                                            />
-                                        </List.Content>
-                                    </List.Item>
-                                ))}
-                            </List>
-                        </Grid.Row>
-                        <br/>
-                        <Grid.Row>
-                            <Button color="green" onClick={() => setAdditionalBranches((current) => [...current, {order: current.length}])}>
+                <Grid padded="vertically" divided='vertically'>
+                    <Grid.Row textAlign={"right"} >
+                        <Grid.Column floated={"right"}>
+                            <Button color="green" onClick={() => setOpenModal(true)}>
                                 Adicionar ramo
                             </Button>
+                        </Grid.Column>
+                    </Grid.Row>
+                    {branches?.map((branch) => (
+                        <Grid.Row columns={3} key={branch.id} verticalAlign={"middle"}>
+                            <Grid.Column>
+                                <div>
+                                    <Header size='small'>
+                                        Name - PT
+                                        <Header.Subheader>
+                                            {branch.name_pt}
+                                        </Header.Subheader>
+                                    </Header>
+                                </div>
+                                <div className={'margin-top-s'}>
+                                    <Header size='small'>
+                                        Initials - PT
+                                        <Header.Subheader>
+                                            {branch.initials_pt}
+                                        </Header.Subheader>
+                                    </Header>
+                                </div>
+                            </Grid.Column>
+                            <Grid.Column>
+                                <div>
+                                    <Header size='small'>
+                                        Name - EN
+                                        <Header.Subheader>
+                                            {branch.name_en}
+                                        </Header.Subheader>
+                                    </Header>
+                                </div>
+                                <div className={'margin-top-s'}>
+                                    <Header size='small'>
+                                        Initials - EN
+                                        <Header.Subheader>
+                                            {branch.initials_en}
+                                        </Header.Subheader>
+                                    </Header>
+                                </div>
+                            </Grid.Column>
+                            <Grid.Column textAlign={"right"} floated={"right"}>
+                                <Button color="red" onClick={() => removeBranch(branch.id)}>Remover</Button>
+                            </Grid.Column>
                         </Grid.Row>
-                    </Grid.Column>
+                    ))}
                 </Grid>
+            )}
+
+            {openModal && (
+                <Modal dimmer="blurring" open={openModal} onClose={closeModal}>
+                    <Modal.Header>Adicionar ramo</Modal.Header>
+                    <Modal.Content>
+                        <Form>
+                            <Form.Group widths={2}>
+                                <Form.Input label={"Nome do ramo - PT"} placeholder="Nome do ramo - PT" onChange={(e, {value}) => setNewBranch(newBranch => ({...newBranch, name_pt: value}))}/>
+                                <Form.Input label={"Iniciais do ramo - PT"} placeholder="Iniciais do ramo - PT" onChange={(e, {value}) => setNewBranch(newBranch => ({...newBranch, initials_pt: value}))}/>
+                            </Form.Group>
+                            <Form.Group widths={2}>
+                                <Form.Input label="Nome do ramo - EN" placeholder="Nome do ramo - EN" onChange={(e, {value}) => setNewBranch(newBranch => ({...newBranch, name_en: value}))}/>
+                                <Form.Input label="Iniciais do ramo - EN" placeholder="Iniciais do ramo - EN" onChange={(e, {value}) => setNewBranch(newBranch => ({...newBranch, initials_en: value}))}/>
+                            </Form.Group>
+                        </Form>
+                    </Modal.Content>
+                    <Modal.Actions>
+                        <Button negative onClick={closeModal}>
+                            Cancelar
+                        </Button>
+                        <Button positive onClick={addNewBranch} loading={loadingRequest}>
+                            Adicionar
+                        </Button>
+                    </Modal.Actions>
+                </Modal>
             )}
         </Tab.Pane>
     );

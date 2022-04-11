@@ -106,7 +106,7 @@ const Detail = () => {
 
     return (
         <Container>
-            <div className="margin-bottom-s margin-top-base">
+            <div className="margin-bottom-base">
                 <Link to="/curso"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
             <FinalForm initialValues={initialValues} onSubmit={onSaveCourse} render={({handleSubmit}) => (

@@ -12,8 +12,10 @@ class BranchesResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'initials' => $this->initials,
-            'name' => $this->name
+            'name_pt' => $this->name_pt,
+            'name_en' => $this->name_en,
+            'initials_pt' => $this->initials_pt,
+            'initials_en' => $this->initials_en
         ];
     }
 }

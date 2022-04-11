@@ -1,11 +1,11 @@
 import axios from 'axios';
 import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
-import {Icon, Table, Header, Tab, Modal, Form, Button} from 'semantic-ui-react';
+import {Table, Tab, Modal, Form, Button} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import {successConfig, errorConfig} from '../../../utils/toastConfig';
 
-const CourseTabs = ({ courseId, isLoading }) => {
+const CourseTabsUnits = ({ courseId, isLoading }) => {
     const [loading, setLoading] = useState(true);
     const [openModal, setOpenModal] = useState(false);
     const [unitToAdd, setUnitToAdd] = useState([]);
@@ -65,9 +65,9 @@ const CourseTabs = ({ courseId, isLoading }) => {
     };
 
     return (
-        <Tab.Pane loading={loading} key='tab_units'>
-            {Object.keys(courseUnitsGrouped).map((year) => (
-                <Table striped color="green">
+        <Tab.Pane loading={loading} key='tab_units_content'>
+            {Object.keys(courseUnitsGrouped).map((year, index) => (
+                <Table striped color="green" key={index}>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell rowSpan="1" colSpan="4">
@@ -81,7 +81,6 @@ const CourseTabs = ({ courseId, isLoading }) => {
                             <Table.HeaderCell>Ramo</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-
                     <Table.Body>
                         {courseUnitsGrouped[year].map((unit, index) => (
                             <Table.Row key={index}>
@@ -127,4 +126,4 @@ const CourseTabs = ({ courseId, isLoading }) => {
     );
 };
 
-export default CourseTabs;
+export default CourseTabsUnits;
