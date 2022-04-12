@@ -47,14 +47,11 @@ body {
 }
 
 .footer.ui.inverted.vertical.segment{
-    height: 145px;
+    min-height: 145px;
     padding: 3em 0 4em;
     width: 100%;
 }
 
-.footer .ui.link.list.list .active.item.dropdown{
-    rgba(255,255,255,.1);
-}
 .footer .ui.inverted.link.list .item .dropdown > .menu .item{
     color: rgba(0,0,0,.87);
 }
