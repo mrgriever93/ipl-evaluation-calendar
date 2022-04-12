@@ -1,17 +1,21 @@
-import axios from 'axios';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Button, Card, Container, Dimmer, Form, Icon, Loader, Tab, Message } from 'semantic-ui-react';
+import { Field, Form as FinalForm } from 'react-final-form';
+import { useParams, useNavigate} from "react-router-dom";
 import _ from 'lodash';
-import React, {useEffect, useMemo, useState} from 'react';
-import {Field, Form as FinalForm} from 'react-final-form';
-import {useNavigate, useParams, Link} from 'react-router-dom';
-import {toast} from 'react-toastify';
-import {Button, Card, Container, Dimmer, Form, Icon, Loader, Message, Tab} from 'semantic-ui-react';
-import {errorConfig, successConfig} from '../../utils/toastConfig';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import {useTranslation} from "react-i18next";
+import { errorConfig, successConfig } from '../../utils/toastConfig';
 
-const NewEscola = () => {
+const New = () => {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
+    // get URL params
     let { id } = useParams();
     let paramsId = id;
 
-    const history = useNavigate();
     const [loading, setLoading] = useState(!!paramsId);
     const [isSaving, setIsSaving] = useState(false);
     const [school, setSchool] = useState({});
@@ -20,46 +24,37 @@ const NewEscola = () => {
     const [groups, setGroups] = useState([]);
 
     useEffect(() => {
-        if(!/\d+/.test(paramsId)){
-            history(-1);
-            toast('Ocorreu um erro ao carregar a informacao pretendida', errorConfig);
-        }
-        axios.get('/user-group').then((res) => {
-            if (res.status === 200) {
-                setGroups(res.data.data.map((group) => ({
-                    key: group.id,
-                    value: group.id,
-                    text: group.description,
-                })));
-                if (paramsId) {
-                    axios
-                        .get(`/schools/${paramsId}`)
-                        .then((response) => {
-                            setSchool(response?.data?.data);
-                            setLoading(false);
-                        });
-                }
-            }
-        });
-    }, [paramsId]);
+        if (paramsId) {
+            axios.get(`/schools/${paramsId}`).then((response) => {
+                setSchool(response?.data?.data);
+                setLoading(false);
+            });
 
-    useEffect(() => () => {
-            setSchool(null);
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        []);
+            axios.get('/user-group').then((res) => {
+                if (res.status === 200) {
+                    let groupsMap = res.data.data.map((group) => ({
+                        key: group.id,
+                        value: group.id,
+                        text: group.description,
+                    }));
+                    setGroups(groupsMap);
+                }
+            });
+        }
+    }, [paramsId]);
 
     useEffect(() => {
         if (!loading && paramsId && !school) {
-            history('/escola');
+            navigate('/escola');
         }
-    }, [paramsId, loading, school, history]);
+    }, [paramsId, loading, school, navigate]);
 
     const initialValues = useMemo(() => {
         const {
             id,
             code,
-            name,
+            name_pt,
+            name_en,
             base_link,
             index_course_code,
             index_course_name,
@@ -76,62 +71,64 @@ const NewEscola = () => {
         return {
             id,
             code,
-            name,
-            linkWS: base_link,
-            indexCode: index_course_code,
-            indexName: index_course_name,
-            indexNameUC: index_course_unit_name,
-            indexYear: index_course_unit_curricular_year,
-            indexCodeUC: index_course_unit_code,
-            indexTeachers: index_course_unit_teachers,
-            academicYearQueryParam: query_param_academic_year,
-            semesterQueryParam: query_param_semester,
-            gop: gop_group_id,
-            board: board_group_id,
-            pedagogic: pedagogic_group_id,
+            name_pt,
+            name_en,
+            base_link,
+            index_course_code,
+            index_course_name,
+            index_course_unit_name,
+            index_course_unit_curricular_year,
+            index_course_unit_code,
+            index_course_unit_teachers,
+            query_param_academic_year,
+            query_param_semester,
+            gop_group_id,
+            board_group_id,
+            pedagogic_group_id,
         };
     }, [school]);
 
-    const onSubmit = ({
-                          id, code,
-                          name,
-                          linkWS,
-                          indexCode,
-                          indexName,
-                          indexNameUC,
-                          indexYear,
-                          indexCodeUC,
-                          indexTeachers,
-                          academicYearQueryParam,
-                          semesterQueryParam,
-                          gop,
-                          board,
-                          pedagogic,
-                      }) => {
+    const onSubmit = ({ id, code, name_pt, name_en,
+            base_link,
+            index_course_code,
+            index_course_name,
+            index_course_unit_name,
+            index_course_unit_curricular_year,
+            index_course_unit_code,
+            index_course_unit_teachers,
+            query_param_academic_year,
+            query_param_semester,
+            gop_group_id,
+            board_group_id,
+            pedagogic_group_id }
+            ) => {
         setIsSaving(true);
-        axios.patch(
-            `/schools/${id}`, {
-                code,
-                name,
-                base_link: linkWS,
-                index_course_code: indexCode,
-                index_course_name: indexName,
-                index_course_unit_name: indexNameUC,
-                index_course_unit_curricular_year: indexYear,
-                index_course_unit_code: indexCodeUC,
-                index_course_unit_teachers: indexTeachers,
-                query_param_academic_year: academicYearQueryParam,
-                query_param_semester: semesterQueryParam,
-                gop_group_id: gop,
-                board_group_id: board,
-                pedagogic_group_id: pedagogic,
-            },
-        ).then((res) => {
+        axios.patch(`/schools/${id}`, {
+            code,
+            name_pt,
+            name_en,
+            base_link,
+            index_course_code,
+            index_course_name,
+            index_course_unit_name,
+            index_course_unit_curricular_year,
+            index_course_unit_code,
+            index_course_unit_teachers,
+            query_param_academic_year,
+            query_param_semester,
+            gop_group_id,
+            board_group_id,
+            pedagogic_group_id }).then((res) => {
+                
             setIsSaving(false);
             if (res.status === 200) {
-                toast('Escola atualizada com sucesso', successConfig);
-            } else {
-                toast('Ocorreu um erro ao gravar as alterações da escola!', errorConfig);
+                toast(t('Escola atualizada com sucesso'), successConfig);
+            }
+            else if (res.status === 201) {
+                toast(t('Escola criada com sucesso'), successConfig);
+            }
+            else {
+                toast(t('Existiu um problema ao gravar as alterações!'), errorConfig);
             }
         });
     };
@@ -169,40 +166,40 @@ const NewEscola = () => {
                             unidade ao número da ordem da coluna.
                         </Message.Content>
                     </Message>
-                    <Form>
+                    <Form>            
                         <Card fluid>
                             <Card.Content>
                                 <Form.Group widths="equal">
-                                    <Field name="indexCode">
-                                        {({input: indexCodeInput}) => (
-                                            <Form.Input label="Index coluna Código Curso"{...indexCodeInput}/>
+                                    <Field name="index_course_code">
+                                        {({input: index_course_codeInput}) => (
+                                            <Form.Input label="Index coluna Código Curso" {...index_course_codeInput}/>
                                         )}
                                     </Field>
-                                    <Field name="indexName">
-                                        {({input: indexNameInput}) => (
-                                            <Form.Input label="Index coluna Nome Curso"{...indexNameInput}/>
+                                    <Field name="index_course_name">
+                                        {({input: index_course_nameInput}) => (
+                                            <Form.Input label="Index coluna Nome Curso" {...index_course_nameInput}/>
                                         )}
                                     </Field>
-                                    <Field name="indexCodeUC">
-                                        {({input: indexCodeUCInput}) => (
-                                            <Form.Input label="Index coluna Código Unidade Curricular"{...indexCodeUCInput}/>
+                                    <Field name="index_course_unit_code">
+                                        {({input: index_course_unit_codeInput}) => (
+                                            <Form.Input label="Index coluna Código Unidade Curricular" {...index_course_unit_codeInput}/>
                                         )}
                                     </Field>
                                 </Form.Group>
                                 <Form.Group widths="equal">
-                                    <Field name="indexNameUC">
-                                        {({input: indexNameUCInput}) => (
-                                            <Form.Input label="Index coluna Nome Unidade Curricular"{...indexNameUCInput}/>
+                                    <Field name="index_course_unit_name">
+                                        {({input: index_course_unit_nameInput}) => (
+                                            <Form.Input label="Index coluna Nome Unidade Curricular" {...index_course_unit_nameInput}/>
                                         )}
                                     </Field>
-                                    <Field name="indexTeachers">
-                                        {({input: indexTeachersInput}) => (
-                                            <Form.Input label="Index coluna Professores do curso"{...indexTeachersInput}/>
+                                    <Field name="index_course_unit_teachers">
+                                        {({input: index_course_unit_teachersInput}) => (
+                                            <Form.Input label="Index coluna Professores do curso" {...index_course_unit_teachersInput}/>
                                         )}
                                     </Field>
-                                    <Field name="indexYear">
-                                        {({input: indexYearInput}) => (
-                                            <Form.Input label="Index coluna Ano curricular da Unidade Curricular"{...indexYearInput}/>
+                                    <Field name="index_course_unit_curricular_year">
+                                        {({input: index_course_unit_curricular_yearInput}) => (
+                                            <Form.Input label="Index coluna Ano curricular da Unidade Curricular" {...index_course_unit_curricular_yearInput}/>
                                         )}
                                     </Field>
                                 </Form.Group>
@@ -248,14 +245,14 @@ const NewEscola = () => {
                         <Card fluid>
                             <Card.Content>
                                 <Form.Group widths="equal">
-                                    <Field name="academicYearQueryParam">
-                                        {({input: anoletivoInput}) => (
-                                            <Form.Input label="Nome do parâmetro para o ano letivo"{...anoletivoInput}/>
+                                    <Field name="query_param_academic_year">
+                                        {({input: query_param_academic_yearInput}) => (
+                                            <Form.Input label="Nome do parâmetro para o ano letivo" {...query_param_academic_yearInput}/>
                                         )}
                                     </Field>
-                                    <Field name="semesterQueryParam">
-                                        {({input: semestreInput}) => (
-                                            <Form.Input label="Nome do parâmetro para o semestre"{...semestreInput}/>
+                                    <Field name="query_param_semester">
+                                        {({input: query_param_semesterInput}) => (
+                                            <Form.Input label="Nome do parâmetro para o semestre" {...query_param_semesterInput}/>
                                         )}
                                     </Field>
                                 </Form.Group>
@@ -269,103 +266,85 @@ const NewEscola = () => {
 
     return (
         <Container>
-            <FinalForm onSubmit={onSubmit} initialValues={initialValues}
-                render={({handleSubmit}) => (
-                    <Form>
-                        <Card fluid>
-                            {loading && (
-                                <Dimmer active inverted>
-                                    <Loader indeterminate>
-                                        A carregar a escola
-                                    </Loader>
-                                </Dimmer>
-                            )}
-                            <Card.Content header={`${isEditMode ? 'Editar' : 'Nova'} Escola`}/>
-                            <Card.Content>
-                                <Form.Group widths="equal">
-                                    <Field name="code">
-                                        {({input: codeInput}) => (
-                                            <Form.Input label="Código"{...codeInput}/>
-                                        )}
-                                    </Field>
-                                    <Field name="name">
-                                        {({input: nameInput}) => (
-                                            <Form.Input label="Nome"{...nameInput}/>
-                                        )}
-                                    </Field>
-                                </Form.Group>
-                                <Form.Group>
-                                    <Field name="gop">
-                                        {({input: gopGroup}) => (
-                                            <Form.Dropdown
-                                                options={groups}
-                                                selection
-                                                label="Grupo GOP da escola"
-                                                {...gopGroup}
-                                                onChange={(e, {value}) => gopGroup.onChange(value)}
-                                                clearable
-                                                search
-                                            />
-                                        )}
-                                    </Field>
-                                    <Field name="board">
-                                        {({input: boardGroup}) => (
-                                            <Form.Dropdown
-                                                options={groups}
-                                                selection
-                                                label="Grupo Direção da escola"
-                                                {...boardGroup}
-                                                onChange={(e, {value}) => boardGroup.onChange(value)}
-                                                clearable
-                                                search
-                                            />
-                                        )}
-                                    </Field>
-                                    <Field name="pedagogic">
-                                        {({input: pedagogicGroup}) => (
-                                            <Form.Dropdown
-                                                options={groups}
-                                                selection
-                                                label="Grupo Pedagógico da escola"
-                                                {...pedagogicGroup}
-                                                onChange={(e, {value}) => pedagogicGroup.onChange(value)}
-                                                clearable
-                                                search
-                                            />
-                                        )}
-                                    </Field>
-                                </Form.Group>
-                                <Form.Group widths="equal">
-                                    <Field name="linkWS">
-                                        {({input: linkWSInput}) => (
-                                            <Form.Input
-                                                label="Link do Webservice dos Cursos"
-                                                placeholder="Exemplo: http://www.dei.estg.ipleiria.pt/intranet/horarios/ws/inscricoes/cursos_ucs.php"
-                                                {...linkWSInput}
-                                            />
-                                        )}
-                                    </Field>
-                                </Form.Group>
-                                <Tab panes={panes} renderActiveOnly/>
-                            </Card.Content>
-                            <Card.Content>
-                                <Link to="/escola">
-                                    <Button icon labelPosition="left" color="teal">
-                                        <Icon name="left arrow"/>
-                                        Voltar à lista
-                                    </Button>
-                                </Link>
-                                <Button onClick={handleSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving}>
-                                    <Icon name={isEditMode ? 'save' : 'plus'}/>
-                                    {isEditMode ? 'Guardar' : 'Criar'}
-                                </Button>
-                            </Card.Content>
-                        </Card>
-                    </Form>
-                )}
-            />
+            <div className="margin-bottom-s">
+                <Link to="/escola"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
+            </div>
+            <FinalForm onSubmit={onSubmit} initialValues={initialValues} render={({ handleSubmit }) => (
+                <Form>
+                    <Card fluid>
+                        { loading && (
+                            <Dimmer active inverted>
+                                <Loader indeterminate>{t('A carregar dados')}</Loader>
+                            </Dimmer>
+                        )}
+                        <Card.Content header={`${ isEditMode ? t('Editar Escola') : t('Nova Escola') }`} />
+                        <Card.Content>
+                            <Form.Group widths="equal">
+                                <Field name="code">
+                                    {( { input: codeInput }) => (
+                                        <Form.Input label={t('Nome')} {...codeInput} />
+                                    )}
+                                </Field>
+                                <Field name="name_pt">
+                                    {( { input: namePtInput }) => (
+                                        <Form.Input label={t('Descrição PT')} {...namePtInput} />
+                                    )}
+                                </Field>
+                                <Field name="name_en">
+                                    {( { input: nameEnInput }) => (
+                                        <Form.Input label={t('Descrição EN')} {...nameEnInput} />
+                                    )}
+                                </Field>
+                            </Form.Group>
+                            <Form.Group widths="equal" style={{ marginTop: 'var(--space-m)' }}>
+                                <Field name="gop_group_id">
+                                    {({input: gop_group_idInput}) => (
+                                        <Form.Dropdown options={groups} selection clearable search
+                                        {...gop_group_idInput}
+                                        onChange={(e, {value}) => gop_group_idInput.onChange(value)}
+                                        label="Grupo GOP da escola" />
+                                    )}
+                                </Field>
+                                <Field name="board_group_id">
+                                    {({input: board_group_idInput}) => (
+                                        <Form.Dropdown options={groups} selection clearable search
+                                            {...board_group_idInput}
+                                            onChange={(e, {value}) => board_group_idInput.onChange(value)}
+                                            label="Grupo Direção da escola" />
+                                    )}
+                                </Field>
+                                <Field name="pedagogic_group_id">
+                                    {({input: pedagogic_group_idInput}) => (
+                                        <Form.Dropdown options={groups} selection clearable search
+                                            {...pedagogic_group_idInput}
+                                            onChange={(e, {value}) => pedagogic_group_idInput.onChange(value)}
+                                            label="Grupo Pedagógico da escola" />
+                                    )}
+                                </Field>
+                            </Form.Group>
+                            <Form.Group widths="equal" style={{ marginTop: 'var(--space-m)' }}>
+                                <Field name="base_link">
+                                    {({input: base_linkInput}) => (
+                                        <Form.Input placeholder="Exemplo: http://www.dei.estg.ipleiria.pt/intranet/horarios/ws/inscricoes/cursos_ucs.php"
+                                            {...base_linkInput}
+                                            label="Link do Webservice dos Cursos" />
+                                    )}
+                                </Field>
+                            </Form.Group>
+                        </Card.Content>
+                        <Card.Content>
+                            <Button onClick={handleSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} >
+                                <Icon name={isEditMode ? 'save' : 'plus'} /> {isEditMode ? t('Guardar') : t('Criar')}
+                            </Button> 
+                        </Card.Content>
+                    </Card>
+                    { !loading && (
+                        <Tab panes={panes} renderActiveOnly/>
+                    )}                    
+                </Form>
+            )} />
         </Container>
     );
 };
 
-export default NewEscola;
+export default New;
