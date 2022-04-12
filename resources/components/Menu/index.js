@@ -94,7 +94,7 @@ const HeaderMenu = () => {
                                 <Dropdown.Item as={Link} to="/ano-letivo">{t('menu.Anos Letivos')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...SCHOOLS_SCOPES]}>
-                                <Dropdown.Item as={Link} to="/escola">{t('menu.Unidades de Ensino')}</Dropdown.Item>
+                                <Dropdown.Item as={Link} to="/escola">{t('menu.Escolas')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...CALENDAR_PHASES_SCOPES]}>
                                 <Dropdown.Item as={Link} to="/calendario/fases">{t('menu.Fases Calendário')}</Dropdown.Item>

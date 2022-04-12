@@ -6,7 +6,7 @@
         "menu.Cursos": "Cursos",
         "menu.Configurações": "Configurações",
         "menu.Anos Letivos": "Anos Letivos",
-        "menu.Unidades de Ensino": "Unidades de Ensino",
+        "menu.Escolas": "Escolas",
         "menu.Fases Calendário": "Fases Calendário",
         "menu.Tipos Interrupções": "Tipos Interrupções",
         "menu.Tipos Avaliações": "Tipos Avaliações",
@@ -102,10 +102,19 @@
         "Editar Fase do calendário": "Editar Fase do calendário",
         "Nova fase do calendário":  "Nova fase do calendário",
 
+        "Escolas": "Escolas",
+        "Ohh! Não foi possível encontrar Escolas!": "Ohh! Não foi possível encontrar Escolas!",
+        "Escola atualizado com sucesso": "Escola atualizado com sucesso",
+        "Escola criado com sucesso": "Escola criado com sucesso",
+        "Editar Escola": "Editar escola",
+        "Nova Escola":  "Nova escola",
+
         "Ocorreu um erro ao carregar a informacao pretendida": "Ocorreu um erro ao carregar a informacao pretendida",
 
         "Descrição": "Descrição",
+        "Iniciais": "Iniciais",
         "Ativo?": "Ativo?",
+        "Configurada?": "Configurada?",
         "Ações": "Ações",
         "Sim": "Sim",
         "Não": "Não",
@@ -119,7 +128,6 @@
 
         "Por Página": "Por Página",
         "Grau de ensino": "Grau de ensino",
-        "Escolas": "Escolas",
         "Todas as Escolas": "Todas as Escolas",
         "Grupo de Utilizador": "Grupo de Utilizador"
     }

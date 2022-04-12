@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {Card, Container, Table, Form, Button, Header, Icon, Modal } from 'semantic-ui-react';
+import { Card, Container, Table, Form, Button, Header, Icon, Modal } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import _ from 'lodash';
