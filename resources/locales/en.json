@@ -6,7 +6,7 @@
         "menu.Cursos": "Courses",
         "menu.Configurações": "Settings",
         "menu.Anos Letivos": "Academic Years",
-        "menu.Unidades de Ensino": "Teaching Units",
+        "menu.Escolas": "Schools",
         "menu.Fases Calendário": "Calendar Phases",
         "menu.Tipos Interrupções": "Types Interrupts",
         "menu.Tipos Avaliações": "Evaluation Types",
@@ -101,10 +101,19 @@
         "Editar Fase do calendário": "Edit calendar phase",
         "Nova fase do calendário":  "New calendar phase",
 
+        "Escolas": "Schools",
+        "Ohh! Não foi possível encontrar Escolas!": "Ohh! It wasn't possible to find Schools!",
+        "Escola atualizado com sucesso": "School updated with success",
+        "Escola criado com sucesso": "School created with success",
+        "Editar Escola": "Edit school",
+        "Nova Escola":  "New school",
+
         "Ocorreu um erro ao carregar a informacao pretendida": "Something went wrong while trying to fetch data",
 
         "Descrição": "Description",
+        "Iniciais": "Initials",
         "Ativo?": "Active?",
+        "Configurada?": "Configured?",
         "Ações": "Actions",
         "Sim": "Yes",
         "Não": "No",
@@ -118,7 +127,6 @@
 
         "Por Página": "Per Page",
         "Grau de ensino": "Degree",
-        "Escolas": "Schools",
         "Todas as Escolas": "All Schools",
         "Grupo de Utilizador": "User Groups"
     }
