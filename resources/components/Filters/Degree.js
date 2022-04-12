@@ -29,7 +29,7 @@ const FilterOptionDegree = ({widthSize, eventHandler, disabled, value, isSearch=
     };
 
     return (
-        <Form.Dropdown selectOnBlur={false} width={widthSize} disabled={disabled} selection value={degree} options={degreeOptions} label={t("Grau de ensino")} placeholder={t("Grau de ensino")} loading={loading} onChange={filterByDegree}/>
+        <Form.Dropdown selectOnBlur={false} width={widthSize} clearable disabled={disabled} selection value={degree} options={degreeOptions} label={t("Grau de ensino")} placeholder={t("Grau de ensino")} loading={loading} onChange={filterByDegree}/>
     );
 };
 

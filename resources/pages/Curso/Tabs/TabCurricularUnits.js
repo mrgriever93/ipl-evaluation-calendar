@@ -1,7 +1,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
-import {Table, Tab, Modal, Form, Button} from 'semantic-ui-react';
+import {Table, Tab, Modal, Form, Button, Icon, Segment, Grid, Divider, Header, Search} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import {successConfig, errorConfig} from '../../../utils/toastConfig';
 
@@ -11,6 +11,7 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
     const [unitToAdd, setUnitToAdd] = useState([]);
     const [courseUnits, setCourseUnits] = useState({});
     const [listOfUnits, setListOfUnits] = useState([]);
+    const [searchCurricularUnit, setSearchCurricularUnit] = useState(false);
 
     const loadCourseDetailUnits = () => {
         setLoading(true);
@@ -38,21 +39,21 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
         });
     };
 
-    const addCourseUnit = () => {
+    const addCourseUnit = (year) => {
         setOpenModal(false);
-        axios.patch(`/courses/${courseId}/unit`, {
-            unit_id: unitToAdd
-        }).then((res) => {
-            if (res.status === 200) {
-                loadCourseDetailUnits();
-                toast('Aluno adicionado com sucesso!', successConfig);
-            } else {
-                toast('Ocorreu um erro ao adicionar o aluno!', errorConfig);
-            }
-        });
+        axios.post(`/courses/${courseId}/unit`, {unit_id: unitToAdd})
+            .then((res) => {
+                if (res.status === 200) {
+                    loadCourseDetailUnits();
+                    toast('Aluno adicionado com sucesso!', successConfig);
+                } else {
+                    toast('Ocorreu um erro ao adicionar o aluno!', errorConfig);
+                }
+            });
     };
 
     const searchUnits = (e, {searchQuery}) => {
+        setSearchCurricularUnit(true);
         axios.get(`/search/students?q=${searchQuery}`).then((res) => {
             if (res.status === 200) {
                 setListOfUnits(res.data?.map((unit) => ({
@@ -60,12 +61,16 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
                     value: unit.id,
                     text: `(${unit.code}) - ${unit.label}`
                 })));
+                setSearchCurricularUnit(false);
             }
         });
     };
 
     return (
         <Tab.Pane loading={loading} key='tab_units_content'>
+            <Button floated='right' icon labelPosition='left' positive size='small' onClick={() => setOpenModal(true)}>
+                <Icon name='add' /> Add Unit
+            </Button>
             {Object.keys(courseUnitsGrouped).map((year, index) => (
                 <Table striped color="green" key={index}>
                     <Table.Header>
@@ -87,7 +92,7 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
                                 <Table.Cell>{unit.code}</Table.Cell>
                                 <Table.Cell>{unit.name}</Table.Cell>
                                 <Table.Cell>{unit.initials}</Table.Cell>
-                                <Table.Cell>{unit.branch?.name}</Table.Cell>
+                                <Table.Cell>{unit.branch_label}</Table.Cell>
                             </Table.Row>
                         ))}
                     </Table.Body>
@@ -97,27 +102,44 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
             {openModal && (
                 <Modal dimmer="blurring" open={openModal} onClose={() => setOpenModal(false)}>
                     <Modal.Header>Adicionar Unidade curricular</Modal.Header>
-                    <Modal.Content>
-                        <Form>
-                            <Form.Dropdown
-                                placeholder="Procurar pelo email do aluno"
-                                label="Aluno a adicionar"
-                                search
-                                selection
-                                options={listOfUnits}
-                                onChange={(e, {value}) => setUnitToAdd(
-                                    listOfUnits.find((x) => x.value === value),
-                                )}
-                                onSearchChange={_.debounce(searchUnits, 400)}
-                            />
-                        </Form>
-                    </Modal.Content>
+                    <div>
+                        <Segment placeholder>
+                            <Grid columns={2} stackable textAlign='center'>
+                                <Divider vertical>Or</Divider>
+                                <Grid.Row verticalAlign='middle'>
+                                    <Grid.Column>
+                                        <Header icon>
+                                            <Icon name='search' />
+                                            Procurar unidades curriculares existentes
+                                        </Header>
+                                        <Form.Dropdown width={16} search selection
+                                            placeholder="Procurar por unidade curricular"
+                                            loading={searchCurricularUnit}
+                                            options={listOfUnits}
+                                            onChange={(e, {value}) => setUnitToAdd(
+                                                listOfUnits.find((x) => x.value === value),
+                                            )}
+                                            onSearchChange={_.debounce(searchUnits, 400)}
+                                        />
+                                        <Button positive onClick={addCourseUnit} disabled={!!unitToAdd}>
+                                            Adicionar
+                                        </Button>
+                                    </Grid.Column>
+
+                                    <Grid.Column>
+                                        <Header icon>
+                                            <Icon name='book' />
+                                            Adicionar Nova unidade curricular
+                                        </Header>
+                                        <Button positive>Nova</Button>
+                                    </Grid.Column>
+                                </Grid.Row>
+                            </Grid>
+                        </Segment>
+                    </div>
                     <Modal.Actions>
                         <Button negative onClick={() => { setUnitToAdd(undefined);setOpenModal(false); }}>
                             Cancelar
-                        </Button>
-                        <Button positive onClick={addCourseUnit}>
-                            Adicionar
                         </Button>
                     </Modal.Actions>
                 </Modal>

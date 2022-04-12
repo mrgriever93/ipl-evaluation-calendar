@@ -179,7 +179,7 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/courses/{course}/branch/{branch}',   'deleteBranch'     );
 
         Route::get('/courses/{course}/units',                'getUnits'         );
-        Route::patch('/courses/{course}/units',              'addUnit'          );
+        Route::post('/courses/{course}/unit',                'addUnit'          );
         Route::delete('/courses/{course}/unit/{unit}',       'removeUnit'       );
 
         Route::get('/courses/{course}/students',             'getStudents'      );
