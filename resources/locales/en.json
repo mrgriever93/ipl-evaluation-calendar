@@ -6,7 +6,7 @@
         "menu.Cursos": "Courses",
         "menu.Configurações": "Settings",
         "menu.Anos Letivos": "Academic Years",
-        "menu.Unidades de Ensino": "Teaching Units",
+        "menu.Escolas": "Schools",
         "menu.Fases Calendário": "Calendar Phases",
         "menu.Tipos Interrupções": "Types Interrupts",
         "menu.Tipos Avaliações": "Evaluation Types",
@@ -41,7 +41,7 @@
         "Grupo de utilizador removido com sucesso!": "User group deleted with success!",
         "Não foi possível remover o Grupo de utilizador!": "There was a problem removing the User Group!",
         "Ohh! Não foi possível encontrar grupos de utilizador!": "Ohh! It wasn't possible to find User Groups!",
-        
+
         "A carregar registos...": "Loading records...",
         "A carregar dados": "Loading data",
         "Criar novo": "Create new",
@@ -62,7 +62,7 @@
         "É o ano que irá estar selecionado automáticamente para o utilizador! Apenas um pode estar selecionado de cada vez.": "It is the year that will be automatically selected for the user! Only one can be selected at a time.",
         "Anos letivos disponivies para os utilizadores selecionarem.": "Academic years available for users to select.",
 
-        
+
         "Tipos de Avaliação": "Evaluation Types",
         "Pesquisar tipo de avaliação...": "Search evaluation type...",
         "Ohh! Não foi possível encontrar Tipos de Avaliação!": "Ohh! It wasn't possible to find Evaluation Types!",
@@ -87,8 +87,8 @@
         "Tipo de Interrupção criado com sucesso": "Interruption Type created with success",
         "Editar Tipo de Interrupção": "Edit Interruption Type",
         "Novo Tipo de Interrupção":  "New Interruption Type",
-        
-        
+
+
         "Fases do Calendário": "Calendar Phases",
         "Pesquisar fase do calendário...": "Search calendar phase...",
         "Ohh! Não foi possível encontrar a fase do calendário!": "Ohh! It wasn't possible to find a calendar phase!",
@@ -101,10 +101,19 @@
         "Editar Fase do calendário": "Edit calendar phase",
         "Nova fase do calendário":  "New calendar phase",
 
+        "Escolas": "Schools",
+        "Ohh! Não foi possível encontrar Escolas!": "Ohh! It wasn't possible to find Schools!",
+        "Escola atualizada com sucesso": "School updated with success",
+        "Escola criada com sucesso": "School created with success",
+        "Editar Escola": "Edit school",
+        "Nova Escola":  "New school",
+
         "Ocorreu um erro ao carregar a informacao pretendida": "Something went wrong while trying to fetch data",
-        
+
         "Descrição": "Description",
+        "Iniciais": "Initials",
         "Ativo?": "Active?",
+        "Configurada?": "Configured?",
         "Ações": "Actions",
         "Sim": "Yes",
         "Não": "No",
@@ -114,6 +123,11 @@
         "Guardar": "Save",
         "Criar": "Create",
         "Duplicar": "Clone",
-        "Pesquisar": "Search"
+        "Pesquisar": "Search",
+
+        "Por Página": "Per Page",
+        "Grau de ensino": "Degree",
+        "Todas as Escolas": "All Schools",
+        "Grupo de Utilizador": "User Groups"
     }
 }

@@ -14,6 +14,8 @@ const GroupPermissions = () => {
     let paramsId = id;
 
     const [state, setState] = useState({
+        loadingCalendarPermissions: true,
+        loadingGenericPermissions: true,
         groupPermissions: [],
         calendarGroupPermissions: [],
     });
@@ -23,6 +25,7 @@ const GroupPermissions = () => {
         axios.get('/user-group/' + paramsId + '/permissions').then((res) => {
             let permissionSections = res.data.data || [];
             setState( prevState => ({
+                loadingGenericPermissions: false,
                 calendarGroupPermissions: prevState.calendarGroupPermissions,
                 groupPermissions: permissionSections
             }));
@@ -31,6 +34,7 @@ const GroupPermissions = () => {
         axios.get('/user-group/' + paramsId + '/calendar-permissions').then((res) => {
             let permissionPhases = res.data.data || [];
             setState( prevState => ({
+                loadingCalendarPermissions: false,
                 groupPermissions: prevState.groupPermissions,
                 calendarGroupPermissions: permissionPhases
             }));
@@ -55,7 +59,7 @@ const GroupPermissions = () => {
 
     const panes = [
         {menuItem: t("Permissões Gerais"), render: () => (
-            <Tab.Pane>
+            <Tab.Pane loading={state.loadingGenericPermissions}>
                 <div className='padding-s-base'>
                     <Grid columns={3} >
                         <Grid.Row>
@@ -83,7 +87,7 @@ const GroupPermissions = () => {
         )},
         {
             menuItem: t("Permissões do Calendário"), render: () => (
-                <Tab.Pane>
+                <Tab.Pane loading={state.loadingCalendarPermissions}>
                     <div className='padding-s-base'>
                         { state.calendarGroupPermissions.map( (phase, phaseIndex) => (
                             <div className='section sticky--section' key={phaseIndex}>
