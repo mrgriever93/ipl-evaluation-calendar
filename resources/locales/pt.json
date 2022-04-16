@@ -42,7 +42,6 @@
         "Não foi possível remover o Grupo de utilizador!": "Não foi possível remover o Grupo de utilizador!",
         "Ohh! Não foi possível encontrar grupos de utilizador!": "Ohh! Não foi possível encontrar Grupos de Utilizador!",
 
-
         "A carregar registos...": "A carregar registos...",
         "A carregar dados": "A carregar dados",
         "Criar novo": "Criar novo",
@@ -58,11 +57,20 @@
         "ano_letivo.Abrir novo ano letivo": "Abrir novo ano letivo",
         "ano_letivo.Ao abrir um novo ano letivo, este ficará ativo por defeito para todos os utilizadores!": "Ao abrir um novo ano letivo, este ficará ativo por defeito para todos os utilizadores!",
         "ano_letivo.Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?": "Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?",
+        "ano_letivo.Ano letivo removido com sucesso!": "Ano letivo removido com sucesso!",
+        "ano_letivo.Ocorreu um problema ao remover o ano letivo!": "Ocorreu um problema ao remover o ano letivo!",
         "ano_letivo.Ano letivo atualizado com sucesso!": "Ano letivo atualizado com sucesso!",
         "ano_letivo.Ocorreu um problema ao atualizar o ano letivo!" : "Ocorreu um problema ao atualizar o ano letivo!",
         "É o ano que irá estar selecionado automáticamente para o utilizador! Apenas um pode estar selecionado de cada vez.": "É o ano que irá estar selecionado automáticamente para o utilizador! Apenas um pode estar selecionado de cada vez.",
         "Anos letivos disponivies para os utilizadores selecionarem.": "Anos letivos disponivies para os utilizadores selecionarem.",
-
+        "ano_letivo.Irá começar brevemente a sincronização do ano letivo": "Irá começar brevemente a sincronização do ano letivo",
+        "ano_letivo.Ocorreu um problema ao tentar começar sincronizar o ano letivo": "Ocorreu um problema ao tentar começar sincronizar o ano letivo",
+        "ano_letivo.A sincronização vai sempre acontecer quando clicarmos no botão?": "A sincronização vai sempre acontecer quando clicarmos no botão?",
+        "ano_letivo.Não. Irá ser iniciada a sincronização quando não houver trabalho para o servidor.": "Não. Irá ser iniciada a sincronização quando não houver trabalho para o servidor.",
+        "ano_letivo.Todos os semestres e ano letivos que estejam ativos e que já tenham sido sincronizados antes, vão ser atualizados todos os dias as 3 da manhã.": "Todos os semestres e ano letivos que estejam ativos e que já tenham sido sincronizados antes, vão ser atualizados todos os dias as 3 da manhã.",
+        "ano_letivo.Outras informações": "Outras informações",
+        "ano_letivo.Ja existem em sincronizacao, esperar ate acabar antes de comecar a proxima.": "Já existem em sincronização, tem de esperar até acabar antes de comecar a próxima.",
+        "ano_letivo.Apenas 1 sincronização pode acontecer de cada vez, para prevenir duplicações ou bloqueio do servidor.": "Apenas 1 sincronização pode acontecer de cada vez, para prevenir duplicações ou bloqueio do servidor.",
 
         "Tipos de Avaliação": "Tipos de Avaliação",
         "Pesquisar tipo de avaliação...": "Pesquisar tipo de avaliação...",

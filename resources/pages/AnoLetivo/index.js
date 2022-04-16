@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Card, Container, Table, Button, Icon, Modal, Header, Dimmer, Loader, Checkbox, Popup} from 'semantic-ui-react';
+import {Card, Container, Table, Button, Icon, Modal, Header, Checkbox, Popup, Message} from 'semantic-ui-react';
 import axios from 'axios';
 import {useTranslation} from "react-i18next";
 import Swal from 'sweetalert2';
@@ -60,10 +60,10 @@ const AnoLetivo = () => {
         axios.delete('/academic-year/' + modalInfo.id).then((res) => {
             setLoading(false);
             if (res.status === 200) {
-                toast(t('ano_letivo.Ano letivo atualizado com sucesso!'), successConfig);
+                toast(t('ano_letivo.Ano letivo removido com sucesso!'), successConfig);
                 setAcademicYearsList(res?.data?.data);
             } else {
-                toast(t('ano_letivo.Ocorreu um problema ao atualizar o ano letivo!'), errorConfig);
+                toast(t('ano_letivo.Ocorreu um problema ao remover o ano letivo!'), errorConfig);
             }
         });
     };
@@ -101,12 +101,16 @@ const AnoLetivo = () => {
             }
         });
     };
-    const syncSemester = (id, semester) => {
+    const syncSemester = (id, semester, year) => {
         axios.get('/academic-year/' + id + "/sync/" + semester).then((res) => {
             if (res.status === 200) {
-                toast(t('ano_letivo.Ano letivo atualizado com sucesso!'), successConfig);
+                toast(() => <div>{t('ano_letivo.Irá começar brevemente a sincronização do ano letivo')} <b>{year}</b>!
+                </div>, successConfig);
+                setAcademicYearsList(res?.data?.data);
+            } else if (res.status === 409){
+                toast(() => <div>{t(res.data)}</div>, errorConfig);
             } else {
-                toast(t('ano_letivo.Ocorreu um problema ao atualizar o ano letivo!'), errorConfig);
+                toast(() => <div>{t('ano_letivo.Ocorreu um problema ao tentar começar sincronizar o ano letivo')} <b>{ year }</b>!</div>, errorConfig);
             }
         });
     }
@@ -168,7 +172,7 @@ const AnoLetivo = () => {
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
-                                { academicYearsList.map(({id, active, selected, display, code, isActiveLoading, isSelectedLoading, s1_sync, s2_sync}) => (
+                                { academicYearsList.map(({id, active, selected, display, code, isActiveLoading, isSelectedLoading, s1_sync, s2_sync, s1_sync_active, s2_sync_active, s1_sync_waiting, s2_sync_waiting}) => (
                                     <Table.Row key={id}>
                                         <Table.Cell><b>{display}</b> <small>({code})</small></Table.Cell>
                                         <Table.Cell textAlign="center">
@@ -184,8 +188,20 @@ const AnoLetivo = () => {
                                                 <Checkbox toggle defaultChecked={selected} disabled={selected} onChange={() => handleYearSelected(id)} />
                                             </ShowComponentIfAuthorized>
                                         </Table.Cell>
-                                        <Table.Cell><Button icon color="olive" onClick={() => syncSemester(id, 1)}><Icon name={'sync'}/></Button> { s1_sync ? moment(s1_sync).fromNow() : 'N/A' }</Table.Cell>
-                                        <Table.Cell><Button icon color="olive" onClick={() => syncSemester(id, 2)}><Icon name={'sync'}/></Button> { s2_sync ? moment(s2_sync).fromNow() : 'N/A' }</Table.Cell>
+                                        <Table.Cell>
+                                            <Button disabled={s1_sync_active || s1_sync_waiting} loading={s1_sync_active} icon color="olive" onClick={() => {syncSemester(id, 1, display); s1_sync_active=true;}}>
+                                                <Icon name={'sync'}/>
+                                            </Button>
+                                            { s1_sync ? moment(s1_sync).fromNow() : 'N/A' }
+                                            {s1_sync_waiting && <div> Waiting to be synced </div> }
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            <Button disabled={s2_sync_active || s2_sync_waiting} loading={s2_sync_active} icon color="olive" onClick={() => {syncSemester(id, 2, display); s2_sync_active=true;}}>
+                                                <Icon name={'sync'}/>
+                                            </Button>
+                                            { s2_sync ? moment(s2_sync).fromNow() : 'N/A' }
+                                            { s2_sync_waiting && <div> Waiting to be synced </div> }
+                                        </Table.Cell>
                                         <Table.Cell textAlign="center">
                                             <ShowComponentIfAuthorized permission={[SCOPES.DELETE_ACADEMIC_YEARS]}>
                                                 <Button onClick={() => remove(id, code)} color="red" icon disabled={selected}>
@@ -200,6 +216,16 @@ const AnoLetivo = () => {
                         ) : ( <EmptyTable isLoading={loading} label={t('Sem resultados')}/> ) }
                 </Card.Content>
             </Card>
+            <Message info>
+                <Message.Header>{t('ano_letivo.A sincronização vai sempre acontecer quando clicarmos no botão?')}</Message.Header>
+                <p>{ t('ano_letivo.Não. Irá ser iniciada a sincronização quando não houver trabalho para o servidor.') }</p>
+                <br/>
+                <Message.Header>{ t('ano_letivo.Outras informações') }</Message.Header>
+                <Message.List>
+                    <Message.Item>{ t('ano_letivo.Todos os semestres e ano letivos que estejam ativos e que já tenham sido sincronizados antes, vão ser atualizados todos os dias as 3 da manhã.') }</Message.Item>
+                    <Message.Item>{ t('ano_letivo.Apenas 1 sincronização pode acontecer de cada vez, para prevenir duplicações ou bloqueio do servidor.') }</Message.Item>
+                </Message.List>
+            </Message>
             <Modal dimmer="blurring" open={modalOpen} onClose={handleModalClose}>
                 <Modal.Header>{t('ano_letivo.Remover Ano letivo')}</Modal.Header>
                 <Modal.Content>
