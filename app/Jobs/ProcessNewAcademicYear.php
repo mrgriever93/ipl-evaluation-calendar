@@ -9,8 +9,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
-class ProcessNewAcademicYear implements ShouldQueue, ShouldBeUnique
+class ProcessNewAcademicYear implements ShouldQueue//, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -38,6 +39,7 @@ class ProcessNewAcademicYear implements ShouldQueue, ShouldBeUnique
      */
     public function __construct(int $academicYearCode, int $semester)
     {
+        Log::channel('courses_sync')->info('Queue requested for year (' . $academicYearCode . ') and semester (' . $semester . ')');
         $this->onQueue('academicYear');
         $this->academicYearCode = $academicYearCode;
         $this->semester = $semester;
@@ -50,6 +52,7 @@ class ProcessNewAcademicYear implements ShouldQueue, ShouldBeUnique
      */
     public function handle()
     {
+        Log::channel('courses_sync')->info('Queue started for year (' . $this->academicYearCode . ') and semester (' . $this->semester . ')');
         ExternalImports::importCoursesFromWebService($this->academicYearCode, $this->semester);
     }
 }
