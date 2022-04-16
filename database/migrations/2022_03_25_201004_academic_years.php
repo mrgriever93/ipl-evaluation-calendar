@@ -21,8 +21,10 @@ return new class extends Migration
             $table->boolean('active')->default(true);
             $table->boolean('selected')->default(true);
 
-            $table->timestamp('s1_sync')->nullable();
-            $table->timestamp('s2_sync')->nullable();
+            $table->timestamp('s1_sync_last')->nullable();
+            $table->boolean('s1_sync_active')->default(false);
+            $table->timestamp('s2_sync_last')->nullable();
+            $table->boolean('s2_sync_active')->default(false);
 
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();

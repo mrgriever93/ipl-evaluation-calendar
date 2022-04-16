@@ -14,8 +14,10 @@ class AcademicYearResource extends JsonResource
             'display'           => $this->display,
             'selected'          => !!$this->selected,//$request->hasCookie('academic_year') ? $this->id == $request->cookie('academic_year') : $this->active,
             'active'            => !!$this->active,
-            's1_sync'           => $this->s1_sync,
-            's2_sync'           => $this->s2_sync,
+            's1_sync'           => $this->s1_sync_last,
+            's1_sync_active'    => !!$this->s1_sync_active,
+            's2_sync'           => $this->s2_sync_last,
+            's2_sync_active'    => !!$this->s2_sync_active,
             'isActiveLoading'   => false,
             'isSelectedLoading' => false
         ];

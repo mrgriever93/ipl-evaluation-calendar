@@ -18,12 +18,27 @@ class ProcessNewAcademicYear implements ShouldQueue, ShouldBeUnique
     protected $semester;
 
     /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 2;
+
+    /**
+     * The maximum number of unhandled exceptions to allow before failing.
+     *
+     * @var int
+     */
+    public $maxExceptions = 3;
+
+    /**
      * Create a new job instance.
      *
      * @return void
      */
     public function __construct(int $academicYearCode, int $semester)
     {
+        $this->onQueue('academicYear');
         $this->academicYearCode = $academicYearCode;
         $this->semester = $semester;
     }

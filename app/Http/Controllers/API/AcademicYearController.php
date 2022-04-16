@@ -88,7 +88,7 @@ class AcademicYearController extends Controller
         $year = AcademicYear::findOrFail($id);
 
         // TODO Validate response, it returns 200 but will wait for response anyway
-        ProcessNewAcademicYear::dispatchAfterResponse($year->code, $semester);
+        ProcessNewAcademicYear::dispatch($year->code, $semester);
 
         return response()->json("Syncing!", Response::HTTP_OK);
     }
