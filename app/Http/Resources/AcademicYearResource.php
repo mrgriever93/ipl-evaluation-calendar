@@ -16,8 +16,10 @@ class AcademicYearResource extends JsonResource
             'active'            => !!$this->active,
             's1_sync'           => $this->s1_sync_last,
             's1_sync_active'    => !!$this->s1_sync_active,
+            's1_sync_waiting'   => !!$this->s1_sync_waiting,
             's2_sync'           => $this->s2_sync_last,
             's2_sync_active'    => !!$this->s2_sync_active,
+            's2_sync_waiting'   => !!$this->s2_sync_waiting,
             'isActiveLoading'   => false,
             'isSelectedLoading' => false
         ];

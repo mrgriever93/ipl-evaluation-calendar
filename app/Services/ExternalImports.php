@@ -52,9 +52,12 @@ class ExternalImports
             if( !$academicYear ){
                 exit();
             }
+            // update flags for front-end
             if( $semester == 1) {
+                $academicYear->s1_sync_waiting = false;
                 $academicYear->s1_sync_active = true;
             } else {
+                $academicYear->s2_sync_waiting = false;
                 $academicYear->s2_sync_active = true;
             }
             $academicYear->save();
