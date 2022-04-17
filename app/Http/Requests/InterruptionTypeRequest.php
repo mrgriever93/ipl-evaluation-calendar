@@ -15,8 +15,8 @@ class InterruptionTypeRequest extends FormRequest
     public function rules()
     {
         $rules =  [
-            'name_pt'   => 'string|max:255|unique:interruption_types,name_pt',
-            'name_en'   => 'string|max:255|unique:interruption_types,name_en',
+            'name_pt'   => 'string|max:255|unique:interruption_types,name_pt,' . $this->id,
+            'name_en'   => 'string|max:255|unique:interruption_types,name_en,' . $this->id,
             'enabled'   => 'required|boolean',
         ];
 
