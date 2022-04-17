@@ -13,7 +13,7 @@ import EmptyTable from "../../../components/EmptyTable";
 const List = () => {
     const { t } = useTranslation();
     const columns = [
-        {name: t('Descrição')},
+        {name: t('Nome')},
         {name: t('Ativo?'), align: 'center', style: {width: '15%'} },
         {name: t('Ações'),  align: 'center', style: {width: '15%'} },
     ];
@@ -64,10 +64,11 @@ const List = () => {
         axios.delete(`/calendar-phases/${modalInfo?.id}`).then((res) => {
             if (res.status === 200) {
                 toast(t("Fase do calendário removido com sucesso!"), successConfig);
+                setCalendarPhases(res?.data?.data);
+                setFilteredResults(res?.data?.data);
             } else {
                 toast(t("Não foi possível remover a fase do calendário!"), errorConfig);
             }
-            fetchPhaseList();
         });
         handleModalClose();
     };
@@ -95,7 +96,7 @@ const List = () => {
                         </Form.Group>
                     </Form>
                 </Card.Content>
-                
+
                 <Card.Content>
                 { filteredResults.length < 1 || isLoading ? (
                     <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar a fase do calendário!")}/>
@@ -136,7 +137,7 @@ const List = () => {
                     )}
                 </Card.Content>
             </Card>
-            
+
             <Modal dimmer="blurring" open={modalOpen} onClose={handleModalClose} >
                 <Modal.Header>{t("Remover a fase do calendário")}</Modal.Header>
                 <Modal.Content>{t("Tem a certeza que deseja remover a fase do calendário")} <strong>{modalInfo?.description}</strong> ?</Modal.Content>
