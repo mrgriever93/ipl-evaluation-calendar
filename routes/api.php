@@ -172,6 +172,7 @@ Route::middleware('auth:api')->group(function () {
     Route::controller(CourseController::class)->group(function () {
         Route::get('/courses',                               'index'            );
         Route::get('/courses/degrees',                       'listDegrees'      );
+        Route::get('/courses-search',                        'search'           );
         Route::get('/courses/{course}',                      'show'             );
 
         Route::get('/courses/{course}/branches',             'branchesList'     );
@@ -191,14 +192,6 @@ Route::middleware('auth:api')->group(function () {
         Route::patch('/courses/{course}/coordinator',        'assignCoordinator');
     });
 
-    Route::controller(CourseUnitGroupController::class)->group(function () {
-        Route::post('/course-unit-groups',                    'store'  );
-        Route::delete('/course-unit-groups/{courseUnitGroup}','destroy');
-        Route::patch('/course-unit-groups/{courseUnitGroup}', 'update' );
-        Route::get('/course-unit-groups',                     'index'  );
-        Route::get('/course-unit-groups/{courseUnitGroup}',   'show'   );
-    });
-
     Route::controller(CourseUnitController::class)->group(function () {
         Route::get('/course-units',                           'index'               );
         Route::get('/course-units/{courseUnit}',              'show'                );
@@ -209,6 +202,14 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/course-units/{courseUnit}/epochs',       'epochsForCourseUnit' );
         Route::get('/course-units/{courseUnit}/methods',      'methodsForCourseUnit');
         Route::patch('/course-units/{courseUnit}/responsible','assignResponsible'   );
+    });
+
+    Route::controller(CourseUnitGroupController::class)->group(function () {
+        Route::post('/course-unit-groups',                    'store'  );
+        Route::delete('/course-unit-groups/{courseUnitGroup}','destroy');
+        Route::patch('/course-unit-groups/{courseUnitGroup}', 'update' );
+        Route::get('/course-unit-groups',                     'index'  );
+        Route::get('/course-unit-groups/{courseUnitGroup}',   'show'   );
     });
 
     Route::get('/search/users',         [LdapController::class, 'searchUsers']      );
