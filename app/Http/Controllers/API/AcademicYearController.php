@@ -12,7 +12,6 @@ use App\Jobs\ProcessNewAcademicYear;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class AcademicYearController extends Controller
 {
@@ -43,8 +42,6 @@ class AcademicYearController extends Controller
     {
         try {
             DB::beginTransaction();
-            //AcademicYear::query()->update(['active' => false, 'selected' => false]);
-
             $oldYear = AcademicYear::withTrashed()
                 ->where('code', $request->code)
                 ->first();
