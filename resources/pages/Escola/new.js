@@ -21,7 +21,6 @@ const New = () => {
     const [school, setSchool] = useState({});
     const isEditMode = !_.isEmpty(school);
     const [tabActiveIndex, setTabActiveIndex] = useState(0);
-    const [allValidated, setAllValidated] = useState(false);
     const [formErrors, setFormErrors] = useState([]);
 
     const [groups, setGroups] = useState([]);
@@ -121,7 +120,6 @@ const New = () => {
             board_group_id,
             pedagogic_group_id
     }) => {
-        setAllValidated(true);
         if(!index_course_code || !index_course_name || !index_course_unit_name || !index_course_unit_curricular_year || !index_course_unit_code || !index_course_unit_teachers){
             setTabActiveIndex(0);
             return false;
@@ -131,82 +129,37 @@ const New = () => {
             return false;
         }
         setIsSaving(true);
-        if (id) {
-            axios.patch(`/schools/${id}`, {
-                id,
-                code,
-                name_pt,
-                name_en,
-                base_link,
-                index_course_code,
-                index_course_name,
-                index_course_unit_name,
-                index_course_unit_curricular_year,
-                index_course_unit_code,
-                index_course_unit_teachers,
-                query_param_academic_year,
-                query_param_semester,
-                gop_group_id,
-                board_group_id,
-                pedagogic_group_id
-            }).then((res) => {
-                setIsSaving(false);
-                setFormErrors([]);
-                if (res.status === 200) {
-                    toast(t('Escola atualizada com sucesso'), successConfig);
-                } else if (res.status === 201) {
-                    toast(t('Escola criada com sucesso'), successConfig);
+        const isNew = !id;
+        const axiosFn = isNew ? axios.post : axios.patch;
+
+        axiosFn(`/schools${!isNew ? '/' + id : ''}`, {
+            id: (!isNew ? id : null),
+            code, name_pt, name_en,
+            gop_group_id, board_group_id, pedagogic_group_id,
+            base_link,
+            index_course_code, index_course_name, index_course_unit_name,
+            index_course_unit_curricular_year, index_course_unit_code, index_course_unit_teachers,
+            query_param_academic_year, query_param_semester
+        }).then((res) => {
+            setIsSaving(false);
+            setFormErrors([]);
+            if (res.status === 200) {
+                toast(t('Escola atualizada com sucesso'), successConfig);
+            } else if (res.status === 201) {
+                toast(t('Escola criada com sucesso'), successConfig);
+            } else {
+                let errorsArray = [];
+                if(typeof res.response.data.errors === 'object' && res.response.data.errors !== null){
+                    errorsArray = Object.values(res.response.data.errors);
                 } else {
-                    let errorsArray = [];
-                    if(typeof res.response.data.errors === 'object' && res.response.data.errors !== null){
-                        errorsArray = Object.values(res.response.data.errors);
-                    } else {
-                        if(Array.isArray(res.response.data.errors)){
-                            errorsArray = res.response.data.errors;
-                        }
+                    if(Array.isArray(res.response.data.errors)){
+                        errorsArray = res.response.data.errors;
                     }
-                    setFormErrors(errorsArray);
-                    toast(t('Existiu um problema ao gravar as alterações!'), errorConfig);
                 }
-            });
-        } else {
-            axios.post(`/schools`, {
-                code,
-                name_pt,
-                name_en,
-                base_link,
-                index_course_code,
-                index_course_name,
-                index_course_unit_name,
-                index_course_unit_curricular_year,
-                index_course_unit_code,
-                index_course_unit_teachers,
-                query_param_academic_year,
-                query_param_semester,
-                gop_group_id,
-                board_group_id,
-                pedagogic_group_id
-            }).then((res) => {
-                setIsSaving(false);
-                setFormErrors([]);
-                if (res.status === 200) {
-                    toast(t('Escola atualizada com sucesso'), successConfig);
-                } else if (res.status === 201) {
-                    toast(t('Escola criada com sucesso'), successConfig);
-                } else {
-                    let errorsArray = [];
-                    if(typeof res.response.data.errors === 'object' && res.response.data.errors !== null){
-                        errorsArray = Object.values(res.response.data.errors);
-                    } else {
-                        if(Array.isArray(res.response.data.errors)){
-                            errorsArray = res.response.data.errors;
-                        }
-                    }
-                    setFormErrors(errorsArray);
-                    toast(t('Existiu um problema ao gravar as alterações!'), errorConfig);
-                }
-            });
-        }
+                setFormErrors(errorsArray);
+                toast(t('Existiu um problema ao gravar as alterações!'), errorConfig);
+            }
+        });
     };
 
     const panes = [

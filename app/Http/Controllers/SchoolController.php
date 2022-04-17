@@ -37,7 +37,6 @@ class SchoolController extends Controller
         $school = new School();
         $school->fill($request->all());
         $school->save();
-
     }
 
 
