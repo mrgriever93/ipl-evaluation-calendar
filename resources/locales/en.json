@@ -144,8 +144,6 @@
         "Todas as Escolas": "All Schools",
         "Grupo de Utilizador": "User Groups",
 
-
-
         "Configuração das colunas": "Columns configuration",
         "Apenas o formato CSV é aceite pelo importador, por isso, deverá seguir as normas de construção de um CSV.": "Only the CSV format is accepted by the importer, so you should follow the rules for building a CSV.",
         "O caracter utilizado para separação de colunas, é:" :"The character used for column separation is:",
@@ -172,6 +170,19 @@
         "Grupo GOP da escola" : "GOP Group of school",
         "Grupo Direção da escola" :  "Management group of school",
         "Grupo Pedagógico da escola" : "Pedagogic group of school",
-        "Link do Webservice dos Cursos" :  "Webservice link for Courses"
+        "Link do Webservice dos Cursos" :  "Webservice link for Courses",
+
+        "Unidades Curriculares": "Curricular Units",
+        "Unidade curricular eliminada com sucesso!": "Curricular unit deleted with success!",
+        "Ocorreu um erro ao eliminar a unidade curricular!": "Something went wrong while trying to delete the curricular unit!",
+        "Curso": "Course",
+        "Ramo": "Branch",
+        "Métodos definidos?": "Defined methods?",
+        "Agrupamento": "Groupings",
+        "Pesquisar por nome": "Search by name",
+        "Ohh! Não foi possível encontrar Unidades Curriculares!": "Ohh! It wasn't possible to find a Curricular unit!",
+        "Métodos": "Methods",
+        "Remover Unidade Curricular": "Delete Curricular Unit",
+        "Tem a certeza que deseja remover a Unidade Curricular": "Are you sure you want to delete this Curricular Unit"
     }
 }

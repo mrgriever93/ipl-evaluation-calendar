@@ -169,7 +169,20 @@
         "Grupo GOP da escola" : "Grupo GOP da escola",
         "Grupo Direção da escola" :  "Grupo Direção da escola",
         "Grupo Pedagógico da escola" : "Grupo Pedagógico da escola",
-        "Link do Webservice dos Cursos" :  "Link do Webservice dos Cursos"
+        "Link do Webservice dos Cursos" :  "Link do Webservice dos Cursos",
+
+        "Unidades Curriculares": "Unidades Curriculares",
+        "Unidade curricular eliminada com sucesso!": "Unidade curricular eliminada com sucesso!",
+        "Ocorreu um erro ao eliminar a unidade curricular!": "Ocorreu um erro ao eliminar a unidade curricular!",
+        "Curso": "Curso",
+        "Ramo": "Ramo",
+        "Métodos definidos?": "Métodos definidos?",
+        "Agrupamento": "Agrupamento",
+        "Pesquisar por nome": "Pesquisar por nome",
+        "Ohh! Não foi possível encontrar Unidades Curriculares!": "Ohh! Não foi possível encontrar Unidades Curriculares!",
+        "Métodos": "Métodos",
+        "Remover Unidade Curricular": "Remover Unidade Curricular",
+        "Tem a certeza que deseja remover a Unidade Curricular": "Tem a certeza que deseja remover a Unidade Curricular"
 
     }
 }
