@@ -20,9 +20,6 @@
         "A carregar o grupo":  "A carregar o grupo",
         "Editar Grupo de Utilizador": "Editar Grupo de Utilizador",
         "Novo Grupo de Utilizador":  "Novo Grupo de Utilizador",
-        "Nome": "Nome",
-        "Descrição PT":  "Descrição PT",
-        "Descrição EN": "Descrição EN",
         "Grupo de utilizador ativo?":  "Grupo de utilizador ativo?",
         "Grupo atualizado com sucesso": "Grupo atualizado com sucesso",
         "Grupo criado com sucesso": "Grupo criado com sucesso",
@@ -133,6 +130,13 @@
         "Criar": "Criar",
         "Duplicar": "Duplicar",
         "Pesquisar": "Pesquisar",
+
+        "Código": "Código",
+        "Nome": "Nome",
+        "Nome PT": "Nome PT",
+        "Nome EN": "Nome EN",
+        "Descrição PT":  "Descrição PT",
+        "Descrição EN": "Descrição EN",
 
         "Por Página": "Por Página",
         "Grau de ensino": "Grau de ensino",

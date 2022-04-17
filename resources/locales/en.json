@@ -20,9 +20,6 @@
         "A carregar o grupo":  "Loading group",
         "Editar Grupo de Utilizador": "Edit user group",
         "Novo Grupo de Utilizador":  "New user group",
-        "Nome": "Name",
-        "Descrição PT":  "Description PT",
-        "Descrição EN": "Description EN",
         "Grupo de utilizador ativo?":  "User group active?",
         "Grupo atualizado com sucesso": "Group updated with success",
         "Grupo criado com sucesso": "Group created with success",
@@ -134,6 +131,13 @@
         "Criar": "Create",
         "Duplicar": "Clone",
         "Pesquisar": "Search",
+
+        "Código": "Code",
+        "Nome": "Name",
+        "Nome PT": "Name PT",
+        "Nome EN": "Name EN",
+        "Descrição PT":  "Description PT",
+        "Descrição EN": "Description EN",
 
         "Por Página": "Per Page",
         "Grau de ensino": "Degree",
