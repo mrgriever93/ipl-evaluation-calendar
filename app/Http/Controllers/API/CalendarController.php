@@ -12,6 +12,7 @@ use App\Http\Requests\PublishCalendarRequest;
 use App\Http\Requests\UpdateCalendarRequest;
 use App\Http\Resources\AvailableCourseUnitsResource;
 use App\Http\Resources\CalendarResource;
+use App\Http\Resources\Generic\SemestersSearchResource;
 use App\Http\Resources\SemesterResource;
 use App\Models\Calendar;
 use App\Models\CalendarPhase;
@@ -214,8 +215,11 @@ class CalendarController extends Controller
         }
     }
 
-    public function listSemesters()
+    public function listSemesters(Request $request)
     {
-        return SemesterResource::collection(Semester::all());
+        if($request->has('special')){
+            return SemestersSearchResource::collection(Semester::all());
+        }
+        return SemestersSearchResource::collection(Semester::where("special", 0)->get());
     }
 }
