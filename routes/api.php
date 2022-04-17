@@ -11,7 +11,6 @@ use App\Services\ExternalImports;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
 use App\Http\Controllers\API\AcademicYearController;
 use App\Http\Controllers\API\CalendarController;
 use App\Http\Controllers\API\CourseUnitController;
@@ -143,6 +142,7 @@ Route::middleware('auth:api')->group(function () {
     Route::controller(SchoolController::class)->group(function () {
         Route::get('/schools',                  'index' );
         Route::get('/schools-list',             'list' );
+        Route::post('/schools',                 'store' );
         Route::get('/schools/{school}',         'show'  );
         Route::patch('/schools/{school}',       'update');
     });

@@ -19,7 +19,7 @@ const FilterOptionPerPage = ({widthSize, eventHandler}) => {
     };
 
     return (
-        <Form.Dropdown width={widthSize} selection value={perPage} options={perPageOptions} label={t("Por Página")} placeholder={t("Por Página")} onChange={filterByPerPage}/>
+        <Form.Dropdown selectOnBlur={false} width={widthSize} selection value={perPage} options={perPageOptions} label={t("Por Página")} placeholder={t("Por Página")} onChange={filterByPerPage}/>
     );
 };
 

@@ -20,26 +20,46 @@ const New = () => {
     const [isSaving, setIsSaving] = useState(false);
     const [school, setSchool] = useState({});
     const isEditMode = !_.isEmpty(school);
+    const [tabActiveIndex, setTabActiveIndex] = useState(0);
+    const [allValidated, setAllValidated] = useState(false);
+    const [formErrors, setFormErrors] = useState([]);
 
     const [groups, setGroups] = useState([]);
+    const [loadingGroups, setLoadingGroups] = useState(true);
+
+    const required = value => (value ? undefined : 'Required');
+
+    const handleTabChange = (e, { activeIndex }) => {
+        setTabActiveIndex(activeIndex);
+    }
+
+    const getUserGroups = () => {
+        setLoadingGroups(true);
+        axios.get('/user-group').then((res) => {
+            if (res.status === 200) {
+                let groupsMap = res.data.data.map((group) => ({
+                    key: group.id,
+                    value: group.id,
+                    text: group.description,
+                }));
+                setGroups(groupsMap);
+                setLoadingGroups(false);
+            }
+        });
+    }
+    const getSchoolDetail = (id) => {
+        axios.get(`/schools/${id}`).then((response) => {
+            setSchool(response?.data?.data);
+            setLoading(false);
+        });
+    }
+    useEffect(() => {
+        getUserGroups();
+    }, []);
 
     useEffect(() => {
         if (paramsId) {
-            axios.get(`/schools/${paramsId}`).then((response) => {
-                setSchool(response?.data?.data);
-                setLoading(false);
-            });
-
-            axios.get('/user-group').then((res) => {
-                if (res.status === 200) {
-                    let groupsMap = res.data.data.map((group) => ({
-                        key: group.id,
-                        value: group.id,
-                        text: group.description,
-                    }));
-                    setGroups(groupsMap);
-                }
-            });
+            getSchoolDetail(paramsId);
         }
     }, [paramsId]);
 
@@ -88,8 +108,7 @@ const New = () => {
         };
     }, [school]);
 
-    const onSubmit = ({ id, code, name_pt, name_en,
-            base_link,
+    const onSubmit = ({ id, code, name_pt, name_en, base_link,
             index_course_code,
             index_course_name,
             index_course_unit_name,
@@ -100,167 +119,205 @@ const New = () => {
             query_param_semester,
             gop_group_id,
             board_group_id,
-            pedagogic_group_id }
-            ) => {
+            pedagogic_group_id
+    }) => {
+        setAllValidated(true);
+        if(!index_course_code || !index_course_name || !index_course_unit_name || !index_course_unit_curricular_year || !index_course_unit_code || !index_course_unit_teachers){
+            setTabActiveIndex(0);
+            return false;
+        }
+        if(!query_param_academic_year || !query_param_semester ){
+            setTabActiveIndex(1);
+            return false;
+        }
         setIsSaving(true);
-        axios.patch(`/schools/${id}`, {
-            code,
-            name_pt,
-            name_en,
-            base_link,
-            index_course_code,
-            index_course_name,
-            index_course_unit_name,
-            index_course_unit_curricular_year,
-            index_course_unit_code,
-            index_course_unit_teachers,
-            query_param_academic_year,
-            query_param_semester,
-            gop_group_id,
-            board_group_id,
-            pedagogic_group_id }).then((res) => {
-                
-            setIsSaving(false);
-            if (res.status === 200) {
-                toast(t('Escola atualizada com sucesso'), successConfig);
-            }
-            else if (res.status === 201) {
-                toast(t('Escola criada com sucesso'), successConfig);
-            }
-            else {
-                toast(t('Existiu um problema ao gravar as alterações!'), errorConfig);
-            }
-        });
+        if (id) {
+            axios.patch(`/schools/${id}`, {
+                id,
+                code,
+                name_pt,
+                name_en,
+                base_link,
+                index_course_code,
+                index_course_name,
+                index_course_unit_name,
+                index_course_unit_curricular_year,
+                index_course_unit_code,
+                index_course_unit_teachers,
+                query_param_academic_year,
+                query_param_semester,
+                gop_group_id,
+                board_group_id,
+                pedagogic_group_id
+            }).then((res) => {
+                setIsSaving(false);
+                setFormErrors([]);
+                if (res.status === 200) {
+                    toast(t('Escola atualizada com sucesso'), successConfig);
+                } else if (res.status === 201) {
+                    toast(t('Escola criada com sucesso'), successConfig);
+                } else {
+                    let errorsArray = [];
+                    if(typeof res.response.data.errors === 'object' && res.response.data.errors !== null){
+                        errorsArray = Object.values(res.response.data.errors);
+                    } else {
+                        if(Array.isArray(res.response.data.errors)){
+                            errorsArray = res.response.data.errors;
+                        }
+                    }
+                    setFormErrors(errorsArray);
+                    toast(t('Existiu um problema ao gravar as alterações!'), errorConfig);
+                }
+            });
+        } else {
+            axios.post(`/schools`, {
+                code,
+                name_pt,
+                name_en,
+                base_link,
+                index_course_code,
+                index_course_name,
+                index_course_unit_name,
+                index_course_unit_curricular_year,
+                index_course_unit_code,
+                index_course_unit_teachers,
+                query_param_academic_year,
+                query_param_semester,
+                gop_group_id,
+                board_group_id,
+                pedagogic_group_id
+            }).then((res) => {
+                setIsSaving(false);
+                setFormErrors([]);
+                if (res.status === 200) {
+                    toast(t('Escola atualizada com sucesso'), successConfig);
+                } else if (res.status === 201) {
+                    toast(t('Escola criada com sucesso'), successConfig);
+                } else {
+                    let errorsArray = [];
+                    if(typeof res.response.data.errors === 'object' && res.response.data.errors !== null){
+                        errorsArray = Object.values(res.response.data.errors);
+                    } else {
+                        if(Array.isArray(res.response.data.errors)){
+                            errorsArray = res.response.data.errors;
+                        }
+                    }
+                    setFormErrors(errorsArray);
+                    toast(t('Existiu um problema ao gravar as alterações!'), errorConfig);
+                }
+            });
+        }
     };
 
     const panes = [
         {
-            menuItem: 'Configuração das colunas',
-            render: () => (
-                <Tab.Pane>
+            menuItem: t('Configuração das colunas'),
+            pane: { key: "tab_content", content: (
+                <div>
                     <Message>
-                        <Message.Header>Dicas de implementação</Message.Header>
+                        <Message.Header>{ t('Dicas de implementação') }</Message.Header>
                         <Message.Content>
-                            Apenas o formato CSV é aceite pelo importador, por
-                            isso, deverá seguir as normas de construção de um
-                            CSV.
+                            { t('Apenas o formato CSV é aceite pelo importador, por isso, deverá seguir as normas de construção de um CSV.') }
                         </Message.Content>
                         <br/>
                         <Message.Content>
-                            O caracter utilizado para separação de colunas, é:
+                            { t('O caracter utilizado para separação de colunas, é:') + ' ' }
                             <strong>
                                 <code>;</code>
                             </strong>
                         </Message.Content>
                         <br/>
                         <Message.Content>
-                            Os índices (index) começam no número 0, por isso,
-                            tenha em atenção este facto e faça a "conversão"
-                            para o index correto.
+                            { t("Os índices (index) começam no número 0, por isso, tenha em atenção este facto e faça a 'conversão' para o index correto.") }
                             <br/>
-                            <strong>Exemplo:</strong>
-                            {' '}
-                            O nome da unidade
-                            curricular é a segunda (2ª) coluna, então deveremos
-                            converter para o index = 1, pois retiramos sempre 1
-                            unidade ao número da ordem da coluna.
+                            <strong>{ t('Exemplo:') }</strong>
+                            { t('O nome da unidade curricular é a segunda (2ª) coluna, então deveremos converter para o index = 1, pois retiramos sempre 1 unidade ao número da ordem da coluna.') }
                         </Message.Content>
                     </Message>
-                    <Form>            
-                        <Card fluid>
-                            <Card.Content>
-                                <Form.Group widths="equal">
-                                    <Field name="index_course_code">
-                                        {({input: index_course_codeInput}) => (
-                                            <Form.Input label="Index coluna Código Curso" {...index_course_codeInput}/>
-                                        )}
-                                    </Field>
-                                    <Field name="index_course_name">
-                                        {({input: index_course_nameInput}) => (
-                                            <Form.Input label="Index coluna Nome Curso" {...index_course_nameInput}/>
-                                        )}
-                                    </Field>
-                                    <Field name="index_course_unit_code">
-                                        {({input: index_course_unit_codeInput}) => (
-                                            <Form.Input label="Index coluna Código Unidade Curricular" {...index_course_unit_codeInput}/>
-                                        )}
-                                    </Field>
-                                </Form.Group>
-                                <Form.Group widths="equal">
-                                    <Field name="index_course_unit_name">
-                                        {({input: index_course_unit_nameInput}) => (
-                                            <Form.Input label="Index coluna Nome Unidade Curricular" {...index_course_unit_nameInput}/>
-                                        )}
-                                    </Field>
-                                    <Field name="index_course_unit_teachers">
-                                        {({input: index_course_unit_teachersInput}) => (
-                                            <Form.Input label="Index coluna Professores do curso" {...index_course_unit_teachersInput}/>
-                                        )}
-                                    </Field>
-                                    <Field name="index_course_unit_curricular_year">
-                                        {({input: index_course_unit_curricular_yearInput}) => (
-                                            <Form.Input label="Index coluna Ano curricular da Unidade Curricular" {...index_course_unit_curricular_yearInput}/>
-                                        )}
-                                    </Field>
-                                </Form.Group>
-                            </Card.Content>
-                        </Card>
-                    </Form>
-                </Tab.Pane>
-            ),
+                    <Card fluid>
+                        <Card.Content>
+                            <Form.Group widths="equal">
+                                <Field name="index_course_code" validate={required}>
+                                    {({input: index_course_codeInput, meta}) => (
+                                        <Form.Input type='number' label={ t("Index coluna Código Curso") } {...index_course_codeInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                                <Field name="index_course_name" validate={required}>
+                                    {({input: index_course_nameInput, meta}) => (
+                                        <Form.Input type='number' label={ t("Index coluna Nome Curso") } {...index_course_nameInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                                <Field name="index_course_unit_code" validate={required}>
+                                    {({input: index_course_unit_codeInput, meta}) => (
+                                        <Form.Input type='number' label={ t("Index coluna Código Unidade Curricular") } {...index_course_unit_codeInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                            </Form.Group>
+                            <Form.Group widths="equal">
+                                <Field name="index_course_unit_name" validate={required}>
+                                    {({input: index_course_unit_nameInput, meta}) => (
+                                        <Form.Input type='number' label={ t("Index coluna Nome Unidade Curricular") } {...index_course_unit_nameInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                                <Field name="index_course_unit_teachers" validate={required}>
+                                    {({input: index_course_unit_teachersInput, meta}) => (
+                                        <Form.Input type='number' label={ t("Index coluna Professores do curso") } {...index_course_unit_teachersInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                                <Field name="index_course_unit_curricular_year" validate={required}>
+                                    {({input: index_course_unit_curricular_yearInput, meta}) => (
+                                        <Form.Input type='number' label={ t("Index coluna Ano curricular da Unidade Curricular") } {...index_course_unit_curricular_yearInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                            </Form.Group>
+                        </Card.Content>
+                    </Card>
+                </div>
+            )},
         },
         {
-            menuItem: 'Configuração da queryString',
-            render: () => (
-                <Tab.Pane>
+            menuItem: t('Configuração da queryString'),
+            pane: { key: "tab_link", content: (
+                <div>
                     <Message>
-                        <Message.Header>Dicas de implementação</Message.Header>
+                        <Message.Header>{ t('Dicas de implementação') }</Message.Header>
                         <Message.Content>
-                            Sugere-se que as variáveis que recebem os dados
-                            relativos ao ano letivo e ao semestre, sejam de
-                            acordo com a lista seguinte:
+                            { t('Sugere-se que as variáveis que recebem os dados relativos ao ano letivo e ao semestre, sejam de acordo com a lista seguinte:')}
                         </Message.Content>
                         <Message.List
                             items={[
-                                'anoletivo -> Pronto a receber no formato: 202122',
-                                'periodo -> Pronto a receber no formato (S1/S2)',
+                                t('anoletivo -> Pronto a receber no formato: 202122'),
+                                t('periodo -> Pronto a receber no formato (S1/S2)'),
                             ]}
                         />
                         <Message.Content>
-                            Ainda assim, poderá querer escolher outros nomes
-                            para estes campos, no formulário abaixo.
+                            { t('Ainda assim, poderá querer escolher outros nomes para estes campos, no formulário abaixo.') }
                         </Message.Content>
                         <Message.Content>
                             <strong>
-                                No final, o URL deverá ser semelhante ao
-                                seguinte:
-                                {' '}
-                                <i>
-                                    http://www.dei.estg.ipleiria.pt/intranet/horarios/ws/inscricoes/cursos_ucs.php?anoletivo=202122&periodo=S1
-                                </i>
+                                { t('No final, o URL deverá ser semelhante ao seguinte:') }
+                                <i>http://www.dei.estg.ipleiria.pt/intranet/horarios/ws/inscricoes/cursos_ucs.php?anoletivo=202122&periodo=S1</i>
                             </strong>
                         </Message.Content>
                     </Message>
-                    <Form>
-                        <Card fluid>
-                            <Card.Content>
-                                <Form.Group widths="equal">
-                                    <Field name="query_param_academic_year">
-                                        {({input: query_param_academic_yearInput}) => (
-                                            <Form.Input label="Nome do parâmetro para o ano letivo" {...query_param_academic_yearInput}/>
-                                        )}
-                                    </Field>
-                                    <Field name="query_param_semester">
-                                        {({input: query_param_semesterInput}) => (
-                                            <Form.Input label="Nome do parâmetro para o semestre" {...query_param_semesterInput}/>
-                                        )}
-                                    </Field>
-                                </Form.Group>
-                            </Card.Content>
-                        </Card>
-                    </Form>
-                </Tab.Pane>
-            ),
+                    <Card fluid>
+                        <Card.Content>
+                            <Form.Group widths="equal">
+                                <Field name="query_param_academic_year" validate={required}>
+                                    {({input: query_param_academic_yearInput, meta}) => (
+                                        <Form.Input type='number' placeholder={t('anoletivo -> Pronto a receber no formato: 202122')} label={ t("Nome do parâmetro para o ano letivo") } {...query_param_academic_yearInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                                <Field name="query_param_semester" validate={required}>
+                                    {({input: query_param_semesterInput, meta}) => (
+                                        <Form.Input placeholder={t('periodo -> Pronto a receber no formato (S1/S2)')} label={ t("Nome do parâmetro para o semestre") } {...query_param_semesterInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                            </Form.Group>
+                        </Card.Content>
+                    </Card>
+                </div>
+            )},
         },
     ];
 
@@ -280,67 +337,77 @@ const New = () => {
                         <Card.Content header={`${ isEditMode ? t('Editar Escola') : t('Nova Escola') }`} />
                         <Card.Content>
                             <Form.Group widths="equal">
-                                <Field name="code">
-                                    {( { input: codeInput }) => (
-                                        <Form.Input label={t('Nome')} {...codeInput} />
+                                <Field name="code" validate={required}>
+                                    {( { input: codeInput, meta}) => (
+                                        <Form.Input label={t('Nome')} {...codeInput} error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
-                                <Field name="name_pt">
-                                    {( { input: namePtInput }) => (
-                                        <Form.Input label={t('Descrição PT')} {...namePtInput} />
+                                <Field name="name_pt" validate={required}>
+                                    {( { input: namePtInput, meta}) => (
+                                        <Form.Input label={t('Descrição PT')} {...namePtInput} error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
-                                <Field name="name_en">
-                                    {( { input: nameEnInput }) => (
-                                        <Form.Input label={t('Descrição EN')} {...nameEnInput} />
+                                <Field name="name_en" validate={required}>
+                                    {( { input: nameEnInput, meta}) => (
+                                        <Form.Input label={t('Descrição EN')} {...nameEnInput} error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
                             </Form.Group>
                             <Form.Group widths="equal" style={{ marginTop: 'var(--space-m)' }}>
-                                <Field name="gop_group_id">
-                                    {({input: gop_group_idInput}) => (
+                                <Field name="gop_group_id" validate={required}>
+                                    {({input: gop_group_idInput, meta}) => (
                                         <Form.Dropdown options={groups} selection clearable search
-                                        {...gop_group_idInput}
+                                        {...gop_group_idInput} selectOnBlur={false} loading={loadingGroups}
                                         onChange={(e, {value}) => gop_group_idInput.onChange(value)}
-                                        label="Grupo GOP da escola" />
+                                        label={ t("Grupo GOP da escola") } error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
-                                <Field name="board_group_id">
-                                    {({input: board_group_idInput}) => (
+                                <Field name="board_group_id" validate={required}>
+                                    {({input: board_group_idInput, meta}) => (
                                         <Form.Dropdown options={groups} selection clearable search
-                                            {...board_group_idInput}
+                                            {...board_group_idInput} selectOnBlur={false} loading={loadingGroups}
                                             onChange={(e, {value}) => board_group_idInput.onChange(value)}
-                                            label="Grupo Direção da escola" />
+                                            label={ t("Grupo Direção da escola") } error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
-                                <Field name="pedagogic_group_id">
-                                    {({input: pedagogic_group_idInput}) => (
+                                <Field name="pedagogic_group_id" validate={required}>
+                                    {({input: pedagogic_group_idInput, meta}) => (
                                         <Form.Dropdown options={groups} selection clearable search
-                                            {...pedagogic_group_idInput}
+                                            {...pedagogic_group_idInput} selectOnBlur={false} loading={loadingGroups}
                                             onChange={(e, {value}) => pedagogic_group_idInput.onChange(value)}
-                                            label="Grupo Pedagógico da escola" />
+                                            label={ t("Grupo Pedagógico da escola") } error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
                             </Form.Group>
                             <Form.Group widths="equal" style={{ marginTop: 'var(--space-m)' }}>
-                                <Field name="base_link">
-                                    {({input: base_linkInput}) => (
+                                <Field name="base_link" validate={required}>
+                                    {({input: base_linkInput, meta}) => (
                                         <Form.Input placeholder="Exemplo: http://www.dei.estg.ipleiria.pt/intranet/horarios/ws/inscricoes/cursos_ucs.php"
                                             {...base_linkInput}
-                                            label="Link do Webservice dos Cursos" />
+                                            label={ t("Link do Webservice dos Cursos") } error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
                             </Form.Group>
                         </Card.Content>
+                        { formErrors.length > 0 &&
+                            <Card.Content>
+                                <Message negative>
+                                    <Message.Header>Errors</Message.Header>
+                                    <Message.List>
+                                        {formErrors?.map((item, index) =>
+                                            <Message.Item key={index}>{item}</Message.Item>
+                                        )}
+                                    </Message.List>
+                                </Message>
+                            </Card.Content>
+                        }
                         <Card.Content>
                             <Button onClick={handleSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} >
                                 <Icon name={isEditMode ? 'save' : 'plus'} /> {isEditMode ? t('Guardar') : t('Criar')}
-                            </Button> 
+                            </Button>
                         </Card.Content>
                     </Card>
-                    { !loading && (
-                        <Tab panes={panes} renderActiveOnly/>
-                    )}                    
+                    { !loading && ( <Tab panes={panes} renderActiveOnly={false} activeIndex={tabActiveIndex} onTabChange={handleTabChange}/> )}
                 </Form>
             )} />
         </Container>

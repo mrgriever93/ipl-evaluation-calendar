@@ -27,7 +27,7 @@ const FilterOptionSchool = ({widthSize, eventHandler}) => {
     };
 
     return (
-        <Form.Dropdown width={widthSize} selection value={school} options={schoolsOptions} label={t("Escolas")} placeholder={t("Todas as Escolas")} loading={loading} onChange={filterBySchool}/>
+        <Form.Dropdown selectOnBlur={false} width={widthSize} selection value={school} options={schoolsOptions} label={t("Escolas")} placeholder={t("Todas as Escolas")} loading={loading} onChange={filterBySchool}/>
     );
 };
 
