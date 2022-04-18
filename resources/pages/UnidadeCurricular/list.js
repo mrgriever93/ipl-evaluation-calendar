@@ -63,9 +63,9 @@ const CourseUnitsList = () => {
         axios.delete(`/course-units/${modalInfo.id}`).then((res) => {
             if (res.status === 200) {
                 fetchCourseUnits();
-                toast('Unidade curricular eliminada com sucesso!', successConfig);
+                toast(t('Unidade curricular eliminada com sucesso!'), successConfig);
             } else {
-                toast('Ocorreu um erro ao eliminar a unidade curricular!', errorConfig);
+                toast(t('Ocorreu um erro ao eliminar a unidade curricular!'), errorConfig);
             }
         });
     };
@@ -108,7 +108,7 @@ const CourseUnitsList = () => {
                         <Form.Group>
                             <Courses widthSize={4} eventHandler={filterByCourse} />
                             <Semesters widthSize={4} eventHandler={filterBySemester} withSpecial={false} />
-                            <Form.Input width={4} onChange={_.debounce(handleSearchCourseUnits, 400)} search label="Pesquisar por nome"/>
+                            <Form.Input width={4} onChange={_.debounce(handleSearchCourseUnits, 400)} search label={t("Pesquisar por nome")} />
                             <Form.Field width={2} />
                             <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                         </Form.Group>
@@ -155,7 +155,7 @@ const CourseUnitsList = () => {
                                                 <Link to={`unidade-curricular/${id}/metodos`}>
                                                     <Button color="olive" icon labelPosition="left">
                                                         <Icon name="file alternate"/>
-                                                        Métodos
+                                                        { t('Métodos') }
                                                     </Button>
                                                 </Link>
                                             </ShowComponentIfAuthorized>
@@ -177,13 +177,13 @@ const CourseUnitsList = () => {
                 </Card.Content>
             </Card>
             <Modal dimmer="blurring" open={modalOpen} onClose={handleModalClose}>
-                <Modal.Header>Remover Unidade Curricular</Modal.Header>
+                <Modal.Header>{ t("Remover Unidade Curricular") }</Modal.Header>
                 <Modal.Content>
-                    Tem a certeza que deseja remover a Unidade Curricular{' '}{modalInfo?.course}?
+                    { t("Tem a certeza que deseja remover a Unidade Curricular") } {modalInfo?.course}?
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button negative onClick={handleModalClose}>Cancelar</Button>
-                    <Button positive onClick={handleRemoval}>Sim</Button>
+                    <Button negative onClick={handleModalClose}>{ t("Cancelar") }</Button>
+                    <Button positive onClick={handleRemoval}>{ t("Sim") }</Button>
                 </Modal.Actions>
             </Modal>
         </Container>
