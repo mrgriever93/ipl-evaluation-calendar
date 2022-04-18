@@ -1,18 +1,8 @@
 import React from 'react';
-import {Navigate, Route, Routes} from 'react-router';
-import List from './list';
-import New from './new';
-import Methods from './methods';
+import {Outlet} from 'react-router';
 
-const UnidadeCurricular = ({match}) => (
-    <Routes>
-        <Route path={`/novo`} exact element={<New />}/>
-        <Route path={`/:id(\\d+)`} exact element={() => <b>Not found</b>}/>
-        <Route path={`/edit/:id(\\d+)`} exact element={<New />}/>
-        <Route path={`/:id(\\d+)/metodos`} exact element={<Methods />}/>
-        <Route path={`/`} exact element={<List />}/>
-        <Route path={`/*`} element={<Navigate replace to="/404"/>}/>
-    </Routes>
+const UnidadeCurricular = () => (
+    <Outlet/>
 );
 
 export default UnidadeCurricular;

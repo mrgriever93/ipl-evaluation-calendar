@@ -4,7 +4,7 @@ namespace App\Http\Resources\Admin\Edit;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class EvaluationTypeDetailResource extends JsonResource
+class EvaluationTypeEditResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

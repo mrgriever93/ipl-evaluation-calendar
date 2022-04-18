@@ -49,7 +49,7 @@ class LoginController extends Controller
                 if (isset($user->ldap)) {
                     $groups = $user->ldap->title;
                     foreach ($groups as $group) {
-                        $bdGroup = Group::where('description', $group)->first();
+                        $bdGroup = Group::where('name_pt', $group)->first();
                         if ($bdGroup) {
                             $user->groups()->syncWithoutDetaching([$bdGroup->id]);
                         }

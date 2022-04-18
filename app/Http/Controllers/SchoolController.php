@@ -31,6 +31,15 @@ class SchoolController extends Controller
         $school->save();
     }
 
+    public function store(SchoolRequest $request)
+    {
+        $request->validated();
+        $school = new School();
+        $school->fill($request->all());
+        $school->save();
+    }
+
+
     public function destroy($id)
     {
         //

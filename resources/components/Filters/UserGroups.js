@@ -26,7 +26,7 @@ const FilterOptionUserGroups = ({widthSize, eventHandler}) => {
     };
 
     return (
-        <Form.Dropdown width={widthSize} options={userGroupsOptions} value={userGroups} selection search multiple clearable label={t("Grupo de Utilizador")} placeholder={t("Grupo de Utilizador")} loading={loading} onChange={filterByUserGroup}/>
+        <Form.Dropdown selectOnBlur={false} width={widthSize} options={userGroupsOptions} value={userGroups} selection search multiple clearable label={t("Grupo de Utilizador")} placeholder={t("Grupo de Utilizador")} loading={loading} onChange={filterByUserGroup}/>
     );
 };
 

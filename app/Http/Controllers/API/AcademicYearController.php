@@ -12,13 +12,16 @@ use App\Jobs\ProcessNewAcademicYear;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class AcademicYearController extends Controller
 {
+    private function getList(){
+        return AcademicYearResource::collection(AcademicYear::all()->sortBy('display'));
+    }
+
     public function index()
     {
-        return AcademicYearResource::collection(AcademicYear::all()->sortBy('display'));
+        return $this->getList();
     }
 
     /**
@@ -39,8 +42,6 @@ class AcademicYearController extends Controller
     {
         try {
             DB::beginTransaction();
-            //AcademicYear::query()->update(['active' => false, 'selected' => false]);
-
             $oldYear = AcademicYear::withTrashed()
                 ->where('code', $request->code)
                 ->first();
@@ -59,7 +60,7 @@ class AcademicYearController extends Controller
             return response()->json("An error has occurred! {$ex->getMessage()}", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return (AcademicYearResource::collection(AcademicYear::all()->sortBy('display')))->response()->setStatusCode(Response::HTTP_CREATED);
+        return ($this->getList())->response()->setStatusCode(Response::HTTP_CREATED);
     }
 
     public function active($id)
@@ -76,7 +77,8 @@ class AcademicYearController extends Controller
         $year = AcademicYear::find($id);
         $year->selected = !$year->selected;
         $year->save();
-        return (AcademicYearResource::collection(AcademicYear::all()->sortBy('display')))->response()->setStatusCode(Response::HTTP_OK);
+
+        return ($this->getList())->response()->setStatusCode(Response::HTTP_OK);
     }
 
     public function sync($id, $semester)
@@ -85,17 +87,28 @@ class AcademicYearController extends Controller
         if( $semester != 1 && $semester != 2) {
             return response()->json("error on semester value!", Response::HTTP_BAD_REQUEST);
         }
+
+        $hasWaiting = AcademicYear::where('s1_sync_active', true)->orWhere('s2_sync_active', true)->count();
+        if($hasWaiting > 0){
+            return response()->json("ano_letivo.Ja existem em sincronizacao, esperar ate acabar antes de comecar a proxima.",Response::HTTP_CONFLICT);
+        }
         $year = AcademicYear::findOrFail($id);
+        if( $semester == 1) {
+            $year->s1_sync_waiting = true;
+        } else {
+            $year->s2_sync_waiting = true;
+        }
+        $year->save();
 
         // TODO Validate response, it returns 200 but will wait for response anyway
-        ProcessNewAcademicYear::dispatchAfterResponse($year->code, $semester);
+        ProcessNewAcademicYear::dispatch($year->code, $semester)->afterResponse();
 
-        return response()->json("Syncing!", Response::HTTP_OK);
+        return ($this->getList())->response()->setStatusCode(Response::HTTP_OK);
     }
 
     public function destroy($id)
     {
         AcademicYear::find($id)->delete();
-        return (AcademicYearResource::collection(AcademicYear::all()->sortBy('display')))->response()->setStatusCode(Response::HTTP_OK);
+        return ($this->getList())->response()->setStatusCode(Response::HTTP_OK);
     }
 }

@@ -237,7 +237,7 @@ class UserPermissionsSeeder extends Seeder
             ["group_id" => 2, "permission_id" => 47, "phase_id" => 11, "enabled" => 1],
             ["group_id" => 3, "permission_id" => 3, "phase_id" => 12, "enabled" => 1],
             ["group_id" => 3, "permission_id" => 6, "phase_id" => 12, "enabled" => 1],
-            ["group_id" => 3, "permission_id" => 40, "phase_id" => 9, "enabled" => 1],
+            ["group_id" => 3, "permission_id" => 43, "phase_id" => 9, "enabled" => 1],
             ["group_id" => 4, "permission_id" => 3, "phase_id" => 12, "enabled" => 1],
             ["group_id" => 4, "permission_id" => 6, "phase_id" => 12, "enabled" => 1],
             ["group_id" => 4, "permission_id" => 40, "phase_id" => 5, "enabled" => 1],

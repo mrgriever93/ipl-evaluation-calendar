@@ -20,9 +20,6 @@
         "A carregar o grupo":  "A carregar o grupo",
         "Editar Grupo de Utilizador": "Editar Grupo de Utilizador",
         "Novo Grupo de Utilizador":  "Novo Grupo de Utilizador",
-        "Nome": "Nome",
-        "Descrição PT":  "Descrição PT",
-        "Descrição EN": "Descrição EN",
         "Grupo de utilizador ativo?":  "Grupo de utilizador ativo?",
         "Grupo atualizado com sucesso": "Grupo atualizado com sucesso",
         "Grupo criado com sucesso": "Grupo criado com sucesso",
@@ -42,7 +39,6 @@
         "Não foi possível remover o Grupo de utilizador!": "Não foi possível remover o Grupo de utilizador!",
         "Ohh! Não foi possível encontrar grupos de utilizador!": "Ohh! Não foi possível encontrar Grupos de Utilizador!",
 
-
         "A carregar registos...": "A carregar registos...",
         "A carregar dados": "A carregar dados",
         "Criar novo": "Criar novo",
@@ -58,11 +54,20 @@
         "ano_letivo.Abrir novo ano letivo": "Abrir novo ano letivo",
         "ano_letivo.Ao abrir um novo ano letivo, este ficará ativo por defeito para todos os utilizadores!": "Ao abrir um novo ano letivo, este ficará ativo por defeito para todos os utilizadores!",
         "ano_letivo.Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?": "Tem a certeza que deseja abrir um novo ano letivo com o seguinte código?",
+        "ano_letivo.Ano letivo removido com sucesso!": "Ano letivo removido com sucesso!",
+        "ano_letivo.Ocorreu um problema ao remover o ano letivo!": "Ocorreu um problema ao remover o ano letivo!",
         "ano_letivo.Ano letivo atualizado com sucesso!": "Ano letivo atualizado com sucesso!",
         "ano_letivo.Ocorreu um problema ao atualizar o ano letivo!" : "Ocorreu um problema ao atualizar o ano letivo!",
         "É o ano que irá estar selecionado automáticamente para o utilizador! Apenas um pode estar selecionado de cada vez.": "É o ano que irá estar selecionado automáticamente para o utilizador! Apenas um pode estar selecionado de cada vez.",
         "Anos letivos disponivies para os utilizadores selecionarem.": "Anos letivos disponivies para os utilizadores selecionarem.",
-
+        "ano_letivo.Irá começar brevemente a sincronização do ano letivo": "Irá começar brevemente a sincronização do ano letivo",
+        "ano_letivo.Ocorreu um problema ao tentar começar sincronizar o ano letivo": "Ocorreu um problema ao tentar começar sincronizar o ano letivo",
+        "ano_letivo.A sincronização vai sempre acontecer quando clicarmos no botão?": "A sincronização vai sempre acontecer quando clicarmos no botão?",
+        "ano_letivo.Não. Irá ser iniciada a sincronização quando não houver trabalho para o servidor.": "Não. Irá ser iniciada a sincronização quando não houver trabalho para o servidor.",
+        "ano_letivo.Todos os semestres e ano letivos que estejam ativos e que já tenham sido sincronizados antes, vão ser atualizados todos os dias as 3 da manhã.": "Todos os semestres e ano letivos que estejam ativos e que já tenham sido sincronizados antes, vão ser atualizados todos os dias as 3 da manhã.",
+        "ano_letivo.Outras informações": "Outras informações",
+        "ano_letivo.Ja existem em sincronizacao, esperar ate acabar antes de comecar a proxima.": "Já existem em sincronização, tem de esperar até acabar antes de comecar a próxima.",
+        "ano_letivo.Apenas 1 sincronização pode acontecer de cada vez, para prevenir duplicações ou bloqueio do servidor.": "Apenas 1 sincronização pode acontecer de cada vez, para prevenir duplicações ou bloqueio do servidor.",
 
         "Tipos de Avaliação": "Tipos de Avaliação",
         "Pesquisar tipo de avaliação...": "Pesquisar tipo de avaliação...",
@@ -104,8 +109,8 @@
 
         "Escolas": "Escolas",
         "Ohh! Não foi possível encontrar Escolas!": "Ohh! Não foi possível encontrar Escolas!",
-        "Escola atualizado com sucesso": "Escola atualizado com sucesso",
-        "Escola criado com sucesso": "Escola criado com sucesso",
+        "Escola atualizada com sucesso": "Escola atualizado com sucesso",
+        "Escola criada com sucesso": "Escola criado com sucesso",
         "Editar Escola": "Editar escola",
         "Nova Escola":  "Nova escola",
 
@@ -126,9 +131,58 @@
         "Duplicar": "Duplicar",
         "Pesquisar": "Pesquisar",
 
+        "Código": "Código",
+        "Nome": "Nome",
+        "Nome PT": "Nome PT",
+        "Nome EN": "Nome EN",
+        "Descrição PT":  "Descrição PT",
+        "Descrição EN": "Descrição EN",
+
         "Por Página": "Por Página",
         "Grau de ensino": "Grau de ensino",
         "Todas as Escolas": "Todas as Escolas",
-        "Grupo de Utilizador": "Grupo de Utilizador"
+        "Grupo de Utilizador": "Grupo de Utilizador",
+
+        "Configuração das colunas": "Configuração das colunas",
+        "Apenas o formato CSV é aceite pelo importador, por isso, deverá seguir as normas de construção de um CSV.": "Apenas o formato CSV é aceite pelo importador, por isso, deverá seguir as normas de construção de um CSV.",
+        "O caracter utilizado para separação de colunas, é:" :"O caracter utilizado para separação de colunas, é:",
+        "Os índices (index) começam no número 0, por isso, tenha em atenção este facto e faça a 'conversão' para o index correto." : "Os índices (index) começam no número 0, por isso, tenha em atenção este facto e faça a 'conversão' para o index correto.",
+        "Exemplo:" :"Exemplo:",
+        "O nome da unidade curricular é a segunda (2ª) coluna, então deveremos converter para o index = 1, pois retiramos sempre 1 unidade ao número da ordem da coluna." : "O nome da unidade curricular é a segunda (2ª) coluna, então deveremos converter para o index = 1, pois retiramos sempre 1 unidade ao número da ordem da coluna.",
+
+        "Configuração da queryString": "Configuração da queryString",
+        "Dicas de implementação": "Dicas de implementação",
+        "Sugere-se que as variáveis que recebem os dados relativos ao ano letivo e ao semestre, sejam de acordo com a lista seguinte:": "Sugere-se que as variáveis que recebem os dados relativos ao ano letivo e ao semestre, sejam de acordo com a lista seguinte:",
+        "anoletivo -> Pronto a receber no formato: 202122": "anoletivo -> Pronto a receber no formato: 202122",
+        "periodo -> Pronto a receber no formato (S1/S2)":  "periodo -> Pronto a receber no formato (S1/S2)",
+        "Ainda assim, poderá querer escolher outros nomes para estes campos, no formulário abaixo.": "Ainda assim, poderá querer escolher outros nomes para estes campos, no formulário abaixo.",
+        "No final, o URL deverá ser semelhante ao seguinte:":  "No final, o URL deverá ser semelhante ao seguinte:",
+
+        "Index coluna Código Curso": "Index coluna Código Curso",
+        "Index coluna Nome Curso" : "Index coluna Nome Curso",
+        "Index coluna Código Unidade Curricular" : "Index coluna Código Unidade Curricular",
+        "Index coluna Nome Unidade Curricular" :  "Index coluna Nome Unidade Curricular",
+        "Index coluna Professores do curso" : "Index coluna Professores do curso",
+        "Index coluna Ano curricular da Unidade Curricular" :  "Index coluna Ano curricular da Unidade Curricular",
+        "Nome do parâmetro para o ano letivo" : "Nome do parâmetro para o ano letivo",
+        "Nome do parâmetro para o semestre" :  "Nome do parâmetro para o semestre",
+        "Grupo GOP da escola" : "Grupo GOP da escola",
+        "Grupo Direção da escola" :  "Grupo Direção da escola",
+        "Grupo Pedagógico da escola" : "Grupo Pedagógico da escola",
+        "Link do Webservice dos Cursos" :  "Link do Webservice dos Cursos",
+
+        "Unidades Curriculares": "Unidades Curriculares",
+        "Unidade curricular eliminada com sucesso!": "Unidade curricular eliminada com sucesso!",
+        "Ocorreu um erro ao eliminar a unidade curricular!": "Ocorreu um erro ao eliminar a unidade curricular!",
+        "Curso": "Curso",
+        "Ramo": "Ramo",
+        "Métodos definidos?": "Métodos definidos?",
+        "Agrupamento": "Agrupamento",
+        "Pesquisar por nome": "Pesquisar por nome",
+        "Ohh! Não foi possível encontrar Unidades Curriculares!": "Ohh! Não foi possível encontrar Unidades Curriculares!",
+        "Métodos": "Métodos",
+        "Remover Unidade Curricular": "Remover Unidade Curricular",
+        "Tem a certeza que deseja remover a Unidade Curricular": "Tem a certeza que deseja remover a Unidade Curricular"
+
     }
 }

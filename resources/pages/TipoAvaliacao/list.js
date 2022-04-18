@@ -13,7 +13,7 @@ import EmptyTable from "../../components/EmptyTable";
 const List = () => {
     const { t } = useTranslation();
     const columns = [
-        {name: t('Descrição')},
+        {name: t('Nome')},
         {name: t('Ativo?'), align: 'center', style: {width: '15%'} },
         {name: t('Ações'),  align: 'center', style: {width: '15%'} },
     ];
@@ -25,7 +25,7 @@ const List = () => {
 
     const fetchEvaluationTypes = () => {
         setIsLoading(true);
-        
+
         axios.get('/evaluation-types/').then((response) => {
             setIsLoading(false);
             if (response.status >= 200 && response.status < 300) {
@@ -42,7 +42,7 @@ const List = () => {
     const filterResults = useCallback(
         (searchTerm) => {
             const filtered = evaluationTypes.filter(
-                (x) => x.code.toLowerCase().includes(searchTerm.toLowerCase()) || x.description.toLowerCase().includes(searchTerm.toLowerCase()),
+                (x) => x.code.toLowerCase().includes(searchTerm.toLowerCase()) || x.name.toLowerCase().includes(searchTerm.toLowerCase()),
             );
             setFilteredResults(filtered);
         },
@@ -64,10 +64,11 @@ const List = () => {
         axios.delete(`/evaluation-types/${modalInfo?.id}`).then((res) => {
             if (res.status === 200) {
                 toast(t("Tipo de Avaliação removido com sucesso!"), successConfig);
+                setEvaluationTypes(response.data?.data);
+                setFilteredResults(response?.data?.data);
             } else {
                 toast(t("Não foi possível remover o Tipo de Avaliação!"), errorConfig);
             }
-            fetchEvaluationTypes();
         });
         handleModalClose();
     };
@@ -95,7 +96,7 @@ const List = () => {
                         </Form.Group>
                     </Form>
                 </Card.Content>
-                
+
                 <Card.Content>
                 { filteredResults.length < 1 || isLoading ? (
                     <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar Tipos de Avaliação!")}/>
@@ -109,9 +110,9 @@ const List = () => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            { filteredResults?.map(({ id, description, enabled, removable }, index ) => (
+                            { filteredResults?.map(({ id, name, enabled, removable }, index ) => (
                                 <Table.Row key={index}>
-                                    <Table.Cell>{description}</Table.Cell>
+                                    <Table.Cell>{name}</Table.Cell>
                                     <Table.Cell textAlign="center">
                                         <Icon name={!enabled ? 'close' : 'check'} />
                                     </Table.Cell>
@@ -124,7 +125,7 @@ const List = () => {
                                             </Link>
                                         </ShowComponentIfAuthorized>
                                         <ShowComponentIfAuthorized permission={[SCOPES.DELETE_EVALUATION_TYPES]}>
-                                            <Button onClick={() => remove({id, description}) } color="red" icon disabled={!removable} >
+                                            <Button onClick={() => remove({id, name}) } color="red" icon>
                                                 <Icon name="trash"/>
                                             </Button>
                                         </ShowComponentIfAuthorized>
@@ -136,10 +137,10 @@ const List = () => {
                     )}
                 </Card.Content>
             </Card>
-            
+
             <Modal dimmer="blurring" open={modalOpen} onClose={handleModalClose} >
                 <Modal.Header>{t("Remover Tipo de Avaliação")}</Modal.Header>
-                <Modal.Content>{t("Tem a certeza que deseja remover o tipo de avaliação")} <strong>{modalInfo?.description}</strong> ?</Modal.Content>
+                <Modal.Content>{t("Tem a certeza que deseja remover o tipo de avaliação")} <strong>{modalInfo?.name}</strong> ?</Modal.Content>
                 <Modal.Actions>
                     <Button negative onClick={handleModalClose}>{t("Cancelar")}</Button>
                     <Button positive onClick={handleRemoval}>{t("Sim")}</Button>

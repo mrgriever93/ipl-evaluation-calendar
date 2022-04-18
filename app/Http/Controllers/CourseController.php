@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Filters\CourseFilters;
 use App\Http\Requests\CourseRequest;
 use App\Http\Resources\Generic\CourseFullDetailResource;
-use App\Http\Resources\Generic\CourseListResource;
+use App\Http\Resources\Generic\CourseSearchListResource;
 use App\Http\Resources\Generic\BranchesResource;
 use App\Http\Resources\Generic\CourseResource;
 use App\Http\Resources\Generic\CourseUnitListResource;
@@ -28,6 +28,7 @@ class CourseController extends Controller
     public function index(Request $request, CourseFilters $filters)
     {
         $perPage = request('per_page', 10);
+
         $courseList = Course::with('school')->ofAcademicYear($request->cookie('academic_year'));
         if( request('school') ){
             $courseList->where('school_id', request('semester'));
@@ -37,7 +38,22 @@ class CourseController extends Controller
         }
         $courseList->filter($filters);
 
-        return CourseListResource::collection($courseList->paginate($perPage));
+        return CourseSearchListResource::collection($courseList->paginate($perPage));
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function search(Request $request, CourseFilters $filters)
+    {
+        $courseList = Course::ofAcademicYear($request->cookie('academic_year'));
+        $hasSearch = false;
+        if($request->has('search') && !empty($request->has('search'))) {
+            $hasSearch = true;
+            $courseList->filter($filters);
+        }
+
+        return CourseSearchListResource::collection(($hasSearch ? $courseList->get() : $courseList->limit(15)->get()));
     }
 
     /**
