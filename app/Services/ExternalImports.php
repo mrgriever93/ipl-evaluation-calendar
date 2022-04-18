@@ -49,6 +49,19 @@ class ExternalImports
             }
             //get AcademicYear Id
             $academicYear = AcademicYear::where('code', $academicYearCode)->firstOrFail();
+            if( !$academicYear ){
+                exit();
+            }
+            // update flags for front-end
+            if( $semester == 1) {
+                $academicYear->s1_sync_waiting = false;
+                $academicYear->s1_sync_active = true;
+            } else {
+                $academicYear->s2_sync_waiting = false;
+                $academicYear->s2_sync_active = true;
+            }
+            $academicYear->save();
+
             $academicYearId = $academicYear->id;
             // get list of schools that have "base_link" data
             $schools = School::whereNotNull('base_link')->get();
@@ -65,8 +78,16 @@ class ExternalImports
             foreach ($schools as $school) {
                 $apiEndpoint = "{$school->base_link}?{$school->query_param_academic_year}={$academicYearCode}&{$school->query_param_semester}=S{$semester}";
                 $courseUnits = [];
-
-                array_push($courseUnits, ...explode("<br>", mb_convert_encoding(file_get_contents($apiEndpoint), "utf-8", "latin1")));
+                /*
+                 * Get file contents
+                 */
+                $file_data = file_get_contents($apiEndpoint);
+                // check if the file has any content (prevent going forward
+                if( strlen(trim($file_data)) == 0) {
+                    continue;
+                }
+                // converts file and splits by line/<br>
+                array_push($courseUnits, ...explode("<br>", mb_convert_encoding($file_data, "utf-8", "latin1")));
                 // loop for each course unit
                 foreach ($courseUnits as $courseUnit) {
                     if (!empty($courseUnit)) {
@@ -156,14 +177,23 @@ class ExternalImports
             }
 
             if($semester === 1) {
-                $academicYear->s1_sync = Carbon::now();
+                $academicYear->s1_sync_last = Carbon::now();
+                $academicYear->s1_sync_active = false;
                 $academicYear->save();
             } else if($semester === 2) {
-                $academicYear->s2_sync = Carbon::now();
+                $academicYear->s2_sync_last = Carbon::now();
+                $academicYear->s2_sync_active = false;
                 $academicYear->save();
             }
         } catch(\Exception $e){
             Log::channel('courses_sync')->error('There was an error syncing. ', $e);
+            $academicYear = AcademicYear::where('code', $academicYearCode)->firstOrFail();
+            if($semester === 1) {
+                $academicYear->s1_sync_active = false;
+            } else if($semester === 2) {
+                $academicYear->s2_sync_active = false;
+            }
+            $academicYear->save();
         }
         Log::channel('courses_sync')->info('End "importCoursesFromWebService" sync for Year code (' . $academicYearCode . ') and semester (' . $semester . ')');
     }

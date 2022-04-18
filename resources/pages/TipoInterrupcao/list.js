@@ -11,8 +11,9 @@ import EmptyTable from "../../components/EmptyTable";
 
 const List = () => {
     const { t } = useTranslation();
+
     const columns = [
-        {name: t('Descrição')},
+        {name: t('Nome')},
         {name: t('Ativo?'), align: 'center', style: {width: '15%'} },
         {name: t('Ações'),  align: 'center', style: {width: '15%'} },
     ];
@@ -24,7 +25,6 @@ const List = () => {
 
     const fetchInterruptionList = () => {
         setIsLoading(true);
-
         axios.get('/interruption-types').then((response) => {
             setIsLoading(false);
             if (response.status >= 200 && response.status < 300) {
@@ -41,7 +41,7 @@ const List = () => {
     const filterResults = useCallback(
         (searchTerm) => {
             const filtered = interruptionList.filter(
-                (x) => x.description.toLowerCase().includes(searchTerm.toLowerCase()) || x.code.toLowerCase().includes(searchTerm.toLowerCase()),
+                (x) => x.label.toLowerCase().includes(searchTerm.toLowerCase()),
             );
             setFilteredResults(filtered);
         },
@@ -63,12 +63,12 @@ const List = () => {
         axios.delete(`/interruption-types/${modalInfo.id}`).then((res) => {
             if (res.status === 200) {
                 toast(t("Tipo de Interrupção removido com sucesso!"), successConfig);
+                setInterruptionList(res?.data?.data);
+                setFilteredResults(res?.data?.data);
             } else {
                 toast(t("Não foi possível remover o Tipo de Interrupção!"), errorConfig);
             }
-            fetchInterruptionList();
         });
-
         handleModalClose();
     };
 
@@ -87,7 +87,6 @@ const List = () => {
                         </ShowComponentIfAuthorized>
                     </div>
                 </Card.Content>
-
                 <Card.Content>
                     <Form>
                         <Form.Group widths="2">
@@ -95,7 +94,6 @@ const List = () => {
                         </Form.Group>
                     </Form>
                 </Card.Content>
-
                 <Card.Content>
                 { filteredResults.length < 1 || isLoading ? (
                     <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar Tipos de Interrupção!")}/>
@@ -109,9 +107,9 @@ const List = () => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            { filteredResults?.map(({ id, description, enabled, removable }, index ) => (
+                            { filteredResults?.map(({ id, label, enabled, removable }, index ) => (
                                 <Table.Row key={index}>
-                                    <Table.Cell>{description}</Table.Cell>
+                                    <Table.Cell>{label}</Table.Cell>
                                     <Table.Cell textAlign="center">
                                         <Icon name={!enabled ? 'close' : 'check'} />
                                     </Table.Cell>
@@ -124,7 +122,7 @@ const List = () => {
                                             </Link>
                                         </ShowComponentIfAuthorized>
                                         <ShowComponentIfAuthorized permission={[SCOPES.DELETE_INTERRUPTION_TYPES]}>
-                                            <Button onClick={() => remove({id, description}) } color="red" icon disabled={!removable} >
+                                            <Button onClick={() => remove({id, label}) } color="red" icon>
                                                 <Icon name="trash"/>
                                             </Button>
                                         </ShowComponentIfAuthorized>
@@ -136,10 +134,10 @@ const List = () => {
                     )}
                 </Card.Content>
             </Card>
-            
+
             <Modal dimmer="blurring" open={modalOpen} onClose={handleModalClose} >
                 <Modal.Header>{t("Remover Tipo de Interrupção")}</Modal.Header>
-                <Modal.Content>{t("Tem a certeza que deseja remover o Tipo de Interrupção")} <strong>{modalInfo?.description}</strong> ?</Modal.Content>
+                <Modal.Content>{t("Tem a certeza que deseja remover o Tipo de Interrupção")} <strong>{modalInfo?.label}</strong> ?</Modal.Content>
                 <Modal.Actions>
                     <Button negative onClick={handleModalClose}>{t("Cancelar")}</Button>
                     <Button positive onClick={handleRemoval}>{t("Sim")}</Button>

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EvaluationTypeRequest;
-use App\Http\Resources\Admin\Edit\EvaluationTypeDetailResource;
-use App\Http\Resources\Admin\EvaluationTypeResource;
+use App\Http\Resources\Admin\Edit\EvaluationTypeEditResource;
+use App\Http\Resources\Admin\EvaluationTypeListResource;
 use App\Models\EvaluationType;
 use Illuminate\Http\Response;
 
@@ -13,7 +13,7 @@ class EvaluationTypeController extends Controller
 {
     public function index()
     {
-        return EvaluationTypeResource::collection(EvaluationType::all());
+        return EvaluationTypeListResource::collection(EvaluationType::all());
     }
 
     public function store(EvaluationTypeRequest $request)
@@ -26,7 +26,7 @@ class EvaluationTypeController extends Controller
 
     public function show($id)
     {
-        return new EvaluationTypeDetailResource(EvaluationType::findOrFail($id));
+        return new EvaluationTypeEditResource(EvaluationType::findOrFail($id));
     }
 
     public function update(EvaluationTypeRequest $request, EvaluationType $evaluationType)
@@ -39,5 +39,6 @@ class EvaluationTypeController extends Controller
     public function destroy(EvaluationType $evaluationType)
     {
         $evaluationType->delete();
+        return EvaluationTypeListResource::collection(EvaluationType::all());
     }
 }

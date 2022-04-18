@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Filters\CourseUnitFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CourseUnitRequest;
+use App\Http\Resources\Admin\Edit\CourseUnitEditResource;
 use App\Http\Resources\Generic\CourseUnitResource;
 use App\Models\Calendar;
 use App\Models\Course;
@@ -25,10 +26,13 @@ class CourseUnitController extends Controller
      */
     public function index(Request $request, CourseUnitFilters $filters)
     {
+        $lang = (in_array($request->header("lang"), ["en", "pt"]) ? $request->header("lang") : "pt");
         $perPage = request('per_page', 10);
-        $courseUnits = CourseUnit::with('methods')->filter($filters)->ofAcademicYear($request->cookie('academic_year'));
+
+        $courseUnits = CourseUnit::with('methods')->filter($filters, $lang)->ofAcademicYear($request->cookie('academic_year'));
+
         if ($request->has('all') && $request->all === "true") {
-            $courseUnits = $courseUnits->orderBy('name')->get();
+            $courseUnits = $courseUnits->orderBy('name_' . $lang)->get();
         } else {
             $userId = Auth::user()->id;
             $userGroups = Auth::user()->groups();
@@ -40,10 +44,8 @@ class CourseUnitController extends Controller
                 if (with(clone $userGroups)->responsible()->get()->count() > 0 && $userGroups->count() == 1) {
                     $courseUnits->where('responsible_user_id', $userId);
                 }
-
                 if (with(clone $userGroups)->coordinator()->get()->count() > 0) {
                     $courseUnits->whereIn('course_id', Course::where('coordinator_user_id', $userId)->pluck('id'));
-
                     if (with(clone $userGroups)->isTeacher()->get()->count() > 0) {
                         $courseUnits->orWhereIn('id', Auth::user()->courseUnits->pluck('id'));
                     }
@@ -53,16 +55,13 @@ class CourseUnitController extends Controller
                     $courseUnits->whereIn('id', Auth::user()->courseUnits->pluck('id'));
                 }
 
-
                 $schoolsForTheUser = collect();
 
                 if (Auth::user()->gopSchools->pluck('id')->count() > 0) {
                     $schoolsForTheUser->push(Auth::user()->gopSchools->pluck('id'));
-
                 }
                 if (Auth::user()->boardSchools->pluck('id')->count() > 0) {
                     $schoolsForTheUser->push(Auth::user()->boardSchools->pluck('id'));
-
                 }
                 if (Auth::user()->pedagogicSchools->pluck('id')->count() > 0) {
                     $schoolsForTheUser->push(Auth::user()->pedagogicSchools->pluck('id'));
@@ -75,7 +74,7 @@ class CourseUnitController extends Controller
             if( request('semester') ){
                 $courseUnits->where('semester', request('semester'));
             }
-            $courseUnits = $courseUnits->orderBy('name')->paginate($perPage);
+            $courseUnits = $courseUnits->orderBy('name_' . $lang)->paginate($perPage);
         }
         return CourseUnitResource::collection($courseUnits);
     }
@@ -107,7 +106,7 @@ class CourseUnitController extends Controller
      */
     public function show(CourseUnit $courseUnit)
     {
-        return new CourseUnitResource($courseUnit->load(['methods', 'responsibleUser']));
+        return new CourseUnitEditResource($courseUnit->load(['methods', 'responsibleUser']));
     }
 
     public function branches(CourseUnit $courseUnit)

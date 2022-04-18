@@ -6,6 +6,7 @@ use App\Filters\CourseFilters;
 use App\Http\Requests\CourseRequest;
 use App\Http\Resources\Generic\CourseFullDetailResource;
 use App\Http\Resources\Generic\CourseListResource;
+use App\Http\Resources\Generic\CourseSearchListResource;
 use App\Http\Resources\Generic\BranchesResource;
 use App\Http\Resources\Generic\CourseResource;
 use App\Http\Resources\Generic\CourseUnitListResource;
@@ -16,6 +17,7 @@ use App\Models\Course;
 use App\Models\Group;
 use App\Models\User;
 use App\Services\DegreesUtil;
+use App\Utils\Utils;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -28,7 +30,8 @@ class CourseController extends Controller
     public function index(Request $request, CourseFilters $filters)
     {
         $perPage = request('per_page', 10);
-        $courseList = Course::with('school')->ofAcademicYear($request->cookie('academic_year'));
+        $utils = new Utils();
+        $courseList = Course::with('school')->ofAcademicYear($utils->getCurrentAcademicYear($request));
         if( request('school') ){
             $courseList->where('school_id', request('semester'));
         }
@@ -38,6 +41,22 @@ class CourseController extends Controller
         $courseList->filter($filters);
 
         return CourseListResource::collection($courseList->paginate($perPage));
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function search(Request $request, CourseFilters $filters)
+    {
+        $utils = new Utils();
+        $courseList = Course::ofAcademicYear($utils->getCurrentAcademicYear($request));
+        $hasSearch = false;
+        if($request->has('search') && !empty($request->has('search'))) {
+            $hasSearch = true;
+            $courseList->filter($filters);
+        }
+
+        return CourseSearchListResource::collection(($hasSearch ? $courseList->get() : $courseList->limit(15)->get()));
     }
 
     /**

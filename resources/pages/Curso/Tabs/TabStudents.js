@@ -11,6 +11,7 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
     const [openModal, setOpenModal] = useState(false);
     const [listOfStudents, setListOfStudents] = useState([]);
     const [studentToAdd, setStudentToAdd] = useState([]);
+    const [searchStudent, setSearchStudent] = useState(false);
 
     const loadCourseStudents = () => {
         setLoading(true);
@@ -38,6 +39,7 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
     };
 
     const searchStudents = (e, {searchQuery}) => {
+        setSearchStudent(true);
         axios.get(`/search/students?q=${searchQuery}`).then((res) => {
             if (res.status === 200) {
                 setListOfStudents(res.data?.map((students) => ({
@@ -47,6 +49,7 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
                     email: students.mail,
                     name: students.name,
                 })));
+                setSearchStudent(false);
             }
         });
     };
@@ -103,6 +106,7 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
                                 label="Aluno a adicionar"
                                 search
                                 selection
+                                loading={searchStudent}
                                 options={listOfStudents}
                                 onChange={(e, {value}) => setStudentToAdd(
                                     listOfStudents.find((x) => x.value === value),

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Card, Checkbox, Container, Dimmer, Form, Icon, Loader } from 'semantic-ui-react';
+import {Button, Card, Checkbox, Container, Dimmer, Form, Icon, Loader, Message} from 'semantic-ui-react';
 import { Field, Form as FinalForm } from 'react-final-form';
 import { useParams, useNavigate} from "react-router-dom";
 import _ from 'lodash';
@@ -21,6 +21,8 @@ const New = () => {
     const [phaseDetail, setPhaseDetail] = useState({});
     const isEditMode = !_.isEmpty(phaseDetail);
     const [isRemovable, setIsRemovable] = useState(true);
+    const [formErrors, setFormErrors] = useState([]);
+    const required = value => (value ? undefined : 'Required');
 
     useEffect(() => {
         if (paramsId) {
@@ -45,8 +47,8 @@ const New = () => {
             navigate('/fases');
         }
     }, [paramsId, loading, phaseDetail, navigate]);
-  
-    const initialValues = useMemo(() => {        
+
+    const initialValues = useMemo(() => {
         const { id, code, name_pt, name_en, enabled = true } = phaseDetail;
 
         return { id, code, name_pt, name_en, enabled };
@@ -58,17 +60,25 @@ const New = () => {
         const axiosFn = isNew ? axios.post : axios.patch;
 
         axiosFn(`/calendar-phases/${!isNew ? id : ''}`, {
-             code: (isRemovable ? code : null), name_pt, name_en, enabled 
+             code: (isRemovable ? code : null), name_pt, name_en, enabled
         }).then((res) => {
             setIsSaving(false);
 
+            setFormErrors([]);
             if (res.status === 200) {
                 toast(t('Fase do calendário atualizado com sucesso'), successConfig);
-            }
-            else if (res.status === 201) {
+            } else if (res.status === 201) {
                 toast(t('Fase do calendário criado com sucesso'), successConfig);
-            }
-            else {
+            } else {
+                let errorsArray = [];
+                if(typeof res.response.data.errors === 'object' && res.response.data.errors !== null){
+                    errorsArray = Object.values(res.response.data.errors);
+                } else {
+                    if(Array.isArray(res.response.data.errors)){
+                        errorsArray = res.response.data.errors;
+                    }
+                }
+                setFormErrors(errorsArray);
                 toast(t('Existiu um problema ao gravar as alterações!'), errorConfig);
             }
         });
@@ -87,25 +97,25 @@ const New = () => {
                                 <Loader indeterminate>{t('A carregar dados')}</Loader>
                             </Dimmer>
                         )}
-                        <Card.Content header={`${ isEditMode ? t('Editar fase do calendário') : t('Novo fase do calendário') }`} />
-                        
+                        <Card.Content header={`${ isEditMode ? t('Editar fase do calendário') : t('Nova fase do calendário') }`} />
+
                         <Card.Content>
                             <Form.Group widths="equal">
-                                <Field name="code">
-                                    {( { input: codeInput }) => (
-                                        <Form.Input label={t('Nome')} {...codeInput} disabled={!isRemovable} />
+                                <Field name="code" validate={required}>
+                                    {( { input: codeInput, meta}) => (
+                                        <Form.Input label={t('Código')} {...codeInput} disabled={!isRemovable} error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
                             </Form.Group>
                             <Form.Group widths="equal">
-                                <Field name="name_pt">
-                                    {( { input: namePtInput }) => (
-                                        <Form.Input label={t('Descrição PT')} {...namePtInput} />
+                                <Field name="name_pt" validate={required}>
+                                    {( { input: namePtInput, meta}) => (
+                                        <Form.Input label={t('Nome PT')} {...namePtInput} error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
-                                <Field name="name_en">
-                                    {( { input: nameEnInput }) => (
-                                        <Form.Input label={t('Descrição EN')} {...nameEnInput} />
+                                <Field name="name_en" validate={required}>
+                                    {( { input: nameEnInput, meta}) => (
+                                        <Form.Input label={t('Nome EN')} {...nameEnInput} error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
                             </Form.Group>
@@ -115,10 +125,22 @@ const New = () => {
                                 )}
                             </Field>
                         </Card.Content>
+                        { formErrors.length > 0 &&
+                            <Card.Content>
+                                <Message negative>
+                                    <Message.Header>Errors</Message.Header>
+                                    <Message.List>
+                                        {formErrors?.map((item, index) =>
+                                            <Message.Item key={index}>{item}</Message.Item>
+                                        )}
+                                    </Message.List>
+                                </Message>
+                            </Card.Content>
+                        }
                         <Card.Content>
                             <Button onClick={handleSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} >
                                 <Icon name={isEditMode ? 'save' : 'plus'} /> {isEditMode ? t('Guardar') : t('Criar')}
-                            </Button> 
+                            </Button>
                         </Card.Content>
                     </Card>
                 </Form>

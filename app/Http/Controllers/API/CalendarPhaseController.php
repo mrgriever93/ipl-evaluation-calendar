@@ -37,5 +37,7 @@ class CalendarPhaseController extends Controller
     public function destroy(CalendarPhase $calendarPhase)
     {
         $calendarPhase->delete();
+
+        return CalendarPhaseResource::collection(CalendarPhase::all());
     }
 }
