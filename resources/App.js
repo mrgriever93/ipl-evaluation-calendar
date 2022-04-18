@@ -49,6 +49,12 @@ axios.interceptors.response.use(
     },
 );
 
+axios.get('/permissions').then((res) => {
+    if (res.status === 200) {
+        localStorage.setItem('scopes', JSON.stringify(res.data));
+    }
+});
+
 function App() {
     const navigate = useNavigate();
     const authToken = localStorage.getItem('authToken');
