@@ -18,23 +18,20 @@ class EnsureWeSendCookies
      */
     public function handle(Request $request, Closure $next)
     {
+        $selectedAcademicYear = null;
         if ($request->has('switch_to')) {
-            Cookie::queue('academic_year', AcademicYear::findOrFail($request->switch_to)->id);
-        } elseif ($request->hasCookie('academic_year')) {
-            if (AcademicYear::where('id', $request->cookie('academic_year'))->get()->count() == 0) {
-                if (AcademicYear::where('active', true)->get()->count() > 0) {
-                    Cookie::queue('academic_year', AcademicYear::where('active', true)->first()->id, 120);
-                }
-            }
-            else {
-                Cookie::queue('academic_year', AcademicYear::find($request->cookie('academic_year'))->id, 120);
-            }
+            $selectedAcademicYear = AcademicYear::findOrFail($request->switch_to)->id;
+        } elseif ($request->hasCookie('academic_year') && AcademicYear::where('id', $request->cookie('academic_year'))->count() > 0) {
+            $selectedAcademicYear = AcademicYear::find($request->cookie('academic_year'))->id;
         } else {
-            if (AcademicYear::where('active', true)->get()->count() > 0) {
-                Cookie::queue('academic_year', AcademicYear::where('active', true)->first()->id, 120);
+            if (AcademicYear::where('selected', true)->count() > 0) {
+                $selectedAcademicYear = AcademicYear::where('selected', true)->first()->id;
             }
         }
-
+        // Add Cookie if new value
+        if($selectedAcademicYear){
+            Cookie::queue('academic_year', $selectedAcademicYear, 120);
+        }
         return $next($request);
     }
 }
