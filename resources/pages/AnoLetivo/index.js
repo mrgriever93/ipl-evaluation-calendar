@@ -220,6 +220,10 @@ const AnoLetivo = () => {
                 <Message.Header>{t('ano_letivo.A sincronização vai sempre acontecer quando clicarmos no botão?')}</Message.Header>
                 <p>{ t('ano_letivo.Não. Irá ser iniciada a sincronização quando não houver trabalho para o servidor.') }</p>
                 <br/>
+                <Message.Header>{t('ano_letivo.O que vai sincronizar?')}</Message.Header>
+                <p>{ t('ano_letivo.Irá sincronizar as escolas que já foram preenchidas. Para ver a lista pode seguir por este') }
+                    <a href="/escola" target={"_blank"}> <Icon name={"external"}/>link</a>.</p>
+                <br/>
                 <Message.Header>{ t('ano_letivo.Outras informações') }</Message.Header>
                 <Message.List>
                     <Message.Item>{ t('ano_letivo.Todos os semestres e ano letivos que estejam ativos e que já tenham sido sincronizados antes, vão ser atualizados todos os dias as 3 da manhã.') }</Message.Item>
