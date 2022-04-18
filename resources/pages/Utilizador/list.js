@@ -9,6 +9,7 @@ import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorize
 import SCOPES from '../../utils/scopesConstants';
 import FilterOptionPerPage from "../../components/Filters/PerPage";
 import FilterOptionUserGroups from "../../components/Filters/UserGroups";
+import PaginationDetail from "../../components/Pagination";
 
 const SweetAlertComponent = withReactContent(Swal);
 
@@ -21,6 +22,7 @@ const List = () => {
     const [searchTerm, setSearchTerm] = useState();
     const [perPage, setPerPage] = useState(10);
     const [userGroups, setUserGroups] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
 
     // Table columns
     const columns = [
@@ -32,8 +34,8 @@ const List = () => {
     ];
 
     useEffect(() => {
-        fetchUserList(1, searchTerm, userGroups, perPage);
-    }, [searchTerm, userGroups, perPage]);
+        fetchUserList(currentPage, searchTerm, userGroups, perPage);
+    }, [searchTerm, userGroups, perPage, currentPage]);
 
     const fetchUserList = useCallback((page = 1, search, groups, per_page) => {
         if (search) {
@@ -58,7 +60,9 @@ const List = () => {
     }, []);
 
     // Handle Pagination
-    const loadUsers = (evt, {activePage}) => fetchUserList(activePage);
+    const changedPage = (activePage) => {
+        setCurrentPage(activePage);
+    }
 
     const setUserEnabled = (userId, enabled) => {
         axios.patch(`/user/${userId}`, {enabled})
@@ -142,11 +146,8 @@ const List = () => {
                             </Dimmer>
                         )}
                     </Table>
-                    <Pagination defaultActivePage={1} totalPages={paginationInfo.last_page} onPageChange={loadUsers}
-                                ellipsisItem={{ content: <Icon name='ellipsis horizontal' />, icon: true }}
-                                prevItem={{ content: <Icon name='angle left' />, icon: true }}
-                                nextItem={{ content: <Icon name='angle right' />, icon: true }}
-                                firstItem={null} lastItem={null} /> {/* paginationInfo.current_page > 1 ? <>: null */} {/*paginationInfo.current_page < paginationInfo.last_page ? <> : null */}
+
+                    <PaginationDetail currentPage={currentPage} info={paginationInfo} eventHandler={changedPage} />
                 </Card.Content>
             </Card>
         </Container>

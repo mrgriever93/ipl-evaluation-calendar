@@ -134,6 +134,11 @@
         "Duplicar": "Clone",
         "Pesquisar": "Search",
 
+        "Desde": "From",
+        "até": "to",
+        "de": "of",
+        "resultados": "results",
+
         "Código": "Code",
         "Nome": "Name",
         "Nome PT": "Name PT",
