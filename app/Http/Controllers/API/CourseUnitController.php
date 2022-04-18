@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Filters\CourseUnitFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CourseUnitRequest;
+use App\Http\Resources\Admin\Edit\CourseUnitEditResource;
 use App\Http\Resources\Generic\CourseUnitResource;
 use App\Models\Calendar;
 use App\Models\Course;
@@ -105,7 +106,7 @@ class CourseUnitController extends Controller
      */
     public function show(CourseUnit $courseUnit)
     {
-        return new CourseUnitResource($courseUnit->load(['methods', 'responsibleUser']));
+        return new CourseUnitEditResource($courseUnit->load(['methods', 'responsibleUser']));
     }
 
     public function branches(CourseUnit $courseUnit)
