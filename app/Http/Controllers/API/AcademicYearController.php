@@ -45,13 +45,13 @@ class AcademicYearController extends Controller
             $oldYear = AcademicYear::withTrashed()
                 ->where('code', $request->code)
                 ->first();
-            $numYears = AcademicYear::all()->count();
+            //$numYears = AcademicYear::all()->count();
             if($oldYear){
                 $oldYear->restore();
             } else {
                 $newAcademicYear = new AcademicYear($request->all());
-                $newAcademicYear->active = $numYears == 0;
-                $newAcademicYear->selected = $numYears == 0;
+                $newAcademicYear->active = 0;//$numYears == 0;
+                $newAcademicYear->selected = 0;//$numYears == 0;
                 $newAcademicYear->save();
             }
             DB::commit();
