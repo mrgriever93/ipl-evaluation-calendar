@@ -1,50 +1,65 @@
 import React, {useEffect, useState} from 'react';
-import {
-    Card,
-    Container,
-    Dimmer,
-    Form,
-    Loader,
-    Pagination,
-    Table,
-    Button,
-    Icon,
-    Header,
-} from 'semantic-ui-react';
+import {Card, Container, Dimmer, Form, Loader, Table, Button, Icon, Header} from 'semantic-ui-react';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
-import {useSelector} from 'react-redux';
-import styled from 'styled-components';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import {toast} from 'react-toastify';
-import ShowComponentIfAuthorized, {useComponentIfAuthorized} from '../../components/ShowComponentIfAuthorized';
-import SCOPES, {COURSE_SCOPES} from '../../utils/scopesConstants';
+import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
+import SCOPES from '../../utils/scopesConstants';
 import {successConfig, errorConfig} from '../../utils/toastConfig';
+import EmptyTable from "../../components/EmptyTable";
+import {useTranslation} from "react-i18next";
+import FilterOptionSchool from "../../components/Filters/Schools";
+import FilterOptionDegree from "../../components/Filters/Degree";
+import FilterOptionPerPage from "../../components/Filters/PerPage";
+import PaginationDetail from "../../components/Pagination";
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const Wrapper = styled.div`
-.header {
-  display: inline;
-}
-`;
-
-const List = ({match}) => {
+const CoursesList = () => {
+    const { t } = useTranslation();
     const [courseList, setCourseList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [paginationInfo, setPaginationInfo] = useState({});
     const [removingCourse, setRemovingCourse] = useState(undefined);
+
+    // Filters
     const [searchTerm, setSearchTerm] = useState();
+    const [perPage, setPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [school, setSchool] = useState();
+    const [degree, setDegree] = useState();
+
+    // Table columns
+    const columns = [
+        {name: 'Unidade de Ensino', style: {width: '15%'} },
+        {name: 'Código', style: {width: '10%'} },
+        {name: 'Nome'},
+        //{name: 'Sigla'},
+        {name: 'Grau de Ensino', style: {width: '15%'}},
+        //{name: 'Numero de Anos'},
+        {name: t('Ações'),  align: 'center', style: {width: '10%'} },
+    ];
 
     useEffect(() => {
         fetchCourses();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchTerm]);
+    }, [searchTerm, school, degree, perPage, currentPage]);
 
-    const fetchCourses = (page = 1) => {
+    const changedPage = (activePage) => {
+        setCurrentPage(activePage);
+    }
+
+    const fetchCourses = () => {
         setLoading(true);
-        axios.get(`/courses?page=${page}${searchTerm ? `&search=${searchTerm}` : ''}`).then((response) => {
+
+        let searchLink = `/courses?page=${currentPage}`;
+        searchLink += `${searchTerm ? `&search=${searchTerm}` : ''}`;
+        searchLink += `${school ? `&school=${school}` : ''}`;
+        searchLink += `${degree ? `&degree=${degree}` : ''}`;
+        searchLink += '&per_page=' + perPage;
+
+        axios.get(searchLink).then((response) => {
             if (response.status >= 200 && response.status < 300) {
                 setCourseList(response.data.data);
                 setPaginationInfo(response.data.meta);
@@ -53,20 +68,7 @@ const List = ({match}) => {
         });
     };
 
-    const loadCourses = (evt, {activePage}) => fetchCourses(activePage);
 
-    const columns = [
-        'Unidade de Ensino',
-        'Código',
-        'Nome',
-        'Sigla',
-        'Grau de Ensino',
-        'Numero de Anos',
-        'Ações',
-    ];
-    const syncCursos = () => {
-
-    };
     const remove = (courseId) => {
         SweetAlertComponent.fire({
             title: 'Atenção!',
@@ -95,99 +97,71 @@ const List = ({match}) => {
     };
 
     return (
-        <Container style={{marginTop: '2em'}}>
+        <Container>
             <Card fluid>
                 <Card.Content>
-                    <Wrapper>
+                    <div>
                         <Header as="span">Cursos</Header>
-                    </Wrapper>
+                    </div>
                 </Card.Content>
                 <Card.Content>
                     <Form>
-                        <Form.Group widths="2">
-                            <Form.Input placeholder="Pesquisar curso..."
-                                        onChange={(e, {value}) => _.debounce(setSearchTerm(value), 500)}/>
+                        <Form.Group>
+                            <Form.Input width={6} label="Pesquisar curso..." placeholder="Pesquisar curso..." onChange={(e, {value}) => _.debounce(setSearchTerm(value), 500)}/>
+                            <FilterOptionSchool widthSize={7} eventHandler={(value) => setSchool(value)} />
+                            <FilterOptionDegree widthSize={4} eventHandler={(value) => setDegree(value)} />
+                            <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                         </Form.Group>
-                        <Button color="green" icon onClick={() => syncCursos()}>
-                            <Icon name="eye"/>
-                            Sync Cursos
-                        </Button>
                     </Form>
                 </Card.Content>
-                <Card.Content>
-                    <Table celled fixed>
-                        <Table.Header>
-                            <Table.Row>
-                                {columns.map((col) => (
-                                    <Table.HeaderCell key={"table_header_" + col}>{col}</Table.HeaderCell>
-                                ))}
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            {courseList.map(
-                                ({
-                                     id,
-                                     school,
-                                     code,
-                                     name,
-                                     initials,
-                                     level,
-                                     duration,
-                                 }) => (
-                                    <Table.Row key={code}>
-                                        <Table.Cell>{school.code}</Table.Cell>
+                { !loading && courseList.length > 0 ? (
+                    <Card.Content>
+                        <Table celled fixed>
+                            <Table.Header>
+                                <Table.Row>
+                                    {columns.map((col, index) => (
+                                        <Table.HeaderCell key={index} textAlign={col.align} style={ col.style } >{col.name} </Table.HeaderCell>
+                                    ))}
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {courseList.map(({id, school, code, name, initials, level, duration, has_issues}) => (
+                                    <Table.Row key={code} warning={has_issues}>
+                                        <Table.Cell>{school}</Table.Cell>
                                         <Table.Cell>{code}</Table.Cell>
-                                        <Table.Cell>{name}</Table.Cell>
-                                        <Table.Cell>{initials}</Table.Cell>
-                                        <Table.Cell>{level}</Table.Cell>
-                                        <Table.Cell>{duration}</Table.Cell>
                                         <Table.Cell>
-                                            <Link
-                                                to={`../curso/${id}`}
-                                            >
+                                            {has_issues ? <Icon name='warning sign' /> : ''}{name}
+                                        </Table.Cell>
+                                        {/*<Table.Cell>{initials}</Table.Cell>*/}
+                                        <Table.Cell>{level}</Table.Cell>
+                                        {/*<<Table.Cell>{duration}</Table.Cell>*/}
+                                        <Table.Cell textAlign="center">
+                                            <Link to={`/curso/${id}`}>
                                                 <Button color="green" icon>
                                                     <Icon name="eye"/>
                                                 </Button>
                                             </Link>
-                                            <ShowComponentIfAuthorized
-                                                permission={[SCOPES.DELETE_COURSES]}
-                                            >
-                                                <Button
-                                                    onClick={() => remove(id)}
-                                                    color="red"
-                                                    icon
-                                                    loading={removingCourse === id}
-                                                >
+                                            <ShowComponentIfAuthorized permission={[SCOPES.DELETE_COURSES]}>
+                                                <Button onClick={() => remove(id)} color="red" icon loading={removingCourse === id}>
                                                     <Icon name="trash"/>
                                                 </Button>
                                             </ShowComponentIfAuthorized>
                                         </Table.Cell>
                                     </Table.Row>
-                                ),
-                            )}
-                        </Table.Body>
-                    </Table>
-                    {paginationInfo && paginationInfo.current_page
-                        !== paginationInfo.last_page && (
-                            <Pagination
-                                secondary
-                                pointing
-                                fluid
-                                defaultActivePage={1}
-                                activePage={paginationInfo.current_page}
-                                totalPages={paginationInfo.last_page}
-                                onPageChange={loadCourses}
-                            />
+                                ))}
+                            </Table.Body>
+                        </Table>
+                        <PaginationDetail currentPage={currentPage} info={paginationInfo} eventHandler={changedPage} />
+                        {loading && (
+                            <Dimmer active inverted>
+                                <Loader indeterminate>A carregar os cursos</Loader>
+                            </Dimmer>
                         )}
-                    {loading && (
-                        <Dimmer active inverted>
-                            <Loader indeterminate>A carregar os cursos</Loader>
-                        </Dimmer>
-                    )}
-                </Card.Content>
+                    </Card.Content>
+                    ) : ( <EmptyTable isLoading={loading} label={t('Sem resultados')}/> ) }
             </Card>
         </Container>
     );
 };
 
-export default List;
+export default CoursesList;

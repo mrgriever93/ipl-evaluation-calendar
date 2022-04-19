@@ -2,63 +2,23 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Filters\CourseUnitFilters;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\CourseUnitRequest;
+use App\Http\Resources\Admin\Edit\CourseUnitEditResource;
+use App\Http\Resources\Generic\CourseUnitResource;
 use App\Models\Calendar;
 use App\Models\Course;
 use App\Models\CourseUnit;
 use App\Models\Epoch;
 use App\Models\Group;
 use App\Models\User;
-use App\Filters\CourseUnitFilters;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\CourseUnitRequest;
-use App\Http\Resources\CourseUnitResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class CourseUnitController extends Controller
 {
-
-    private function attachResponsibleGroupToUser($responsible_user_id)
-    {
-        $user = User::find($responsible_user_id);
-        if ($user->groups()->responsible()->get()->count() == 0) {
-            $user->groups()->syncWithoutDetaching(Group::responsible()->get());
-        }
-    }
-
-    private function assignResponsibleUserToCourseUnit($user, $courseUnit)
-    {
-        if (isset($user)) {
-            $responsibleUser = User::find($user);
-            $hasCoordinatorGroup = $responsibleUser->groups()->responsible()->count() > 0;
-            if (!$hasCoordinatorGroup) {
-                $responsibleUser->groups()->syncWithoutDetaching(Group::responsible()->get());
-            }
-            $courseUnit->responsibleUser()->associate($responsibleUser);
-        } else {
-            $courseUnit->responsibleUser()->associate(null);
-        }
-    }
-
-    public function assignResponsible(Request $request, CourseUnit $courseUnit){
-        $responsibleUser = User::where('email', $request->responsible_user_email)->first();
-
-        if (is_null($responsibleUser)) {
-            $newUser = new User([
-                "email" => $request->responsible_user_email,
-                "name" => $request->responsible_user_name,
-                "password" => ""
-            ]);
-            $newUser->save();
-
-            $this->attachResponsibleGroupToUser($newUser->id);
-        }
-
-        $this->assignResponsibleUserToCourseUnit(is_null($responsibleUser) ? $newUser->id : $responsibleUser->id, $courseUnit);
-        $courseUnit->save();
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -66,10 +26,15 @@ class CourseUnitController extends Controller
      */
     public function index(Request $request, CourseUnitFilters $filters)
     {
-        $courseUnits = CourseUnit::with('methods')->filter($filters)->ofAcademicYear($request->cookie('academic_year'));
+        $lang = (in_array($request->header("lang"), ["en", "pt"]) ? $request->header("lang") : "pt");
+        $perPage = request('per_page', 10);
+
+        $courseUnits = CourseUnit::with('methods')->filter($filters, $lang)->ofAcademicYear($request->cookie('academic_year'));
+
         if ($request->has('all') && $request->all === "true") {
-            $courseUnits = $courseUnits->orderBy('name')->get();
+            $courseUnits = $courseUnits->orderBy('name_' . $lang)->get();
         } else {
+            $userId = Auth::user()->id;
             $userGroups = Auth::user()->groups();
             if (
                 Auth::user()->groups()->superAdmin()->get()->count() == 0 &&
@@ -77,12 +42,10 @@ class CourseUnitController extends Controller
                 Auth::user()->groups()->responsiblePedagogic()->get()->count() == 0
             ) {
                 if (with(clone $userGroups)->responsible()->get()->count() > 0 && $userGroups->count() == 1) {
-                    $courseUnits->where('responsible_user_id', Auth::user()->id);
+                    $courseUnits->where('responsible_user_id', $userId);
                 }
-
                 if (with(clone $userGroups)->coordinator()->get()->count() > 0) {
-                    $courseUnits->whereIn('course_id', Course::where('coordinator_user_id', Auth::user()->id)->pluck('id'));
-
+                    $courseUnits->whereIn('course_id', Course::where('coordinator_user_id', $userId)->pluck('id'));
                     if (with(clone $userGroups)->isTeacher()->get()->count() > 0) {
                         $courseUnits->orWhereIn('id', Auth::user()->courseUnits->pluck('id'));
                     }
@@ -92,17 +55,13 @@ class CourseUnitController extends Controller
                     $courseUnits->whereIn('id', Auth::user()->courseUnits->pluck('id'));
                 }
 
-
-
                 $schoolsForTheUser = collect();
 
                 if (Auth::user()->gopSchools->pluck('id')->count() > 0) {
                     $schoolsForTheUser->push(Auth::user()->gopSchools->pluck('id'));
-
                 }
                 if (Auth::user()->boardSchools->pluck('id')->count() > 0) {
                     $schoolsForTheUser->push(Auth::user()->boardSchools->pluck('id'));
-
                 }
                 if (Auth::user()->pedagogicSchools->pluck('id')->count() > 0) {
                     $schoolsForTheUser->push(Auth::user()->pedagogicSchools->pluck('id'));
@@ -112,19 +71,18 @@ class CourseUnitController extends Controller
                     $courseUnits->whereIn('course_id', Course::whereIn('school_id', $schoolsForTheUser->toArray())->get()->pluck('id'));
                 }
             }
-
-            $courseUnits = $courseUnits->orderBy('name')->paginate(10);
+            if( request('semester') ){
+                $courseUnits->where('semester', request('semester'));
+            }
+            $courseUnits = $courseUnits->orderBy('name_' . $lang)->paginate($perPage);
         }
-
-
-
         return CourseUnitResource::collection($courseUnits);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(CourseUnitRequest $request)
@@ -140,27 +98,27 @@ class CourseUnitController extends Controller
     }
 
 
-
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show(CourseUnit $courseUnit)
     {
-        return new CourseUnitResource($courseUnit->load(['methods', 'responsibleUser']));
+        return new CourseUnitEditResource($courseUnit->load(['methods', 'responsibleUser']));
     }
 
-    public function branches(CourseUnit $courseUnit) {
+    public function branches(CourseUnit $courseUnit)
+    {
         return response()->json($courseUnit->course->branches);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  CourseUnit  $courseUnit
+     * @param \Illuminate\Http\Request $request
+     * @param CourseUnit $courseUnit
      * @return \Illuminate\Http\Response
      */
     public function update(CourseUnitRequest $request, CourseUnit $courseUnit)
@@ -194,7 +152,8 @@ class CourseUnitController extends Controller
         $courseUnit->save();
     }
 
-    public function epochsForCourseUnit(CourseUnit $courseUnit) {
+    public function epochsForCourseUnit(CourseUnit $courseUnit)
+    {
         $availableCalendarsForCourseUnit = Calendar::where('course_id', $courseUnit->course_id)->whereIn('semester', [$courseUnit->semester, 3])->get()->pluck('id');
         $epochs = Epoch::whereIn('calendar_id', $availableCalendarsForCourseUnit)->groupBy(['epoch_type_id', 'name'])->get(['epoch_type_id', 'name']);
 
@@ -205,8 +164,9 @@ class CourseUnitController extends Controller
         ]);
     }
 
-    public function methodsForCourseUnit(CourseUnit $courseUnit) {
-        foreach($courseUnit->methods as $method) {
+    public function methodsForCourseUnit(CourseUnit $courseUnit)
+    {
+        foreach ($courseUnit->methods as $method) {
             $epochs = $method->epochs();
             $method['epoch_type_id'] = $epochs->count() > 0 ? $epochs->first()->epoch_type_id : null;
         }
@@ -217,11 +177,53 @@ class CourseUnitController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, CourseUnit $courseUnit)
     {
         $courseUnit->academicYears()->detach($request->cookie('academic_year'));
+    }
+
+
+    private function attachResponsibleGroupToUser($responsible_user_id)
+    {
+        $user = User::find($responsible_user_id);
+        if ($user->groups()->responsible()->get()->count() == 0) {
+            $user->groups()->syncWithoutDetaching(Group::responsible()->get());
+        }
+    }
+
+    private function assignResponsibleUserToCourseUnit($user, $courseUnit)
+    {
+        if (isset($user)) {
+            $responsibleUser = User::find($user);
+            $hasCoordinatorGroup = $responsibleUser->groups()->responsible()->count() > 0;
+            if (!$hasCoordinatorGroup) {
+                $responsibleUser->groups()->syncWithoutDetaching(Group::responsible()->get());
+            }
+            $courseUnit->responsibleUser()->associate($responsibleUser);
+        } else {
+            $courseUnit->responsibleUser()->associate(null);
+        }
+    }
+
+    public function assignResponsible(Request $request, CourseUnit $courseUnit)
+    {
+        $responsibleUser = User::where('email', $request->responsible_user_email)->first();
+
+        if (is_null($responsibleUser)) {
+            $newUser = new User([
+                "email" => $request->responsible_user_email,
+                "name" => $request->responsible_user_name,
+                "password" => ""
+            ]);
+            $newUser->save();
+
+            $this->attachResponsibleGroupToUser($newUser->id);
+        }
+
+        $this->assignResponsibleUserToCourseUnit(is_null($responsibleUser) ? $newUser->id : $responsibleUser->id, $courseUnit);
+        $courseUnit->save();
     }
 }

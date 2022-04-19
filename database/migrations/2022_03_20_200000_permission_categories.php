@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('permission_categories', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
-            $table->string('name');
-            $table->string('description_pt');
-            $table->string('description_en');
+            $table->string('code');
+            $table->string('name_pt');
+            $table->string('name_en');
 
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();

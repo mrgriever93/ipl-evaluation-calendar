@@ -17,22 +17,12 @@ use Illuminate\Http\Response;
 
 class MethodController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         return MethodResource::collection(Method::all());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(NewMethodRequest $request)
     {
         foreach ($request->methods as $method) {
@@ -84,35 +74,16 @@ class MethodController extends Controller
         return response()->json("Created/Updated!", Response::HTTP_OK);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show(Method $method)
     {
         return new MethodResource($method);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(UpdateMethodRequest $request, Method $method)
     {
         $method->update($request->all());
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Method $method)
     {
         if (count($method->exams) > 0) {

@@ -17,22 +17,11 @@ use Illuminate\Support\Facades\DB;
 
 class GroupController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        return GroupsResource::collection(Group::orderBy('name')->get());
+        return GroupsResource::collection(Group::orderBy('code')->get());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(GroupRequest $request)
     {
         $newGroup = new Group($request->all());
@@ -41,47 +30,22 @@ class GroupController extends Controller
         return response()->json("Created!", Response::HTTP_CREATED);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  Group  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show(Group $group)
     {
         return new GroupEditResource($group);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(GroupRequest $request, Group $group)
     {
         $group->fill($request->all());
         $group->save();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  Group  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Group $group)
     {
         $group->delete();
     }
 
-    /**
-     * Get permissions of the specified group.
-     *
-     * @param Group $group
-     * @return PermissionSectionsResource
-     */
     public function groupPermissions(Group $group) {
         return $this->getPermissions( 1, $group->id, 12);
     }
@@ -94,17 +58,6 @@ class GroupController extends Controller
         return PermissionSectionsByPhaseResource::collection($phases);
     }
 
-
-    /**
-     * This will get all the permissions associated
-     * with a group, and filtered by phase_id and category_id
-     *
-     * @param $sections
-     * @param $categoryId
-     * @param $groupId
-     * @param $phaseId
-     * @return PermissionSectionsResource
-     */
     private function getPermissions( $categoryId, $groupId, $phaseId) {
         $sections = PermissionSection::whereHas('permissions', function ($query) use ($categoryId) {
             $query->where('category_id', $categoryId);
@@ -126,24 +79,11 @@ class GroupController extends Controller
         return PermissionSectionsResource::collection($sections);
     }
 
-
-
-    /**
-     * Duplicate the specified group.
-     *
-     * @param Group $group
-     * @return              SOMETHING HERE
-     */
-    public function cloneGroup(Group $group) {
-
-
-        // TODO: @Miguel, fazes isto melhor q eu xD
-
-        // $newGroup = new Group($group->id();
-        // $newGroup->save();
-
-    return response()->json("Created!", Response::HTTP_FORBIDDEN /*HTTP_CREATED*/);
+    public function cloneGroup(Group $group)
+    {
+        $newGroup = $group->cloneGroupWithPermissions();
+        return response()->json(["id" => $newGroup->id], Response::HTTP_CREATED);
     }
 
-    
+
 }

@@ -11,7 +11,6 @@ import store from './redux/store';
 
 import 'semantic-ui-css/semantic.min.css';
 import 'react-toastify/dist/ReactToastify.css';
-import './global.css';
 
 import RoutesList from './routes';
 import PageLoader from "./components/PageLoader";
@@ -49,6 +48,12 @@ axios.interceptors.response.use(
         return error;
     },
 );
+
+axios.get('/permissions').then((res) => {
+    if (res.status === 200) {
+        localStorage.setItem('scopes', JSON.stringify(res.data));
+    }
+});
 
 function App() {
     const navigate = useNavigate();

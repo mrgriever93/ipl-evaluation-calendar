@@ -2,62 +2,40 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\CalendarChanged;
+use App\Events\CalendarDeleted;
+use App\Events\CalendarPublished;
+use App\Filters\CalendarFilters;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\NewCalendarRequest;
+use App\Http\Requests\PublishCalendarRequest;
+use App\Http\Requests\UpdateCalendarRequest;
+use App\Http\Resources\AvailableCourseUnitsResource;
+use App\Http\Resources\CalendarResource;
+use App\Http\Resources\Generic\SemestersSearchResource;
+use App\Http\Resources\SemesterResource;
 use App\Models\Calendar;
 use App\Models\CalendarPhase;
 use App\Models\Course;
 use App\Models\CourseUnit;
 use App\Models\Epoch;
-use App\Models\Exam;
-use App\Models\InitialGroups;
 use App\Models\Interruption;
 use App\Models\InterruptionType;
-use App\Models\Method;
 use App\Models\Semester;
-
-use App\Http\Controllers\Controller;
-use App\Events\CalendarChanged;
-use App\Events\CalendarDeleted;
-use App\Events\CalendarPublished;
-use App\Filters\CalendarFilters;
-use App\Http\Requests\NewCalendarRequest;
-use App\Http\Requests\PublishCalendarRequest;
-use App\Http\Requests\UpdateCalendarRequest;
-use App\Http\Resources\AvailableCourseUnitsResource;
-use App\Http\Resources\AvailableMethodsResource;
-use App\Http\Resources\CalendarResource;
-use App\Http\Resources\CourseUnitResource;
-use App\Http\Resources\SemesterResource;
 use Carbon\Carbon;
-use Dotenv\Util\Str;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str as SupportStr;
-use PhpParser\ErrorHandler\Collecting;
 
 class CalendarController extends Controller
 {
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request, CalendarFilters $filters)
     {
         $calendars = Calendar::with(['course', 'phase'])->filter($filters);
         return CalendarResource::collection($calendars->ofAcademicYear($request->cookie('academic_year'))->orderBy('previous_calendar_id')->get());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(NewCalendarRequest $request)
     {
         $courses = $request->courses;
@@ -176,24 +154,11 @@ class CalendarController extends Controller
             return AvailableCourseUnitsResource::collection($response);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  Calendar  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show(Calendar $calendar)
     {
         return new CalendarResource($calendar->load(['epochs', 'interruptions']));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(UpdateCalendarRequest $request, Calendar $calendar)
     {
         $calendar->fill($request->all())->save();
@@ -201,12 +166,6 @@ class CalendarController extends Controller
         CalendarChanged::dispatch($calendar);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  Calendar  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Calendar $calendar)
     {
         $calendar->delete();
@@ -249,15 +208,18 @@ class CalendarController extends Controller
             $clone->save();
         }
         if (!$calendar->published) {
-            $calendar->calendar_phase_id = CalendarPhase::where('name', "Published")->first()->id;
+            $calendar->calendar_phase_id = CalendarPhase::where('code', "published")->first()->id;
             $calendar->published = true;
             $calendar->save();
             CalendarPublished::dispatch($calendar);
         }
     }
 
-    public function listSemesters()
+    public function listSemesters(Request $request)
     {
-        return SemesterResource::collection(Semester::all());
+        if($request->has('special')){
+            return SemestersSearchResource::collection(Semester::all());
+        }
+        return SemestersSearchResource::collection(Semester::where("special", 0)->get());
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SchoolRequest extends FormRequest
@@ -16,20 +15,21 @@ class SchoolRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'code' => 'required|string',
-            'name' => 'required|string',
-            'gop_group_id' => 'nullable|sometimes|exists:groups,id',
-            'board_group_id' => 'nullable|sometimes|exists:groups,id',
-            'pedagogic_group_id' => 'nullable|sometimes|exists:groups,id',
-            'base_link' => 'sometimes|string',
-            'index_course_code' => 'sometimes|string',
-            'index_course_name' => 'sometimes|string',
-            'index_course_unit_name' => 'sometimes|string',
-            'index_course_unit_curricular_year' => 'sometimes|string',
-            'index_course_unit_code' => 'sometimes|string',
-            'index_course_unit_teachers' => 'sometimes|string',
-            'query_param_academic_year' => 'sometimes|string',
-            'query_param_semester' => 'sometimes|string',
+            'code'                              => 'required|string|unique:schools,code,' . $this->id,
+            'name_en'                           => 'required|string',
+            'name_pt'                           => 'required|string',
+            'base_link'                         => 'sometimes|string',
+            'index_course_code'                 => 'sometimes|numeric',
+            'index_course_name'                 => 'sometimes|numeric',
+            'index_course_unit_name'            => 'sometimes|numeric',
+            'index_course_unit_curricular_year' => 'sometimes|numeric',
+            'index_course_unit_code'            => 'sometimes|numeric',
+            'index_course_unit_teachers'        => 'sometimes|numeric',
+            'query_param_academic_year'         => 'sometimes|string',
+            'query_param_semester'              => 'sometimes|string',
+            'gop_group_id'                      => 'nullable|sometimes|exists:groups,id',
+            'board_group_id'                    => 'nullable|sometimes|exists:groups,id',
+            'pedagogic_group_id'                => 'nullable|sometimes|exists:groups,id',
         ];
         return $rules;
     }

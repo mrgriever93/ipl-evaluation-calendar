@@ -9,7 +9,7 @@ class CalendarPhase extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["name", "description_pt", "description_en", "enabled"];
+    protected $fillable = ["code", "name_pt", "name_en", "enabled"];
 
     public function permissions()
     {

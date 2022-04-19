@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UtilizadorAutenticadoResource;
+use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Models\Entidade;
 use App\Models\Group;
@@ -36,36 +37,48 @@ class LoginController extends Controller
 
     public function login(LoginRequest $request)
     {
-       if (Auth::attempt($this->credentials($request))) {
+        if (Auth::attempt($this->credentials($request))) {
             $user = Auth::user();
             $user->refresh();
             if (!$user->enabled) {
                 return response()->json("Unauthorized.", Response::HTTP_UNAUTHORIZED);
             }
-// TODO @miguel.cerejo LDAP
-           /*if (isset($user->ldap)) {
-               $groups = $user->ldap->title;
-               foreach ($groups as $group) {
-                   if (Group::where('description', $group)->count() > 0) {
-                       $user->groups()->syncWithoutDetaching([Group::where('description', $group)->first()->id]);
-                   }
 
-                   if ($group === InitialGroups::STUDENT) {
-                       foreach ($user->ldap->departmentnumber as $course) {
-                           if (Course::where('code', $course)->count() > 0) {
-                               $user->courses()->syncWithoutDetaching([Course::where('code', $course)->first()->id]);
-                           }
-                       }
-                   }
-               }
-           }*/
-            $scopes = $user->permissions()->where('group_permissions.enabled', true)->groupBy('permissions.name')->pluck('permissions.name')->values()->toArray();
+            $isServer = env('APP_SERVER', false);
+            if($isServer) {
+                if (isset($user->ldap)) {
+                    $groups = $user->ldap->title;
+                    foreach ($groups as $group) {
+                        $bdGroup = Group::where('name_pt', $group)->first();
+                        if ($bdGroup) {
+                            $user->groups()->syncWithoutDetaching([$bdGroup->id]);
+                        }
+
+                        if ($group === InitialGroups::STUDENT) {
+                            foreach ($user->ldap->departmentnumber as $course) {
+                                $bdCourse = Course::where('code', $course)->first();
+                                if ($bdCourse) {
+                                    $user->courses()->syncWithoutDetaching([$bdCourse->id]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            $scopes = $user->permissions()->where('group_permissions.enabled', true)->groupBy('permissions.code')->pluck('permissions.code')->values()->toArray();
             $accessToken = $user->createToken('authToken', $scopes)->accessToken;
+
+            $selectedYear = AcademicYear::where('selected', true)->first();
+            if($selectedYear){
+                $activeYear = $selectedYear->id;
+            } else {
+                $activeYear = 0;
+            }
 
             return response()->json([
                 'user' => new UserResource($user),
                 'accessToken' => $accessToken
-            ], Response::HTTP_OK);
+            ], Response::HTTP_OK)->withCookie('academic_year', $activeYear);
         } else {
             return response()->json("Unauthorized.", Response::HTTP_UNAUTHORIZED);
         }

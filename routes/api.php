@@ -7,10 +7,9 @@ use App\Http\Controllers\API\GroupController;
 use App\Http\Controllers\API\InterruptionTypeController;
 use App\Http\Controllers\API\LoginController;
 use App\Models\AcademicYear;
-use App\Models\Course;
+use App\Services\ExternalImports;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 
 use App\Http\Controllers\API\AcademicYearController;
 use App\Http\Controllers\API\CalendarController;
@@ -53,7 +52,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/calendar-history/{calendar}',   [CalendarChangeController::class, 'show']);
 
     Route::get('/v2/sync-courses', function () {
-        Course::importCoursesFromWebService(AcademicYear::where('active', true)->first()->code);
+        $month = date('m');
+        ExternalImports::importCoursesFromWebService(AcademicYear::where('selected', true)->first()->code, ($month > 1 && $month < 7? 2 : 1));
     });
 
     Route::controller(CalendarController::class)->group(function () {
@@ -67,20 +67,19 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/available-methods/{calendar}',        'getAvailableMethods'  );
         Route::get('/semesters',                           'listSemesters'        );
         Route::post('/calendar/{calendar}/publish',        'publish'              );
-        Route::delete('/branches/{branch}',                'deleteBranch'         );
     });
 
     Route::controller(EvaluationTypeController::class)->group(function () {
-        Route::get('/evaluation-types',                         'list'   );
+        Route::get('/evaluation-types',                         'index'   );
         Route::get('/evaluation-types/{id}',                    'show'   );
         Route::delete('/evaluation-types/{evaluationType}',     'destroy');
         Route::post('/evaluation-types',                        'store'  );
         Route::patch('/evaluation-types/{evaluationType}',      'update' );
     });
 
-    Route::controller(EvaluationTypeController::class)->group(function () {
-        Route::post('/interruption-types',                      'store'  );
+    Route::controller(InterruptionTypeController::class)->group(function () {
         Route::get('/interruption-types',                       'index'  );
+        Route::post('/interruption-types',                      'store'  );
         Route::get('/interruption-types/{interruptionType}',    'show'   );
         Route::patch('/interruption-types/{interruptionType}',  'update' );
         Route::delete('/interruption-types/{interruptionType}', 'destroy');
@@ -130,13 +129,20 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::controller(AcademicYearController::class)->group(function () {
-        Route::post('/academic-years',          'store' );
-        Route::get('/academic-years',           'index' );
-        Route::post('/academic-years/switch',   'switch');
+        Route::post('/academic-years',                      'store' );
+        Route::get('/academic-years',                       'index' );
+        Route::get('/academic-years/menu',                  'menu' );
+        Route::post('/academic-years/switch',               'switch');
+        Route::delete('/academic-year/{id}',                'destroy');
+        Route::post('/academic-year/{id}/active',           'active');
+        Route::post('/academic-year/{id}/selected',         'selected');
+        Route::get('/academic-year/{id}/sync/{semester}',   'sync')->where(['id' => '[0-9]+', 'semester' => '[1-2]']);;
     });
 
     Route::controller(SchoolController::class)->group(function () {
         Route::get('/schools',                  'index' );
+        Route::get('/schools-list',             'list' );
+        Route::post('/schools',                 'store' );
         Route::get('/schools/{school}',         'show'  );
         Route::patch('/schools/{school}',       'update');
     });
@@ -165,20 +171,25 @@ Route::middleware('auth:api')->group(function () {
 
     Route::controller(CourseController::class)->group(function () {
         Route::get('/courses',                               'index'            );
+        Route::get('/courses/degrees',                       'listDegrees'      );
+        Route::get('/courses-search',                        'search'           );
         Route::get('/courses/{course}',                      'show'             );
-        Route::delete('/courses/{course}/student/{student}', 'removeStudent'    );
+
+        Route::get('/courses/{course}/branches',             'branchesList'     );
+        Route::post('/courses/{course}/branch',              'branchAdd'        );
+        Route::delete('/courses/{course}/branch/{branch}',   'deleteBranch'     );
+
+        Route::get('/courses/{course}/units',                'getUnits'         );
+        Route::post('/courses/{course}/unit',                'addUnit'          );
+        Route::delete('/courses/{course}/unit/{unit}',       'removeUnit'       );
+
+        Route::get('/courses/{course}/students',             'getStudents'      );
         Route::patch('/courses/{course}/student',            'addStudent'       );
+        Route::delete('/courses/{course}/student/{student}', 'removeStudent'    );
+
         Route::delete('/courses/{course}',                   'destroy'          );
         Route::patch('/courses/{course}',                    'update'           );
         Route::patch('/courses/{course}/coordinator',        'assignCoordinator');
-    });
-
-    Route::controller(CourseUnitGroupController::class)->group(function () {
-        Route::post('/course-unit-groups',                    'store'  );
-        Route::delete('/course-unit-groups/{courseUnitGroup}','destroy');
-        Route::patch('/course-unit-groups/{courseUnitGroup}', 'update' );
-        Route::get('/course-unit-groups',                     'index'  );
-        Route::get('/course-unit-groups/{courseUnitGroup}',   'show'   );
     });
 
     Route::controller(CourseUnitController::class)->group(function () {
@@ -191,6 +202,14 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/course-units/{courseUnit}/epochs',       'epochsForCourseUnit' );
         Route::get('/course-units/{courseUnit}/methods',      'methodsForCourseUnit');
         Route::patch('/course-units/{courseUnit}/responsible','assignResponsible'   );
+    });
+
+    Route::controller(CourseUnitGroupController::class)->group(function () {
+        Route::post('/course-unit-groups',                    'store'  );
+        Route::delete('/course-unit-groups/{courseUnitGroup}','destroy');
+        Route::patch('/course-unit-groups/{courseUnitGroup}', 'update' );
+        Route::get('/course-unit-groups',                     'index'  );
+        Route::get('/course-unit-groups/{courseUnitGroup}',   'show'   );
     });
 
     Route::get('/search/users',         [LdapController::class, 'searchUsers']      );

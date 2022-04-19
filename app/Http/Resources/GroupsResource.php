@@ -10,8 +10,8 @@ class GroupsResource extends JsonResource
     {
         return [
             'id'                        => $this->id,
-            'name'                      => $this->name,
-            'description'               => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
+            'name'                      => $this->code,
+            'description'               => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
             'removable'                 => $this->when($this->whenLoaded('permissions', false), $this->removable),
             'enabled'                   => $this->when($this->whenLoaded('permissions', false), $this->enabled),
             'permissions'               => PermissionsResource::collection($this->whenLoaded('permissions')),

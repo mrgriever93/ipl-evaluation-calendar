@@ -23,20 +23,4 @@ class Interruption extends Model
         return $this->hasOne(InterruptionType::class);
     }
 
-    public static function importYearHolidays($yearToImport, $calendarId)
-    {
-        $apiEndpoint = Config::get('constants.api.sapo_holidays_endpoint');
-        $url = "{$apiEndpoint}?year={$yearToImport}";
-        $holidays = simplexml_load_file($url);
-
-        foreach ($holidays->GetNationalHolidaysResult->Holiday as $key => $holiday) {
-            $newInterruption = new Interruption();
-            $newInterruption->start_date            = $holiday->Date;
-            $newInterruption->end_date              = $holiday->Date;
-            $newInterruption->description           = $holiday->Name;
-            $newInterruption->interruption_type_id  = InterruptionType::where('name', InterruptionTypesEnum::HOLIDAYS)->first()->id;
-            $newInterruption->calendar_id           = $calendarId;
-            $newInterruption->save();
-        }
-    }
 }

@@ -17,8 +17,6 @@ return new class extends Migration
             $table->unsignedBigInteger('id')->autoIncrement();
             $table->string('name_pt');
             $table->string('name_en');
-            $table->string('description_pt');
-            $table->string('description_en');
             $table->boolean('enabled')->default(true);
 
             $table->timestamp('created_at')->useCurrent();

@@ -14,7 +14,8 @@ class CourseUnitFilters extends QueryFilters
 {
 
     public function search($search) {
-        return $this->builder->where('name', 'like', "%{$search}%");
+        $lang = (in_array($this->request->header("lang"), ["en", "pt"]) ? $this->request->header("lang") : "pt");
+        return $this->builder->where('name_' . $lang, 'like', "%{$search}%");
     }
 
     public function semester($semester) {

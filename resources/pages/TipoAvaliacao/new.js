@@ -1,135 +1,138 @@
-import axios from 'axios';
-import _ from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
+import {Button, Card, Checkbox, Container, Dimmer, Form, Icon, Loader, Message} from 'semantic-ui-react';
 import { Field, Form as FinalForm } from 'react-final-form';
-import { useNavigate } from 'react-router';
+import { useParams, useNavigate} from "react-router-dom";
+import _ from 'lodash';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import { toast } from 'react-toastify';
-import {
-  Button,
-  Card,
-  Checkbox,
-  Container,
-  Form,
-  Icon,
-} from 'semantic-ui-react';
+import {useTranslation} from "react-i18next";
 import { errorConfig, successConfig } from '../../utils/toastConfig';
 
-const New = ({ match }) => {
-  const history = useNavigate();
-  const [evaluationTypeDetail, setEvaluationTypeDetail] = useState({});
-  const [loading, setLoading] = useState(!!match.params?.id);
-  const [isSaving, setIsSaving] = useState(false);
-  const isEditMode = !_.isEmpty(evaluationTypeDetail);
+const New = () => {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
+    // get URL params
+    let { id } = useParams();
+    let paramsId = id;
 
-  useEffect(() => {
-    if (match.params?.id) {
-      axios.get(`/evaluation-types/${match.params.id}`).then((res) => {
-        setLoading(false);
-        setEvaluationTypeDetail(res?.data?.data);
-      });
-    }
-  }, [match.params]);
+    const [loading, setLoading] = useState(!!paramsId);
+    const [isSaving, setIsSaving] = useState(false);
+    const [evaluationTypeDetail, setEvaluationTypeDetail] = useState({});
+    const isEditMode = !_.isEmpty(evaluationTypeDetail);
+    const [formErrors, setFormErrors] = useState([]);
+    const required = value => (value ? undefined : 'Required');
 
-  useEffect(() => {
-    if (!loading && match.params?.id && !evaluationTypeDetail) {
-      history('/tipo-avaliacao');
-    }
-  }, [match.params, loading, evaluationTypeDetail, history]);
+    useEffect(() => {
+        if (paramsId) {
+            axios.get(`/evaluation-types/${paramsId}`).then((response) => {
+                setEvaluationTypeDetail(response?.data?.data);
+                setLoading(false);
+            });
+        }
+    }, [paramsId]);
 
-  const initialValues = useMemo(() => {
-    const {
-      id, description, code, enabled,
-    } = evaluationTypeDetail;
-    return {
-      id,
-      code,
-      description,
-      enabled,
+    useEffect(() => {
+        if (!loading && paramsId && !evaluationTypeDetail) {
+            navigate('/tipo-avaliacao');
+        }
+    }, [paramsId, loading, evaluationTypeDetail, navigate]);
+
+    const initialValues = useMemo(() => {
+        const { id, code, name_pt, name_en, enabled = true } = evaluationTypeDetail;
+
+        return { id, code, name_pt, name_en, enabled };
+    }, [evaluationTypeDetail]);
+
+    const onSubmit = ({ id, code, name_pt, name_en, enabled }) => {
+        setIsSaving(true);
+        const isNew = !id;
+        const axiosFn = isNew ? axios.post : axios.patch;
+
+        axiosFn(`/evaluation-types/${!isNew ? id : ''}`, {id: (!isNew ? id : null), code, name_pt, name_en, enabled }).then((res) => {
+            setIsSaving(false);
+            setFormErrors([]);
+            if (res.status === 200) {
+                toast(t('Tipo de Avaliação atualizado com sucesso'), successConfig);
+            } else if (res.status === 201) {
+                toast(t('Tipo de Avaliação criado com sucesso'), successConfig);
+            } else {
+                let errorsArray = [];
+                if(typeof res.response.data.errors === 'object' && res.response.data.errors !== null){
+                    errorsArray = Object.values(res.response.data.errors);
+                } else {
+                    if(Array.isArray(res.response.data.errors)){
+                        errorsArray = res.response.data.errors;
+                    }
+                }
+                setFormErrors(errorsArray);
+                toast(t('Existiu um problema ao gravar as alterações!'), errorConfig);
+            }
+        });
     };
-  }, [evaluationTypeDetail]);
 
-  const onSubmit = ({
-    id, code, description, enabled,
-  }) => {
-    setIsSaving(true);
-    const isNew = !id;
-    const axiosFn = isNew ? axios.post : axios.patch;
-
-    axiosFn(`/evaluation-types/${!isNew ? id : ''}`, {
-      code,
-      description,
-      enabled,
-    }).then((res) => {
-      setIsSaving(false);
-      if (res.status >= 200 && res.status < 300) {
-        toast(`O tipo de avaliação foi ${isEditMode ? 'editado' : 'criado'} com sucesso!`, successConfig);
-      } else {
-        toast('Existiu um problema ao gravar as alterações!', errorConfig);
-      }
-    });
-  };
-
-  return (
-    <Container style={{ marginTop: '2em' }}>
-      <FinalForm
-        onSubmit={onSubmit}
-        initialValues={initialValues}
-        render={({ handleSubmit }) => (
-          <Form>
-            <Card fluid>
-              <Card.Content
-                header={`${isEditMode ? 'Editar' : 'Novo'} Tipo de Avaliação`}
-              />
-              <Card.Content>
-                <Form.Group widths="equal">
-                  <Field name="code">
-                    {({ input: codeInput }) => (
-                      <Form.Input label="Código" {...codeInput} />
-                    )}
-                  </Field>
-                  <Field name="description">
-                    {({ input: descriptionInput }) => (
-                      <Form.Input label="Descrição" {...descriptionInput} />
-                    )}
-                  </Field>
-                </Form.Group>
-                <Field name="enabled" type="checkbox">
-                  {({ input: isEnabled }) => (
-                    <Checkbox
-                      label="Tipo de Avaliação Ativo?"
-                      toggle
-                      onClick={() => isEnabled.onChange(!isEnabled.checked)}
-                      checked={isEnabled.checked}
-                    />
-                  )}
-                </Field>
-              </Card.Content>
-              <Card.Content>
-                <Link to="/tipo-avaliacao">
-                  <Button icon labelPosition="left" color="teal">
-                    <Icon name="left arrow" />
-                    Voltar à lista
-                  </Button>
-                </Link>
-                <Button
-                  onClick={handleSubmit}
-                  color="green"
-                  icon
-                  labelPosition="left"
-                  floated="right"
-                  loading={isSaving}
-                >
-                  <Icon name={isEditMode ? 'save' : 'plus'} />
-                  {isEditMode ? 'Guardar' : 'Criar'}
-                </Button>
-              </Card.Content>
-            </Card>
-          </Form>
-        )}
-      />
-    </Container>
-  );
+    return (
+        <Container>
+            <div className="margin-bottom-s">
+                <Link to="/tipo-avaliacao"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
+            </div>
+            <FinalForm onSubmit={onSubmit} initialValues={initialValues} render={({ handleSubmit }) => (
+                <Form>
+                    <Card fluid>
+                        { loading && (
+                            <Dimmer active inverted>
+                                <Loader indeterminate>{t('A carregar dados')}</Loader>
+                            </Dimmer>
+                        )}
+                        <Card.Content header={`${ isEditMode ? t('Editar Tipo de Avaliação') : t('Novo Tipo de Avaliação') }`} />
+                        <Card.Content>
+                            <Form.Group widths="equal">
+                                <Field name="code" validate={required}>
+                                    {( { input: codeInput, meta}) => (
+                                        <Form.Input label={t('Código')} {...codeInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                            </Form.Group>
+                            <Form.Group widths="equal">
+                                <Field name="name_pt" validate={required}>
+                                    {( { input: namePtInput, meta}) => (
+                                        <Form.Input label={t('Nome PT')} {...namePtInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                                <Field name="name_en" validate={required}>
+                                    {( { input: nameEnInput, meta}) => (
+                                        <Form.Input label={t('Nome EN')} {...nameEnInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                            </Form.Group>
+                            <Field name="enabled" type="checkbox">
+                                {({ input: isEnabled }) => (
+                                    <Checkbox label={t('Ativo?')} toggle defaultChecked={isEnabled.checked} onClick={() => isEnabled.onChange( !isEnabled.checked) } />
+                                )}
+                            </Field>
+                        </Card.Content>
+                        { formErrors.length > 0 &&
+                            <Card.Content>
+                                <Message negative>
+                                    <Message.Header>Errors</Message.Header>
+                                    <Message.List>
+                                        {formErrors?.map((item, index) =>
+                                            <Message.Item key={index}>{item}</Message.Item>
+                                        )}
+                                    </Message.List>
+                                </Message>
+                            </Card.Content>
+                        }
+                        <Card.Content>
+                            <Button onClick={handleSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} >
+                                <Icon name={isEditMode ? 'save' : 'plus'} /> {isEditMode ? t('Guardar') : t('Criar')}
+                            </Button>
+                        </Card.Content>
+                    </Card>
+                </Form>
+            )} />
+        </Container>
+    );
 };
 
 export default New;

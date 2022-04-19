@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id')->autoIncrement();
             $table->string('name_pt');
             $table->string('name_en');
+            $table->boolean('special')->default(false);
         });
     }
 

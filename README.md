@@ -69,6 +69,25 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 ## Installation
 
 1) Install Ubuntu & Docker (WSL 2 on Windows )
+
+2) Install PHP and Composer based on the following docs:
+
+        https://www.digitalocean.com/community/tutorials/how-to-install-and-use-composer-on-ubuntu-20-04-pt
+        https://www.vultr.com/docs/upgrade-from-php-7-to-php-8-on-ubuntu-20-04-with-apache/        
+
+4) Change to your project folder with `cd` command
+
+        $> cd /mnt/c/path_to_your_git_folder        
+
+5) Add sail alias to machine
+
+        $> alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
+
+5) Run 
+
+        $> composer install
+
+
 2) To do sail command:
 
         $> <command here>
@@ -98,3 +117,20 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
         
         $> npm run dev          // compile once
 
+7) Plugins
+
+   [Translations](https://react.i18next.com/)
+
+
+8) Links
+
+   https://laravel-mix.com/
+   
+    https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE
+
+   https://bobbyhadz.com/blog/javascript-remove-object-from-array-by-value
+
+    
+9) Best practices
+
+   https://github.com/alexeymezenin/laravel-best-practices

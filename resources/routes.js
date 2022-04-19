@@ -4,7 +4,7 @@ import React, {lazy} from "react";
 import Login from './pages/Auth/Login';
 import NotFoundPage from './pages/NotFound';
 import NoPermissionsPage from './pages/NoPermissions';
-import Dashboard from './pages/Dashboard';
+import Layout from './pages/Layout';
 import About from './pages/About';
 
 // Calendar pages
@@ -22,9 +22,9 @@ const Utilizador = lazy(() => import('./pages/Utilizador'));
 const UtilizadorDetail = lazy(() => import('./pages/Utilizador/edit'));
 const UtilizadorList = lazy(() => import('./pages/Utilizador/list'));
     //Interrupacao Pages
-const Interrupcao = lazy(() => import('./pages/Interrupcao'));
-const InterrupcaoNew = lazy(() => import('./pages/Interrupcao/new'));
-const InterrupcaoList = lazy(() => import('./pages/Interrupcao/list'));
+const Interrupcao = lazy(() => import('./pages/TipoInterrupcao'));
+const InterrupcaoNew = lazy(() => import('./pages/TipoInterrupcao/new'));
+const InterrupcaoList = lazy(() => import('./pages/TipoInterrupcao/list'));
     //TipoAvaliacao Pages
 const TipoAvaliacao = lazy(() => import('./pages/TipoAvaliacao'));
 const TipoAvaliacaoNew = lazy(() => import('./pages/TipoAvaliacao/new'));
@@ -34,7 +34,7 @@ const GrupoUtilizador = lazy(() => import('./pages/GrupoUtilizador'));
 const GrupoUtilizadorNew = lazy(() => import('./pages/GrupoUtilizador/new'));
 const GrupoUtilizadorList = lazy(() => import('./pages/GrupoUtilizador/list'));
     //Permissoes Pages
-const Permissoes = lazy(() => import('./pages/Permissoes'));
+// const Permissoes = lazy(() => import('./pages/Permissoes'));
     //AgrupamentoUnidadeCurricular Pages
 const AgrupamentoUnidadeCurricular = lazy(() => import('./pages/AgrupamentoUnidadeCurricular'));
 const AgrupamentoUnidadeCurricularList = lazy(() => import('./pages/AgrupamentoUnidadeCurricular/list'));
@@ -79,7 +79,7 @@ const isAuthorized = useComponentIfAuthorized([
 const RouterList = (isLoggedIn) => {
     return useRoutes([
         {
-            element: isLoggedIn ? <Dashboard /> : <Navigate to="/no-permissions" />,
+            element: isLoggedIn ? <Layout /> : <Navigate to="/no-permissions" />,
             children: [
                 { path:"/", exact: true, element: <CalendarList /> },
                 { path:"/about", exact:true, element:<About />},
@@ -156,7 +156,7 @@ const RouterList = (isLoggedIn) => {
                     ],
                 },
                 {
-                    path: "/interrupcao",
+                    path: "/tipo-interrupcao",
                     element: (isAuthorized.CREATE_INTERRUPTION_TYPES || isAuthorized.EDIT_INTERRUPTION_TYPES || isAuthorized.DELETE_INTERRUPTION_TYPES) ? <Interrupcao /> : <Navigate to="/no-permissions" />,
                     children: [
                         { path: 'novo', exact: true, element: <InterrupcaoNew />},
@@ -177,7 +177,7 @@ const RouterList = (isLoggedIn) => {
                 },
                 {
                     path: "/grupo-utilizador",
-                    element: (isAuthorized.EDIT_USER_GROUPS || isAuthorized.CREATE_USER_GROUPS || isAuthorized.DELETE_USER_GROUPS) ? <GrupoUtilizador /> : <Navigate to="/no-permissions" />,
+                    element: (isAuthorized.CHANGE_PERMISSIONS || isAuthorized.EDIT_USER_GROUPS || isAuthorized.CREATE_USER_GROUPS || isAuthorized.DELETE_USER_GROUPS) ? <GrupoUtilizador /> : <Navigate to="/no-permissions" />,
                     children: [
                         { path: 'novo', exact: true, element: <GrupoUtilizadorNew />},
                         { path: 'edit/:id', exact: true, element: <GrupoUtilizadorNew />},
@@ -185,10 +185,10 @@ const RouterList = (isLoggedIn) => {
                         { path: '*', element: <NotFoundPage />}
                     ],
                 },
-                {
-                    path: "/permissoes",
-                    element: (isAuthorized.CHANGE_PERMISSIONS) ? <Permissoes /> : <Navigate to="/no-permissions" />,
-                },
+                // {
+                //     path: "/permissoes",
+                //     element: (isAuthorized.CHANGE_PERMISSIONS) ? <Permissoes /> : <Navigate to="/no-permissions" />,
+                // },
             ],
         },
         { path: "/login", element: <Login /> },

@@ -13,7 +13,7 @@ const Permissions = () => {
     ];
 
     return (
-        <Container style={{marginTop: "2em"}}>
+        <Container>
             <Tab panes={panes} renderActiveOnly/>
         </Container>
     );

@@ -13,7 +13,8 @@ class School extends Model
 
     protected $fillable = [
         'code',
-        'name',
+        'name_pt',
+        'name_en',
         'base_link',
         'index_course_code',
         'index_course_name',
