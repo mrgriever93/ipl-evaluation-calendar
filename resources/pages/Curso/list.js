@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Card, Container, Dimmer, Form, Loader, Pagination, Table, Button, Icon, Header} from 'semantic-ui-react';
+import {Card, Container, Dimmer, Form, Loader, Table, Button, Icon, Header} from 'semantic-ui-react';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 import Swal from 'sweetalert2';
@@ -13,6 +13,7 @@ import {useTranslation} from "react-i18next";
 import FilterOptionSchool from "../../components/Filters/Schools";
 import FilterOptionDegree from "../../components/Filters/Degree";
 import FilterOptionPerPage from "../../components/Filters/PerPage";
+import PaginationDetail from "../../components/Pagination";
 
 const SweetAlertComponent = withReactContent(Swal);
 
@@ -26,6 +27,7 @@ const CoursesList = () => {
     // Filters
     const [searchTerm, setSearchTerm] = useState();
     const [perPage, setPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
     const [school, setSchool] = useState();
     const [degree, setDegree] = useState();
 
@@ -42,13 +44,16 @@ const CoursesList = () => {
 
     useEffect(() => {
         fetchCourses();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchTerm, school, degree, perPage]);
+    }, [searchTerm, school, degree, perPage, currentPage]);
 
-    const fetchCourses = (page = 1) => {
+    const changedPage = (activePage) => {
+        setCurrentPage(activePage);
+    }
+
+    const fetchCourses = () => {
         setLoading(true);
 
-        let searchLink = `/courses?page=${page}`;
+        let searchLink = `/courses?page=${currentPage}`;
         searchLink += `${searchTerm ? `&search=${searchTerm}` : ''}`;
         searchLink += `${school ? `&school=${school}` : ''}`;
         searchLink += `${degree ? `&degree=${degree}` : ''}`;
@@ -63,7 +68,6 @@ const CoursesList = () => {
         });
     };
 
-    const loadCourses = (evt, {activePage}) => fetchCourses(activePage);
 
     const remove = (courseId) => {
         SweetAlertComponent.fire({
@@ -147,12 +151,7 @@ const CoursesList = () => {
                                 ))}
                             </Table.Body>
                         </Table>
-                        { paginationInfo && (<div> From <b>{ paginationInfo.from }</b> to  <b>{ paginationInfo.to }</b> of <b>{ paginationInfo.total }</b> results</div>)}
-                        {
-                            paginationInfo && paginationInfo.current_page !== paginationInfo.last_page && (
-                                <Pagination defaultActivePage={1} totalPages={paginationInfo.last_page} onPageChange={loadCourses} firstItem={null} lastItem={null} />
-                            )
-                        }
+                        <PaginationDetail currentPage={currentPage} info={paginationInfo} eventHandler={changedPage} />
                         {loading && (
                             <Dimmer active inverted>
                                 <Loader indeterminate>A carregar os cursos</Loader>

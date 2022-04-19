@@ -68,6 +68,8 @@
         "ano_letivo.Outras informações": "Other information's",
         "ano_letivo.Ja existem em sincronizacao, esperar ate acabar antes de comecar a proxima.": "There is already a synchronization occurring, you need to wait until its finished before start a new one.",
         "ano_letivo.Apenas 1 sincronização pode acontecer de cada vez, para prevenir duplicações ou bloqueio do servidor.": "Only 1 synchronization can occur at a time, to prevent duplicated records or to block the server.",
+        "ano_letivo.O que vai sincronizar?":  "What will be synchronized?",
+        "ano_letivo.Irá sincronizar as escolas que já foram preenchidas. Para ver a lista pode seguir por este": "It will synchronize the schools that were already fulfilled. To check the list, you can be redirect there by this",
 
 
         "Tipos de Avaliação": "Evaluation Types",
@@ -131,6 +133,11 @@
         "Criar": "Create",
         "Duplicar": "Clone",
         "Pesquisar": "Search",
+
+        "Desde": "From",
+        "até": "to",
+        "de": "of",
+        "resultados": "results",
 
         "Código": "Code",
         "Nome": "Name",

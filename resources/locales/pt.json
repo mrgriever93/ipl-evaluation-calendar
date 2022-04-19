@@ -68,6 +68,8 @@
         "ano_letivo.Outras informações": "Outras informações",
         "ano_letivo.Ja existem em sincronizacao, esperar ate acabar antes de comecar a proxima.": "Já existem em sincronização, tem de esperar até acabar antes de comecar a próxima.",
         "ano_letivo.Apenas 1 sincronização pode acontecer de cada vez, para prevenir duplicações ou bloqueio do servidor.": "Apenas 1 sincronização pode acontecer de cada vez, para prevenir duplicações ou bloqueio do servidor.",
+        "ano_letivo.O que vai sincronizar?":  "O que vai sincronizar?",
+        "ano_letivo.Irá sincronizar as escolas que já foram preenchidas. Para ver a lista pode seguir por este": "Irá sincronizar as escolas que já foram preenchidas. Para ver a lista pode seguir por este",
 
         "Tipos de Avaliação": "Tipos de Avaliação",
         "Pesquisar tipo de avaliação...": "Pesquisar tipo de avaliação...",
@@ -130,6 +132,11 @@
         "Criar": "Criar",
         "Duplicar": "Duplicar",
         "Pesquisar": "Pesquisar",
+
+        "Desde": "Desde",
+        "até": "até",
+        "de": "de",
+        "resultados": "resultados",
 
         "Código": "Código",
         "Nome": "Nome",

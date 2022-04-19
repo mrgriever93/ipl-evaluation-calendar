@@ -12,6 +12,7 @@ import Semesters from "../../components/Filters/Semesters";
 import Courses from "../../components/Filters/Courses";
 import {useTranslation} from "react-i18next";
 import FilterOptionPerPage from "../../components/Filters/PerPage";
+import PaginationDetail from "../../components/Pagination";
 
 const CourseUnitsList = () => {
     const { t } = useTranslation();
@@ -24,10 +25,11 @@ const CourseUnitsList = () => {
     const [semesterFilter, setSemesterFilter] = useState();
     const [searchFilter, setSearchFilter] = useState();
     const [perPage, setPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
 
-    const fetchCourseUnits = (page = 1) => {
+    const fetchCourseUnits = () => {
         setIsLoading(true);
-        let link = '/course-units?page=' + page;
+        let link = '/course-units?page=' + currentPage;
         link += (semesterFilter ? '&semester=' + semesterFilter : '');
         link += (courseFilter   ? '&course='   + courseFilter   : '');
         link += (searchFilter   ? '&search='   + searchFilter   : '');
@@ -44,12 +46,16 @@ const CourseUnitsList = () => {
 
     useEffect(() => {
         fetchCourseUnits();
-    }, [semesterFilter, courseFilter, searchFilter]);
+    }, [semesterFilter, courseFilter, searchFilter, currentPage]);
 
 
     const filterByCourse = (course) => {
         setCourseFilter(course);
     };
+
+    const changedPage = (activePage) => {
+        setCurrentPage(activePage);
+    }
 
     const remove = (courseUnit) => {
         setModalInfo(courseUnit);
@@ -69,8 +75,6 @@ const CourseUnitsList = () => {
             }
         });
     };
-
-    const loadCourseUnits = (evt, {activePage}) => fetchCourseUnits(activePage);
 
     const handleSearchCourseUnits = (evt, {value}) => {
         setSearchFilter(value);
@@ -152,7 +156,7 @@ const CourseUnitsList = () => {
                                                 </Button>
                                             </ShowComponentIfAuthorized>
                                             <ShowComponentIfAuthorized permission={[SCOPES.MANAGE_EVALUATION_METHODS]}>
-                                                <Link to={`unidade-curricular/${id}/metodos`}>
+                                                <Link to={`/unidade-curricular/${id}/metodos`}>
                                                     <Button color="olive" icon labelPosition="left">
                                                         <Icon name="file alternate"/>
                                                         { t('Métodos') }
@@ -165,15 +169,7 @@ const CourseUnitsList = () => {
                             </Table.Body>
                         </Table>
                     )}
-                    { courseUnits.length > 0 && (
-                        <Pagination defaultActivePage={1} totalPages={paginationInfo.last_page}
-                                    onPageChange={loadCourseUnits} activePage={paginationInfo.current_page}
-                                    ellipsisItem={{content: <Icon name='ellipsis horizontal'/>, icon: true}}
-                                    prevItem={{content: <Icon name='angle left'/>, icon: true}}
-                                    nextItem={{content: <Icon name='angle right'/>, icon: true}}
-                                    firstItem={null}
-                                    lastItem={null}/>
-                    )}
+                    <PaginationDetail currentPage={currentPage} info={paginationInfo} eventHandler={changedPage} />
                 </Card.Content>
             </Card>
             <Modal dimmer="blurring" open={modalOpen} onClose={handleModalClose}>

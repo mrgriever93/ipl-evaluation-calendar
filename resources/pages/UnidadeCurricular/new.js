@@ -8,7 +8,7 @@ import axios from 'axios';
 import {toast} from 'react-toastify';
 import IplLogo from '../../../public/images/ipl.png';
 import {successConfig, errorConfig} from '../../utils/toastConfig';
-import ShowComponentIfAuthorized, {useComponentIfAuthorized} from '../../components/ShowComponentIfAuthorized';
+import {useComponentIfAuthorized} from '../../components/ShowComponentIfAuthorized';
 import SCOPES from '../../utils/scopesConstants';
 import {useTranslation} from "react-i18next";
 import Semesters from "../../components/Filters/Semesters";
