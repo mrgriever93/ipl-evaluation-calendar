@@ -156,7 +156,7 @@ const CourseUnitsList = () => {
                                                 </Button>
                                             </ShowComponentIfAuthorized>
                                             <ShowComponentIfAuthorized permission={[SCOPES.MANAGE_EVALUATION_METHODS]}>
-                                                <Link to={`unidade-curricular/${id}/metodos`}>
+                                                <Link to={`/unidade-curricular/${id}/metodos`}>
                                                     <Button color="olive" icon labelPosition="left">
                                                         <Icon name="file alternate"/>
                                                         { t('Métodos') }
