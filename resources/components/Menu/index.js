@@ -40,8 +40,11 @@ const HeaderMenu = () => {
 
     const logoutUser = () => {
         axios.post('/logout').then(() => {
+            localStorage.removeItem('language');
             localStorage.removeItem('authToken');
             localStorage.removeItem('username');
+            localStorage.removeItem('scopes');
+            localStorage.removeItem('calendarPermissions');
             dispatch(logout());
             navigate('/login');
         });
