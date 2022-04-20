@@ -4,6 +4,9 @@
 /* ================================================================ */
 
 :root {
+    --color-primary: #edaa02;
+    --color-secondary: #1c1c1c;
+
     --space-none:   0;
     --space-xs:     4px;
     --space-s:      8px;
@@ -15,20 +18,21 @@
 
     --background-color: #F3F6F8;
 }
+
 html, body {
     height: 100%;
     margin: 0;
 }
+
 body {
     background: var(--background-color);
 }
-#root{
-    height: 100%;
-}
+
 .app-content{
-    min-height: calc(100% - (60px + 145px));
+    min-height: calc(100vh - (60px + 221px));
     padding: 30px 0;
 }
+
 .ui.menu {
     margin: 0 auto;
     height: 60px;
@@ -36,6 +40,22 @@ body {
 
 .ui.menu + .ui.container {
     padding-bottom: 56px;
+}
+
+.ui.menu .active.item {
+    background: transparent;
+    font-weight: 700;
+}
+
+.ui.menu .active.item:before {
+    background: var(--color-primary) !important;
+    bottom: 0;
+    height: 3px;
+    left: 0;
+    right: 0;
+    top: auto;
+    width: 100%;
+    z-index: 10;
 }
 
 .ui.menu .item.lang-dropdown {
@@ -233,6 +253,21 @@ body {
     margin-top: 9px;
     opacity: .7;
 }
+
+/* Custom Component > Pagination */
+.pagination-wrapper {
+    align-items: center;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    margin-top: var(--space-base)
+}
+
+.pagination-list .ui.menu {
+    height: 40px;
+}
+
+/* Other stuff */
 
 .card-header-alignment {
     display: flex;

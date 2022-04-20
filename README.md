@@ -134,3 +134,16 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 9) Best practices
 
    https://github.com/alexeymezenin/laravel-best-practices
+
+
+10) Server commands
+
+        $> composer install --optimize-autoloader --no-dev
+
+    compile JS
+    
+        $> npm run prod
+
+    Rewrite DB tables and seed
+        
+        $> php artisan migrate:fresh --seed

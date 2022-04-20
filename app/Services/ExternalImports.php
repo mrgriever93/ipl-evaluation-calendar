@@ -40,6 +40,8 @@ class ExternalImports
     public static function importCoursesFromWebService(int $academicYearCode, int $semester)
     {
         set_time_limit(0);
+        ini_set('max_execution_time', 0);
+
         $isServer = env('APP_SERVER', false);
         Log::channel('courses_sync')->info('Start "importCoursesFromWebService" sync for Year code (' . $academicYearCode . ') and semester (' . $semester . ')');
         try{
@@ -76,14 +78,32 @@ class ExternalImports
 
             // Loop for each saved school
             foreach ($schools as $school) {
-                $apiEndpoint = "{$school->base_link}?{$school->query_param_academic_year}={$academicYearCode}&{$school->query_param_semester}=S{$semester}";
                 $courseUnits = [];
+
                 /*
                  * Get file contents
                  */
-                $file_data = file_get_contents($apiEndpoint);
+                //$apiEndpoint = "{$school->base_link}?{$school->query_param_academic_year}={$academicYearCode}&{$school->query_param_semester}=S{$semester}";
+                //array_push($courseUnits, ...explode("<br>", mb_convert_encoding(file_get_contents("$apiEndpoint"), "utf-8", "latin1")));
+
+                // From URL to get webpage contents
+                $apiEndpoint = $school->base_link . '?' . $school->query_param_academic_year . '=' . $academicYearCode . '&' . $school->query_param_semester . '=S' . $semester;
+
+                // Initialize a CURL session.
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 3*60); //timeout in seconds
+                curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($ch, CURLOPT_URL, $apiEndpoint);
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+                $file_data = curl_exec($ch);
+                curl_close($ch);
+
+                Log::channel('courses_sync')->error('Data. -------- ' . $file_data);
                 // check if the file has any content (prevent going forward
-                if( strlen(trim($file_data)) == 0) {
+                if( empty($courseUnits)) {
                     continue;
                 }
                 // converts file and splits by line/<br>
@@ -186,7 +206,7 @@ class ExternalImports
                 $academicYear->save();
             }
         } catch(\Exception $e){
-            Log::channel('courses_sync')->error('There was an error syncing. ', $e);
+            Log::channel('courses_sync')->error('There was an error syncing. -------- ' . $e->getMessage());
             $academicYear = AcademicYear::where('code', $academicYearCode)->firstOrFail();
             if($semester === 1) {
                 $academicYear->s1_sync_active = false;

@@ -110,10 +110,9 @@ const CourseUnitsList = () => {
                 <Card.Content>
                     <Form>
                         <Form.Group>
-                            <Courses widthSize={4} eventHandler={filterByCourse} />
-                            <Semesters widthSize={4} eventHandler={filterBySemester} withSpecial={false} />
-                            <Form.Input width={4} onChange={_.debounce(handleSearchCourseUnits, 400)} search label={t("Pesquisar por nome")} />
-                            <Form.Field width={2} />
+                            <Form.Input icon='search' iconPosition='left' width={5} onChange={_.debounce(handleSearchCourseUnits, 400)} search placeholder={t("Pesquisar por nome")} label={t("Pesquisar por nome")} />
+                            <Courses widthSize={5} eventHandler={filterByCourse} />
+                            <Semesters widthSize={5} eventHandler={filterBySemester} withSpecial={false} />
                             <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                         </Form.Group>
                     </Form>

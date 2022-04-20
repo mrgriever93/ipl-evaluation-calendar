@@ -10,18 +10,21 @@ const PaginationDetail = ({info, currentPage = 1, eventHandler}) => {
     };
 
     return (
-        <div>
+        <>
             { info && (
-                <div>
-                    <div> { t('Desde') } <b>{ info.from }</b> { t('até') }  <b>{ info.to }</b> { t('de') } <b>{ info.total }</b> { t('resultados') }</div>
-                    <br/>
-                    { info.current_page !== info.last_page && (
-                        <Pagination activePage={currentPage} totalPages={info.last_page} onPageChange={updatePages} firstItem={null} lastItem={null} />
-                    )}
+                <div className="pagination-wrapper">
+                    <div className="pagination-counter">
+                        <div> { t('Desde') } <b>{ info.from }</b> { t('até') }  <b>{ info.to }</b> { t('de') } <b>{ info.total }</b> { t('resultados') }</div>
+                    </div>
+                    <div className="pagination-list">
+                        { info.last_page > 1 && (
+                            <Pagination activePage={currentPage} totalPages={info.last_page} onPageChange={updatePages} firstItem={null} lastItem={null} />
+                        )}
+                    </div>
                 </div>
                 )
             }
-        </div>
+        </>
     );
 };
 

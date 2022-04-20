@@ -107,9 +107,9 @@ const CoursesList = () => {
                 <Card.Content>
                     <Form>
                         <Form.Group>
-                            <Form.Input width={6} label="Pesquisar curso..." placeholder="Pesquisar curso..." onChange={(e, {value}) => _.debounce(setSearchTerm(value), 500)}/>
-                            <FilterOptionSchool widthSize={7} eventHandler={(value) => setSchool(value)} />
-                            <FilterOptionDegree widthSize={4} eventHandler={(value) => setDegree(value)} />
+                            <Form.Input icon='search' iconPosition='left' width={5} label="Pesquisar curso..." placeholder="Pesquisar curso..." onChange={(e, {value}) => _.debounce(setSearchTerm(value), 500)}/>
+                            <FilterOptionSchool widthSize={5} eventHandler={(value) => setSchool(value)} />
+                            <FilterOptionDegree widthSize={5} eventHandler={(value) => setDegree(value)} />
                             <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                         </Form.Group>
                     </Form>
