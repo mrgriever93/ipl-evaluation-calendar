@@ -73,7 +73,7 @@ const HeaderMenu = () => {
                 </Menu.Item> */}
                 <Menu.Item 
                     as={Link} 
-                    className={ location.pathname == '/calendario' ? 'active' : ''} 
+                    className={ location.pathname == '/calendario' || location.pathname == '/' ? 'active' : ''} 
                     to="/calendario" >{t('menu.Calendários') }
                 </Menu.Item>
                 <ShowComponentIfAuthorized permission={[...COURSE_UNIT_SCOPES]}>                    
@@ -83,6 +83,7 @@ const HeaderMenu = () => {
                         className={ location.pathname == '/unidade-curricular' ? 'active' : ''} 
                         disabled={academicYearsList.length === 0}>{t('menu.Unidades Curriculares')}
                     </Menu.Item>
+                    {/* // TODO: Criar permissões para ser possível agrupar UC's */}
                     <Menu.Item 
                         as={Link} 
                         to="/agrupamento-unidade-curricular" 
@@ -101,7 +102,9 @@ const HeaderMenu = () => {
                 <ShowComponentIfAuthorized permission={[...CONFIG_SCOPES]}>
                     <Dropdown 
                         className={ (location.pathname != '/calendario' && 
+                        location.pathname != '/' && 
                         location.pathname != '/curso' && 
+                        location.pathname != '/about' && 
                         location.pathname != '/unidade-curricular' && 
                         location.pathname != '/agrupamento-unidade-curricular') ? 'active' : ''} 
                         item 

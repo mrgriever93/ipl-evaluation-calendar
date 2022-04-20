@@ -43,7 +43,19 @@ body {
 }
 
 .ui.menu .active.item {
-    background: var(--color-primary);
+    background: transparent;
+    font-weight: 700;
+}
+
+.ui.menu .active.item:before {
+    background: var(--color-primary) !important;
+    bottom: 0;
+    height: 3px;
+    left: 0;
+    right: 0;
+    top: auto;
+    width: 100%;
+    z-index: 10;
 }
 
 .ui.menu .item.lang-dropdown {
