@@ -1,49 +1,44 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Card,
-  Container,
-  Table,
-  Form,
-  Icon,
-  Button,
-  Header,
-  Dimmer,
-  Loader,
-} from 'semantic-ui-react';
-import axios from 'axios';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Card, Container, Table, Form, Button, Header, Icon, Modal } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import axios from 'axios';
+import _ from 'lodash';
+import { toast } from 'react-toastify';
+import {useTranslation} from "react-i18next";
+import { errorConfig, successConfig } from '../../utils/toastConfig';
+import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
+import SCOPES from '../../utils/scopesConstants';
+import EmptyTable from "../../components/EmptyTable";
+
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import { toast } from 'react-toastify';
-import SCOPES from '../../utils/scopesConstants';
-import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
-import { errorConfig, successConfig } from '../../utils/toastConfig';
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const Wrapper = styled.div`
-    .header {
-        display: inline;
-    }
-`;
 
-const List = ({ match }) => {
-  const [courseUnitGroups, setCourseUnitGrous] = useState([]);
-  const [courseUnitList, setCourseUnitList] = useState([]);
-  const [isCourseUnitsLoading, setIsCourseUnitsLoading] = useState(true);
-  const [removingCourseUnitGroup, setRemovingCourseUnitGroup] = useState();
-  const [isLoading, setIsLoading] = useState(true);
+const List = () => {
+    const { t } = useTranslation();
+    const columns = [
+        {name: t('Nome')},
+        {name: 'Unidades Curriculares' },
+        {name: "Número de UC's" },
+        {name: t('Ações'),  align: 'center', style: {width: '15%'} },
+    ];
+    const [courseUnitGroups, setCourseUnitGrous] = useState([]);
+    const [courseUnitList, setCourseUnitList] = useState([]);
+    const [isCourseUnitsLoading, setIsCourseUnitsLoading] = useState(true);
+    const [removingCourseUnitGroup, setRemovingCourseUnitGroup] = useState();
+    const [isLoading, setIsLoading] = useState(true);
 
-  const loadCourseUnitGroups = () => {
-    setIsLoading(true);
-    axios.get('/course-unit-groups').then((response) => {
-      setIsLoading(false);
-      if (response.status >= 200 && response.status < 300) {
-        setCourseUnitGrous(response.data.data);
-      }
-    });
-  };
+    const loadCourseUnitGroups = () => {
+        setIsLoading(true);
+        axios.get('/course-unit-groups').then((response) => {
+        setIsLoading(false);
+        if (response.status >= 200 && response.status < 300) {
+            setCourseUnitGrous(response.data.data);
+        }
+        });
+    };
 
   useEffect(() => {
     loadCourseUnitGroups();
@@ -82,35 +77,23 @@ const List = ({ match }) => {
       });
   };
 
-  const columns = [
-    { name: 'Nome' },
-    { name: 'Unidades Curriculares' },
-    { name: "Número de UC's" },
-    { name: 'Ações' },
-  ];
-
   return (
     <Container>
-      <Card fluid>
-        <Card.Content>
-          {isLoading && (
-          <Dimmer active inverted>
-            <Loader indeterminate>A carregar os agrupamentos de unidades curriculares</Loader>
-          </Dimmer>
-          )}
-          <Wrapper>
-            <Header as="span">Agrupamento de Unidades Curriculares</Header>
-            <ShowComponentIfAuthorized
-              permission={[SCOPES.CREATE_COURSE_UNITS]}
-            >
-              <Link to="/agrupamento-unidade-curricular/novo">
-                <Button floated="right" color="green">
-                  Novo
-                </Button>
-              </Link>
-            </ShowComponentIfAuthorized>
-          </Wrapper>
-        </Card.Content>
+        <Card fluid>
+            <Card.Content>
+                <div className='card-header-alignment'>
+                    <Header as="span">{t("Agrupamento de Unidades Curriculares")}</Header>
+                    <ShowComponentIfAuthorized permission={[SCOPES.CREATE_COURSE_UNITS]}>
+                        { !isLoading && (
+                          <Link to="/agrupamento-unidade-curricular/novo">
+                                <Button floated="right" color="green">{t("Novo")}</Button>
+                            </Link>
+                        )}
+                    </ShowComponentIfAuthorized>
+                </div>
+            </Card.Content>
+
+
         <Card.Content>
           <Form>
             <Form.Group widths="4">

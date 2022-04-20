@@ -100,7 +100,7 @@ const CoursesList = () => {
         <Container>
             <Card fluid>
                 <Card.Content>
-                    <div>
+                    <div className='card-header-alignment'>
                         <Header as="span">Cursos</Header>
                     </div>
                 </Card.Content>
