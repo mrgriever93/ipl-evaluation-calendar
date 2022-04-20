@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Link, useNavigate} from 'react-router-dom';
+import {Link, useNavigate, useLocation} from 'react-router-dom';
 import {Container, Image, Menu, Dropdown, Icon} from 'semantic-ui-react';
 import axios from 'axios';
 import {useTranslation} from "react-i18next";
@@ -24,6 +24,7 @@ import ShowComponentIfAuthorized from '../ShowComponentIfAuthorized';
 
 const HeaderMenu = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const [academicYearsList, setAcademicYearsList] = useState([]);
@@ -65,25 +66,47 @@ const HeaderMenu = () => {
     return (
         <Menu borderless>
             <Container>
-                <Menu.Item header>
+                {/* <Menu.Item header>
                     <Link to="/">
                         <Image src={logoSVG} width="100px"/>
                     </Link>
+                </Menu.Item> */}
+                <Menu.Item 
+                    as={Link} 
+                    className={ location.pathname == '/calendario' ? 'active' : ''} 
+                    to="/calendario" >{t('menu.Calendários') }
                 </Menu.Item>
-                <Menu.Item as={Link} to="/calendario">{t('menu.Calendários')}</Menu.Item>
-                <ShowComponentIfAuthorized permission={[...COURSE_UNIT_SCOPES]}>
-                    <Dropdown disabled={academicYearsList.length === 0} item text={t('menu.Unidades Curriculares')}>
-                        <Dropdown.Menu>
-                            <Dropdown.Item as={Link} to="/unidade-curricular">{t('menu.Unidades Curriculares')}</Dropdown.Item>
-                            <Dropdown.Item as={Link} to="/agrupamento-unidade-curricular">{t('menu.Agrupamentos')}</Dropdown.Item>
-                        </Dropdown.Menu>
-                    </Dropdown>
+                <ShowComponentIfAuthorized permission={[...COURSE_UNIT_SCOPES]}>                    
+                    <Menu.Item 
+                        as={Link} 
+                        to="/unidade-curricular" 
+                        className={ location.pathname == '/unidade-curricular' ? 'active' : ''} 
+                        disabled={academicYearsList.length === 0}>{t('menu.Unidades Curriculares')}
+                    </Menu.Item>
+                    <Menu.Item 
+                        as={Link} 
+                        to="/agrupamento-unidade-curricular" 
+                        className={ location.pathname == '/agrupamento-unidade-curricular' ? 'active' : ''} 
+                        disabled={academicYearsList.length === 0}>{t('menu.Agrupar UCs')}
+                    </Menu.Item>
                 </ShowComponentIfAuthorized>
                 <ShowComponentIfAuthorized permission={[...COURSE_SCOPES]}>
-                    <Menu.Item disabled={academicYearsList.length === 0} as={Link} to="/curso">{t('menu.Cursos')}</Menu.Item>
+                    <Menu.Item 
+                        as={Link} 
+                        disabled={academicYearsList.length === 0} 
+                        className={ location.pathname == '/curso' ? 'active' : ''} 
+                        to="/curso">{t('menu.Cursos')}
+                    </Menu.Item>
                 </ShowComponentIfAuthorized>
                 <ShowComponentIfAuthorized permission={[...CONFIG_SCOPES]}>
-                    <Dropdown item text={t('menu.Configurações')} icon={ (academicYearsList.length === 0 ? "warning circle" : "dropdown") }>
+                    <Dropdown 
+                        className={ (location.pathname != '/calendario' && 
+                        location.pathname != '/curso' && 
+                        location.pathname != '/unidade-curricular' && 
+                        location.pathname != '/agrupamento-unidade-curricular') ? 'active' : ''} 
+                        item 
+                        text={t('menu.Configurações')} 
+                        icon={ (academicYearsList.length === 0 ? "warning circle" : "dropdown") }>
                         <Dropdown.Menu>
                             <ShowComponentIfAuthorized permission={[...ACADEMIC_YEAR_SCOPES]}>
                                 <Dropdown.Item as={Link} to="/ano-letivo">{t('menu.Anos Letivos')} { academicYearsList.length === 0 && (<Icon name={"warning circle"} />) }</Dropdown.Item>
