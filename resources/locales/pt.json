@@ -83,7 +83,6 @@
         "Editar Tipo de Avaliação": "Editar Tipo de Avaliação",
         "Novo Tipo de Avaliação":  "Novo Tipo de Avaliação",
 
-
         "Tipos de Interrupções": "Tipos de Interrupções",
         "Pesquisar tipo de interrupção...": "Pesquisar tipo de interrupção...",
         "Ohh! Não foi possível encontrar Tipos de Interrupção!": "Ohh! Não foi possível encontrar Tipos de Interrupção!",
@@ -139,6 +138,7 @@
         "resultados": "resultados",
 
         "Código": "Código",
+        "Email": "Email",
         "Nome": "Nome",
         "Nome PT": "Nome PT",
         "Nome EN": "Nome EN",
@@ -189,7 +189,19 @@
         "Ohh! Não foi possível encontrar Unidades Curriculares!": "Ohh! Não foi possível encontrar Unidades Curriculares!",
         "Métodos": "Métodos",
         "Remover Unidade Curricular": "Remover Unidade Curricular",
-        "Tem a certeza que deseja remover a Unidade Curricular": "Tem a certeza que deseja remover a Unidade Curricular"
+        "Tem a certeza que deseja remover a Unidade Curricular": "Tem a certeza que deseja remover a Unidade Curricular",
 
+        "Utilizador atualizado com sucesso": "Utilizador atualizado com sucesso",
+        "Editar Utilizador": "Editar Utilizador",
+        "Utilizador ativo?": "Utilizador ativo?",
+
+        "Sucesso!": "Sucesso!",
+        "Utilizadores": "Utilizadores",
+        "Utilizador": "Utilizador",
+        "Pesquisar utilizador...": "Pesquisar utilizador...",
+        "Ohh! Não foi possível encontrar Utilizadores!": "Ohh! Não foi possível encontrar Utilizadores!",
+        "Bloquear a conta do utilizador.": "Bloquear a conta do utilizador.",
+        "Desbloquear a conta do utilizador.": "Desbloquear a conta do utilizador.",
+        "A carregar os utilizadores": "A carregar os utilizadores"
     }
 }

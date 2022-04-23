@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Filters\UserFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
+use App\Http\Resources\Admin\Edit\UserEditResource;
+use App\Http\Resources\Admin\UserListResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,7 +17,7 @@ class UserController extends Controller
     public function index(UserFilters $filters)
     {
         $perPage = request('per_page', 10);
-        return UserResource::collection(User::filter($filters)->paginate($perPage));
+        return UserListResource::collection(User::filter($filters)->paginate($perPage));
     }
 
     public function store(Request $request)
@@ -25,7 +27,7 @@ class UserController extends Controller
 
     public function show($id)
     {
-        return new UserResource(User::with('groups')->find($id));
+        return new UserEditResource(User::with('groups')->find($id));
     }
 
     public function update(UserRequest $request, User $user)
