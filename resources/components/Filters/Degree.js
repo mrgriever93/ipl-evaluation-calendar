@@ -14,7 +14,7 @@ const FilterOptionDegree = ({widthSize, eventHandler, disabled, value, isSearch=
         axios.get('/courses/degrees').then((response) => {
             if (response.status >= 200 && response.status < 300) {
                 if (isSearch){
-                    response.data.unshift({value: '', text: "All Degrees"});
+                    response.data.unshift({value: '', text: t("Grau de ensino")});
                 }
                 setDegreeOptions(response.data);
                 setLoading(false);

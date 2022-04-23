@@ -146,7 +146,7 @@
         "Descrição EN": "Descrição EN",
 
         "Por Página": "Por Página",
-        "Grau de ensino": "Grau de ensino",
+        "Grau de ensino": "Graus de ensino",
         "Todas as Escolas": "Todas as Escolas",
         "Grupo de Utilizador": "Grupo de Utilizador",
 
@@ -202,6 +202,20 @@
         "Ohh! Não foi possível encontrar Utilizadores!": "Ohh! Não foi possível encontrar Utilizadores!",
         "Bloquear a conta do utilizador.": "Bloquear a conta do utilizador.",
         "Desbloquear a conta do utilizador.": "Desbloquear a conta do utilizador.",
-        "A carregar os utilizadores": "A carregar os utilizadores"
+        "A carregar os utilizadores": "A carregar os utilizadores",
+
+        "Unidade de Ensino": "Unidade de Ensino",
+        "Sigla": "Sigla",
+        "Grau de Ensino": "Grau de Ensino",
+        "Numero de Anos": "Numero de Anos",
+        "Atenção!": "Atenção!",
+        "Ao eliminar o curso, todos os calendários, avaliações e métodos serão também eliminados.": "Ao eliminar o curso, todos os calendários, avaliações e métodos serão também eliminados.",
+        "Tem a certeza que deseja eliminar este curso, em vez de editar?": "Tem a certeza que deseja eliminar este curso, em vez de editar?",
+        "Curso eliminado com sucesso!": "Curso eliminado com sucesso!",
+        "Ocorreu um problema ao eliminar este curso!": "Ocorreu um problema ao eliminar este curso!",
+        "Cursos": "Cursos",
+        "Pesquisar curso...": "Pesquisar curso...",
+        "Falta preencher detalhes sobre este curso.": "Falta preencher detalhes sobre este curso.",
+        "A carregar os cursos": "A carregar os cursos"
     }
 }

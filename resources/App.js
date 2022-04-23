@@ -53,17 +53,19 @@ function App() {
     const navigate = useNavigate();
     const authToken = localStorage.getItem('authToken');
     useEffect(() => {
-        if (!authToken) {
-            navigate('/login');
-        } else if (jwtDecode(authToken).exp < Date.now() / 1000) {
-            navigate('/login');
-        }
         if(authToken && window.location.pathname !== '/login') {
             axios.get('/permissions').then((res) => {
                 if (res.status === 200) {
                     localStorage.setItem('scopes', JSON.stringify(res.data));
                 }
             });
+        }
+    }, [authToken]);
+    useEffect(() => {
+        if (!authToken) {
+            navigate('/login');
+        } else if (jwtDecode(authToken).exp < Date.now() / 1000) {
+            navigate('/login');
         }
     }, [authToken, navigate]);
     return (

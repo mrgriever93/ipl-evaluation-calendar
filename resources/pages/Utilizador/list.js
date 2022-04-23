@@ -96,7 +96,7 @@ const List = () => {
                         <Form.Group>
                             <Form.Field width={7}>
                                 <label>{ t("Utilizador") }</label>
-                                <Input fluid loading={searching} placeholder={t("Pesquisar utilizador...")} onChange={_.debounce(searchUser, 900)}/>
+                                <Input icon='search' iconPosition='left' fluid loading={searching} placeholder={t("Pesquisar utilizador...")} onChange={_.debounce(searchUser, 900)}/>
                             </Form.Field>
                             <FilterOptionUserGroups widthSize={7} eventHandler={(value) => setUserGroups(value)} />
                             <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
