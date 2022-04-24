@@ -6,6 +6,7 @@ use App\Filters\CourseUnitFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CourseUnitRequest;
 use App\Http\Resources\Admin\Edit\CourseUnitEditResource;
+use App\Http\Resources\Generic\BranchSearchResource;
 use App\Http\Resources\Generic\CourseUnitResource;
 use App\Models\Calendar;
 use App\Models\Course;
@@ -109,11 +110,6 @@ class CourseUnitController extends Controller
         return new CourseUnitEditResource($courseUnit->load(['methods', 'responsibleUser']));
     }
 
-    public function branches(CourseUnit $courseUnit)
-    {
-        return response()->json($courseUnit->course->branches);
-    }
-
     /**
      * Update the specified resource in storage.
      *
@@ -123,10 +119,15 @@ class CourseUnitController extends Controller
      */
     public function update(CourseUnitRequest $request, CourseUnit $courseUnit)
     {
+        $courseUnit->fill($request->all());
+        $courseUnit->save();
+    }
+
+    public function updateTeachers(CourseUnitRequest $request, CourseUnit $courseUnit)
+    {
         if (!empty($request->responsible_user_id)) {
             $this->attachResponsibleGroupToUser($request->responsible_user_id);
         }
-        $courseUnit->fill($request->all());
         $teachersForCourseUnit = [];
         foreach ($request->teachers as $teacher) {
             $teacherUser = User::where('email', $teacher['email'])->first();
@@ -152,6 +153,24 @@ class CourseUnitController extends Controller
         $courseUnit->save();
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Request $request, CourseUnit $courseUnit)
+    {
+        $courseUnit->academicYears()->detach($request->cookie('academic_year'));
+    }
+
+
+
+    public function branches(CourseUnit $courseUnit)
+    {
+        return  BranchSearchResource::collection($courseUnit->course->branches);
+    }
+
     public function epochsForCourseUnit(CourseUnit $courseUnit)
     {
         $availableCalendarsForCourseUnit = Calendar::where('course_id', $courseUnit->course_id)->whereIn('semester', [$courseUnit->semester, 3])->get()->pluck('id');
@@ -172,17 +191,6 @@ class CourseUnitController extends Controller
         }
 
         return response()->json($courseUnit->methods);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Request $request, CourseUnit $courseUnit)
-    {
-        $courseUnit->academicYears()->detach($request->cookie('academic_year'));
     }
 
 

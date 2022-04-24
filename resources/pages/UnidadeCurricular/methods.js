@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {
     Button, Card, Container, Form, Icon, List, Progress, Header, Dimmer, Loader,
 } from 'semantic-ui-react';
-import {Form as FinalForm} from 'react-final-form';
 import axios from 'axios';
 import styled from 'styled-components';
 import {toast} from 'react-toastify';
@@ -171,12 +170,8 @@ const Methods = () => {
                         <Loader indeterminate>A carregar os métodos</Loader>
                     </Dimmer>
                 )}
-                {
-                    // eslint-disable-next-line no-nested-ternary
-                    isLoading ? null : noCalendarCreated ? (
-                        <Card.Content
-                            header="Não existem calendários criados que incluam esta unidade curricular!"
-                        />
+                { isLoading ? null : noCalendarCreated ? (
+                        <Card.Content header="Não existem calendários criados que incluam esta unidade curricular!" />
                     ) : (
                         <>
                             <Card.Content>
@@ -216,11 +211,7 @@ const Methods = () => {
 
                                         </Card.Content>
                                         <Card.Content>
-                                            <Progress
-                                                indicating
-                                                percent={methods[index]?.reduce((a, b) => a + (b?.weight || 0), 0)}
-                                                progress
-                                            >
+                                            <Progress indicating percent={methods[index]?.reduce((a, b) => a + (b?.weight || 0), 0)} progress>
                                                 Ajuste os pesos dos métodos de avaliação até resultar em 100%
                                             </Progress>
                                             {loadingMethods ? (
@@ -238,11 +229,7 @@ const Methods = () => {
                                                                             <Form>
                                                                                 <Form.Dropdown
                                                                                     label="Tipo de avaliação"
-                                                                                    options={evaluationTypes.map(({
-                                                                                                                      id,
-                                                                                                                      description,
-                                                                                                                      enabled,
-                                                                                                                  }) => (enabled ? ({
+                                                                                    options={evaluationTypes.map(({id, description, enabled}) => (enabled ? ({
                                                                                         key: id,
                                                                                         value: id,
                                                                                         text: description,
@@ -274,14 +261,7 @@ const Methods = () => {
                                                                                         return copy;
                                                                                     })}
                                                                                 />
-                                                                                <Form.Field
-                                                                                    label="Peso da avaliação (%)"
-                                                                                    type="number"
-                                                                                    control="input"
-                                                                                    step="10"
-                                                                                    min="0"
-                                                                                    max="100"
-                                                                                    value={method.weight}
+                                                                                <Form.Field label="Peso da avaliação (%)" type="number" control="input" step="10" min="0" max="100" value={method.weight}
                                                                                     onChange={(ev) => setMethods((current) => {
                                                                                         const copy = [...current];
                                                                                         copy[index][methodIndex].weight = parseInt(
@@ -293,9 +273,7 @@ const Methods = () => {
                                                                             </Form>
                                                                         </Card.Content>
                                                                         <Card.Content extra>
-                                                                            <Button icon labelPosition="left"
-                                                                                    color="red"
-                                                                                    onClick={() => removeMethod(index, methodIndex)}>
+                                                                            <Button icon labelPosition="left" color="red" onClick={() => removeMethod(index, methodIndex)}>
                                                                                 <Icon name="trash"/>
                                                                                 Remover método
                                                                             </Button>
@@ -312,15 +290,7 @@ const Methods = () => {
                                 ))}
                             </Card.Content>
                             <Card.Content extra>
-                                <Button
-                                    onClick={onSubmit}
-                                    color="green"
-                                    icon
-                                    labelPosition="left"
-                                    floated="right"
-                                    loading={isSaving}
-                                    disabled={!formValid}
-                                >
+                                <Button onClick={onSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} disabled={!formValid}>
                                     <Icon name="save"/>
                                     Guardar
                                 </Button>

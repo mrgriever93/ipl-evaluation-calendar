@@ -216,6 +216,14 @@
         "Cursos": "Cursos",
         "Pesquisar curso...": "Pesquisar curso...",
         "Falta preencher detalhes sobre este curso.": "Falta preencher detalhes sobre este curso.",
-        "A carregar os cursos": "A carregar os cursos"
+        "A carregar os cursos": "A carregar os cursos",
+
+        "A carregar os unidades curriculares": "A carregar os unidades curriculares",
+        "Falta preencher os métodos de avaliação.": "Falta preencher os métodos de avaliação.",
+        "Métodos de avaliação preenchidos.": "Métodos de avaliação preenchidos.",
+
+        "Editar": "Editar",
+        "Nova": "Nova",
+        "Professores": "Professores"
     }
 }

@@ -216,6 +216,14 @@
         "Cursos": "Courses",
         "Pesquisar curso...": "Search course...",
         "Falta preencher detalhes sobre este curso.": "Details about this course are missing.",
-        "A carregar os cursos": "Loading courses"
+        "A carregar os cursos": "Loading courses",
+
+        "A carregar os unidades curriculares": "Loading curricular units",
+        "Falta preencher os métodos de avaliação.": "The evaluation methods are missing.",
+        "Métodos de avaliação preenchidos.": "Evaluation methods are filled.",
+
+        "Editar": "Edit",
+        "Nova": "New",
+        "Professores": "Teachers"
     }
 }
