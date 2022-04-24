@@ -1,72 +1,33 @@
 import axios from 'axios';
-import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
-import {Icon, Table, Form, Button, Modal, Tab, Card, List} from 'semantic-ui-react';
+import {Table, Form, Button, Tab, Card, List} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import {successConfig, errorConfig} from '../../../utils/toastConfig';
 import {useComponentIfAuthorized} from "../../../components/ShowComponentIfAuthorized";
 import SCOPES from "../../../utils/scopesConstants";
 import Teachers from "../../../components/Filters/Teachers";
+import {useTranslation} from "react-i18next";
 
-const UnitTabTeacher = ({ courseId, isLoading }) => {
+const UnitTabTeacher = ({ unitId, isLoading }) => {
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(true);
-    const [students, setStudents] = useState([]);
-    const [openModal, setOpenModal] = useState(false);
-    const [listOfStudents, setListOfStudents] = useState([]);
-    const [studentToAdd, setStudentToAdd] = useState([]);
-    const [searchStudent, setSearchStudent] = useState(false);
-
-
-    const [teachers, setTeachers] = useState([]);
-    const [teacherList, setTeacherList] = useState([]);
-    const [methods, setMethods] = useState([]);
-    const [responsibleUser, setResponsibleUser] = useState(undefined);
-    const [loadingResponsibles, setLoadingResponsibles] = useState(false);
+    const [teacherToAdd, setTeacherToAdd] = useState();
+    const [responsibleUser, setResponsibleUser] = useState();
     const [courseUnitTeachers, setCourseUnitTeachers] = useState([]);
 
-    const loadCourseStudents = () => {
+    const loadCourseUnitTeachers = () => {
         setLoading(true);
         isLoading = true;
-        axios.get(`/courses/${courseId}/students`).then((res) => {
+        axios.get(`/course-units/${unitId}/teachers`).then((res) => {
             setLoading(false);
             isLoading = false;
-            setStudents(res.data.data);
+            setCourseUnitTeachers(res.data.data);
         });
     };
 
-
-
-    const removeStudent = (studentId) => {
-        axios.delete(`/courses/${courseId}/student/${studentId}`).then((res) => {
-            if (res.status === 200) {
-                toast('Estudante removido com sucesso do curso!', successConfig);
-            } else {
-                toast('Ocorreu um problema ao remover o estudante do curso!', errorConfig);
-            }
-        });
-    };
-
-    const searchStudents = (e, {searchQuery}) => {
-        setSearchStudent(true);
-        axios.get(`/search/students?q=${searchQuery}`).then((res) => {
-            if (res.status === 200) {
-                setListOfStudents(res.data?.map((students) => ({
-                    key: students.mail,
-                    value: students.mail,
-                    text: `${students.name} - ${students.mail}`,
-                    email: students.mail,
-                    name: students.name,
-                })));
-                setSearchStudent(false);
-            }
-        });
-    };
-
-    const addStudent = () => {
-        setOpenModal(false);
-        axios.patch(`/courses/${courseId}/student`, {
-            user_email: studentToAdd.email,
-            user_name: studentToAdd.name,
+    const addTeacher = () => {
+        axios.patch(`/course-units/${unitId}/teacher`, {
+            teacher: teacherToAdd
         }).then((res) => {
             if (res.status === 200) {
                 loadCourseStudents();
@@ -77,17 +38,21 @@ const UnitTabTeacher = ({ courseId, isLoading }) => {
         });
     };
 
-    useEffect(() => {
-        loadCourseStudents();
-    }, [courseId]);
+    const removeTeacher = (teacherId) => {
+        axios.delete(`/course-units/${unitId}/teacher/${teacherId}`).then((res) => {
+            if (res.status === 200) {
+                toast('Professor removido com sucesso da unidade curricular!', successConfig);
+            } else {
+                toast('Ocorreu um problema ao remover o professor da unidade curricular!', errorConfig);
+            }
+        });
+    };
 
     const setResponsible = () => {
-        axios.patch(`/course-units/${paramsId}/responsible`, {
-            responsible_user_name: responsibleUser?.name,
-            responsible_user_email: responsibleUser?.email,
+        axios.patch(`/course-units/${unitId}/responsible`, {
+            responsible_teacher: responsibleUser
         }).then((res) => {
             if (res.status === 200) {
-                fetchDetail();
                 toast('Guardou o responsável da UC com sucesso!', successConfig);
             } else {
                 toast('Ocorreu um erro ao guardar o responsável da UC!', errorConfig);
@@ -102,130 +67,49 @@ const UnitTabTeacher = ({ courseId, isLoading }) => {
         [SCOPES.DEFINE_COURSE_UNIT_TEACHERS],
     );
 
-    const handleSearchResponsible = (e, {searchQuery}) => {
-        setLoadingResponsibles(true);
-        axios.get(`/search/users?q=${searchQuery}`).then((res) => {
-            setLoadingResponsibles(false);
-            if (res.status === 200) {
-                setTeachers(res.data?.map(({mail, name}) => ({
-                    key: mail,
-                    value: mail,
-                    name,
-                    text: `${name} - ${mail}`,
-                })));
-            }
-        });
-    };
+    const handleSearchTeachers = (teacher) => {
+        setTeacherToAdd(teacher);
+    }
 
-    const handleSearchTeachers = (e, {searchQuery}) => {
-        axios.get(`/search/users?q=${searchQuery}`).then((res) => {
-            if (res.status === 200) {
-                setTeacherList(res.data?.map(({mail, name}) => ({
-                    key: mail,
-                    value: mail,
-                    name,
-                    text: `${name} - ${mail}`,
-                })));
-            }
-        });
-    };
+    useEffect(() => {
+        loadCourseUnitTeachers();
+    }, [unitId]);
 
     return (
-        <Tab.Pane loading={loading} key='tab_students'>
-            <Card fluid>
-                <Card.Content header={'Professores da UC'}/>
-                <Card.Content>
-                    <Form>
-                        <Teachers isSearch={false} eventHandler={(e, {value, options}) => {
-                            setResponsibleUser(
-                                {
-                                    email: value,
-                                    name: options.find((x) => x.value === value).name
-                                },
-                            );
-                        }} isDisabled={loading || !hasPermissionToDefineResponsible}/>
-                        <Form.Group widths="2">
-                            <Form.Field name="teacherList">
-                                    <Form.Dropdown
-                                        disabled={loading || !hasPermissionToDefineTeachers}
-                                        selection
-                                        options={teacherList}
-                                        onChange={(e, {value, key, options}) => {
-                                            setCourseUnitTeachers((current) => [
-                                                ...current,
-                                                {
-                                                    id: key,
-                                                    name: options.find((x) => x.value === value).name,
-                                                    email: value,
-                                                },
-                                            ]);
-                                        }}
-                                        onSearchChange={_.debounce(handleSearchTeachers, 400)}
-                                        label="Professores"
-                                        loading={loadingResponsibles}
-                                        search
-                                        placeholder="Procurar professores"
-                                    />
-                            </Form.Field>
-                        </Form.Group>
-                        {courseUnitTeachers?.length > 0 && (
-                            <Form.Field name="teacherList">
-                                <List divided verticalAlign="middle">
-                                    {courseUnitTeachers?.map(({name, email, id}, index) => (
-                                        <List.Item key={id}>
-                                            <List.Content floated="right">
-                                                <Button
-                                                    disabled={!hasPermissionToDefineTeachers}
-                                                    onClick={() => setCourseUnitTeachers((current) => {
-                                                        const copy = [...current];
-                                                        copy.splice(index, 1);
-                                                        return copy;
-                                                    })}
-                                                    color="red"
-                                                >
-                                                    Remover
-                                                </Button>
-                                            </List.Content>
-                                            <List.Content>{name + ' - ' + email}</List.Content>
-                                        </List.Item>
-                                    ))}
-                                </List>
-                            </Form.Field>
-                        )}
-                    </Form>
-                </Card.Content>
-            </Card>
-
-            {openModal && (
-                <Modal dimmer="blurring" open={openModal} onClose={() => setOpenModal(false)}>
-                    <Modal.Header>Adicionar aluno</Modal.Header>
-                    <Modal.Content>
-                        <Form>
-                            <Form.Dropdown
-                                placeholder="Procurar pelo email do aluno"
-                                label="Aluno a adicionar"
-                                search
-                                selection
-                                loading={searchStudent}
-                                options={listOfStudents}
-                                onChange={(e, {value}) => setStudentToAdd(
-                                    listOfStudents.find((x) => x.value === value),
-                                )}
-                                onSearchChange={_.debounce(searchStudents, 400)}
-                            />
-                        </Form>
-                    </Modal.Content>
-                    <Modal.Actions>
-                        <Button negative onClick={() => { setStudentToAdd(undefined);setOpenModal(false); }}>
-                            Cancelar
-                        </Button>
-                        <Button positive onClick={addStudent}>
-                            Adicionar
-                        </Button>
-                    </Modal.Actions>
-                </Modal>
-            )}
-        </Tab.Pane>
+        <Card fluid>
+            <Card.Content>
+                <Form>
+                    <Form.Group widths="2">
+                        <Teachers isSearch={false} eventHandler={(value) => handleSearchTeachers(value)} isDisabled={loading || !hasPermissionToDefineTeachers}/>
+                        <Button onClick={addTeacher} color={"green"}>Add Teacher</Button>
+                    </Form.Group>
+                </Form>
+            </Card.Content>
+            <Card.Content>
+            <Table striped color="green">
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell>Nome</Table.HeaderCell>
+                        <Table.HeaderCell>Email</Table.HeaderCell>
+                        <Table.HeaderCell>Responsavel</Table.HeaderCell>
+                        <Table.HeaderCell>Acoes</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {courseUnitTeachers?.map((teacher) => (
+                        <Table.Row>
+                            <Table.Cell>{teacher.name}</Table.Cell>
+                            <Table.Cell>{teacher.email}</Table.Cell>
+                            <Table.Cell>{teacher.isResponsable}</Table.Cell>
+                            <Table.Cell>
+                                <Button disabled={!hasPermissionToDefineTeachers} onClick={() => removeTeacher(teacher.id)} color="red">Remover</Button>
+                            </Table.Cell>
+                        </Table.Row>
+                    ))}
+                </Table.Body>
+            </Table>
+            </Card.Content>
+        </Card>
     );
 };
 

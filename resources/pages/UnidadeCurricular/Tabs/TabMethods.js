@@ -143,147 +143,142 @@ const UnitTabMethods = ({ unitId }) => {
     };
 
     return (
-        <Tab.Pane loading={false} key='tab_students'>
-
-
-            <Card fluid>
-                <Card.Content header={`Métodos de avaliação para a Unidade Curricular: ${courseUnit || ''}`}/>
-                {isLoading && (
-                    <Dimmer active inverted>
-                        <Loader indeterminate>A carregar os métodos</Loader>
-                    </Dimmer>
-                )}
-                { isLoading ? null : noCalendarCreated ? (
-                    <Card.Content header="Não existem calendários criados que incluam esta unidade curricular!" />
-                ) : (
-                    <>
-                        <Card.Content>
-                            {epochs.map((x, index) => (
-                                <Card fluid key={x.name}>
-                                    <Card.Content>
-                                        <Wrapper>
-                                            <Header as="span">{x.name}</Header>
-                                            {((methods[index] || [])?.reduce(
-                                                (a, b) => a + (b?.weight || 0), 0,
-                                            ) < 100) && (
-                                                <Button
-                                                    floated="right"
-                                                    color="green"
-                                                    onClick={() => {
-                                                        setMethods((current) => {
-                                                            const copy = [...current];
-                                                            if (!copy[index]?.length) {
-                                                                copy[index] = [];
-                                                            }
-                                                            copy[index].push({
-                                                                epoch_type_id: x.epoch_type_id,
-                                                                weight: 100 - copy[index].reduce(
-                                                                    (a, b) => a + (b?.weight || 0), 0,
-                                                                ),
-                                                                minimum: 9.5,
-                                                                evaluation_type_id: undefined,
-                                                            });
-                                                            return copy;
+        <Card fluid>
+            <Card.Content header={`Métodos de avaliação para a Unidade Curricular: ${courseUnit || ''}`}/>
+            {isLoading && (
+                <Dimmer active inverted>
+                    <Loader indeterminate>A carregar os métodos</Loader>
+                </Dimmer>
+            )}
+            { isLoading ? null : noCalendarCreated ? (
+                <Card.Content header="Não existem calendários criados que incluam esta unidade curricular!" />
+            ) : (
+                <>
+                    <Card.Content>
+                        {epochs.map((x, index) => (
+                            <Card fluid key={x.name}>
+                                <Card.Content>
+                                    <Wrapper>
+                                        <Header as="span">{x.name}</Header>
+                                        {((methods[index] || [])?.reduce(
+                                            (a, b) => a + (b?.weight || 0), 0,
+                                        ) < 100) && (
+                                            <Button
+                                                floated="right"
+                                                color="green"
+                                                onClick={() => {
+                                                    setMethods((current) => {
+                                                        const copy = [...current];
+                                                        if (!copy[index]?.length) {
+                                                            copy[index] = [];
+                                                        }
+                                                        copy[index].push({
+                                                            epoch_type_id: x.epoch_type_id,
+                                                            weight: 100 - copy[index].reduce(
+                                                                (a, b) => a + (b?.weight || 0), 0,
+                                                            ),
+                                                            minimum: 9.5,
+                                                            evaluation_type_id: undefined,
                                                         });
-                                                    }}
-                                                >
-                                                    Adicionar novo método
-                                                </Button>
-                                            )}
-                                        </Wrapper>
-
-                                    </Card.Content>
-                                    <Card.Content>
-                                        <Progress indicating percent={methods[index]?.reduce((a, b) => a + (b?.weight || 0), 0)} progress>
-                                            Ajuste os pesos dos métodos de avaliação até resultar em 100%
-                                        </Progress>
-                                        {loadingMethods ? (
-                                            <Dimmer active inverted>
-                                                <Loader indeterminate>A carregar os métodos</Loader>
-                                            </Dimmer>
-                                        ) : (
-                                            <List>
-                                                <List.Item>
-                                                    <List.Content>
-                                                        <Card.Group itemsPerRow={3}>
-                                                            {methods[index]?.map((method, methodIndex) => (
-                                                                <Card>
-                                                                    <Card.Content>
-                                                                        <Form>
-                                                                            <Form.Dropdown
-                                                                                label="Tipo de avaliação"
-                                                                                options={evaluationTypes.map(({id, description, enabled}) => (enabled ? ({
-                                                                                    key: id,
-                                                                                    value: id,
-                                                                                    text: description,
-                                                                                }) : undefined))}
-                                                                                onChange={
-                                                                                    (ev, {value}) => setMethods((current) => {
-                                                                                        const copy = [...current];
-                                                                                        copy[index][methodIndex].evaluation_type_id = value;
-                                                                                        return copy;
-                                                                                    })
-                                                                                }
-                                                                                value={method.evaluation_type_id}
-                                                                                selection
-                                                                                search
-                                                                            />
-                                                                            <Form.Field
-                                                                                label="Nota mínima"
-                                                                                type="number"
-                                                                                control="input"
-                                                                                step="0.5"
-                                                                                min="0"
-                                                                                max="20"
-                                                                                value={method.minimum}
-                                                                                onChange={(ev) => setMethods((current) => {
-                                                                                    const copy = [...current];
-                                                                                    copy[index][methodIndex].minimum = parseFloat(
-                                                                                        ev.target.value,
-                                                                                    );
-                                                                                    return copy;
-                                                                                })}
-                                                                            />
-                                                                            <Form.Field label="Peso da avaliação (%)" type="number" control="input" step="10" min="0" max="100" value={method.weight}
-                                                                                        onChange={(ev) => setMethods((current) => {
-                                                                                            const copy = [...current];
-                                                                                            copy[index][methodIndex].weight = parseInt(
-                                                                                                ev.target.value, 10,
-                                                                                            );
-                                                                                            return copy;
-                                                                                        })}
-                                                                            />
-                                                                        </Form>
-                                                                    </Card.Content>
-                                                                    <Card.Content extra>
-                                                                        <Button icon labelPosition="left" color="red" onClick={() => removeMethod(index, methodIndex)}>
-                                                                            <Icon name="trash"/>
-                                                                            Remover método
-                                                                        </Button>
-                                                                    </Card.Content>
-                                                                </Card>
-                                                            ))}
-                                                        </Card.Group>
-                                                    </List.Content>
-                                                </List.Item>
-                                            </List>
+                                                        return copy;
+                                                    });
+                                                }}
+                                            >
+                                                Adicionar novo método
+                                            </Button>
                                         )}
-                                    </Card.Content>
-                                </Card>
-                            ))}
-                        </Card.Content>
-                        <Card.Content extra>
-                            <Button onClick={onSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} disabled={!formValid}>
-                                <Icon name="save"/>
-                                Guardar
-                            </Button>
-                        </Card.Content>
-                    </>
-                )
-                }
-            </Card>
+                                    </Wrapper>
 
-        </Tab.Pane>
+                                </Card.Content>
+                                <Card.Content>
+                                    <Progress indicating percent={methods[index]?.reduce((a, b) => a + (b?.weight || 0), 0)} progress>
+                                        Ajuste os pesos dos métodos de avaliação até resultar em 100%
+                                    </Progress>
+                                    {loadingMethods ? (
+                                        <Dimmer active inverted>
+                                            <Loader indeterminate>A carregar os métodos</Loader>
+                                        </Dimmer>
+                                    ) : (
+                                        <List>
+                                            <List.Item>
+                                                <List.Content>
+                                                    <Card.Group itemsPerRow={3}>
+                                                        {methods[index]?.map((method, methodIndex) => (
+                                                            <Card>
+                                                                <Card.Content>
+                                                                    <Form>
+                                                                        <Form.Dropdown
+                                                                            label="Tipo de avaliação"
+                                                                            options={evaluationTypes.map(({id, description, enabled}) => (enabled ? ({
+                                                                                key: id,
+                                                                                value: id,
+                                                                                text: description,
+                                                                            }) : undefined))}
+                                                                            onChange={
+                                                                                (ev, {value}) => setMethods((current) => {
+                                                                                    const copy = [...current];
+                                                                                    copy[index][methodIndex].evaluation_type_id = value;
+                                                                                    return copy;
+                                                                                })
+                                                                            }
+                                                                            value={method.evaluation_type_id}
+                                                                            selection
+                                                                            search
+                                                                        />
+                                                                        <Form.Field
+                                                                            label="Nota mínima"
+                                                                            type="number"
+                                                                            control="input"
+                                                                            step="0.5"
+                                                                            min="0"
+                                                                            max="20"
+                                                                            value={method.minimum}
+                                                                            onChange={(ev) => setMethods((current) => {
+                                                                                const copy = [...current];
+                                                                                copy[index][methodIndex].minimum = parseFloat(
+                                                                                    ev.target.value,
+                                                                                );
+                                                                                return copy;
+                                                                            })}
+                                                                        />
+                                                                        <Form.Field label="Peso da avaliação (%)" type="number" control="input" step="10" min="0" max="100" value={method.weight}
+                                                                                    onChange={(ev) => setMethods((current) => {
+                                                                                        const copy = [...current];
+                                                                                        copy[index][methodIndex].weight = parseInt(
+                                                                                            ev.target.value, 10,
+                                                                                        );
+                                                                                        return copy;
+                                                                                    })}
+                                                                        />
+                                                                    </Form>
+                                                                </Card.Content>
+                                                                <Card.Content extra>
+                                                                    <Button icon labelPosition="left" color="red" onClick={() => removeMethod(index, methodIndex)}>
+                                                                        <Icon name="trash"/>
+                                                                        Remover método
+                                                                    </Button>
+                                                                </Card.Content>
+                                                            </Card>
+                                                        ))}
+                                                    </Card.Group>
+                                                </List.Content>
+                                            </List.Item>
+                                        </List>
+                                    )}
+                                </Card.Content>
+                            </Card>
+                        ))}
+                    </Card.Content>
+                    <Card.Content extra>
+                        <Button onClick={onSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} disabled={!formValid}>
+                            <Icon name="save"/>
+                            Guardar
+                        </Button>
+                    </Card.Content>
+                </>
+            )
+            }
+        </Card>
     )
 };
 

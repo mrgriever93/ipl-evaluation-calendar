@@ -22,10 +22,7 @@ class CourseUnitEditResource extends JsonResource
             'course'            => $this->course_id,
             'branch'            => $this->branch_id,
             "responsible"       => $this->responsible_user_id,
-            "course_unit_group" => $this->course_unit_group_id,
-
-            "teachers"  => UserResource::collection($this->teachers),
-            "methods"   => MethodResource::collection($this->whenLoaded('methods'))
+            "course_unit_group" => $this->course_unit_group_id
         ];
     }
 }

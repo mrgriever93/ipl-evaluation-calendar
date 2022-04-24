@@ -6,13 +6,17 @@ use App\Filters\CourseUnitFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CourseUnitRequest;
 use App\Http\Resources\Admin\Edit\CourseUnitEditResource;
+use App\Http\Resources\Admin\LogsResource;
 use App\Http\Resources\Generic\BranchSearchResource;
 use App\Http\Resources\Generic\CourseUnitResource;
+use App\Http\Resources\Generic\TeacherResource;
+use App\Http\Resources\MethodResource;
 use App\Models\Calendar;
 use App\Models\Course;
 use App\Models\CourseUnit;
 use App\Models\Epoch;
 use App\Models\Group;
+use App\Models\UnitLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -23,7 +27,6 @@ class CourseUnitController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index(Request $request, CourseUnitFilters $filters)
     {
@@ -83,8 +86,6 @@ class CourseUnitController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
      */
     public function store(CourseUnitRequest $request)
     {
@@ -94,6 +95,11 @@ class CourseUnitController extends Controller
 
         $newCourseUnit = new CourseUnit($request->all());
         $newCourseUnit->save();
+        UnitLog::create([
+            "course_unit_id"    => $newCourseUnit->id,
+            "user_id"           => Auth::id(),
+            "description"       => "Unidade curricular criada por '" . Auth::user()->name . "'."
+        ]);
 
         return response()->json("Created!", Response::HTTP_CREATED);
     }
@@ -102,8 +108,6 @@ class CourseUnitController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
-     * @return \Illuminate\Http\Response
      */
     public function show(CourseUnit $courseUnit)
     {
@@ -113,15 +117,27 @@ class CourseUnitController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param CourseUnit $courseUnit
-     * @return \Illuminate\Http\Response
      */
     public function update(CourseUnitRequest $request, CourseUnit $courseUnit)
     {
         $courseUnit->fill($request->all());
         $courseUnit->save();
+        UnitLog::create([
+            "course_unit_id"    => $courseUnit->id,
+            "user_id"           => Auth::id(),
+            "description"       => "Unidade curricular atualizada por '" . Auth::user()->name . "'."
+        ]);
     }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     */
+    public function destroy(Request $request, CourseUnit $courseUnit)
+    {
+        $courseUnit->academicYears()->detach($request->cookie('academic_year'));
+    }
+
 
     public function updateTeachers(CourseUnitRequest $request, CourseUnit $courseUnit)
     {
@@ -151,24 +167,51 @@ class CourseUnitController extends Controller
         }
         $courseUnit->teachers()->sync($teachersForCourseUnit, true);
         $courseUnit->save();
+        UnitLog::create([
+            "course_unit_id"    => $courseUnit->id,
+            "user_id"           => Auth::id(),
+            "description"       => "Professores alterados nesta Unidade curricular por '" . Auth::user()->name . "'."
+        ]);
     }
+
+    /******************************************
+     *             RELATIONS CALLS
+     *  - Branches
+     *  - Teachers
+     *  - Methods
+     *  - Logs
+     ******************************************/
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * List branches for the COURSE of the unit
      */
-    public function destroy(Request $request, CourseUnit $courseUnit)
-    {
-        $courseUnit->academicYears()->detach($request->cookie('academic_year'));
-    }
-
-
-
     public function branches(CourseUnit $courseUnit)
     {
         return  BranchSearchResource::collection($courseUnit->course->branches);
+    }
+
+    /**
+     * List teachers associated to the unit
+     */
+    public function teachers(CourseUnit $courseUnit)
+    {
+        return  TeacherResource::collection($courseUnit->teachers);
+    }
+
+    /**
+     * List methods associated to the unit
+     */
+    public function methods(CourseUnit $courseUnit)
+    {
+        return  MethodResource::collection($courseUnit->methods);
+    }
+
+    /**
+     * List logs associated to the unit
+     */
+    public function logs(CourseUnit $courseUnit)
+    {
+        return  LogsResource::collection($courseUnit->log);
     }
 
     public function epochsForCourseUnit(CourseUnit $courseUnit)
@@ -193,7 +236,6 @@ class CourseUnitController extends Controller
         return response()->json($courseUnit->methods);
     }
 
-
     private function attachResponsibleGroupToUser($responsible_user_id)
     {
         $user = User::find($responsible_user_id);
@@ -214,6 +256,11 @@ class CourseUnitController extends Controller
         } else {
             $courseUnit->responsibleUser()->associate(null);
         }
+        UnitLog::create([
+            "course_unit_id"    => $courseUnit->id,
+            "user_id"           => Auth::id(),
+            "description"       => "Professor responsavel por esta Unidade curricular alterado por '" . Auth::user()->name . "'."
+        ]);
     }
 
     public function assignResponsible(Request $request, CourseUnit $courseUnit)

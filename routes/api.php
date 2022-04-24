@@ -195,10 +195,16 @@ Route::middleware('auth:api')->group(function () {
     Route::controller(CourseUnitController::class)->group(function () {
         Route::get('/course-units',                           'index'               );
         Route::get('/course-units/{courseUnit}',              'show'                );
-        Route::get('/course-units/{courseUnit}/branches',     'branches'            );
         Route::post('/course-units',                          'store'               );
         Route::patch('/course-units/{courseUnit}',            'update'              );
         Route::delete('/course-units/{courseUnit}',           'destroy'             );
+
+        // Relations of course units
+        Route::get('/course-units/{courseUnit}/branches',     'branches'            );
+        Route::get('/course-units/{courseUnit}/teachers',     'teachers'            );
+        Route::get('/course-units/{courseUnit}/methods',      'methods'             );
+        Route::get('/course-units/{courseUnit}/logs',         'logs'                );
+
         Route::get('/course-units/{courseUnit}/epochs',       'epochsForCourseUnit' );
         Route::get('/course-units/{courseUnit}/methods',      'methodsForCourseUnit');
         Route::patch('/course-units/{courseUnit}/responsible','assignResponsible'   );

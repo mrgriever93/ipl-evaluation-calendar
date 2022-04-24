@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Generic;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,7 +14,6 @@ class UserResource extends JsonResource
             'name'   => $this->name,
             'enabled' => $this->enabled,
             'groups' => GroupsResource::collection($this->whenLoaded('groups'))
-
         ];
     }
 }
