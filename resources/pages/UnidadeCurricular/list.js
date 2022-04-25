@@ -62,6 +62,7 @@ const CourseUnitsList = () => {
     }
 
     const remove = (courseUnit) => {
+
         setModalInfo(courseUnit);
         setModalOpen(true);
     };
@@ -152,7 +153,7 @@ const CourseUnitsList = () => {
                                                     </Link>
                                                 </ShowComponentIfAuthorized>
                                                 <ShowComponentIfAuthorized permission={[SCOPES.DELETE_COURSE_UNITS]}>
-                                                    <Button color="red" icon="trash" onClick={() => remove({id, course: course_description})} />
+                                                    <Button color="red" icon="trash" onClick={() => remove({id, course: course_description, unit: name})} />
                                                 </ShowComponentIfAuthorized>
                                             </Table.Cell>
                                         </Table.Row>
@@ -174,7 +175,7 @@ const CourseUnitsList = () => {
             <Modal dimmer="blurring" open={modalOpen} onClose={handleModalClose}>
                 <Modal.Header>{ t("Remover Unidade Curricular") }</Modal.Header>
                 <Modal.Content>
-                    { t("Tem a certeza que deseja remover a Unidade Curricular") } {modalInfo?.course}?
+                    { t("Tem a certeza que deseja remover a Unidade Curricular") } <b>{modalInfo?.course}</b> - <b>{modalInfo?.unit}</b>?
                 </Modal.Content>
                 <Modal.Actions>
                     <Button negative onClick={handleModalClose}>{ t("Cancelar") }</Button>
