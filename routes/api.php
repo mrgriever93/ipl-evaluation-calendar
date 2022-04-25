@@ -57,16 +57,18 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::controller(CalendarController::class)->group(function () {
-        Route::get('/calendar',                            'index'            );
-        Route::get('/calendar/{calendar}',                 'show'             );
-        Route::post('/calendar',                           'store'            );
-        Route::patch('/calendar/{calendar}',               'update'           );
-        Route::delete('/calendar/{calendar}',              'destroy'          );
+        Route::get('/calendar',                             'index'            );
+        Route::get('/calendar/{calendar}',                  'show'             );
+        Route::post('/calendar',                            'store'            );
+        Route::patch('/calendar/{calendar}',                'update'           );
+        Route::delete('/calendar/{calendar}',               'destroy'          );
 
         /* Previous Methods */
-        Route::get('/available-methods/{calendar}',        'getAvailableMethods'  );
-        Route::get('/semesters',                           'listSemesters'        );
-        Route::post('/calendar/{calendar}/publish',        'publish'              );
+        Route::get('/available-methods/{calendar}',         'getAvailableMethods'  );
+        Route::get('/semesters',                            'listSemesters'        );
+        Route::get('/semesters/new-calendar',               'calendarSemesters'    );
+
+        Route::post('/calendar/{calendar}/publish',         'publish'              );
     });
 
     Route::controller(EvaluationTypeController::class)->group(function () {

@@ -12,8 +12,8 @@ use App\Http\Requests\PublishCalendarRequest;
 use App\Http\Requests\UpdateCalendarRequest;
 use App\Http\Resources\AvailableCourseUnitsResource;
 use App\Http\Resources\CalendarResource;
+use App\Http\Resources\Generic\Calendar_SemesterResource;
 use App\Http\Resources\Generic\SemestersSearchResource;
-use App\Http\Resources\SemesterResource;
 use App\Models\Calendar;
 use App\Models\CalendarPhase;
 use App\Models\Course;
@@ -22,6 +22,7 @@ use App\Models\Epoch;
 use App\Models\Interruption;
 use App\Models\InterruptionType;
 use App\Models\Semester;
+use App\Services\ExternalImports;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -71,7 +72,8 @@ class CalendarController extends Controller
                 $newInterruption = new Interruption($interruption);
                 $newInterruption->calendar_id = $newCalendar->id;
                 if (empty($interruption->description)) {
-                    $newInterruption->description = InterruptionType::find($interruption['interruption_type_id'])->description;
+                    $newInterruption->description_pt = InterruptionType::find($interruption['interruption_type_id'])->name_pt;
+                    $newInterruption->description_en = InterruptionType::find($interruption['interruption_type_id'])->name_en;
                 }
                 $newInterruption->save();
             }
@@ -80,7 +82,7 @@ class CalendarController extends Controller
                 $yearOfFirstDay = Carbon::parse($newCalendar->firstDayOfSchool())->year;
                 $yearOfLastDay = Carbon::parse($newCalendar->lastDayOfSchool())->year;
                 do {
-                    Interruption::importYearHolidays($yearOfFirstDay, $newCalendar->id);
+                    ExternalImports::importYearHolidays($yearOfFirstDay, $newCalendar->id);
                 } while ($yearOfFirstDay++ < $yearOfLastDay);
             }
         }
@@ -222,4 +224,10 @@ class CalendarController extends Controller
         }
         return SemestersSearchResource::collection(Semester::where("special", 0)->get());
     }
+
+    public function calendarSemesters(Request $request)
+    {
+        return Calendar_SemesterResource::collection(Semester::all());
+    }
+
 }

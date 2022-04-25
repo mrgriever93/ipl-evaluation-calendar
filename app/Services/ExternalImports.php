@@ -30,8 +30,9 @@ class ExternalImports
             $newInterruption = new Interruption();
             $newInterruption->start_date            = $holiday->Date;
             $newInterruption->end_date              = $holiday->Date;
-            $newInterruption->description           = $holiday->Name;
-            $newInterruption->interruption_type_id  = InterruptionType::where('name', InterruptionTypesEnum::HOLIDAYS)->first()->id;
+            $newInterruption->description_pt        = $holiday->Name;
+            $newInterruption->description_en        = $holiday->Name;
+            $newInterruption->interruption_type_id  = InterruptionType::where('name_pt', InterruptionTypesEnum::HOLIDAYS)->first()->id;
             $newInterruption->calendar_id           = $calendarId;
             $newInterruption->save();
         }
