@@ -78,7 +78,7 @@ const New = () => {
 
     return (
         <Container>
-            <div className="margin-bottom-s margin-top-base">
+            <div className="margin-bottom-s">
                 <Link to="/unidade-curricular"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
             <FinalForm onSubmit={onSubmit} initialValues={initialValues} render={({handleSubmit}) => (
@@ -124,7 +124,6 @@ const New = () => {
                                     )}
                                 </Field>
                             </Form.Group>
-                            <Divider />
                             <Form.Group widths="3">
                                 <Field name="curricularYear">
                                     {({input: curricularYearInput}) => (

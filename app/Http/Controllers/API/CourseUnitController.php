@@ -235,14 +235,10 @@ class CourseUnitController extends Controller
 
     public function epochsForCourseUnit(CourseUnit $courseUnit)
     {
-        $availableCalendarsForCourseUnit = Calendar::where('course_id', $courseUnit->course_id)->whereIn('semester', [$courseUnit->semester, 3])->get()->pluck('id');
+        $availableCalendarsForCourseUnit = Calendar::where('course_id', $courseUnit->course_id)->whereIn('semester', [$courseUnit->semester, 3])->modelKeys();// get()->pluck('id');
         $epochs = Epoch::whereIn('calendar_id', $availableCalendarsForCourseUnit)->groupBy(['epoch_type_id', 'name'])->get(['epoch_type_id', 'name']);
 
-        return response()->json([
-            "courseUnit" => $courseUnit->name,
-            "courseUnitGroup" => $courseUnit->group ? $courseUnit->group->description : null,
-            "epochs" => $epochs
-        ]);
+        return response()->json($epochs);
     }
 
     public function methodsForCourseUnit(CourseUnit $courseUnit)
