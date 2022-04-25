@@ -12,7 +12,7 @@ class TeacherResource extends JsonResource
             'id'                => $this->id,
             'email'             => $this->email,
             'name'              => $this->name,
-            'is_responsible'    => false//$this->enabled,
+            'is_responsible'    => $this->isResponsible,
         ];
     }
 }

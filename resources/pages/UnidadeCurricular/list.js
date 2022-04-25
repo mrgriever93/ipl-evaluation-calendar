@@ -133,7 +133,7 @@ const CourseUnitsList = () => {
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
-                                    {courseUnits.map(({id, name, course_description, methods, branch, group_name}) => (
+                                    {courseUnits.map(({id, name, code, methods, branch_label, group_name, course_description}) => (
                                         <Table.Row key={id}>
                                             <Table.Cell>
                                                 { methods?.length > 0 ? (
@@ -141,9 +141,9 @@ const CourseUnitsList = () => {
                                                 ) : (
                                                     <Popup trigger={<Icon name='close' />} content={t('Falta preencher os métodos de avaliação.')} position='top center'/>
                                                 )}
-                                                {course_description} - {name}
+                                                ({code}) - {name}
                                             </Table.Cell>
-                                            <Table.Cell>{branch?.name}</Table.Cell>
+                                            <Table.Cell>{branch_label}</Table.Cell>
                                             <Table.Cell>{group_name || '-'}</Table.Cell>
                                             <Table.Cell>
                                                 <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]}>

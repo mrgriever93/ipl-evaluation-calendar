@@ -34,14 +34,14 @@ const UnitTabLogs = ({ unitId, isLoading }) => {
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Description</Table.HeaderCell>
-                        <Table.HeaderCell style={{width: '15%'}}>Date</Table.HeaderCell>
+                        <Table.HeaderCell style={{width: '15%'}} textAlign={"right"}>Date</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
                     {logs?.map((log) => (
                         <Table.Row>
                             <Table.Cell>{log.description}</Table.Cell>
-                            <Table.Cell>{moment(log.created).fromNow()}</Table.Cell>
+                            <Table.Cell textAlign={"right"}>{moment(log.created).fromNow()}</Table.Cell>
                         </Table.Row>
                     ))}
                 </Table.Body>

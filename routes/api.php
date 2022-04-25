@@ -193,21 +193,26 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::controller(CourseUnitController::class)->group(function () {
-        Route::get('/course-units',                           'index'               );
-        Route::get('/course-units/{courseUnit}',              'show'                );
-        Route::post('/course-units',                          'store'               );
-        Route::patch('/course-units/{courseUnit}',            'update'              );
-        Route::delete('/course-units/{courseUnit}',           'destroy'             );
+        Route::get('/course-units',                                     'index'               );
+        Route::get('/course-units/{courseUnit}',                        'show'                );
+        Route::post('/course-units',                                    'store'               );
+        Route::patch('/course-units/{courseUnit}',                      'update'              );
+        Route::delete('/course-units/{courseUnit}',                     'destroy'             );
 
         // Relations of course units
-        Route::get('/course-units/{courseUnit}/branches',     'branches'            );
-        Route::get('/course-units/{courseUnit}/teachers',     'teachers'            );
-        Route::get('/course-units/{courseUnit}/methods',      'methods'             );
-        Route::get('/course-units/{courseUnit}/logs',         'logs'                );
+        Route::get('/course-units/{courseUnit}/branches',               'branches'            );
+        // relations with teachers
+        Route::get('/course-units/{courseUnit}/teachers',               'teachers'            );
+        Route::post('/course-units/{courseUnit}/teacher',               'addTeacher'          );
+        Route::delete('/course-units/{courseUnit}/teacher/{teacherId}', 'removeTeacher'       );
+        // methods for the course unit
+        Route::get('/course-units/{courseUnit}/methods',                'methods'             );
+        // get all logs for this course unit
+        Route::get('/course-units/{courseUnit}/logs',                   'logs'                );
 
-        Route::get('/course-units/{courseUnit}/epochs',       'epochsForCourseUnit' );
-        Route::get('/course-units/{courseUnit}/methods',      'methodsForCourseUnit');
-        Route::patch('/course-units/{courseUnit}/responsible','assignResponsible'   );
+        Route::get('/course-units/{courseUnit}/epochs',                 'epochsForCourseUnit' );
+        Route::get('/course-units/{courseUnit}/methods',                'methodsForCourseUnit');
+        Route::patch('/course-units/{courseUnit}/responsible',          'assignResponsible'   );
     });
 
     Route::controller(CourseUnitGroupController::class)->group(function () {

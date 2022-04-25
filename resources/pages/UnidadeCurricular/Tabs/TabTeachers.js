@@ -1,71 +1,74 @@
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
-import {Table, Form, Button, Tab, Card, List} from 'semantic-ui-react';
+import {Table, Form, Button, Card, Checkbox, Dimmer, Loader} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import {successConfig, errorConfig} from '../../../utils/toastConfig';
-import {useComponentIfAuthorized} from "../../../components/ShowComponentIfAuthorized";
+import ShowComponentIfAuthorized from "../../../components/ShowComponentIfAuthorized";
 import SCOPES from "../../../utils/scopesConstants";
 import Teachers from "../../../components/Filters/Teachers";
 import {useTranslation} from "react-i18next";
+import EmptyTable from "../../../components/EmptyTable";
 
 const UnitTabTeacher = ({ unitId, isLoading }) => {
     const { t } = useTranslation();
     const [loading, setLoading] = useState(true);
+    const [contentLoading, setContentLoading] = useState(true);
     const [teacherToAdd, setTeacherToAdd] = useState();
-    const [responsibleUser, setResponsibleUser] = useState();
     const [courseUnitTeachers, setCourseUnitTeachers] = useState([]);
 
     const loadCourseUnitTeachers = () => {
-        setLoading(true);
+        setContentLoading(true);
         isLoading = true;
         axios.get(`/course-units/${unitId}/teachers`).then((res) => {
             setLoading(false);
+            setContentLoading(false);
             isLoading = false;
             setCourseUnitTeachers(res.data.data);
         });
     };
 
     const addTeacher = () => {
-        axios.patch(`/course-units/${unitId}/teacher`, {
-            teacher: teacherToAdd
+        setContentLoading(true);
+        axios.post(`/course-units/${unitId}/teacher`, {
+            teacher: teacherToAdd,
         }).then((res) => {
             if (res.status === 200) {
-                loadCourseStudents();
-                toast('Aluno adicionado com sucesso!', successConfig);
+                loadCourseUnitTeachers();
+                toast('Professor adicionado com sucesso!', successConfig);
             } else {
-                toast('Ocorreu um erro ao adicionar o aluno!', errorConfig);
+                setContentLoading(false);
+                toast('Ocorreu um erro ao adicionar o professor!', errorConfig);
             }
         });
     };
 
     const removeTeacher = (teacherId) => {
+        setContentLoading(true);
         axios.delete(`/course-units/${unitId}/teacher/${teacherId}`).then((res) => {
             if (res.status === 200) {
+                loadCourseUnitTeachers();
                 toast('Professor removido com sucesso da unidade curricular!', successConfig);
             } else {
+                setContentLoading(false);
                 toast('Ocorreu um problema ao remover o professor da unidade curricular!', errorConfig);
             }
         });
     };
 
-    const setResponsible = () => {
+    const setResponsible = (teacherId) => {
+        setContentLoading(true);
         axios.patch(`/course-units/${unitId}/responsible`, {
-            responsible_teacher: responsibleUser
+            responsible_teacher: teacherId
         }).then((res) => {
             if (res.status === 200) {
+                loadCourseUnitTeachers();
                 toast('Guardou o responsável da UC com sucesso!', successConfig);
             } else {
+                setContentLoading(false);
                 toast('Ocorreu um erro ao guardar o responsável da UC!', errorConfig);
             }
         });
     };
-
-    const hasPermissionToDefineResponsible = useComponentIfAuthorized(
-        [SCOPES.DEFINE_COURSE_UNIT_RESPONSIBLE],
-    );
-    const hasPermissionToDefineTeachers = useComponentIfAuthorized(
-        [SCOPES.DEFINE_COURSE_UNIT_TEACHERS],
-    );
 
     const handleSearchTeachers = (teacher) => {
         setTeacherToAdd(teacher);
@@ -76,40 +79,61 @@ const UnitTabTeacher = ({ unitId, isLoading }) => {
     }, [unitId]);
 
     return (
-        <Card fluid>
-            <Card.Content>
+        <div>
+            <ShowComponentIfAuthorized permission={[SCOPES.DEFINE_COURSE_UNIT_TEACHERS]}>
                 <Form>
                     <Form.Group widths="2">
-                        <Teachers isSearch={false} eventHandler={(value) => handleSearchTeachers(value)} isDisabled={loading || !hasPermissionToDefineTeachers}/>
-                        <Button onClick={addTeacher} color={"green"}>Add Teacher</Button>
+                        <Teachers isSearch={false} eventHandler={(value) => handleSearchTeachers(value)} isDisabled={loading}/>
+                        <Form.Field className={"align-bottom"}>
+                            <Button onClick={addTeacher} color={"green"}>Add Teacher</Button>
+                        </Form.Field>
                     </Form.Group>
                 </Form>
-            </Card.Content>
-            <Card.Content>
-            <Table striped color="green">
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Nome</Table.HeaderCell>
-                        <Table.HeaderCell>Email</Table.HeaderCell>
-                        <Table.HeaderCell>Responsavel</Table.HeaderCell>
-                        <Table.HeaderCell>Acoes</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                    {courseUnitTeachers?.map((teacher) => (
+            </ShowComponentIfAuthorized>
+            { courseUnitTeachers.length < 1 || loading ? (
+                <EmptyTable isLoading={loading} label={t("Ohh! Não foi possível encontrar professores para esta Unidades Curriculares!")}/>
+            ) : (
+                <Table striped color="green">
+                    <Table.Header>
                         <Table.Row>
-                            <Table.Cell>{teacher.name}</Table.Cell>
-                            <Table.Cell>{teacher.email}</Table.Cell>
-                            <Table.Cell>{teacher.isResponsable}</Table.Cell>
-                            <Table.Cell>
-                                <Button disabled={!hasPermissionToDefineTeachers} onClick={() => removeTeacher(teacher.id)} color="red">Remover</Button>
-                            </Table.Cell>
+                            <Table.HeaderCell>{ t('Nome') }</Table.HeaderCell>
+                            <Table.HeaderCell>{ t('Email') }</Table.HeaderCell>
+                            <ShowComponentIfAuthorized permission={[SCOPES.DEFINE_COURSE_UNIT_RESPONSIBLE]}>
+                                <Table.HeaderCell style={{width: '15%'}} textAlign={"center"}>{ t('Responsável') }</Table.HeaderCell>
+                            </ShowComponentIfAuthorized>
+                            <ShowComponentIfAuthorized permission={[SCOPES.DEFINE_COURSE_UNIT_TEACHERS]}>
+                                <Table.HeaderCell style={{width: '15%'}} textAlign={"center"}>{ t('Ações') }</Table.HeaderCell>
+                            </ShowComponentIfAuthorized>
                         </Table.Row>
-                    ))}
-                </Table.Body>
-            </Table>
-            </Card.Content>
-        </Card>
+                    </Table.Header>
+                    <Table.Body>
+                        {courseUnitTeachers?.map((teacher) => (
+                            <Table.Row>
+                                <Table.Cell>{teacher.name}</Table.Cell>
+                                <Table.Cell>{teacher.email}</Table.Cell>
+                                <ShowComponentIfAuthorized permission={[SCOPES.DEFINE_COURSE_UNIT_RESPONSIBLE]}>
+                                    <Table.Cell style={{width: '15%'}} textAlign={"center"}>
+                                            <Checkbox toggle disabled={teacher.is_responsible}  checked={teacher.is_responsible} onChange={() => setResponsible(teacher.id)} />
+                                    </Table.Cell>
+                                </ShowComponentIfAuthorized>
+                                <ShowComponentIfAuthorized permission={[SCOPES.DEFINE_COURSE_UNIT_TEACHERS]}>
+                                    <Table.Cell style={{width: '15%'}} textAlign={"center"}>
+                                        <Button disabled={teacher.is_responsible} onClick={() => removeTeacher(teacher.id)} color="red" icon="trash" />
+                                    </Table.Cell>
+                                </ShowComponentIfAuthorized>
+                            </Table.Row>
+                        ))}
+                    </Table.Body>
+                </Table>
+            )}
+            {contentLoading && (
+                <Dimmer active inverted>
+                    <Loader indeterminate>
+                        { t("A carregar os dados") }
+                    </Loader>
+                </Dimmer>
+            )}
+        </div>
     );
 };
 
