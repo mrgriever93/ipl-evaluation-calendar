@@ -58,8 +58,17 @@ body {
     z-index: 10;
 }
 
+.display-flex {
+    display: flex;
+}
+.display-block {
+    display: block;
+}
 .display-inline {
     display: inline;
+}
+.display-none {
+    display: none;
 }
 
 .footer.ui.inverted.vertical.segment{

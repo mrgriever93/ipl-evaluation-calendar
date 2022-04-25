@@ -1,12 +1,21 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Field, useField} from 'react-final-form';
 import {DateInput} from 'semantic-ui-calendar-react-yz';
 import {Grid, Button, Card, Form} from 'semantic-ui-react';
+import axios from "axios";
 
-const Step1 = ({semesterList, setActiveSemester, activeSemester}) => {
+const Step1 = ({setActiveSemester, activeSemester}) => {
     const { input: seasons } = useField('step1.seasons');
     const clearSeasons = () => seasons.onChange(null);
+    const [semesterList, setSemesterList] = useState([]);
 
+    useEffect(() => {
+        axios.get('/semesters/new-calendar').then((response) => {
+            if (response.status >= 200 && response.status < 300) {
+                setSemesterList(response.data.data);
+            }
+        });
+    }, []);
     return (
         <Grid padded>
             <Grid.Row>
@@ -18,9 +27,7 @@ const Step1 = ({semesterList, setActiveSemester, activeSemester}) => {
                                     <Button positive={activeSemester === index} key={'step1_button_' + index}
                                         onClick={() => {
                                             clearSeasons();
-                                            semesterInput.onChange(
-                                                index + 1,
-                                            );
+                                            semesterInput.onChange(index + 1);
                                             setActiveSemester(index);
                                         }}>
                                         {semester.name}
@@ -44,31 +51,12 @@ const Step1 = ({semesterList, setActiveSemester, activeSemester}) => {
                                                 <Card.Content header={epoch.name}/>
                                                 <Card.Content>
                                                     <Form.Field>
-                                                        <DateInput name="date" iconPosition="left" label="Data de Ínicio"
-                                                                   placeholder="Data de Ínicio" value={ startDateInput.value }
-                                                                   {...startDateInput} closable
-                                                                    onChange={(evt, {value},) => {
-                                                                        startDateInput.onChange(
-                                                                            value,
-                                                                        );
-                                                                    }}
-                                                        />
+                                                        <DateInput name="date" iconPosition="left" label="Data de Ínicio" placeholder="Data de Ínicio" value={ startDateInput.value }{...startDateInput} closable onChange={(evt, {value}) => {startDateInput.onChange(value);}}/>
                                                     </Form.Field>
                                                 </Card.Content>
                                                 <Card.Content>
                                                     <Form.Field>
-                                                        <DateInput name="date" placeholder="Data de Fim"
-                                                            iconPosition="left" label="Data de Fim" closable
-                                                            {...endDateInput}
-                                                            value={
-                                                                endDateInput.value
-                                                            }
-                                                            onChange={(evt, {value},) => {
-                                                                endDateInput.onChange(
-                                                                    value,
-                                                                );
-                                                            }}
-                                                        />
+                                                        <DateInput name="date" placeholder="Data de Fim" iconPosition="left" label="Data de Fim" closable{...endDateInput} value={endDateInput.value} onChange={(evt, {value}) => {endDateInput.onChange(value);}}/>
                                                     </Form.Field>
                                                 </Card.Content>
                                             </Card>
