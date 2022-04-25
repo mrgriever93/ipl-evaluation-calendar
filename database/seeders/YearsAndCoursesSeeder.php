@@ -112,92 +112,20 @@ class YearsAndCoursesSeeder extends Seeder
             $newCourse->save();
 
             $newCourse->academicYears()->attach($year2122_id);
+
+            $branch = ["course_id" => $newCourse->id, "name_pt" => "Tronco Comum", "name_en" => "Common Branch", "initials_pt" => "TComum", "initials_en" => "CommonB" ];
+            $newBranch = new Branch($branch);
+            $newBranch->save();
         }
 
-
-        $branches = [
-            ["couse_id" => 1,   "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 2,   "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 3,   "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 4,   "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 5,   "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 6,   "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 7,   "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 8,   "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 9,   "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 10,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 11,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 12,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 13,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 14,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 15,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 16,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 17,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 18,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 19,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 20,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 21,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 22,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 23,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 24,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 25,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 26,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 27,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 28,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 29,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 30,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 31,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 32,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 33,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 34,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 35,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 36,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 37,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 38,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 39,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 40,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 41,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 42,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 43,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 44,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 45,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 46,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 47,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 48,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 49,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 50,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 51,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 52,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 53,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 54,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 55,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 56,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 57,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 58,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 59,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 60,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 61,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 62,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 63,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 64,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 65,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 66,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 67,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 68,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 69,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 70,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 71,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 72,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 73,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 74,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 75,  "name_pt" => "Tronco Comum",                "name_en" => "Common Branch",           "initials_pt" => "TComum",      "initials_en" => "CommonB" ],
-            ["couse_id" => 61,  "name_pt" => "Sistemas de Informação",      "name_en" => "Information Systems",     "initials_pt" => "SI",          "initials_en" => "IS",     ],
-            ["couse_id" => 61,  "name_pt" => "Tecnologias de Informação",   "name_en" => "Information technology",  "initials_pt" => "TI",          "initials_en" => "IT",     ],
-            ["couse_id" => 71,  "name_pt" => "Sistemas de Informação",      "name_en" => "Information Systems",     "initials_pt" => "SI",          "initials_en" => "IS",     ],
-            ["couse_id" => 71,  "name_pt" => "Tecnologias de Informação",   "name_en" => "Information technology",  "initials_pt" => "TI",          "initials_en" => "IT",     ],
+        $otherBranches = [
+            ["course_id" => 61,  "name_pt" => "Sistemas de Informação",    "name_en" => "Information Systems",    "initials_pt" => "SI", "initials_en" => "IS" ],
+            ["course_id" => 61,  "name_pt" => "Tecnologias de Informação", "name_en" => "Information technology", "initials_pt" => "TI", "initials_en" => "IT" ],
+            ["course_id" => 71,  "name_pt" => "Sistemas de Informação",    "name_en" => "Information Systems",    "initials_pt" => "SI", "initials_en" => "IS" ],
+            ["course_id" => 71,  "name_pt" => "Tecnologias de Informação", "name_en" => "Information technology", "initials_pt" => "TI", "initials_en" => "IT" ],
         ];
 
-        foreach ($branches as $branch) {
+        foreach ($otherBranches as $branch) {
             $newBranch = new Branch($branch);
             $newBranch->save();
         }
