@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {Card, Container, Table, Form, Button, Header, Icon, Modal } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import _ from 'lodash';
 import { toast } from 'react-toastify';
 import {useTranslation} from "react-i18next";
 import { errorConfig, successConfig } from '../../../utils/toastConfig';
@@ -42,7 +41,7 @@ const List = () => {
     const filterResults = useCallback(
         (searchTerm) => {
             const filtered = calendarPhases.filter(
-                (x) => x.code.toLowerCase().includes(searchTerm.toLowerCase()) || x.description.toLowerCase().includes(searchTerm.toLowerCase()),
+                (x) => x.name.toLowerCase().includes(searchTerm.toLowerCase()) || x.description.toLowerCase().includes(searchTerm.toLowerCase()),
             );
             setFilteredResults(filtered);
         },

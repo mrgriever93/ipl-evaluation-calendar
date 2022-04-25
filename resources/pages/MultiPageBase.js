@@ -1,8 +1,8 @@
 import React from 'react';
 import {Outlet} from 'react-router';
 
-const EvaluationType = () => (
+const MultiPageBase = () => (
     <Outlet/>
 );
 
-export default EvaluationType;
+export default MultiPageBase;

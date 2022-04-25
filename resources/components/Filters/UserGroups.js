@@ -3,7 +3,7 @@ import {Form} from 'semantic-ui-react';
 import axios from 'axios';
 import {useTranslation} from "react-i18next";
 
-const FilterOptionUserGroups = ({widthSize, eventHandler}) => {
+const FilterOptionUserGroups = ({widthSize, values, eventHandler}) => {
     const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [userGroupsOptions, setUserGroupsOptions] = useState([]);
@@ -19,6 +19,13 @@ const FilterOptionUserGroups = ({widthSize, eventHandler}) => {
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    // This will make sure the values are defined when the "values" variable is not empty
+    useEffect(() => {
+        if ( Array.isArray(values) ){
+            setUserGroups(values);
+        }
+    }, [values]);
 
     const filterByUserGroup = (e, {value}) => {
         setUserGroups(value);

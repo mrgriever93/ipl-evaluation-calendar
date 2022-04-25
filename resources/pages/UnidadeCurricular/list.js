@@ -1,16 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import {Card, Container, Table, Form, Icon, Modal, Button, Header, Pagination} from 'semantic-ui-react';
+import {Card, Container, Table, Form, Icon, Modal, Button, Header, Dimmer, Loader, Popup} from 'semantic-ui-react';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
 import {toast} from 'react-toastify';
+import {useTranslation} from "react-i18next";
+
 import SCOPES from '../../utils/scopesConstants';
 import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
 import {successConfig, errorConfig} from '../../utils/toastConfig';
 import EmptyTable from "../../components/EmptyTable";
 import Semesters from "../../components/Filters/Semesters";
 import Courses from "../../components/Filters/Courses";
-import {useTranslation} from "react-i18next";
 import FilterOptionPerPage from "../../components/Filters/PerPage";
 import PaginationDetail from "../../components/Pagination";
 
@@ -21,6 +22,8 @@ const CourseUnitsList = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalInfo, setModalInfo] = useState();
     const [isLoading, setIsLoading] = useState(true);
+    const [contentLoading, setContentLoading] = useState(true);
+
     const [courseFilter, setCourseFilter] = useState();
     const [semesterFilter, setSemesterFilter] = useState();
     const [searchFilter, setSearchFilter] = useState();
@@ -28,7 +31,7 @@ const CourseUnitsList = () => {
     const [currentPage, setCurrentPage] = useState(1);
 
     const fetchCourseUnits = () => {
-        setIsLoading(true);
+        setContentLoading(true);
         let link = '/course-units?page=' + currentPage;
         link += (semesterFilter ? '&semester=' + semesterFilter : '');
         link += (courseFilter   ? '&course='   + courseFilter   : '');
@@ -37,6 +40,7 @@ const CourseUnitsList = () => {
 
         axios.get(link).then((response) => {
             setIsLoading(false);
+            setContentLoading(false);
             if (response.status >= 200 && response.status < 300) {
                 setCourseUnits(response.data.data);
                 setPaginationInfo(response.data.meta);
@@ -58,6 +62,7 @@ const CourseUnitsList = () => {
     }
 
     const remove = (courseUnit) => {
+
         setModalInfo(courseUnit);
         setModalOpen(true);
     };
@@ -86,11 +91,9 @@ const CourseUnitsList = () => {
 
     const columns = [
         {name: t('Nome')},
-        {name: t('Curso')},
-        {name: t('Ramo'),           width: 2},
-        {name: t('Métodos definidos?')},
-        {name: t('Agrupamento'),    width: 4},
-        {name: t('Ações'),          align: 'center', style: {width: '15%'} },
+        {name: t('Ramo')},
+        {name: t('Agrupamento')},
+        {name: t('Ações'),  align: 'center', style: {width: '10%'} },
     ];
     return (
         <Container>
@@ -121,60 +124,58 @@ const CourseUnitsList = () => {
                     { courseUnits.length < 1 || isLoading ? (
                         <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar Unidades Curriculares!")}/>
                     ) : (
-                        <Table celled>
-                            <Table.Header>
-                                <Table.Row>
-                                    {columns.map((col, index) => (
-                                        <Table.HeaderCell key={index} textAlign={col.align} style={col.style} width={col.width}>{col.name}</Table.HeaderCell>
-                                    ))}
-                                </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                {courseUnits.map(({id, name, course_description, methods, branch, group_name}) => (
-                                    <Table.Row key={id}>
-                                        <Table.Cell>
-                                            {name}
-                                        </Table.Cell>
-                                        <Table.Cell>
-                                            {course_description}
-                                        </Table.Cell>
-                                        <Table.Cell>{branch?.name}</Table.Cell>
-                                        <Table.Cell><Icon name={methods?.length > 0 ? 'check' : 'close'}/></Table.Cell>
-                                        <Table.Cell>{group_name || '-'}</Table.Cell>
-                                        <Table.Cell width="5">
-                                            <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]}>
-                                                <Link to={`/unidade-curricular/edit/${id}`}>
-                                                    <Button color="yellow" icon>
-                                                        <Icon name="edit"/>
-                                                    </Button>
-                                                </Link>
-                                            </ShowComponentIfAuthorized>
-                                            <ShowComponentIfAuthorized permission={[SCOPES.DELETE_COURSE_UNITS]}>
-                                                <Button onClick={() => remove({id, course: course_description})} color="red" icon>
-                                                    <Icon name="trash"/>
-                                                </Button>
-                                            </ShowComponentIfAuthorized>
-                                            <ShowComponentIfAuthorized permission={[SCOPES.MANAGE_EVALUATION_METHODS]}>
-                                                <Link to={`/unidade-curricular/${id}/metodos`}>
-                                                    <Button color="olive" icon labelPosition="left">
-                                                        <Icon name="file alternate"/>
-                                                        { t('Métodos') }
-                                                    </Button>
-                                                </Link>
-                                            </ShowComponentIfAuthorized>
-                                        </Table.Cell>
+                        <>
+                            <Table celled>
+                                <Table.Header>
+                                    <Table.Row>
+                                        {columns.map((col, index) => (
+                                            <Table.HeaderCell key={index} textAlign={col.align} style={col.style}>{col.name}</Table.HeaderCell>
+                                        ))}
                                     </Table.Row>
-                                ))}
-                            </Table.Body>
-                        </Table>
+                                </Table.Header>
+                                <Table.Body>
+                                    {courseUnits.map(({id, name, code, methods, branch_label, group_name, course_description}) => (
+                                        <Table.Row key={id}>
+                                            <Table.Cell>
+                                                { methods?.length > 0 ? (
+                                                    <Popup trigger={<Icon name='check' />} content={t('Métodos de avaliação preenchidos.')} position='top center'/>
+                                                ) : (
+                                                    <Popup trigger={<Icon name='close' />} content={t('Falta preencher os métodos de avaliação.')} position='top center'/>
+                                                )}
+                                                ({code}) - {name}
+                                            </Table.Cell>
+                                            <Table.Cell>{branch_label}</Table.Cell>
+                                            <Table.Cell>{group_name || '-'}</Table.Cell>
+                                            <Table.Cell>
+                                                <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]}>
+                                                    <Link to={`/unidade-curricular/edit/${id}`}>
+                                                        <Button color="yellow" icon="edit" />
+                                                    </Link>
+                                                </ShowComponentIfAuthorized>
+                                                <ShowComponentIfAuthorized permission={[SCOPES.DELETE_COURSE_UNITS]}>
+                                                    <Button color="red" icon="trash" onClick={() => remove({id, course: course_description, unit: name})} />
+                                                </ShowComponentIfAuthorized>
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    ))}
+                                </Table.Body>
+                            </Table>
+                            <PaginationDetail currentPage={currentPage} info={paginationInfo} eventHandler={changedPage} />
+                            {contentLoading && (
+                                <Dimmer active inverted>
+                                    <Loader indeterminate>
+                                        { t("A carregar os unidades curriculares") }
+                                    </Loader>
+                                </Dimmer>
+                            )}
+                        </>
                     )}
-                    <PaginationDetail currentPage={currentPage} info={paginationInfo} eventHandler={changedPage} />
                 </Card.Content>
             </Card>
             <Modal dimmer="blurring" open={modalOpen} onClose={handleModalClose}>
                 <Modal.Header>{ t("Remover Unidade Curricular") }</Modal.Header>
                 <Modal.Content>
-                    { t("Tem a certeza que deseja remover a Unidade Curricular") } {modalInfo?.course}?
+                    { t("Tem a certeza que deseja remover a Unidade Curricular") } <b>{modalInfo?.course}</b> - <b>{modalInfo?.unit}</b>?
                 </Modal.Content>
                 <Modal.Actions>
                     <Button negative onClick={handleModalClose}>{ t("Cancelar") }</Button>

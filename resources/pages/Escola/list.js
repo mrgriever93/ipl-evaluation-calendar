@@ -48,7 +48,7 @@ const List = () => {
                             )}
                         </ShowComponentIfAuthorized>
                     </div>
-                </Card.Content>                
+                </Card.Content>
                 
                 <Card.Content>
                 { schoolList.length < 1 || isLoading ? (

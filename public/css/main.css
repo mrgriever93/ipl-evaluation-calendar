@@ -58,10 +58,6 @@ body {
     z-index: 10;
 }
 
-.ui.menu .item.lang-dropdown {
-    text-transform: uppercase;
-}
-
 .display-inline {
     display: inline;
 }
