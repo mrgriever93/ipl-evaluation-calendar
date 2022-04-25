@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\AcademicYear;
 use App\Models\Branch;
 use App\Models\Course;
+use App\Models\CourseUnit;
 use App\Models\School;
 use Illuminate\Database\Seeder;
 
@@ -118,11 +119,13 @@ class YearsAndCoursesSeeder extends Seeder
             $newBranch->save();
         }
 
+        $ei_d = Course::where('code', '9119')->first()->id;
+        $ei_pl = Course::where('code', '9885')->first()->id;
         $otherBranches = [
-            ["course_id" => 61,  "name_pt" => "Sistemas de Informação",    "name_en" => "Information Systems",    "initials_pt" => "SI", "initials_en" => "IS" ],
-            ["course_id" => 61,  "name_pt" => "Tecnologias de Informação", "name_en" => "Information technology", "initials_pt" => "TI", "initials_en" => "IT" ],
-            ["course_id" => 71,  "name_pt" => "Sistemas de Informação",    "name_en" => "Information Systems",    "initials_pt" => "SI", "initials_en" => "IS" ],
-            ["course_id" => 71,  "name_pt" => "Tecnologias de Informação", "name_en" => "Information technology", "initials_pt" => "TI", "initials_en" => "IT" ],
+            ["course_id" => $ei_d,  "name_pt" => "Sistemas de Informação",    "name_en" => "Information Systems",    "initials_pt" => "SI", "initials_en" => "IS" ],
+            ["course_id" => $ei_d,  "name_pt" => "Tecnologias de Informação", "name_en" => "Information technology", "initials_pt" => "TI", "initials_en" => "IT" ],
+            ["course_id" => $ei_pl,  "name_pt" => "Sistemas de Informação",    "name_en" => "Information Systems",    "initials_pt" => "SI", "initials_en" => "IS" ],
+            ["course_id" => $ei_pl,  "name_pt" => "Tecnologias de Informação", "name_en" => "Information technology", "initials_pt" => "TI", "initials_en" => "IT" ],
         ];
 
         foreach ($otherBranches as $branch) {
@@ -130,8 +133,92 @@ class YearsAndCoursesSeeder extends Seeder
             $newBranch->save();
         }
 
+        $curricularUnits = [
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119201",     "name_pt" => "Análise Matemática ",                           "name_en" => "Análise Matemática "                          ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119202",     "name_pt" => "Álgebra Linear ",                               "name_en" => "Álgebra Linear "                              ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119203",     "name_pt" => "Física Aplicada ",                              "name_en" => "Física Aplicada "                             ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119204",     "name_pt" => "Programação I ",                                "name_en" => "Programação I "                               ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119205",     "name_pt" => "Sistemas Computacionais ",                      "name_en" => "Sistemas Computacionais "                     ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119212",     "name_pt" => "Sistemas Gráficos e Interação ",                "name_en" => "Sistemas Gráficos e Interação "               ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119213",     "name_pt" => "Algoritmos e Estruturas de Dados ",             "name_en" => "Algoritmos e Estruturas de Dados "            ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119214",     "name_pt" => "Bases de Dados ",                               "name_en" => "Bases de Dados "                              ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119215",     "name_pt" => "Redes de Computadores ",                        "name_en" => "Redes de Computadores "                       ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119216",     "name_pt" => "Programação Avançada ",                         "name_en" => "Programação Avançada "                        ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119219",     "name_pt" => "Desenvolvimento de Aplicações Distribuídas ",   "name_en" => "Desenvolvimento de Aplicações Distribuídas "  ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119220",     "name_pt" => "Integração de Sistemas ",                       "name_en" => "Integração de Sistemas "                      ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119227",     "name_pt" => "Tópicos Avançados de Engenharia de Software ",  "name_en" => "Tópicos Avançados de Engenharia de Software " ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119228",     "name_pt" => "Desenvolvimento de Aplicações Empresariais ",   "name_en" => "Desenvolvimento de Aplicações Empresariais "  ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119229",     "name_pt" => "Sistemas de Apoio à Decisão ",                  "name_en" => "Sistemas de Apoio à Decisão "                 ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119235",     "name_pt" => "Centros de Processamento de Dados ",            "name_en" => "Centros de Processamento de Dados "           ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119236",     "name_pt" => "Tópicos Avançados de Redes ",                   "name_en" => "Tópicos Avançados de Redes "                  ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9119237",     "name_pt" => "Segurança de Sistemas ",                        "name_en" => "Segurança de Sistemas "                       ],
 
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119206",     "name_pt" => "Matemática Discreta ",                          "name_en" => "Matemática Discreta "                         ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119207",     "name_pt" => "Estatística ",                                  "name_en" => "Estatística "                                 ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119208",     "name_pt" => "Programação II ",                               "name_en" => "Programação II "                              ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119209",     "name_pt" => "Tecnologias de Internet ",                      "name_en" => "Tecnologias de Internet "                     ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119210",     "name_pt" => "Sistemas Operativos ",                          "name_en" => "Sistemas Operativos "                         ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119211",     "name_pt" => "Inglês ",                                       "name_en" => "Inglês "                                      ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119217",     "name_pt" => "Aplicações para a Internet",                    "name_en" => "Aplicações para a Internet",                  ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119218",     "name_pt" => "Engenharia de Software ",                       "name_en" => "Engenharia de Software "                      ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119222",     "name_pt" => "Seminário ",                                    "name_en" => "Seminário "                                   ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119223",     "name_pt" => "Inovação e Empreendedorismo ",                  "name_en" => "Inovação e Empreendedorismo "                 ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119224",     "name_pt" => "Inteligência Artificial ",                      "name_en" => "Inteligência Artificial "                     ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119225",     "name_pt" => "Sistemas de Bases de Dados ",                   "name_en" => "Sistemas de Bases de Dados "                  ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119226",     "name_pt" => "Segurança da Informação ",                      "name_en" => "Segurança da Informação "                     ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119230",     "name_pt" => "Engenharia do Conhecimento ",                   "name_en" => "Engenharia do Conhecimento "                  ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119231",     "name_pt" => "Sistemas de Informação Empresariais ",          "name_en" => "Sistemas de Informação Empresariais "         ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119232",     "name_pt" => "Tecnologias de Virtualização ",                 "name_en" => "Tecnologias de Virtualização "                ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119233",     "name_pt" => "Redes de Dados ",                               "name_en" => "Redes de Dados "                              ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119234",     "name_pt" => "Administração de Sistemas ",                    "name_en" => "Administração de Sistemas "                   ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119238",     "name_pt" => "Laboratório de Tecnologias de Informação ",     "name_en" => "Laboratório de Tecnologias de Informação "    ],
+            [ "course_id" => $ei_d,  "branch_id" => $ei_d,  "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9119239",     "name_pt" => "Engenharia de Sistemas e Serviços ",            "name_en" => "Engenharia de Sistemas e Serviços "           ],
 
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885201",     "name_pt" => "Análise Matemática ",                           "name_en" => "Análise Matemática "                          ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885202",     "name_pt" => "Álgebra Linear ",                               "name_en" => "Álgebra Linear "                              ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885203",     "name_pt" => "Física Aplicada ",                              "name_en" => "Física Aplicada "                             ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885204",     "name_pt" => "Programação I ",                                "name_en" => "Programação I "                               ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885205",     "name_pt" => "Sistemas Computacionais ",                      "name_en" => "Sistemas Computacionais "                     ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885212",     "name_pt" => "Sistemas Gráficos e Interação ",                "name_en" => "Sistemas Gráficos e Interação "               ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885213",     "name_pt" => "Algoritmos e Estruturas de Dados ",             "name_en" => "Algoritmos e Estruturas de Dados "            ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885214",     "name_pt" => "Bases de Dados ",                               "name_en" => "Bases de Dados "                              ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885215",     "name_pt" => "Redes de Computadores ",                        "name_en" => "Redes de Computadores "                       ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885216",     "name_pt" => "Programação Avançada ",                         "name_en" => "Programação Avançada "                        ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885219",     "name_pt" => "Desenvolvimento de Aplicações Distribuídas ",   "name_en" => "Desenvolvimento de Aplicações Distribuídas "  ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885220",     "name_pt" => "Integração de Sistemas ",                       "name_en" => "Integração de Sistemas "                      ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885227",     "name_pt" => "Tópicos Avançados de Engenharia de Software ",  "name_en" => "Tópicos Avançados de Engenharia de Software " ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885228",     "name_pt" => "Desenvolvimento de Aplicações Empresariais ",   "name_en" => "Desenvolvimento de Aplicações Empresariais "  ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885229",     "name_pt" => "Sistemas de Apoio à Decisão ",                  "name_en" => "Sistemas de Apoio à Decisão "                 ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885235",     "name_pt" => "Centros de Processamento de Dados ",            "name_en" => "Centros de Processamento de Dados "           ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885236",     "name_pt" => "Tópicos Avançados de Redes ",                   "name_en" => "Tópicos Avançados de Redes "                  ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 1,  "code" => "9885237",     "name_pt" => "Segurança de Sistemas ",                        "name_en" => "Segurança de Sistemas "                       ],
 
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885206",     "name_pt" => "Matemática Discreta ",                          "name_en" => "Matemática Discreta "                         ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885207",     "name_pt" => "Estatística ",                                  "name_en" => "Estatística "                                 ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885208",     "name_pt" => "Programação II ",                               "name_en" => "Programação II "                              ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885209",     "name_pt" => "Tecnologias de Internet ",                      "name_en" => "Tecnologias de Internet "                     ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885210",     "name_pt" => "Sistemas Operativos ",                          "name_en" => "Sistemas Operativos "                         ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885211",     "name_pt" => "Inglês ",                                       "name_en" => "Inglês "                                      ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885217",     "name_pt" => "Aplicações para a Internet ",                   "name_en" => "Aplicações para a Internet "                  ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885218",     "name_pt" => "Engenharia de Software ",                       "name_en" => "Engenharia de Software "                      ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885222",     "name_pt" => "Seminário ",                                    "name_en" => "Seminário "                                   ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885223",     "name_pt" => "Inovação e Empreendedorismo ",                  "name_en" => "Inovação e Empreendedorismo "                 ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885224",     "name_pt" => "Inteligência Artificial ",                      "name_en" => "Inteligência Artificial "                     ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885225",     "name_pt" => "Sistemas de Bases de Dados ",                   "name_en" => "Sistemas de Bases de Dados "                  ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885226",     "name_pt" => "Segurança da Informação ",                      "name_en" => "Segurança da Informação "                     ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885230",     "name_pt" => "Engenharia do Conhecimento ",                   "name_en" => "Engenharia do Conhecimento "                  ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885231",     "name_pt" => "Sistemas de Informação Empresariais ",          "name_en" => "Sistemas de Informação Empresariais "         ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885232",     "name_pt" => "Tecnologias de Virtualização ",                 "name_en" => "Tecnologias de Virtualização "                ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885233",     "name_pt" => "Redes de Dados ",                               "name_en" => "Redes de Dados "                              ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885234",     "name_pt" => "Administração de Sistemas ",                    "name_en" => "Administração de Sistemas "                   ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885238",     "name_pt" => "Laboratório de Tecnologias de Informação ",     "name_en" => "Laboratório de Tecnologias de Informação "    ],
+            [ "course_id" => $ei_pl, "branch_id" => $ei_pl, "curricular_year" => $year2122_id,  "semester" => 2,  "code" => "9885239",     "name_pt" => "Engenharia de Sistemas e Serviços ",            "name_en" => "Engenharia de Sistemas e Serviços "           ],
+        ];
+
+        foreach ($curricularUnits as $uc) {
+            $newUC = new CourseUnit($uc);
+            $newUC->save();
+        }
+        
     }
 }
