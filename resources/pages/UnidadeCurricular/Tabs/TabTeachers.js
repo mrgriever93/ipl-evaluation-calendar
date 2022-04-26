@@ -107,8 +107,8 @@ const UnitTabTeacher = ({ unitId, isLoading }) => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {courseUnitTeachers?.map((teacher) => (
-                            <Table.Row>
+                        {courseUnitTeachers?.map((teacher, index) => (
+                            <Table.Row key={index}>
                                 <Table.Cell>{teacher.name}</Table.Cell>
                                 <Table.Cell>{teacher.email}</Table.Cell>
                                 <ShowComponentIfAuthorized permission={[SCOPES.DEFINE_COURSE_UNIT_RESPONSIBLE]}>

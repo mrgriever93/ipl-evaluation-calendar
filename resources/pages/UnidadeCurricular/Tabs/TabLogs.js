@@ -38,8 +38,8 @@ const UnitTabLogs = ({ unitId, isLoading }) => {
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {logs?.map((log) => (
-                        <Table.Row>
+                    {logs?.map((log, index) => (
+                        <Table.Row key={index}>
                             <Table.Cell>{log.description}</Table.Cell>
                             <Table.Cell textAlign={"right"}>{moment(log.created).fromNow()}</Table.Cell>
                         </Table.Row>
