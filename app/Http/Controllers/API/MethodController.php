@@ -12,8 +12,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\NewMethodRequest;
 use App\Http\Requests\UpdateMethodRequest;
 use App\Http\Resources\MethodResource;
+use App\Models\UnitLog;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class MethodController extends Controller
 {
@@ -41,13 +43,8 @@ class MethodController extends Controller
                 // insert the new method
                 $groupCourseUnits = CourseUnitGroup::find($courseUnit->course_unit_group_id)->courseUnits()->get();
                 foreach ($groupCourseUnits as $courseUnit) {
-
-                    $epochs = Epoch
-                                ::where('epoch_type_id', $method['epoch_type_id'])
-                                ->whereIn('calendar_id',
-                                    Calendar::where('course_id', $courseUnit->course_id)->whereIn('semester', [$courseUnit->semester, 3])->get('id')
-                                )
-                                ->get()->pluck('id');
+                    $calendarsIds = Calendar::where('course_id', $courseUnit->course_id)->whereIn('semester', [$courseUnit->semester, 3])->get('id');
+                    $epochs = Epoch::where('epoch_type_id', $method['epoch_type_id'])->whereIn('calendar_id', $calendarsIds)->get()->pluck('id');
                     $newMethod->epochs()->syncWithoutDetaching($epochs);
                     $newMethod->courseUnits()->syncWithoutDetaching($courseUnit);
                     $newMethod->save();
@@ -56,12 +53,8 @@ class MethodController extends Controller
                 $newMethod->courseUnits()->syncWithoutDetaching($courseUnit);
                 $newMethod->save();
 
-                $epochs = Epoch
-                        ::where('epoch_type_id', $method['epoch_type_id'])
-                        ->whereIn('calendar_id',
-                            Calendar::where('course_id', $courseUnit->course_id)->whereIn('semester', [$courseUnit->semester, 3])->get('id')
-                        )
-                        ->get()->pluck('id');
+                $calendarsIds = Calendar::where('course_id', $courseUnit->course_id)->whereIn('semester', [$courseUnit->semester, 3])->get('id');
+                $epochs = Epoch::where('epoch_type_id', $method['epoch_type_id'])->whereIn('calendar_id', $calendarsIds)->get()->pluck('id');
                 $newMethod->epochs()->syncWithoutDetaching($epochs);
                 $newMethod->save();
             }
@@ -70,6 +63,12 @@ class MethodController extends Controller
         foreach ($request->removed as $removedMethod) {
             Method::find($removedMethod)->delete();
         }
+
+        UnitLog::create([
+            "course_unit_id"    => $courseUnit->id,
+            "user_id"           => Auth::id(),
+            "description"       => "Metodos de avaliacao alterados por '" . Auth::user()->name . "'."
+        ]);
 
         return response()->json("Created/Updated!", Response::HTTP_OK);
     }
