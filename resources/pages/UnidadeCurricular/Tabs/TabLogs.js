@@ -33,8 +33,8 @@ const UnitTabLogs = ({ unitId, isLoading }) => {
             <Table striped color="green">
                 <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell>Description</Table.HeaderCell>
-                        <Table.HeaderCell style={{width: '15%'}} textAlign={"right"}>Date</Table.HeaderCell>
+                        <Table.HeaderCell>{t("Descrição")}</Table.HeaderCell>
+                        <Table.HeaderCell style={{width: '15%'}} textAlign={"right"}>{t("Data")}</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>

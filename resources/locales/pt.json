@@ -131,6 +131,7 @@
         "Criar": "Criar",
         "Duplicar": "Duplicar",
         "Pesquisar": "Pesquisar",
+        "Data": "Data",
 
         "Desde": "Desde",
         "até": "até",
@@ -224,6 +225,9 @@
 
         "Editar": "Editar",
         "Nova": "Nova",
-        "Professores": "Professores"
+        "Professores": "Professores",
+        "Ano curricular": "Ano curricular",
+        "Semestre": "Semestre",
+        "Todas os Semestres": "Todas os Semestres"
     }
 }
