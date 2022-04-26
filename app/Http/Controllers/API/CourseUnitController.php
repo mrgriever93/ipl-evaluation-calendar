@@ -31,7 +31,7 @@ class CourseUnitController extends Controller
     public function index(Request $request, CourseUnitFilters $filters)
     {
         $lang = (in_array($request->header("lang"), ["en", "pt"]) ? $request->header("lang") : "pt");
-        $perPage = request('per_page', 10);
+        $perPage = request('per_page', 20);
 
         $courseUnits = CourseUnit::with('methods')->filter($filters, $lang)->ofAcademicYear($request->cookie('academic_year'));
 
