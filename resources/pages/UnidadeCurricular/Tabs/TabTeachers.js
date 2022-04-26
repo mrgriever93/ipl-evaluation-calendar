@@ -126,7 +126,7 @@ const UnitTabTeacher = ({ unitId, isLoading }) => {
                     </Table.Body>
                 </Table>
             )}
-            {contentLoading && (
+            {!loading && contentLoading && (
                 <Dimmer active inverted>
                     <Loader indeterminate>
                         { t("A carregar os dados") }

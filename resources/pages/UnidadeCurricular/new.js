@@ -102,12 +102,12 @@ const New = () => {
                             <Form.Group widths="3">
                                 <Field name="code">
                                     {({input: codeInput}) => (
-                                        <Form.Input label="Código" {...codeInput} />
+                                        <Form.Input label={t("Código")} placeholder={t("Código")} {...codeInput} />
                                     )}
                                 </Field>
                                 <Field name="initials">
                                     {({input: initialsInput}) => (
-                                        <Form.Input required label="Iniciais" {...initialsInput} />
+                                        <Form.Input required label={t("Iniciais")} placeholder={t("Iniciais")} {...initialsInput} />
                                     )}
                                 </Field>
                             </Form.Group>
@@ -115,19 +115,19 @@ const New = () => {
                             <Form.Group widths="equal">
                                 <Field name="name_pt">
                                     {({input: namePtInput}) => (
-                                        <Form.Input label="Nome PT" {...namePtInput} />
+                                        <Form.Input label={t("Nome PT")} placeholder={t("Nome PT")} {...namePtInput} />
                                     )}
                                 </Field>
                                 <Field name="name_en">
                                     {({input: nameEnInput}) => (
-                                        <Form.Input label="Nome EN" {...nameEnInput} />
+                                        <Form.Input label={t("Nome EN")} placeholder={t("Nome EN")} {...nameEnInput} />
                                     )}
                                 </Field>
                             </Form.Group>
                             <Form.Group widths="3">
                                 <Field name="curricularYear">
                                     {({input: curricularYearInput}) => (
-                                        <Form.Input label="Ano curricular" {...curricularYearInput} />
+                                        <Form.Input label={t("Ano curricular")} placeholder={t("Ano curricular")} {...curricularYearInput} />
                                     )}
                                 </Field>
                                 <Field name="semester">
@@ -137,7 +137,7 @@ const New = () => {
                                 </Field>
                                 <Field name="branch">
                                     {({input: branchInput}) => (
-                                        <Form.Dropdown options={branchesList} label="Ramo" selection search {...branchInput} onChange={(e, {value}) => branchInput.onChange(value)}/>
+                                        <Form.Dropdown options={branchesList} label={t("Ramo")} placeholder={t("Ramo")} selection search {...branchInput} onChange={(e, {value}) => branchInput.onChange(value)}/>
                                     )}
                                 </Field>
                             </Form.Group>

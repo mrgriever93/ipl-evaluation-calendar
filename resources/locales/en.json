@@ -131,6 +131,7 @@
         "Criar": "Create",
         "Duplicar": "Clone",
         "Pesquisar": "Search",
+        "Data": "Date",
 
         "Desde": "From",
         "até": "to",
@@ -224,6 +225,9 @@
 
         "Editar": "Edit",
         "Nova": "New",
-        "Professores": "Teachers"
+        "Professores": "Teachers",
+        "Ano curricular": "Curricular Year",
+        "Semestre": "Semester",
+        "Todas os Semestres": "All Semesters"
     }
 }
