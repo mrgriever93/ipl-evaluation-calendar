@@ -70,6 +70,9 @@ body {
 .display-none {
     display: none;
 }
+.justify_space_between{
+    justify-content: space-between;
+}
 
 .footer.ui.inverted.vertical.segment{
     min-height: 145px;
@@ -288,4 +291,8 @@ body {
 
 .ui.form .field>.selection.dropdown {
     min-width: 4em;
+}
+
+.ui.large.label.margin-bottom-s {
+    margin-bottom: var(--space-s);
 }

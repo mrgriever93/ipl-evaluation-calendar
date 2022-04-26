@@ -10,10 +10,11 @@ const Step2 = ({additionalInterruptions, setAdditionalInterruptions}) => {
     useEffect(() => {
         axios.get('/interruption-types').then((response) => {
             if (response.status === 200) {
-                setInterruptionTypes(response.data.data?.map(({id, description}) => ({
+                response.data.data.unshift({id: '', label: "Tipo de interrupção"});
+                setInterruptionTypes(response.data.data?.map(({id, label}) => ({
                     key: id,
                     value: id,
-                    text: description,
+                    text: label,
                 })));
             }
         });
@@ -37,45 +38,22 @@ const Step2 = ({additionalInterruptions, setAdditionalInterruptions}) => {
                                                         </Card.Header>
                                                     </Card.Content>
                                                     <Card.Content>
-                                                        <Form.Dropdown label="Tipo de interrupção" selection search
-                                                                       value={interruptionTypeInput.value}
-                                                                       options={interruptionTypes}
-                                                                       onChange={(e, {value}) => interruptionTypeInput.onChange(value)}
-                                                        />
+                                                        <Form.Dropdown selectOnBlur={false} clearable={true} placeholder="Tipo de interrupção" label="Tipo de interrupção" selection search value={interruptionTypeInput.value} options={interruptionTypes} onChange={(e, {value}) => interruptionTypeInput.onChange(value)}/>
                                                         <Form.Field>
-                                                            <DateInput name="date" value={null} iconPosition="left"
-                                                                       closable
-                                                                       label="Data de Ínicio"
-                                                                       placeholder="Data de Ínicio" {...startDateInput}
-                                                                       onChange={(evt, {value}) => {
-                                                                           startDateInput.onChange(value);
-                                                                       }}
-                                                            />
+                                                            <DateInput name="date" value={null} iconPosition="left" closable label="Data de Ínicio" placeholder="Data de Ínicio" {...startDateInput} onChange={(evt, {value}) => {startDateInput.onChange(value);}}/>
                                                         </Form.Field>
                                                     </Card.Content>
                                                     <Card.Content>
                                                         <Form.Field>
-                                                            <DateInput name="date" value={null} iconPosition="left"
-                                                                       closable
-                                                                       label="Data de Fim"
-                                                                       placeholder="Data de Fim" {...endDateInput}
-                                                                       onChange={(evt, {value}) => {
-                                                                           endDateInput.onChange(value);
-                                                                       }}
-                                                            />
+                                                            <DateInput name="date" value={null} iconPosition="left" closable label="Data de Fim" placeholder="Data de Fim" {...endDateInput} onChange={(evt, {value}) => {endDateInput.onChange(value);}}/>
                                                         </Form.Field>
                                                     </Card.Content>
                                                     <Card.Content extra>
-                                                        <Button
-                                                            onClick={() => setAdditionalInterruptions((current) => {
-                                                                const copy = [...current];
-                                                                copy.splice(index, 1);
-                                                                return copy;
-                                                            })}
-                                                            icon
-                                                            labelPosition="left"
-                                                            color="red"
-                                                        >
+                                                        <Button onClick={() => setAdditionalInterruptions((current) => {
+                                                                    const copy = [...current];
+                                                                    copy.splice(index, 1);
+                                                                    return copy;
+                                                                })} icon labelPosition="left" color="red">
                                                             Remover
                                                             <Icon name="trash"/>
                                                         </Button>

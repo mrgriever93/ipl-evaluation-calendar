@@ -1,15 +1,17 @@
 import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
-import {Button, Container, Dimmer, Form, Grid, List, Loader, Segment, Table} from 'semantic-ui-react';
+import {Button, Container, Dimmer, Form, Grid, Icon, Label, List, Loader, Segment, Table} from 'semantic-ui-react';
 import {Field, useField} from 'react-final-form';
 import axios from "axios";
 import PaginationDetail from "../../../components/Pagination";
+import FilterOptionPerPage from "../../../components/Filters/PerPage";
 
 const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loading, setLoading}) => {
     const {input: coursesFieldInput} = useField('step3.courses');
     const [courseList, setCourseList] = useState([]);
     const [courseSearch, setCourseSearch] = useState();
     const [currentPage, setCurrentPage] = useState(1);
+    const [perPage, setPerPage] = useState(10);
 
     const [paginationInfo, setPaginationInfo] = useState({});
 
@@ -25,16 +27,16 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
     useEffect(() => {
         fetchCourses();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [courseSearch, currentPage]);
+    }, [courseSearch, currentPage, perPage]);
 
     const fetchCourses = () => {
         setLoading(true);
 
         let searchLink = `/courses?page=${currentPage}`;
         searchLink += `${courseSearch ? `&search=${courseSearch}` : ''}`;
+        searchLink += '&per_page=' + perPage;
         //searchLink += `${school ? `&school=${school}` : ''}`;
         //searchLink += `${degree ? `&degree=${degree}` : ''}`;
-        //searchLink += '&per_page=' + perPage;
 
         axios.get(searchLink).then((response) => {
             if (response.status >= 200 && response.status < 300) {
@@ -82,24 +84,19 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
                 {!allCourses && (
                     <>
                         {courses.length ? (
-                            <Segment style={{width: '100%'}}>
-                                <List divided verticalAlign="middle">
-                                    {courses.map((course, index) => (
-                                        <List.Item key={index}>
-                                            <List.Content floated="right">
-                                                <Button color="red" onClick={() => removeCourse(course.id)}>
-                                                    Remover
-                                                </Button>
-                                            </List.Content>
-                                            <List.Content>{course.code + ' - ' + course.name}</List.Content>
-                                        </List.Item>
-                                    ))}
-                                </List>
-                            </Segment>
+                            <Grid.Row>
+                                {courses.map((course, index) => (
+                                    <Label key={index} size={"large"} className={"margin-bottom-s"}>
+                                        {course.code + ' - ' + course.name}
+                                        <Icon name='delete' color={"red"} onClick={() => removeCourse(course.id)} />
+                                    </Label>
+                                ))}
+                            </Grid.Row>
                         ) : null}
 
-                        <Grid.Row>
-                            <Form.Input label="Pesquisar curso (Código, Sigla ou Nome)" placeholder="Pesquisar ..." fluid onChange={_.debounce(searchCourse, 900)}/>
+                        <Grid.Row className={"justify_space_between"}>
+                            <Form.Input width={6} label="Pesquisar curso (Código, Sigla ou Nome)" placeholder="Pesquisar ..." fluid onChange={_.debounce(searchCourse, 900)}/>
+                            <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                         </Grid.Row>
                         <Grid.Row>
                             <Table color="green">

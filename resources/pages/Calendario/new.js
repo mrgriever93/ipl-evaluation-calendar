@@ -134,61 +134,65 @@ const NewCalendar = () => {
         <Container>
             <FinalForm onSubmit={onSubmit} initialValues={formInitialValues} key={'form_new_calendar'}
                 render={({handleSubmit}) => (
-                    <Card fluid>
-                        <Card.Content header="Novo Calendário"/>
-                        <Card.Content>
-                            <Step.Group widths={stepsData.length}>
-                                {stepsData.map((step) => (
-                                    <Step link active={currentStep === step.number} key={'step_' + step.number} completed={completedSteps.includes(step.number)} onClick={() => setCurrentStep(step.number)}>
-                                        <Icon name={step.icon}/>
-                                        <Step.Content>
-                                            <Step.Title>{step.title}</Step.Title>
-                                            <Step.Description>{step.description}</Step.Description>
-                                        </Step.Content>
-                                    </Step>
-                                ))}
-                            </Step.Group>
+                    <>
+
+                        <Step.Group widths={stepsData.length}>
+                        {stepsData.map((step) => (
+                            <Step link active={currentStep === step.number} key={'step_' + step.number} completed={completedSteps.includes(step.number)} onClick={() => setCurrentStep(step.number)}>
+                                <Icon name={step.icon}/>
+                                <Step.Content>
+                                    <Step.Title>{step.title}</Step.Title>
+                                    <Step.Description>{step.description}</Step.Description>
+                                </Step.Content>
+                            </Step>
+                        ))}
+                    </Step.Group>
+                        <Card fluid>
+                            <Card.Content header="Novo Calendário"/>
                             <Card.Content>
-                                <Form autoComplete="off">
-                                    <div className={currentStep === 1 ? "display-block" : "display-none"}>
-                                        <Step1 activeSemester={activeSemester} setActiveSemester={setActiveSemester} />
-                                    </div>
-                                    <div className={currentStep === 2 ? "display-block" : "display-none"}>
-                                        <Step2 additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} />
-                                    </div>
-                                    <div className={currentStep === 3 ? "display-block" : "display-none"}>
-                                        <Step3 allCourses={allCourses} setAllCourses={setAllCourses} courses={courses} removeCourse={removeCourse} addCourse={addCourse} loading={loading} setLoading={setLoading}/>
-                                    </div>
-                                </Form>
+
+                                <Card.Content>
+                                    <Form autoComplete="off">
+                                        <div className={currentStep === 1 ? "display-block" : "display-none"}>
+                                            <Step1 activeSemester={activeSemester} setActiveSemester={setActiveSemester} />
+                                        </div>
+                                        <div className={currentStep === 2 ? "display-block" : "display-none"}>
+                                            <Step2 additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} />
+                                        </div>
+                                        <div className={currentStep === 3 ? "display-block" : "display-none"}>
+                                            <Step3 allCourses={allCourses} setAllCourses={setAllCourses} courses={courses} removeCourse={removeCourse} addCourse={addCourse} loading={loading} setLoading={setLoading}/>
+                                        </div>
+                                    </Form>
+                                </Card.Content>
                             </Card.Content>
-                        </Card.Content>
-                        <Card.Content extra>
-                            {currentStep === 2 && (
-                                <Button icon labelPosition="left" color="teal" floated="left" onClick={() => {setAdditionalInterruptions((current) => [...current, current.length]);}}>
-                                    Adicionar interrupção
-                                    <Icon name="plus"/>
-                                </Button>
-                            )}
-                            {currentStep === 3 && (
-                                <Button icon labelPosition="left" color="blue" floated="right" loading={isSaving} onClick={handleSubmit}>
-                                    Criar Calendário
-                                    <Icon name="send"/>
-                                </Button>
-                            )}
-                            {currentStep < 3 && (
-                                <Button icon labelPosition="right" color="green" floated="right" onClick={() => handleStepChange(currentStep + 1)}>
-                                    Seguinte
-                                    <Icon name="right arrow"/>
-                                </Button>
-                            )}
-                            {currentStep > 1 && (
-                                <Button icon labelPosition="left" color="green" floated="right" onClick={() => handleStepChange(currentStep - 1)}>
-                                    Anterior
-                                    <Icon name="left arrow"/>
-                                </Button>
-                            )}
-                        </Card.Content>
-                    </Card>
+                            <Card.Content extra>
+                                {currentStep === 2 && (
+                                    <Button icon labelPosition="left" color="teal" floated="left" onClick={() => {setAdditionalInterruptions((current) => [...current, current.length]);}}>
+                                        Adicionar interrupção
+                                        <Icon name="plus"/>
+                                    </Button>
+                                )}
+                                {currentStep === 3 && (
+                                    <Button icon labelPosition="left" color="blue" floated="right" loading={isSaving} onClick={handleSubmit}>
+                                        Criar Calendário
+                                        <Icon name="send"/>
+                                    </Button>
+                                )}
+                                {currentStep < 3 && (
+                                    <Button icon labelPosition="right" color="green" floated="right" onClick={() => handleStepChange(currentStep + 1)}>
+                                        Seguinte
+                                        <Icon name="right arrow"/>
+                                    </Button>
+                                )}
+                                {currentStep > 1 && (
+                                    <Button icon labelPosition="left" color="green" floated="right" onClick={() => handleStepChange(currentStep - 1)}>
+                                        Anterior
+                                        <Icon name="left arrow"/>
+                                    </Button>
+                                )}
+                            </Card.Content>
+                        </Card>
+                    </>
                 )}
             />
         </Container>
