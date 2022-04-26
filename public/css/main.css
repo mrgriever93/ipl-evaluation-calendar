@@ -296,3 +296,48 @@ body {
 .ui.large.label.margin-bottom-s {
     margin-bottom: var(--space-s);
 }
+
+
+.ui.celled.definition-last.table thead:not(.full-width) th:last-child {
+    box-shadow: 0 -1px 0 1px #fff;
+}
+.ui.definition-last.table thead:not(.full-width) th:last-child {
+    pointer-events: none;
+    background: 0 0;
+    font-weight: 400;
+    color: rgba(0,0,0,.4);
+    box-shadow: -1px -1px 0 1px #fff;
+}
+div.inline{
+    display: inline;
+}
+/*
+ * Slider component
+ */
+.slider-holder{
+    position: relative;
+    width: 80%;
+    height: 30px;
+}
+.slider-input-left {
+    margin-left: 10px;
+}
+.slider-input-right{
+    margin-right: 10px;
+}
+.slider-input-single{
+    width: 100%;
+}
+.slider-holder input{
+    width: 100%;
+}
+.slider-label-min,
+.slider-label-max{
+    position: absolute;
+    top: 15px;
+    left: 0;
+}
+.slider-label-max{
+    left: unset;
+    right: 0;
+}
