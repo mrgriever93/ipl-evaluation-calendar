@@ -1,9 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {
-    Button, Card, Container, Form, Icon, Step,
-} from 'semantic-ui-react';
-import {Form as FinalForm, useField} from 'react-final-form';
+import {Button, Card, Container, Form, Icon, Step} from 'semantic-ui-react';
+import {Form as FinalForm} from 'react-final-form';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -11,8 +9,12 @@ import moment from 'moment';
 import Step1 from './partials/Step1';
 import Step2 from './partials/Step2';
 import Step3 from './partials/Step3';
-import Step4 from './partials/Step4';
-import {SEMESTER} from '../../components/utils/constants';
+
+const SEMESTER = {
+    FIRST: "1",
+    SECOND: "2",
+    SPECIAL: "3",
+};
 
 const SweetAlertComponent = withReactContent(Swal);
 
@@ -21,28 +23,20 @@ const stepsData = [
         number: 1,
         icon: 'calendar alternate outline',
         title: 'Época',
-        description:
-            'Selecione o semestre do calendário a criar, assim como as datas das épocas.',
+        description: 'Selecione o semestre do calendário a criar, assim como as datas das épocas.'
     },
     {
         number: 2,
         icon: 'pause',
         title: 'Interrupções Letivas',
-        description: 'Insira todas as informações das Interrupções letivas.',
+        description: 'Insira todas as informações das Interrupções letivas.'
     },
     {
         number: 3,
         icon: 'book',
         title: 'Cursos',
-        description:
-            'Insira os cursos para os quais deseja criar o calendário.',
-    },
-    {
-        number: 4,
-        icon: 'settings',
-        title: 'Extras',
-        description: 'Configurações adicionais.',
-    },
+        description: 'Insira os cursos para os quais deseja criar o calendário.'
+    }
 ];
 
 const formInitialValues = {
@@ -51,6 +45,7 @@ const formInitialValues = {
     },
     step2: {
         interruptions: {},
+        importHolidays: true,
     },
     step3: {
         allCourses: true,
@@ -59,65 +54,21 @@ const formInitialValues = {
             last_page: 1,
         }
     },
-    step4: {
-        importHolidays: true,
-    },
 };
 
 const NewCalendar = () => {
     const history = useNavigate();
     const [activeSemester, setActiveSemester] = useState(0);
-    const [semesterList, setSemesterList] = useState([]);
     const [additionalInterruptions, setAdditionalInterruptions] = useState([]);
-    const [interruptionTypes, setInterruptionTypes] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const [allCourses, setAllCourses] = useState(true);
     const [courses, setCourses] = useState([]);
-    const [courseList, setCourseList] = useState([]);
 
     const [isSaving, setIsSaving] = useState(false);
     const [visitedSteps, setVisitedSteps] = useState([1]);
     const [currentStep, setCurrentStep] = useState(1);
     const [completedSteps, setCompletedSteps] = useState([]);
-    const [paginationInfo, setPaginationInfo] = useState({});
-    const [courseSearch, setCourseSearch] = useState();
-
-    useEffect(() => {
-        axios.get('/semesters').then((response) => {
-            if (response.status >= 200 && response.status < 300) {
-                setSemesterList(response.data.data);
-            }
-        });
-
-        axios.get('/interruption-types').then((response) => {
-            if (response.status === 200) {
-                setInterruptionTypes(response.data.data?.map(({id, description}) => ({
-                    key: id,
-                    value: id,
-                    text: description,
-                })));
-            }
-        });
-    }, []);
-
-    useEffect(() => {
-        fetchCourses();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [courseSearch]);
-
-    const fetchCourses = (page = 1) => {
-        setLoading(true);
-        axios.get(`/courses?page=${page}${courseSearch ? `&search=${courseSearch}` : ''}`).then((response) => {
-            if (response.status >= 200 && response.status < 300) {
-                setCourseList(response.data.data);
-                setPaginationInfo(response.data.meta);
-            }
-            setLoading(false);
-        });
-    };
-
-    const loadCourses = (evt, {activePage}) => fetchCourses(activePage);
 
     const addCourse = (course) => {
         setCourses([...courses, {...course}]);
@@ -135,7 +86,6 @@ const NewCalendar = () => {
     const onSubmit = (values) => {
         setIsSaving(true);
         const body = {
-            import_holidays: values.step4.importHolidays,
             semester: values.step1.semester,
             is_all_courses: values.step3.allCourses,
             ...(values.step3.allCourses ? null : {courses: [...values.step3.courses.map((x) => x.id)]}),
@@ -156,6 +106,7 @@ const NewCalendar = () => {
                     }),
                 ) || []),
             ],
+            import_holidays: values.step2.importHolidays,
         };
         axios.post('/calendar', body).then((response) => {
             setIsSaving(false);
@@ -179,104 +130,69 @@ const NewCalendar = () => {
         });
     };
 
-    const onCourseSearch = (value) => {
-        setCourseSearch(value);
-    };
-
     return (
         <Container>
             <FinalForm onSubmit={onSubmit} initialValues={formInitialValues} key={'form_new_calendar'}
                 render={({handleSubmit}) => (
-                    <Card fluid>
-                        <Card.Content header="Novo Calendário"/>
-                        <Card.Content>
-                            <Step.Group widths={stepsData.length}>
-                                {stepsData.map((step) => (
-                                    <Step link active={currentStep === step.number} key={'step_' + step.number}
-                                        completed={completedSteps.includes(
-                                            step.number,
-                                        )}
-                                        onClick={() => setCurrentStep(step.number)}
-                                    >
-                                        <Icon name={step.icon}/>
-                                        <Step.Content>
-                                            <Step.Title>
-                                                {step.title}
-                                            </Step.Title>
-                                            <Step.Description>
-                                                {step.description}
-                                            </Step.Description>
-                                        </Step.Content>
-                                    </Step>
-                                ))}
-                            </Step.Group>
+                    <>
+
+                        <Step.Group widths={stepsData.length}>
+                        {stepsData.map((step) => (
+                            <Step link active={currentStep === step.number} key={'step_' + step.number} completed={completedSteps.includes(step.number)} onClick={() => setCurrentStep(step.number)}>
+                                <Icon name={step.icon}/>
+                                <Step.Content>
+                                    <Step.Title>{step.title}</Step.Title>
+                                    <Step.Description>{step.description}</Step.Description>
+                                </Step.Content>
+                            </Step>
+                        ))}
+                    </Step.Group>
+                        <Card fluid>
+                            <Card.Content header="Novo Calendário"/>
                             <Card.Content>
-                                <Form autoComplete="off">
-                                    {currentStep === 1 ? (
-                                        <Step1
-                                            activeSemester={activeSemester}
-                                            setActiveSemester={setActiveSemester}
-                                            semesterList={semesterList}
-                                        />
-                                    ) : currentStep === 2 ? (
-                                        <Step2
-                                            additionalInterruptions={additionalInterruptions}
-                                            setAdditionalInterruptions={setAdditionalInterruptions}
-                                            interruptionTypes={interruptionTypes}
-                                        />
-                                    ) : currentStep === 3 ? (
-                                        <Step3
-                                            allCourses={allCourses}
-                                            setCourseList={setCourseList}
-                                            setAllCourses={setAllCourses}
-                                            courses={courses}
-                                            removeCourse={removeCourse}
-                                            courseList={courseList}
-                                            addCourse={addCourse}
-                                            loadCourses={loadCourses}
-                                            loading={loading}
-                                            setLoading={setLoading}
-                                            paginationInfo={paginationInfo}
-                                            setPaginationInfo={setPaginationInfo}
-                                            onCourseSearch={onCourseSearch}
-                                        />
-                                    ) : (
-                                        <Step4/>
-                                    )}
-                                </Form>
+
+                                <Card.Content>
+                                    <Form autoComplete="off">
+                                        <div className={currentStep === 1 ? "display-block" : "display-none"}>
+                                            <Step1 activeSemester={activeSemester} setActiveSemester={setActiveSemester} />
+                                        </div>
+                                        <div className={currentStep === 2 ? "display-block" : "display-none"}>
+                                            <Step2 additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} />
+                                        </div>
+                                        <div className={currentStep === 3 ? "display-block" : "display-none"}>
+                                            <Step3 allCourses={allCourses} setAllCourses={setAllCourses} courses={courses} removeCourse={removeCourse} addCourse={addCourse} loading={loading} setLoading={setLoading}/>
+                                        </div>
+                                    </Form>
+                                </Card.Content>
                             </Card.Content>
-                        </Card.Content>
-                        <Card.Content extra>
-                            {currentStep === 2 && (
-                                <Button icon labelPosition="left" color="teal" floated="left"
-                                    onClick={() => {
-                                        setAdditionalInterruptions((current) => [...current, current.length]);
-                                    }}
-                                >
-                                    Adicionar interrupção
-                                    <Icon name="plus"/>
-                                </Button>
-                            )}
-                            {currentStep === 4 && (
-                                <Button icon labelPosition="left" color="blue" floated="right" loading={isSaving} onClick={handleSubmit}>
-                                    Criar Calendário
-                                    <Icon name="send"/>
-                                </Button>
-                            )}
-                            {currentStep < 4 && (
-                                <Button icon labelPosition="right" color="green" floated="right" onClick={() => handleStepChange(currentStep + 1)}>
-                                    Seguinte
-                                    <Icon name="right arrow"/>
-                                </Button>
-                            )}
-                            {currentStep > 1 && (
-                                <Button icon labelPosition="left" color="green" floated="right" onClick={() => handleStepChange(currentStep - 1)}>
-                                    Anterior
-                                    <Icon name="left arrow"/>
-                                </Button>
-                            )}
-                        </Card.Content>
-                    </Card>
+                            <Card.Content extra>
+                                {currentStep === 2 && (
+                                    <Button icon labelPosition="left" color="teal" floated="left" onClick={() => {setAdditionalInterruptions((current) => [...current, current.length]);}}>
+                                        Adicionar interrupção
+                                        <Icon name="plus"/>
+                                    </Button>
+                                )}
+                                {currentStep === 3 && (
+                                    <Button icon labelPosition="left" color="blue" floated="right" loading={isSaving} onClick={handleSubmit}>
+                                        Criar Calendário
+                                        <Icon name="send"/>
+                                    </Button>
+                                )}
+                                {currentStep < 3 && (
+                                    <Button icon labelPosition="right" color="green" floated="right" onClick={() => handleStepChange(currentStep + 1)}>
+                                        Seguinte
+                                        <Icon name="right arrow"/>
+                                    </Button>
+                                )}
+                                {currentStep > 1 && (
+                                    <Button icon labelPosition="left" color="green" floated="right" onClick={() => handleStepChange(currentStep - 1)}>
+                                        Anterior
+                                        <Icon name="left arrow"/>
+                                    </Button>
+                                )}
+                            </Card.Content>
+                        </Card>
+                    </>
                 )}
             />
         </Container>

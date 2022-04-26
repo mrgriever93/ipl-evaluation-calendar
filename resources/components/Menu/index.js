@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Link, useNavigate} from 'react-router-dom';
-import {Container, Image, Menu, Dropdown, Icon} from 'semantic-ui-react';
+import {Link, useNavigate, useLocation} from 'react-router-dom';
+import {Container, Menu, Dropdown, Icon} from 'semantic-ui-react';
 import axios from 'axios';
 import {useTranslation} from "react-i18next";
 import {logout, setAcademicYear} from '../../redux/app/actions';
-import logoSVG from '../../logo.svg';
 import {
     ACADEMIC_YEAR_SCOPES,
     CALENDAR_PHASES_SCOPES,
@@ -14,8 +13,6 @@ import {
     COURSE_UNIT_SCOPES,
     EVALUATION_TYPE_SCOPES,
     INTERRUPTION_TYPES_SCOPES,
-    LANGUAGE_SCOPES,
-    PERMISSIONS_SCOPES,
     SCHOOLS_SCOPES,
     USER_GROUPS_SCOPES,
     USER_SCOPES,
@@ -24,9 +21,12 @@ import ShowComponentIfAuthorized from '../ShowComponentIfAuthorized';
 
 const HeaderMenu = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const [academicYearsList, setAcademicYearsList] = useState([]);
+    const [activeMenu, setActiveMenu] = useState();
 
     useEffect(() => {
         axios.get('academic-years/menu').then((response) => {
@@ -35,13 +35,17 @@ const HeaderMenu = () => {
                 setAcademicYearsList(response?.data?.data);
             }
         });
+        getActiveMenu();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const logoutUser = () => {
         axios.post('/logout').then(() => {
+            localStorage.removeItem('language');
             localStorage.removeItem('authToken');
             localStorage.removeItem('username');
+            localStorage.removeItem('scopes');
+            localStorage.removeItem('calendarPermissions');
             dispatch(logout());
             navigate('/login');
         });
@@ -58,29 +62,32 @@ const HeaderMenu = () => {
     };
 
     const selectedAcademicYear = useSelector((state) => state.app.academicYear);
+    const getActiveMenu = () => {
+
+    };
 
     return (
         <Menu borderless>
             <Container>
-                <Menu.Item header>
-                    <Link to="/">
-                        <Image src={logoSVG} width="100px"/>
-                    </Link>
+                <Menu.Item as={Link} className={ (location.pathname.includes('/calendario') || location.pathname === '/') && !location.pathname.includes('/calendario/fases') ? 'active' : ''} to="/" >{t('menu.Calendários') }
                 </Menu.Item>
-                <Menu.Item as={Link} to="/calendario">{t('menu.Calendários')}</Menu.Item>
                 <ShowComponentIfAuthorized permission={[...COURSE_UNIT_SCOPES]}>
-                    <Dropdown disabled={academicYearsList.length === 0} item text={t('menu.Unidades Curriculares')}>
-                        <Dropdown.Menu>
-                            <Dropdown.Item as={Link} to="/unidade-curricular">{t('menu.Unidades Curriculares')}</Dropdown.Item>
-                            <Dropdown.Item as={Link} to="/agrupamento-unidade-curricular">{t('menu.Agrupamentos')}</Dropdown.Item>
-                        </Dropdown.Menu>
-                    </Dropdown>
+                    <Menu.Item as={Link} to="/unidade-curricular" className={ location.pathname.includes('/unidade-curricular') ? 'active' : ''} disabled={academicYearsList.length === 0}>{t('menu.Unidades Curriculares')}</Menu.Item>
+                    {/* // TODO: Criar permissões para ser possível agrupar UC's */}
+                    <Menu.Item as={Link} to="/agrupamento-unidade-curricular" className={ location.pathname.includes('/agrupamento-unidade-curricular') ? 'active' : ''} disabled={academicYearsList.length === 0}>{t('menu.Agrupar UCs')}</Menu.Item>
                 </ShowComponentIfAuthorized>
                 <ShowComponentIfAuthorized permission={[...COURSE_SCOPES]}>
-                    <Menu.Item disabled={academicYearsList.length === 0} as={Link} to="/curso">{t('menu.Cursos')}</Menu.Item>
+                    <Menu.Item as={Link} disabled={academicYearsList.length === 0} className={ location.pathname.includes('/curso') ? 'active' : ''} to="/curso">{t('menu.Cursos')}</Menu.Item>
                 </ShowComponentIfAuthorized>
                 <ShowComponentIfAuthorized permission={[...CONFIG_SCOPES]}>
-                    <Dropdown item text={t('menu.Configurações')} icon={ (academicYearsList.length === 0 ? "warning circle" : "dropdown") }>
+                    <Dropdown
+                        className={ (location.pathname.includes('/ano-letivo') || location.pathname.includes('/escola') ||
+                            location.pathname.includes('/calendario/fases') || location.pathname.includes('/tipo-interrupcao') ||
+                            location.pathname.includes('/tipo-avaliacao') || location.pathname.includes('/grupo-utilizador') ||
+                            location.pathname.includes('/utilizador')) ? 'active' : ''}
+                        item
+                        text={t('menu.Configurações')}
+                        icon={ (academicYearsList.length === 0 ? "warning circle" : "dropdown") }>
                         <Dropdown.Menu>
                             <ShowComponentIfAuthorized permission={[...ACADEMIC_YEAR_SCOPES]}>
                                 <Dropdown.Item as={Link} to="/ano-letivo">{t('menu.Anos Letivos')} { academicYearsList.length === 0 && (<Icon name={"warning circle"} />) }</Dropdown.Item>
@@ -92,7 +99,7 @@ const HeaderMenu = () => {
                                 <Dropdown.Item disabled={academicYearsList.length === 0} as={Link} to="/calendario/fases">{t('menu.Fases Calendário')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...INTERRUPTION_TYPES_SCOPES,]}>
-                                <Dropdown.Item disabled={academicYearsList.length === 0} as={Link} to="/tipo-interrupcao/">{t('menu.Tipos Interrupções')}</Dropdown.Item>
+                                <Dropdown.Item disabled={academicYearsList.length === 0} as={Link} to="/tipo-interrupcao">{t('menu.Tipos Interrupções')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...EVALUATION_TYPE_SCOPES]}>
                                 <Dropdown.Item disabled={academicYearsList.length === 0} as={Link} to="/tipo-avaliacao">{t('menu.Tipos Avaliações')}</Dropdown.Item>
@@ -101,11 +108,8 @@ const HeaderMenu = () => {
                                 <Dropdown.Item disabled={academicYearsList.length === 0} as={Link} to="/grupo-utilizador">{t('menu.Grupos Utilizador')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...USER_SCOPES]}>
-                                <Dropdown.Item disabled={academicYearsList.length === 0} as={Link} to="/utilizador/">{t('menu.Utilizadores')}</Dropdown.Item>
+                                <Dropdown.Item disabled={academicYearsList.length === 0} as={Link} to="/utilizador">{t('menu.Utilizadores')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
-                            {/* <ShowComponentIfAuthorized permission={[...PERMISSIONS_SCOPES]}>
-                                <Dropdown.Item as={Link} to="/permissoes/">{t('menu.Permissões')}</Dropdown.Item>
-                            </ShowComponentIfAuthorized> */}
                         </Dropdown.Menu>
                     </Dropdown>
                 </ShowComponentIfAuthorized>

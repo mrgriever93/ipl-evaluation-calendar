@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Generic;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -10,7 +10,7 @@ class EpochTypesResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'name' => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
         ];
     }
 }

@@ -258,7 +258,7 @@ const New = () => {
                             <Form.Group widths="equal">
                                 <Field name="query_param_academic_year" validate={required}>
                                     {({input: query_param_academic_yearInput, meta}) => (
-                                        <Form.Input type='number' placeholder={t('anoletivo -> Pronto a receber no formato: 202122')} label={ t("Nome do parâmetro para o ano letivo") } {...query_param_academic_yearInput} error={ meta.touched && meta.error } />
+                                        <Form.Input placeholder={t('anoletivo -> Pronto a receber no formato: 202122')} label={ t("Nome do parâmetro para o ano letivo") } {...query_param_academic_yearInput} error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
                                 <Field name="query_param_semester" validate={required}>

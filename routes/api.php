@@ -7,6 +7,7 @@ use App\Http\Controllers\API\GroupController;
 use App\Http\Controllers\API\InterruptionTypeController;
 use App\Http\Controllers\API\LoginController;
 use App\Models\AcademicYear;
+use App\Models\Course;
 use App\Services\ExternalImports;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,20 @@ Route::get('/version', function () {
     return 'v2';
 });
 
+Route::get('/initials', function () {
+    $courses = Course::all();
+    foreach ($courses as $course){
+        $course_initials = preg_match_all("/[A-Z]/", $course->name_pt, $matches, PREG_SET_ORDER, 0);
+        $test = "";
+        for ($i = 0; $i < $course_initials; $i++) {
+            $test .= implode("", $matches[$i]);
+        }
+        $course->initials = $test;
+        $course->save();
+    }
+});
+
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -57,16 +72,18 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::controller(CalendarController::class)->group(function () {
-        Route::get('/calendar',                            'index'            );
-        Route::get('/calendar/{calendar}',                 'show'             );
-        Route::post('/calendar',                           'store'            );
-        Route::patch('/calendar/{calendar}',               'update'           );
-        Route::delete('/calendar/{calendar}',              'destroy'          );
+        Route::get('/calendar',                             'index'            );
+        Route::get('/calendar/{calendar}',                  'show'             );
+        Route::post('/calendar',                            'store'            );
+        Route::patch('/calendar/{calendar}',                'update'           );
+        Route::delete('/calendar/{calendar}',               'destroy'          );
 
         /* Previous Methods */
-        Route::get('/available-methods/{calendar}',        'getAvailableMethods'  );
-        Route::get('/semesters',                           'listSemesters'        );
-        Route::post('/calendar/{calendar}/publish',        'publish'              );
+        Route::get('/available-methods/{calendar}',         'getAvailableMethods'  );
+        Route::get('/semesters',                            'listSemesters'        );
+        Route::get('/semesters/new-calendar',               'calendarSemesters'    );
+
+        Route::post('/calendar/{calendar}/publish',         'publish'              );
     });
 
     Route::controller(EvaluationTypeController::class)->group(function () {
@@ -193,15 +210,26 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::controller(CourseUnitController::class)->group(function () {
-        Route::get('/course-units',                           'index'               );
-        Route::get('/course-units/{courseUnit}',              'show'                );
-        Route::get('/course-units/{courseUnit}/branches',     'branches'            );
-        Route::post('/course-units',                          'store'               );
-        Route::patch('/course-units/{courseUnit}',            'update'              );
-        Route::delete('/course-units/{courseUnit}',           'destroy'             );
-        Route::get('/course-units/{courseUnit}/epochs',       'epochsForCourseUnit' );
-        Route::get('/course-units/{courseUnit}/methods',      'methodsForCourseUnit');
-        Route::patch('/course-units/{courseUnit}/responsible','assignResponsible'   );
+        Route::get('/course-units',                                     'index'               );
+        Route::get('/course-units/{courseUnit}',                        'show'                );
+        Route::post('/course-units',                                    'store'               );
+        Route::patch('/course-units/{courseUnit}',                      'update'              );
+        Route::delete('/course-units/{courseUnit}',                     'destroy'             );
+
+        // Relations of course units
+        Route::get('/course-units/{courseUnit}/branches',               'branches'            );
+        // relations with teachers
+        Route::get('/course-units/{courseUnit}/teachers',               'teachers'            );
+        Route::post('/course-units/{courseUnit}/teacher',               'addTeacher'          );
+        Route::delete('/course-units/{courseUnit}/teacher/{teacherId}', 'removeTeacher'       );
+        // methods for the course unit
+        Route::get('/course-units/{courseUnit}/methods',                'methods'             );
+        // get all logs for this course unit
+        Route::get('/course-units/{courseUnit}/logs',                   'logs'                );
+
+        Route::get('/course-units/{courseUnit}/epochs',                 'epochsForCourseUnit' );
+        Route::get('/course-units/{courseUnit}/methods',                'methodsForCourseUnit');
+        Route::patch('/course-units/{courseUnit}/responsible',          'assignResponsible'   );
     });
 
     Route::controller(CourseUnitGroupController::class)->group(function () {

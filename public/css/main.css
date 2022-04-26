@@ -4,6 +4,9 @@
 /* ================================================================ */
 
 :root {
+    --color-primary: #edaa02;
+    --color-secondary: #1c1c1c;
+
     --space-none:   0;
     --space-xs:     4px;
     --space-s:      8px;
@@ -15,20 +18,21 @@
 
     --background-color: #F3F6F8;
 }
+
 html, body {
     height: 100%;
     margin: 0;
 }
+
 body {
     background: var(--background-color);
 }
-#root{
-    height: 100%;
-}
+
 .app-content{
-    min-height: calc(100% - (60px + 145px));
+    min-height: calc(100vh - (60px + 221px));
     padding: 30px 0;
 }
+
 .ui.menu {
     margin: 0 auto;
     height: 60px;
@@ -38,12 +42,36 @@ body {
     padding-bottom: 56px;
 }
 
-.ui.menu .item.lang-dropdown {
-    text-transform: uppercase;
+.ui.menu .active.item {
+    background: transparent;
+    font-weight: 700;
 }
 
+.ui.menu .active.item:before {
+    background: var(--color-primary) !important;
+    bottom: 0;
+    height: 3px;
+    left: 0;
+    right: 0;
+    top: auto;
+    width: 100%;
+    z-index: 10;
+}
+
+.display-flex {
+    display: flex;
+}
+.display-block {
+    display: block;
+}
 .display-inline {
     display: inline;
+}
+.display-none {
+    display: none;
+}
+.justify_space_between{
+    justify-content: space-between;
 }
 
 .footer.ui.inverted.vertical.segment{
@@ -234,6 +262,21 @@ body {
     opacity: .7;
 }
 
+/* Custom Component > Pagination */
+.pagination-wrapper {
+    align-items: center;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    margin-top: var(--space-base)
+}
+
+.pagination-list .ui.menu {
+    height: 40px;
+}
+
+/* Other stuff */
+
 .card-header-alignment {
     display: flex;
     align-items: center;
@@ -248,4 +291,53 @@ body {
 
 .ui.form .field>.selection.dropdown {
     min-width: 4em;
+}
+
+.ui.large.label.margin-bottom-s {
+    margin-bottom: var(--space-s);
+}
+
+
+.ui.celled.definition-last.table thead:not(.full-width) th:last-child {
+    box-shadow: 0 -1px 0 1px #fff;
+}
+.ui.definition-last.table thead:not(.full-width) th:last-child {
+    pointer-events: none;
+    background: 0 0;
+    font-weight: 400;
+    color: rgba(0,0,0,.4);
+    box-shadow: -1px -1px 0 1px #fff;
+}
+div.inline{
+    display: inline;
+}
+/*
+ * Slider component
+ */
+.slider-holder{
+    position: relative;
+    width: 80%;
+    height: 30px;
+}
+.slider-input-left {
+    margin-left: 10px;
+}
+.slider-input-right{
+    margin-right: 10px;
+}
+.slider-input-single{
+    width: 100%;
+}
+.slider-holder input{
+    width: 100%;
+}
+.slider-label-min,
+.slider-label-max{
+    position: absolute;
+    top: 15px;
+    left: 0;
+}
+.slider-label-max{
+    left: unset;
+    right: 0;
 }

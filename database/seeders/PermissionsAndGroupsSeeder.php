@@ -2,11 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\AcademicYear;
-use App\Models\Branch;
 use App\Models\CalendarPhase;
-use App\Models\Course;
-use App\Models\CourseUnit;
 use App\Models\EpochType;
 use App\Models\EvaluationType;
 use App\Models\Group;
@@ -18,7 +14,6 @@ use App\Models\School;
 use App\Models\Semester;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class PermissionsAndGroupsSeeder extends Seeder
 {

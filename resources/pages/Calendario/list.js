@@ -182,20 +182,13 @@ const CalendarList = ({match}) => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {calendars.map(
-                                (
-                                    {
-                                        id, display_id, course, temporary, phase, semester, published,
-                                    }
-                                ) => (
+                            {calendars.map(({id, display_id, course, temporary, phase, semester, published}) => (
                                     <Table.Row key={id}>
                                         <Table.Cell>{display_id}</Table.Cell>
                                         <Table.Cell>{course.display_name}</Table.Cell>
                                         <Table.Cell>{course.level}</Table.Cell>
                                         <Table.Cell>{semester}</Table.Cell>
-                                        <ShowComponentIfAuthorized
-                                            permission={[SCOPES.VIEW_CALENDAR_INFO]}
-                                            renderIfNotAllowed={() => (
+                                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]} renderIfNotAllowed={() => (
                                                 <Table.Cell>
                                                     {published ? temporary ? 'Provisório' : 'Definitivo' : phase.description}
                                                 </Table.Cell>
@@ -205,28 +198,18 @@ const CalendarList = ({match}) => {
                                                 {temporary ? 'Provisório' : 'Definitivo'}
                                             </Table.Cell>
                                         </ShowComponentIfAuthorized>
-                                        <ShowComponentIfAuthorized
-                                            permission={[SCOPES.VIEW_CALENDAR_INFO]}
-                                        >
+                                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
                                             <Table.Cell textAlign="center">
-                                                <Icon
-                                                    name={
-                                                        published
-                                                            ? 'checkmark'
-                                                            : 'close'
-                                                    }
-                                                />
+                                                <Icon name={published ? 'checkmark' : 'close'}/>
                                             </Table.Cell>
                                         </ShowComponentIfAuthorized>
-                                        <ShowComponentIfAuthorized
-                                            permission={[SCOPES.VIEW_ACTUAL_PHASE]}
-                                        >
+                                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
                                             <Table.Cell>
                                                 {phase.description}
                                             </Table.Cell>
                                         </ShowComponentIfAuthorized>
                                         <Table.Cell>
-                                            <Link to={`../calendario/${id}`}>
+                                            <Link to={`/calendario/${id}`}>
                                                 <Button color="green" icon>
                                                     <Icon name="eye"/>
                                                 </Button>

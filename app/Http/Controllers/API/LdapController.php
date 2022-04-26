@@ -17,58 +17,58 @@ class LdapController extends Controller
             'hosts'    => [env('LDAP_HOST')],
             'username' => env('LDAP_USERNAME'),
             'password' => env('LDAP_PASSWORD'),
-             'version' => 3,
+            'version' => 3
          ]);
     }
 
     public function searchStudents(Request $request) {
-        if(!env('APP_SERVER')) {
-            return response()->json([]);
-        }
-        $query = $this->connection->query()->setDn('OU=Estudantes,dc=ipleiria,dc=pt');
-        $records = $query->whereContains('displayName', $request->q)->orWhereContains('mail', $request->q)->orWhereContains('cn', $request->q)->get();
+        return $this->getLocalUsers('OU=Estudantes,dc=ipleiria,dc=pt', $request->q, true);
+    }
 
+    public function searchUsers(Request $request) {
+        return $this->getLocalUsers('OU=Docentes,OU=Funcionarios,dc=ipleiria,dc=pt', $request->q);
+    }
+
+    // Get necessary search results
+    private function getLocalUsers($querySearchLDAP, $search, $isStudent = false){
         $results = [];
-
-        foreach ($records as $foundObj) {
-            if (isset($foundObj['mail'])) {
-                $results[] = ["mail" => $foundObj['mail'][0], "name" => $foundObj["cn"][0]];
+        if(env('APP_SERVER')) {
+            $query = $this->connection->query()->setDn($querySearchLDAP);
+            $query->whereContains('displayName', $search);
+            if($isStudent){
+                $query->orWhereContains('mail', $search);
             }
-        }
+            $records = $query->orWhereContains('cn', $search)->get();
 
-        $usersFound = User::where('name', 'like', "%$request->q%")->orWhere('email', 'like', "%$request->q%")->get();
+            foreach ($records as $foundObj) {
+                if (isset($foundObj['mail'])) {
+                    $results[] = ["value" => $foundObj['mail'][0], "text" => "(" . $foundObj['mail'][0] . ") - " . $foundObj["cn"][0]];
+                }
+            }
+       }
 
+        $usersFound = User::where('name', 'like', "%$search%")->orWhere('email', 'like', "%$search%")->limit(30)->get();
         foreach ($usersFound as $user) {
             if (array_search($user->email, array_column($results, 'mail')) === false) {
-                $results[] = ["mail" => $user->email, "name" => $user->name];
+                $results[] = ["value" => $user->email, "text" => "(" . $user->email . ") - " . $user->name];
             }
         }
         return response()->json($results);
     }
 
-    public function searchUsers(Request $request) {
-        if(!env('APP_SERVER')) {
-            return response()->json([]);
-        }
-        $query = $this->connection->query()->setDn('OU=Docentes,OU=Funcionarios,dc=ipleiria,dc=pt');
-
-        $records = $query->whereContains('displayName', $request->q)->orWhereContains('cn', $request->q)->get();
-
+    public function getUserInfoByEmail($userEmail, $isStudent = false){
         $results = [];
+        $link = ($isStudent ? 'OU=Estudantes,dc=ipleiria,dc=pt' : 'OU=Docentes,OU=Funcionarios,dc=ipleiria,dc=pt');
+        if(env('APP_SERVER')) {
+            $query = $this->connection->query()->setDn($link);
+            $records = $query->whereContains('mail', $userEmail)->get();
 
-        foreach ($records as $foundObj) {
-            if (isset($foundObj['mail'])) {
-                $results[] = ["mail" => $foundObj['mail'][0], "name" => $foundObj["cn"][0]];
+            foreach ($records as $foundObj) {
+                if (isset($foundObj['mail'])) {
+                    $results = ["email" => $foundObj['mail'][0], "name" => $foundObj["cn"][0]];
+                }
             }
         }
-
-        $usersFound = User::where('name', 'like', "%$request->q%")->orWhere('email', 'like', "%$request->q%")->get();
-
-        foreach ($usersFound as $user) {
-            if (array_search($user->email, array_column($results, 'mail')) === false) {
-                $results[] = ["mail" => $user->email, "name" => $user->name];
-            }
-        }
-        return response()->json($results);
-   }
+        return $results;
+    }
 }

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Card, Container, Dimmer, Form, Loader, Table, Button, Icon, Header} from 'semantic-ui-react';
+import {Card, Container, Dimmer, Form, Loader, Table, Button, Icon, Header, Popup} from 'semantic-ui-react';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 import Swal from 'sweetalert2';
@@ -14,13 +14,15 @@ import FilterOptionSchool from "../../components/Filters/Schools";
 import FilterOptionDegree from "../../components/Filters/Degree";
 import FilterOptionPerPage from "../../components/Filters/PerPage";
 import PaginationDetail from "../../components/Pagination";
+import _ from "lodash";
 
 const SweetAlertComponent = withReactContent(Swal);
 
 const CoursesList = () => {
     const { t } = useTranslation();
     const [courseList, setCourseList] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [contentLoading, setContentLoading] = useState(true);
     const [paginationInfo, setPaginationInfo] = useState({});
     const [removingCourse, setRemovingCourse] = useState(undefined);
 
@@ -33,11 +35,11 @@ const CoursesList = () => {
 
     // Table columns
     const columns = [
-        {name: 'Unidade de Ensino', style: {width: '15%'} },
-        {name: 'Código', style: {width: '10%'} },
-        {name: 'Nome'},
+        {name: t('Unidade de Ensino'), style: {width: '15%'} },
+        {name: t('Código'), style: {width: '10%'} },
+        {name: t('Nome')},
         //{name: 'Sigla'},
-        {name: 'Grau de Ensino', style: {width: '15%'}},
+        {name: t('Grau de Ensino'), style: {width: '15%'}},
         //{name: 'Numero de Anos'},
         {name: t('Ações'),  align: 'center', style: {width: '10%'} },
     ];
@@ -50,8 +52,12 @@ const CoursesList = () => {
         setCurrentPage(activePage);
     }
 
+    const handleSearchCourses = (evt, {value}) => {
+        setSearchTerm(value);
+    };
+
     const fetchCourses = () => {
-        setLoading(true);
+        setContentLoading(true);
 
         let searchLink = `/courses?page=${currentPage}`;
         searchLink += `${searchTerm ? `&search=${searchTerm}` : ''}`;
@@ -65,16 +71,17 @@ const CoursesList = () => {
                 setPaginationInfo(response.data.meta);
             }
             setLoading(false);
+            setContentLoading(false);
         });
     };
 
 
     const remove = (courseId) => {
         SweetAlertComponent.fire({
-            title: 'Atenção!',
-            html: 'Ao eliminar o curso, todos os calendários, avaliações e métodos serão também eliminados.<br/><strong>Tem a certeza que deseja eliminar este curso, em vez de editar?</strong>',
-            denyButtonText: 'Não',
-            confirmButtonText: 'Sim',
+            title: t('Atenção!'),
+            html: t('Ao eliminar o curso, todos os calendários, avaliações e métodos serão também eliminados.') + '<br/><strong>' + t('Tem a certeza que deseja eliminar este curso, em vez de editar?') + '</strong>',
+            denyButtonText: t('Não'),
+            confirmButtonText: t('Sim'),
             showConfirmButton: true,
             showDenyButton: true,
             confirmButtonColor: '#21ba45',
@@ -87,9 +94,9 @@ const CoursesList = () => {
                         setRemovingCourse(null);
                         fetchCourses();
                         if (res.status === 200) {
-                            toast('Curso eliminado com sucesso!', successConfig);
+                            toast(t('Curso eliminado com sucesso!'), successConfig);
                         } else {
-                            toast('Ocorreu um problema ao eliminar este curso!', errorConfig);
+                            toast(t('Ocorreu um problema ao eliminar este curso!'), errorConfig);
                         }
                     });
                 }
@@ -100,16 +107,16 @@ const CoursesList = () => {
         <Container>
             <Card fluid>
                 <Card.Content>
-                    <div>
-                        <Header as="span">Cursos</Header>
+                    <div className='card-header-alignment'>
+                        <Header as="span">{ t("Cursos") }</Header>
                     </div>
                 </Card.Content>
                 <Card.Content>
                     <Form>
                         <Form.Group>
-                            <Form.Input width={6} label="Pesquisar curso..." placeholder="Pesquisar curso..." onChange={(e, {value}) => _.debounce(setSearchTerm(value), 500)}/>
-                            <FilterOptionSchool widthSize={7} eventHandler={(value) => setSchool(value)} />
-                            <FilterOptionDegree widthSize={4} eventHandler={(value) => setDegree(value)} />
+                            <Form.Input icon='search' iconPosition='left' width={5} label={ t("Pesquisar curso...") } placeholder={ t("Pesquisar curso...") } onChange={_.debounce(handleSearchCourses, 500)} />
+                            <FilterOptionSchool widthSize={5} eventHandler={(value) => setSchool(value)} />
+                            <FilterOptionDegree widthSize={5} eventHandler={(value) => setDegree(value)} />
                             <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                         </Form.Group>
                     </Form>
@@ -130,7 +137,8 @@ const CoursesList = () => {
                                         <Table.Cell>{school}</Table.Cell>
                                         <Table.Cell>{code}</Table.Cell>
                                         <Table.Cell>
-                                            {has_issues ? <Icon name='warning sign' /> : ''}{name}
+                                            {has_issues && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher detalhes sobre este curso.')} position='top center'/>}
+                                            {name}
                                         </Table.Cell>
                                         {/*<Table.Cell>{initials}</Table.Cell>*/}
                                         <Table.Cell>{level}</Table.Cell>
@@ -152,9 +160,9 @@ const CoursesList = () => {
                             </Table.Body>
                         </Table>
                         <PaginationDetail currentPage={currentPage} info={paginationInfo} eventHandler={changedPage} />
-                        {loading && (
+                        {contentLoading && (
                             <Dimmer active inverted>
-                                <Loader indeterminate>A carregar os cursos</Loader>
+                                <Loader indeterminate>{ t("A carregar os cursos") }</Loader>
                             </Dimmer>
                         )}
                     </Card.Content>

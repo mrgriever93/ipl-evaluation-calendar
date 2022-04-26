@@ -2,7 +2,7 @@
     "translation": {
         "menu.Calendários": "Calendários",
         "menu.Unidades Curriculares": "Unidades Curriculares",
-        "menu.Agrupamentos": "Agrupamentos",
+        "menu.Agrupar UCs": "Agrupar UCs",
         "menu.Cursos": "Cursos",
         "menu.Configurações": "Configurações",
         "menu.Anos Letivos": "Anos Letivos",
@@ -83,7 +83,6 @@
         "Editar Tipo de Avaliação": "Editar Tipo de Avaliação",
         "Novo Tipo de Avaliação":  "Novo Tipo de Avaliação",
 
-
         "Tipos de Interrupções": "Tipos de Interrupções",
         "Pesquisar tipo de interrupção...": "Pesquisar tipo de interrupção...",
         "Ohh! Não foi possível encontrar Tipos de Interrupção!": "Ohh! Não foi possível encontrar Tipos de Interrupção!",
@@ -132,6 +131,7 @@
         "Criar": "Criar",
         "Duplicar": "Duplicar",
         "Pesquisar": "Pesquisar",
+        "Data": "Data",
 
         "Desde": "Desde",
         "até": "até",
@@ -139,6 +139,7 @@
         "resultados": "resultados",
 
         "Código": "Código",
+        "Email": "Email",
         "Nome": "Nome",
         "Nome PT": "Nome PT",
         "Nome EN": "Nome EN",
@@ -146,7 +147,7 @@
         "Descrição EN": "Descrição EN",
 
         "Por Página": "Por Página",
-        "Grau de ensino": "Grau de ensino",
+        "Grau de ensino": "Graus de ensino",
         "Todas as Escolas": "Todas as Escolas",
         "Grupo de Utilizador": "Grupo de Utilizador",
 
@@ -189,7 +190,44 @@
         "Ohh! Não foi possível encontrar Unidades Curriculares!": "Ohh! Não foi possível encontrar Unidades Curriculares!",
         "Métodos": "Métodos",
         "Remover Unidade Curricular": "Remover Unidade Curricular",
-        "Tem a certeza que deseja remover a Unidade Curricular": "Tem a certeza que deseja remover a Unidade Curricular"
+        "Tem a certeza que deseja remover a Unidade Curricular": "Tem a certeza que deseja remover a Unidade Curricular",
 
+        "Utilizador atualizado com sucesso": "Utilizador atualizado com sucesso",
+        "Editar Utilizador": "Editar Utilizador",
+        "Utilizador ativo?": "Utilizador ativo?",
+
+        "Sucesso!": "Sucesso!",
+        "Utilizadores": "Utilizadores",
+        "Utilizador": "Utilizador",
+        "Pesquisar utilizador...": "Pesquisar utilizador...",
+        "Ohh! Não foi possível encontrar Utilizadores!": "Ohh! Não foi possível encontrar Utilizadores!",
+        "Bloquear a conta do utilizador.": "Bloquear a conta do utilizador.",
+        "Desbloquear a conta do utilizador.": "Desbloquear a conta do utilizador.",
+        "A carregar os utilizadores": "A carregar os utilizadores",
+
+        "Unidade de Ensino": "Unidade de Ensino",
+        "Sigla": "Sigla",
+        "Grau de Ensino": "Grau de Ensino",
+        "Numero de Anos": "Numero de Anos",
+        "Atenção!": "Atenção!",
+        "Ao eliminar o curso, todos os calendários, avaliações e métodos serão também eliminados.": "Ao eliminar o curso, todos os calendários, avaliações e métodos serão também eliminados.",
+        "Tem a certeza que deseja eliminar este curso, em vez de editar?": "Tem a certeza que deseja eliminar este curso, em vez de editar?",
+        "Curso eliminado com sucesso!": "Curso eliminado com sucesso!",
+        "Ocorreu um problema ao eliminar este curso!": "Ocorreu um problema ao eliminar este curso!",
+        "Cursos": "Cursos",
+        "Pesquisar curso...": "Pesquisar curso...",
+        "Falta preencher detalhes sobre este curso.": "Falta preencher detalhes sobre este curso.",
+        "A carregar os cursos": "A carregar os cursos",
+
+        "A carregar os unidades curriculares": "A carregar os unidades curriculares",
+        "Falta preencher os métodos de avaliação.": "Falta preencher os métodos de avaliação.",
+        "Métodos de avaliação preenchidos.": "Métodos de avaliação preenchidos.",
+
+        "Editar": "Editar",
+        "Nova": "Nova",
+        "Professores": "Professores",
+        "Ano curricular": "Ano curricular",
+        "Semestre": "Semestre",
+        "Todas os Semestres": "Todas os Semestres"
     }
 }

@@ -14,10 +14,8 @@ const FilterOptionTeacher = ({ widthSize, eventHandler, value, isSearch = true, 
         setLoading(true);
         axios.get('/search/users' + (search ? "?q=" + search : "")).then((response) => {
             if (response.status >= 200 && response.status < 300) {
-                if(isSearch){
-                    response.data.data.unshift({value: '', text: t("Todos os Professores")});
-                }
-                setTeachersOptions(response.data.data);
+                response.data.unshift({value: '', text: t((isSearch ? "Todos os Professores" : "Professores"))});
+                setTeachersOptions(response.data);
                 setLoading(false);
             }
         });
@@ -32,14 +30,14 @@ const FilterOptionTeacher = ({ widthSize, eventHandler, value, isSearch = true, 
         eventHandler(value);
     };
 
-    const handleSearchResponsible = (e, {searchQuery}) => {
+    const handleSearchTeacher = (e, {searchQuery}) => {
         getList(searchQuery);
     }
     return (
         <Form.Dropdown search selectOnBlur={false} width={widthSize} selection value={teacher} options={teachersOptions} label={t("Professores")}
                        placeholder={ t((isSearch ? "Todos os Professores" : "Professores")) } loading={loading}
                        disabled={isDisabled}
-                       onSearchChange={_.debounce(handleSearchResponsible, 400)}
+                       onSearchChange={_.debounce(handleSearchTeacher, 400)}
                        onChange={filterByTeacher} />
     );
 };

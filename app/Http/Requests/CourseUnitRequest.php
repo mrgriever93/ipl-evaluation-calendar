@@ -23,7 +23,8 @@ class CourseUnitRequest extends FormRequest
 
         return array_merge($newCourseUnitRules, [
             "code" => "required|string",
-            "name" => "required|string",
+            "name_pt" => "required|string",
+            "name_en" => "required|string",
             "initials" => "required|string",
             "curricular_year" => "required|numeric",
             "semester" => "required|numeric",

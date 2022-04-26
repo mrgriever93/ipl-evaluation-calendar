@@ -29,7 +29,7 @@ const FilterOptionSemester = ({withSpecial, widthSize, eventHandler, value, isSe
     };
 
     return (
-        <Form.Dropdown selectOnBlur={false} width={widthSize} selection value={semester} options={semestersOptions} label={t("Semestre")} placeholder={ t((isSearch ? "Todas os Semestres" : "Semestre")) } loading={loading} onChange={filterBySemester}/>
+        <Form.Dropdown selectOnBlur={false} width={widthSize} selection search={isSearch} value={semester} options={semestersOptions} label={t("Semestre")} placeholder={ t((isSearch ? "Todas os Semestres" : "Semestre")) } loading={loading} onChange={filterBySemester}/>
     );
 };
 

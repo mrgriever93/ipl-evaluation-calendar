@@ -15,7 +15,6 @@ class CourseUnitResource extends JsonResource
             'id' => $this->id,
             'name' => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
             'initials' => $this->initials,
-            'methods' => MethodResource::collection($this->whenLoaded('methods')),
             'group_name' => $this->group->description ?? null,
             'course_description' => "{$this->course->name} ({$this->course->code})",
             'code' => $this->code,
@@ -24,8 +23,10 @@ class CourseUnitResource extends JsonResource
             'responsible_name' => $this->whenLoaded('responsibleUser', is_null($this->responsibleUser) ? null :  $this->responsibleUser->name),
             'responsible_email' => $this->whenLoaded('responsibleUser', is_null($this->responsibleUser) ? null :  $this->responsibleUser->email),
             'responsible_id' => $this->whenLoaded('responsibleUser', $this->responsible_user_id),
-            'teachers' => UserResource::collection($this->teachers),
+
             'branch' => $this->branch,
+            'methods' => MethodResource::collection($this->whenLoaded('methods')),
+            'teachers' => UserResource::collection($this->teachers)
         ];
     }
 }

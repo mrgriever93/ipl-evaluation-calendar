@@ -1,25 +1,19 @@
 import _ from 'lodash';
-import React, {useEffect} from 'react';
-import {Button, Container, Dimmer, Form, Grid, Image, List, Loader, Pagination, Segment, Table,} from 'semantic-ui-react';
+import React, {useEffect, useState} from 'react';
+import {Button, Container, Dimmer, Form, Grid, Icon, Label, List, Loader, Segment, Table} from 'semantic-ui-react';
 import {Field, useField} from 'react-final-form';
-import IplLogo from '../../../../public/images/ipl.png';
+import axios from "axios";
+import PaginationDetail from "../../../components/Pagination";
+import FilterOptionPerPage from "../../../components/Filters/PerPage";
 
-const Step3 = ({
-                   allCourses,
-                   setCourseList,
-                   setAllCourses,
-                   courses,
-                   removeCourse,
-                   courseList,
-                   addCourse,
-                   loadCourses,
-                   loading,
-                   setLoading,
-                   paginationInfo,
-                   setPaginationInfo,
-                   onCourseSearch,
-               }) => {
+const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loading, setLoading}) => {
     const {input: coursesFieldInput} = useField('step3.courses');
+    const [courseList, setCourseList] = useState([]);
+    const [courseSearch, setCourseSearch] = useState();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [perPage, setPerPage] = useState(10);
+
+    const [paginationInfo, setPaginationInfo] = useState({});
 
     useEffect(() => {
         coursesFieldInput.onChange(courses);
@@ -27,8 +21,35 @@ const Step3 = ({
     }, [courses]);
 
     const searchCourse = (evt, {value}) => {
-        onCourseSearch(value);
+        setCourseSearch(value);
     };
+
+    useEffect(() => {
+        fetchCourses();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [courseSearch, currentPage, perPage]);
+
+    const fetchCourses = () => {
+        setLoading(true);
+
+        let searchLink = `/courses?page=${currentPage}`;
+        searchLink += `${courseSearch ? `&search=${courseSearch}` : ''}`;
+        searchLink += '&per_page=' + perPage;
+        //searchLink += `${school ? `&school=${school}` : ''}`;
+        //searchLink += `${degree ? `&degree=${degree}` : ''}`;
+
+        axios.get(searchLink).then((response) => {
+            if (response.status >= 200 && response.status < 300) {
+                setCourseList(response.data.data);
+                setPaginationInfo(response.data.meta);
+            }
+            setLoading(false);
+        });
+    };
+
+    const changedPage = (activePage) => {
+        setCurrentPage(activePage);
+    }
 
     return (
         <Container>
@@ -63,29 +84,19 @@ const Step3 = ({
                 {!allCourses && (
                     <>
                         {courses.length ? (
-                            <Segment style={{width: '100%'}}>
-                                <List divided verticalAlign="middle">
-                                    {courses.map((course, index) => (
-                                        <List.Item key={index}>
-                                            <List.Content floated="right">
-                                                <Button color="red" onClick={() => removeCourse(course.id)}>
-                                                    Remover
-                                                </Button>
-                                            </List.Content>
-                                            <Image avatar src={IplLogo}/>
-                                            <List.Content>
-                                                {course.code + ' - ' + course.name}
-                                            </List.Content>
-                                        </List.Item>
-                                    ))}
-                                </List>
-                            </Segment>
+                            <Grid.Row>
+                                {courses.map((course, index) => (
+                                    <Label key={index} size={"large"} className={"margin-bottom-s"}>
+                                        {course.code + ' - ' + course.name}
+                                        <Icon name='delete' color={"red"} onClick={() => removeCourse(course.id)} />
+                                    </Label>
+                                ))}
+                            </Grid.Row>
                         ) : null}
 
-                        <Grid.Row>
-                            <Form.Input label="Pesquisar curso (Código, Sigla ou Nome)" placeholder="Pesquisar ..." fluid
-                                onChange={_.debounce(searchCourse, 900)}
-                            />
+                        <Grid.Row className={"justify_space_between"}>
+                            <Form.Input width={6} label="Pesquisar curso (Código, Sigla ou Nome)" placeholder="Pesquisar ..." fluid onChange={_.debounce(searchCourse, 900)}/>
+                            <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                         </Grid.Row>
                         <Grid.Row>
                             <Table color="green">
@@ -98,26 +109,13 @@ const Step3 = ({
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
-                                    {courseList.map((course) => (
-                                        <Table.Row>
+                                    {courseList.map((course, index) => (
+                                        <Table.Row key={index}>
+                                            <Table.Cell>{course.code}</Table.Cell>
+                                            <Table.Cell>{course.initials}</Table.Cell>
+                                            <Table.Cell>{course.name}</Table.Cell>
                                             <Table.Cell>
-                                                {course.code}
-                                            </Table.Cell>
-                                            <Table.Cell>
-                                                {course.initials}
-                                            </Table.Cell>
-                                            <Table.Cell>
-                                                {course.name}
-                                            </Table.Cell>
-                                            <Table.Cell>
-                                                <Button
-                                                    onClick={() => addCourse(course)}
-                                                    color="teal"
-                                                    disabled={courses.find(
-                                                        ({id: courseId}) => courseId
-                                                            === course.id,
-                                                    )}
-                                                >
+                                                <Button onClick={() => addCourse(course)} color="teal" disabled={courses.find(({id: courseId}) => courseId === course.id)} >
                                                     Adicionar
                                                 </Button>
                                             </Table.Cell>
@@ -125,23 +123,17 @@ const Step3 = ({
                                     ))}
                                 </Table.Body>
                             </Table>
-
-                            <Pagination
-                                secondary
-                                pointing
-                                fluid
-                                activePage={paginationInfo.current_page}
-                                totalPages={paginationInfo.last_page}
-                                onPageChange={loadCourses}
-                            />
-                            {loading && (
-                                <Dimmer active inverted>
-                                    <Loader indeterminate>
-                                        A carregar os cursos
-                                    </Loader>
-                                </Dimmer>
-                            )}
                         </Grid.Row>
+                        <Grid.Row>
+                            <PaginationDetail currentPage={currentPage} info={paginationInfo} eventHandler={changedPage} />
+                        </Grid.Row>
+                        {loading && (
+                            <Dimmer active inverted>
+                                <Loader indeterminate>
+                                    A carregar os cursos
+                                </Loader>
+                            </Dimmer>
+                        )}
                     </>
                 )}
             </Grid>
