@@ -56,9 +56,10 @@ const UnitTabMethods = ({ unitId }) => {
         axios.get(`/course-units/${unitId}/epochs`).then((res) => {
             setIsLoading(false);
             if (res.status === 200) {
-                if (res.data.epochs?.length) {
+                console.log(res.data);
+                if (res.data?.length) {
                     setNoCalendarCreated(false);
-                    setEpochs(res.data.epochs);
+                    setEpochs(res.data);
                 }
             }
         });
@@ -199,10 +200,10 @@ const UnitTabMethods = ({ unitId }) => {
                                                             <Card.Content>
                                                                 <Form>
                                                                     <Form.Dropdown label="Tipo de avaliação"
-                                                                        options={evaluationTypes.map(({id, description, enabled}) => (enabled ? ({
+                                                                        options={evaluationTypes.map(({id, name, enabled}) => (enabled ? ({
                                                                             key: id,
                                                                             value: id,
-                                                                            text: description,
+                                                                            text: name,
                                                                         }) : undefined))}
                                                                         onChange={
                                                                             (ev, {value}) => setMethods((current) => {
