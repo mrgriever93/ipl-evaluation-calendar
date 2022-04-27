@@ -109,7 +109,7 @@ const Detail = () => {
             <div className="margin-bottom-base">
                 <Link to="/curso"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
-            { (!initialValues.coordinator || !initialValues.initials || !initialValues.degree_id ) && (
+            { initialValues && (!initialValues?.coordinator || !initialValues?.initials || !initialValues?.degree_id ) && (
                 <Message warning>
                     <Message.Header>{ t('Os seguintes detalhes do Curso precisam da sua atenção:') }</Message.Header>
                     <Message.List>
@@ -215,7 +215,7 @@ const Detail = () => {
                     </Card.Content>
                 </Card>
             )} />
-            { paramsId && <CourseTabs courseId={paramsId}/> }
+            { paramsId && <CourseTabs courseId={paramsId} /> }
         </Container>
     );
 };

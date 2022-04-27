@@ -1,11 +1,13 @@
 import axios from 'axios';
 import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
-import {Icon, Table, Form, Button, Modal, Header, Tab} from 'semantic-ui-react';
+import {Icon, Table, Form, Button, Modal, Dimmer, Loader} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import {successConfig, errorConfig} from '../../../utils/toastConfig';
+import {useTranslation} from "react-i18next";
 
 const CourseTabsStudents = ({ courseId, isLoading }) => {
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(true);
     const [students, setStudents] = useState([]);
     const [openModal, setOpenModal] = useState(false);
@@ -70,31 +72,42 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
     };
 
     return (
-        <Tab.Pane loading={loading} key='tab_students'>
-            <Button color="green" onClick={() => setOpenModal(true)}>Adicionar aluno</Button>
-            <Table striped color="green">
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Email</Table.HeaderCell>
-                        <Table.HeaderCell>Nome</Table.HeaderCell>
-                        <Table.HeaderCell>Ações</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                    {students.map((student, index) => (
-                        <Table.Row key={index}>
-                            <Table.Cell>{student.email}</Table.Cell>
-                            <Table.Cell>{student.name}</Table.Cell>
-                            <Table.Cell width="3">
-                                <Button color="red" onClick={() => removeStudent(student.id)}>
-                                    <Icon name="trash"/>
-                                    Remover aluno
-                                </Button>
-                            </Table.Cell>
-                        </Table.Row>
-                    ))}
-                </Table.Body>
-            </Table>
+        <div>
+            { loading && (                
+                <div style={{height: "80px"}}>
+                    <Dimmer active inverted>
+                        <Loader indeterminate>{t('A carregar os estudantes')}</Loader>
+                    </Dimmer>
+                </div>
+            )}
+            {!loading && (
+                <>
+                    <Button color="green" onClick={() => setOpenModal(true)}>Adicionar aluno</Button>
+                    <Table striped color="green">
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>Email</Table.HeaderCell>
+                                <Table.HeaderCell>Nome</Table.HeaderCell>
+                                <Table.HeaderCell>Ações</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {students.map((student, index) => (
+                                <Table.Row key={index}>
+                                    <Table.Cell>{student.email}</Table.Cell>
+                                    <Table.Cell>{student.name}</Table.Cell>
+                                    <Table.Cell width="3">
+                                        <Button color="red" onClick={() => removeStudent(student.id)}>
+                                            <Icon name="trash"/>
+                                            Remover aluno
+                                        </Button>
+                                    </Table.Cell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table>
+                </>
+            )}
 
             {openModal && (
                 <Modal dimmer="blurring" open={openModal} onClose={() => setOpenModal(false)}>
@@ -125,7 +138,7 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
                     </Modal.Actions>
                 </Modal>
             )}
-        </Tab.Pane>
+        </div>
     );
 };
 
