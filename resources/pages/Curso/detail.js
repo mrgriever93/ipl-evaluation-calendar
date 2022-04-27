@@ -2,7 +2,7 @@ import axios from 'axios';
 import _ from 'lodash';
 import React, {useEffect, useMemo, useState} from 'react';
 import {Link, useNavigate, useParams} from 'react-router-dom';
-import {Container, Card, Icon, Form, Button, Dimmer, Loader} from 'semantic-ui-react';
+import {Container, Card, Icon, Form, Button, Dimmer, Loader, Header, Message } from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import {Field, Form as FinalForm} from 'react-final-form';
 
@@ -109,6 +109,22 @@ const Detail = () => {
             <div className="margin-bottom-base">
                 <Link to="/curso"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
+            { (!initialValues.coordinator || !initialValues.initials || !initialValues.degree_id ) && (
+                <Message warning>
+                    <Message.Header>{ t('Os seguintes detalhes do Curso precisam da sua atenção:') }</Message.Header>
+                    <Message.List>
+                        { !initialValues.coordinator && (
+                            <Message.Item>{ t('É necessário configurar o docente Coordenador de Curso') }</Message.Item>
+                        )}
+                        { !initialValues.initials && (
+                            <Message.Item>{ t('É necessário configurar a Sigla do Curso') }</Message.Item>
+                        )}
+                        { !initialValues.degree_id && (
+                            <Message.Item>{ t('É necessário configurar o Grau de Ensino do Curso') }</Message.Item>
+                        )}
+                    </Message.List>
+                </Message>
+            )}
             <FinalForm initialValues={initialValues} onSubmit={onSaveCourse} render={({handleSubmit}) => (
                 <Card fluid>
                     { loading && (
@@ -117,10 +133,13 @@ const Detail = () => {
                         </Dimmer>
                     )}
                     <Card.Content>
-                        <Card.Header>
-                            Curso: { courseDetail && courseDetail?.display_name }
-                            <Button floated="right" color="green" onClick={handleSubmit} icon labelPosition="left"><Icon name="save"/>Guardar curso</Button>
-                        </Card.Header>
+                        <div className='card-header-alignment'>
+                            <Header as="span">{ t('Curso') + ": " + ( courseDetail?.display_name || "") }</Header>
+                            <Button onClick={handleSubmit} color="green" icon labelPosition="left" floated="right">
+                                <Icon name={'save'}/>
+                                { t('Guardar') }
+                            </Button>
+                        </div>
                     </Card.Content>
                     <Card.Content>
                         <Form>

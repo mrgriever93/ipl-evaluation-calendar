@@ -132,7 +132,7 @@ const CoursesList = () => {
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
-                                {courseList.map(({id, school, code, name, initials, level, duration, has_issues}) => (
+                                {courseList.map(({id, school, code, name, level, has_issues}) => (
                                     <Table.Row key={code} warning={has_issues}>
                                         <Table.Cell>{school}</Table.Cell>
                                         <Table.Cell>{code}</Table.Cell>
@@ -140,9 +140,7 @@ const CoursesList = () => {
                                             {has_issues && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher detalhes sobre este curso.')} position='top center'/>}
                                             {name}
                                         </Table.Cell>
-                                        {/*<Table.Cell>{initials}</Table.Cell>*/}
                                         <Table.Cell>{level}</Table.Cell>
-                                        {/*<<Table.Cell>{duration}</Table.Cell>*/}
                                         <Table.Cell textAlign="center">
                                             <Link to={`/curso/${id}`}>
                                                 <Button color="green" icon>
