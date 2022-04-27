@@ -50,8 +50,8 @@ import {useComponentIfAuthorized} from "./components/ShowComponentIfAuthorized";
 import {
     ACADEMIC_YEAR_SCOPES,
     CALENDAR_PHASES_SCOPES,
-    COURSE_SCOPES, COURSE_UNIT_SCOPES, EVALUATION_TYPE_SCOPES, INTERRUPTION_TYPES_SCOPES,
-    LANGUAGE_SCOPES, PERMISSIONS_SCOPES,
+    COURSE_SCOPES, COURSE_UNIT_SCOPES, UC_GROUPS_SCOPES,
+    EVALUATION_TYPE_SCOPES, INTERRUPTION_TYPES_SCOPES,
     SCHOOLS_SCOPES, USER_GROUPS_SCOPES, USER_SCOPES
 } from "./utils/scopesConstants";
 
@@ -59,14 +59,13 @@ const isAuthorized = useComponentIfAuthorized([
     ...ACADEMIC_YEAR_SCOPES,
     ...SCHOOLS_SCOPES,
     ...COURSE_SCOPES,
-    ...LANGUAGE_SCOPES,
     ...CALENDAR_PHASES_SCOPES,
     ...INTERRUPTION_TYPES_SCOPES,
     ...EVALUATION_TYPE_SCOPES,
     ...USER_GROUPS_SCOPES,
     ...USER_SCOPES,
-    ...PERMISSIONS_SCOPES,
     ...COURSE_UNIT_SCOPES,
+    ...UC_GROUPS_SCOPES,
 ], true);
 
 const RouterList = (isLoggedIn) => {
@@ -104,7 +103,7 @@ const RouterList = (isLoggedIn) => {
                 },
                 {
                     path: "/agrupamento-unidade-curricular",
-                    element: (isAuthorized.CREATE_COURSE_UNITS || isAuthorized.VIEW_COURSE_UNITS || isAuthorized.EDIT_COURSE_UNITS || isAuthorized.DELETE_COURSE_UNITS) ? <MultiPageBase /> : <Navigate to="/no-permissions" />,
+                    element: (isAuthorized.VIEW_UC_GROUPS || isAuthorized.CREATE_UC_GROUPS || isAuthorized.EDIT_UC_GROUPS || isAuthorized.DELETE_UC_GROUPS) ? <MultiPageBase /> : <Navigate to="/no-permissions" />,
                     children: [
                         { path: 'novo', exact: true, element: <AgrupamentoUnidadeCurricularNew />},
                         { path: 'edit/:id', exact: true, element: <AgrupamentoUnidadeCurricularNew />},
