@@ -94,16 +94,20 @@ const RouterList = (isLoggedIn) => {
                     ],
                 },
                 {
-                    path:"/curso",
+                    path: "/unidade-curricular",
+                    element: (isAuthorized.VIEW_COURSE_UNITS) ? <MultiPageBase /> : <Navigate to="/no-permissions" />,
                     children: [
-                        { path: ':id', exact: true, element: <CursoDetail />},
-                        { path: '', exact: true, element: <CursoList /> },
+                        { path: 'novo', exact: true, element: <UnidadeCurricularNew />},
+                        { path: ':id', exact: true, element: <UnidadeCurricularNew />},
+                        { path: 'edit/:id', exact: true, element: <UnidadeCurricularNew />},
+                        { path: ':id/metodos', exact: true, element: <UnidadeCurricularMethods />},
+                        { path: '', exact: true, element: <UnidadeCurricularList /> },
                         { path: '*', element: <NotFoundPage />}
                     ]
                 },
                 {
                     path: "/agrupamento-unidade-curricular",
-                    element: (isAuthorized.VIEW_UC_GROUPS || isAuthorized.CREATE_UC_GROUPS || isAuthorized.EDIT_UC_GROUPS || isAuthorized.DELETE_UC_GROUPS) ? <MultiPageBase /> : <Navigate to="/no-permissions" />,
+                    element: (isAuthorized.VIEW_UC_GROUPS) ? <MultiPageBase /> : <Navigate to="/no-permissions" />,
                     children: [
                         { path: 'novo', exact: true, element: <AgrupamentoUnidadeCurricularNew />},
                         { path: 'edit/:id', exact: true, element: <AgrupamentoUnidadeCurricularNew />},
@@ -113,14 +117,11 @@ const RouterList = (isLoggedIn) => {
                     ]
                 },
                 {
-                    path: "/unidade-curricular",
-                    element: (isAuthorized.CREATE_COURSE_UNITS || isAuthorized.VIEW_COURSE_UNITS || isAuthorized.EDIT_COURSE_UNITS || isAuthorized.DELETE_COURSE_UNITS) ? <MultiPageBase /> : <Navigate to="/no-permissions" />,
+                    path:"/curso",
+                    element: (isAuthorized.VIEW_COURSES) ? <MultiPageBase /> : <Navigate to="/no-permissions" />,
                     children: [
-                        { path: 'novo', exact: true, element: <UnidadeCurricularNew />},
-                        { path: ':id', exact: true, element: <UnidadeCurricularNew />},
-                        { path: 'edit/:id', exact: true, element: <UnidadeCurricularNew />},
-                        { path: ':id/metodos', exact: true, element: <UnidadeCurricularMethods />},
-                        { path: '', exact: true, element: <UnidadeCurricularList /> },
+                        { path: ':id', exact: true, element: <CursoDetail />},
+                        { path: '', exact: true, element: <CursoList /> },
                         { path: '*', element: <NotFoundPage />}
                     ]
                 },

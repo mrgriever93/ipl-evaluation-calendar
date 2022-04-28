@@ -14,6 +14,8 @@ class UserPermissionsSeeder extends Seeder
      */
     public function run()
     {
+        /* TODO: Este seeder tem de ser refeito porque as permissões já não batem certo. Não pode usar os IDs */
+
         DB::table('group_permissions')->insertOrIgnore([
             ["group_id" => 1, "permission_id" => 1, "phase_id" => 12, "enabled" => 1],
             ["group_id" => 1, "permission_id" => 2, "phase_id" => 12, "enabled" => 1],
