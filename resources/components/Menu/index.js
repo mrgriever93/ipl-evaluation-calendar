@@ -11,6 +11,7 @@ import {
     CONFIG_SCOPES,
     COURSE_SCOPES,
     COURSE_UNIT_SCOPES,
+    UC_GROUPS_SCOPES,
     EVALUATION_TYPE_SCOPES,
     INTERRUPTION_TYPES_SCOPES,
     SCHOOLS_SCOPES,
@@ -26,7 +27,6 @@ const HeaderMenu = () => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const [academicYearsList, setAcademicYearsList] = useState([]);
-    const [activeMenu, setActiveMenu] = useState();
 
     useEffect(() => {
         axios.get('academic-years/menu').then((response) => {
@@ -35,8 +35,6 @@ const HeaderMenu = () => {
                 setAcademicYearsList(response?.data?.data);
             }
         });
-        getActiveMenu();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const logoutUser = () => {
@@ -62,23 +60,38 @@ const HeaderMenu = () => {
     };
 
     const selectedAcademicYear = useSelector((state) => state.app.academicYear);
-    const getActiveMenu = () => {
-
-    };
 
     return (
         <Menu borderless>
             <Container>
                 <Menu.Item as={Link} className={ (location.pathname.includes('/calendario') || location.pathname === '/') && !location.pathname.includes('/calendario/fases') ? 'active' : ''} to="/" >{t('menu.Calendários') }
                 </Menu.Item>
-                <ShowComponentIfAuthorized permission={[...COURSE_UNIT_SCOPES]}>
-                    <Menu.Item as={Link} to="/unidade-curricular" className={ location.pathname.includes('/unidade-curricular') ? 'active' : ''} disabled={academicYearsList.length === 0}>{t('menu.Unidades Curriculares')}</Menu.Item>
-                    {/* // TODO: Criar permissões para ser possível agrupar UC's */}
-                    <Menu.Item as={Link} to="/agrupamento-unidade-curricular" className={ location.pathname.includes('/agrupamento-unidade-curricular') ? 'active' : ''} disabled={academicYearsList.length === 0}>{t('menu.Agrupar UCs')}</Menu.Item>
+
+                <ShowComponentIfAuthorized permission={[COURSE_UNIT_SCOPES[0]]}>
+                    <Menu.Item 
+                        as={Link} 
+                        to="/unidade-curricular"
+                        className={ location.pathname.includes('/unidade-curricular') ? 'active' : ''} 
+                        disabled={academicYearsList.length === 0}
+                        >{t('menu.Unidades Curriculares')}</Menu.Item>
+                </ShowComponentIfAuthorized>                
+                <ShowComponentIfAuthorized permission={[UC_GROUPS_SCOPES[0]]}>
+                    <Menu.Item 
+                        as={Link} 
+                        to="/agrupamento-unidade-curricular" 
+                        className={ location.pathname.includes('/agrupamento-unidade-curricular') ? 'active' : ''} 
+                        disabled={academicYearsList.length === 0}
+                        >{t('menu.Agrupar UCs')}</Menu.Item>
+                </ShowComponentIfAuthorized>                
+                <ShowComponentIfAuthorized permission={[COURSE_SCOPES[0]]}>
+                    <Menu.Item 
+                        as={Link} 
+                        to="/curso" 
+                        className={ location.pathname.includes('/curso') ? 'active' : ''} 
+                        disabled={academicYearsList.length === 0}
+                        >{t('menu.Cursos')} </Menu.Item>
                 </ShowComponentIfAuthorized>
-                <ShowComponentIfAuthorized permission={[...COURSE_SCOPES]}>
-                    <Menu.Item as={Link} disabled={academicYearsList.length === 0} className={ location.pathname.includes('/curso') ? 'active' : ''} to="/curso">{t('menu.Cursos')}</Menu.Item>
-                </ShowComponentIfAuthorized>
+                
                 <ShowComponentIfAuthorized permission={[...CONFIG_SCOPES]}>
                     <Dropdown
                         className={ (location.pathname.includes('/ano-letivo') || location.pathname.includes('/escola') ||

@@ -1,11 +1,13 @@
 import axios from 'axios';
 import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
-import {Table, Tab, Modal, Form, Button, Icon, Segment, Grid, Divider, Header, Search} from 'semantic-ui-react';
+import {Table, Modal, Form, Button, Icon, Segment, Grid, Divider, Header, Dimmer, Loader} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import {successConfig, errorConfig} from '../../../utils/toastConfig';
+import {useTranslation} from "react-i18next";
 
 const CourseTabsUnits = ({ courseId, isLoading }) => {
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(true);
     const [openModal, setOpenModal] = useState(false);
     const [unitToAdd, setUnitToAdd] = useState([]);
@@ -67,37 +69,48 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
     };
 
     return (
-        <Tab.Pane loading={loading} key='tab_units_content'>
-            <Button floated='right' icon labelPosition='left' positive size='small' onClick={() => setOpenModal(true)}>
-                <Icon name='add' /> Add Unit
-            </Button>
-            {Object.keys(courseUnitsGrouped).map((year, index) => (
-                <Table striped color="green" key={index}>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell rowSpan="1" colSpan="4">
-                                Ano{' '}{year}
-                            </Table.HeaderCell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.HeaderCell>Codigo</Table.HeaderCell>
-                            <Table.HeaderCell>Nome</Table.HeaderCell>
-                            <Table.HeaderCell>Sigla</Table.HeaderCell>
-                            <Table.HeaderCell>Ramo</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {courseUnitsGrouped[year].map((unit, index) => (
-                            <Table.Row key={index}>
-                                <Table.Cell>{unit.code}</Table.Cell>
-                                <Table.Cell>{unit.name}</Table.Cell>
-                                <Table.Cell>{unit.initials}</Table.Cell>
-                                <Table.Cell>{unit.branch_label}</Table.Cell>
-                            </Table.Row>
-                        ))}
-                    </Table.Body>
-                </Table>
-            ))}
+        <div>
+            { loading && (                
+                <div style={{height: "80px"}}>
+                    <Dimmer active inverted>
+                        <Loader indeterminate>{t('A carregar as unidades curriculares')}</Loader>
+                    </Dimmer>
+                </div>
+            )}
+            {!loading && (
+                <>
+                    <Button floated='right' icon labelPosition='left' positive size='small' onClick={() => setOpenModal(true)}>
+                        <Icon name='add' /> Add Unit
+                    </Button>
+                    { Object.keys(courseUnitsGrouped).map((year, index) => (
+                        <Table striped color="green" key={index}>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell rowSpan="1" colSpan="4">
+                                        Ano{' '}{year}
+                                    </Table.HeaderCell>
+                                </Table.Row>
+                                <Table.Row>
+                                    <Table.HeaderCell>Codigo</Table.HeaderCell>
+                                    <Table.HeaderCell>Nome</Table.HeaderCell>
+                                    <Table.HeaderCell>Sigla</Table.HeaderCell>
+                                    <Table.HeaderCell>Ramo</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {courseUnitsGrouped[year].map((unit, index) => (
+                                    <Table.Row key={index}>
+                                        <Table.Cell>{unit.code}</Table.Cell>
+                                        <Table.Cell>{unit.name}</Table.Cell>
+                                        <Table.Cell>{unit.initials}</Table.Cell>
+                                        <Table.Cell>{unit.branch_label}</Table.Cell>
+                                    </Table.Row>
+                                ))}
+                            </Table.Body>
+                        </Table>
+                    ))}
+                </>
+            )}
 
             {openModal && (
                 <Modal dimmer="blurring" open={openModal} onClose={() => setOpenModal(false)}>
@@ -144,7 +157,7 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
                     </Modal.Actions>
                 </Modal>
             )}
-        </Tab.Pane>
+        </div>
     );
 };
 
