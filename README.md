@@ -95,27 +95,24 @@ sdfghy
 ---
 
 ### TODO
-- Falta testar a pesquisa do coordenador de curso no detalhe do curso
-- Mostrar um alerta quando estiver acima de 100% (métodos) para confirmar que quer submeter com mais de 100%;
-- Guardar nos métodos nem sempre funciona;
-- Rever Tabs dos Cursos
-- Erros na utilização
-- Rever HTML e detalhe dos Agrupamentos de UC
-- Traduções
-- Rework Novo calendario
-- Adicionar flag nos tipos de interrupções para obrigatórios (Natal e Páscoa);
-
+- [x] Falta testar a pesquisa do coordenador de curso no detalhe do curso
+- [ ] Mostrar um alerta quando estiver acima de 100% (métodos) para confirmar que quer submeter com mais de 100%;
+- [ ] Guardar nos métodos nem sempre funciona;
+- [x] Rever Tabs dos Cursos
+- [ ] Erros na utilização
+- [ ] Rever HTML e detalhe dos Agrupamentos de UC
+- [ ] Traduções
+- [ ] Rework Novo calendario
+- [ ] Adicionar flag nos tipos de interrupções para obrigatórios (Natal e Páscoa);
+- [x] Mensagem de erro no detalhe do curso com infos que faltam
+- [x] Faltam traduções e validar se há mais mensagens a aparecer
+- [x] Refeita tab dos ramos para usar a tabela
+- [x] Para adicionar mantém-se a modal?
+- [x] Atualizadas as permissões do lado da BD e do React
+- [x] Falta testar. O seeder das permissões agora está mal porque os id's mudaram... Devia ser refeito para quando formos testar isto melhor por user na VM
 
 ### TRABALHO FUTURO:
-- Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos);
-- Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;
-- Users com mais do que um role (validar o q deve ser feito)
-- Log dos métodos: registar o que foi alterado e quem alterou;
-
-### DONE:
-- Mensagem de erro no detalhe do curso com infos que faltam
-- Falta traduções e validar se há mais mensagens a aparecer
-- Refeita tab dos ramos para usar a tabela
-- Para adicionar mantém-se  a modal?
-- Atualizadas as permissões do lado da BD e do React
-- Falta testar. O seeder das permissões agora está mal porque os id's mudaram.. Devia ser refeito para quando formos testar isto melhor por user na VM
+- [ ] Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos);
+- [ ] Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;
+- [ ] Users com mais do que um role (validar o que deve ser feito)
+- [ ] Log dos métodos: registar o que foi alterado e quem alterou;
