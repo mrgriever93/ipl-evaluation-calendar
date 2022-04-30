@@ -22,4 +22,7 @@ mix.webpackConfig({
     watchOptions: { ignored: /node_modules/ },
 });
 
+if (mix.inProduction()) {
+    mix.version();
+}
 mix.disableSuccessNotifications();
