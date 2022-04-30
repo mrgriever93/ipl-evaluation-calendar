@@ -95,15 +95,18 @@ sdfghy
 ---
 
 ### TODO
-- [x] Falta testar a pesquisa do coordenador de curso no detalhe do curso
 - [ ] Mostrar um alerta quando estiver acima de 100% (métodos) para confirmar que quer submeter com mais de 100%;
 - [ ] Guardar nos métodos nem sempre funciona;
-- [x] Rever Tabs dos Cursos
-- [ ] Erros na utilização
+- [ ] Erros na utilização 
+  - ***(Detalhes?)***
 - [ ] Rever HTML e detalhe dos Agrupamentos de UC
 - [ ] Traduções
 - [ ] Rework Novo calendario
 - [ ] Adicionar flag nos tipos de interrupções para obrigatórios (Natal e Páscoa);
+---
+- [x] Falta testar a pesquisa do coordenador de curso no detalhe do curso
+- [x] Rever Tabs dos Cursos
+    - Comentei botao de adicionar unidades curriculares, talvez trabalho futuro
 - [x] Mensagem de erro no detalhe do curso com infos que faltam
 - [x] Faltam traduções e validar se há mais mensagens a aparecer
 - [x] Refeita tab dos ramos para usar a tabela
