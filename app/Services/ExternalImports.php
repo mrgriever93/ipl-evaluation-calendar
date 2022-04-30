@@ -14,6 +14,7 @@ use App\Models\School;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use LdapRecord\Connection;
 
@@ -90,25 +91,22 @@ class ExternalImports
                 // From URL to get webpage contents
                 $apiEndpoint = $school->base_link . '?' . $school->query_param_academic_year . '=' . $academicYearCode . '&' . $school->query_param_semester . '=S' . $semester;
 
-                // Initialize a CURL session.
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
-                curl_setopt($ch, CURLOPT_TIMEOUT, 3*60); //timeout in seconds
-                curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
-                curl_setopt($ch, CURLOPT_HEADER, 0);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($ch, CURLOPT_URL, $apiEndpoint);
-                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-                $file_data = curl_exec($ch);
-                curl_close($ch);
-
-                Log::channel('courses_sync')->error('Data. -------- ' . $file_data);
-                // check if the file has any content (prevent going forward
-                if( empty($courseUnits)) {
+                $response = Http::connectTimeout(3*60)->timeout(3*60)->get($apiEndpoint);
+                if($response->failed()){
+                    Log::channel('courses_sync')->info('FAILED - "importCoursesFromWebService" sync for Year code (' . $academicYearCode . ') and semester (' . $semester . ')');
                     continue;
                 }
+                $file_data = $response->body();
+
                 // converts file and splits by line/<br>
                 array_push($courseUnits, ...explode("<br>", mb_convert_encoding($file_data, "utf-8", "latin1")));
+
+                // check if the file has any content (prevent going forward
+                if( empty($courseUnits)) {
+                    Log::channel('courses_sync')->info('EMPTY Courses - "importCoursesFromWebService" sync for Year code (' . $academicYearCode . ') and semester (' . $semester . ')');
+                    continue;
+                }
+                Log::channel('courses_sync')->info(sizeof($courseUnits));
                 // loop for each course unit
                 foreach ($courseUnits as $courseUnit) {
                     if (!empty($courseUnit)) {
@@ -180,8 +178,8 @@ class ExternalImports
                                             $ldapUser = (clone $LdapConnection)->whereContains('mailNickname', $username)->orWhereContains('mail', $userEmail)->first('cn');
                                             $name = $ldapUser['cn'][0];
                                         } else {
-                                            $name_matches = preg_match_all('#(.*?)\(#', $teacher, $matches, PREG_SET_ORDER, 0);
-                                            $name = $name_matches[0];
+                                            preg_match_all('#(.*?)\(#', $teacher, $matches, PREG_SET_ORDER, 0);
+                                            $name = (isset($matches[0]) ? ($matches[0][1] ?? "") : "");
                                         }
                                         $foundUser = User::create([
                                             "email" => $userEmail,

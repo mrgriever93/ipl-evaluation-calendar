@@ -55,6 +55,6 @@ class DegreesUtil
             case str_contains($name, "Doutoramento"):
                 return 8;//"Doutoramento";
         }
-        return 'N/A';
+        return 0;
     }
 }
