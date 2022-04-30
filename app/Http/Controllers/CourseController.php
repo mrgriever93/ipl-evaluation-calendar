@@ -204,10 +204,12 @@ class CourseController extends Controller
     }
 
     public function addUnit(Course $course){
+        // TODO - maybe add later this from the course detail
         return response()->json("Unit added", Response::HTTP_OK);
     }
 
     public function removeUnit(Course $course){
+        // TODO - maybe add later this from the course detail
         return response()->json("Unit removed", Response::HTTP_OK);
     }
 

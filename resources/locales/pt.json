@@ -228,6 +228,38 @@
         "Professores": "Professores",
         "Ano curricular": "Ano curricular",
         "Semestre": "Semestre",
-        "Todas os Semestres": "Todas os Semestres"
+        "Todas os Semestres": "Todas os Semestres",
+
+        "Adicionar Unidade Curricular": "Adicionar Unidade Curricular",
+        "Ano": "Ano",
+        "Procurar unidades curriculares existentes": "Procurar unidades curriculares existentes",
+        "Procurar por unidade curricular": "Procurar por unidade curricular",
+        "Adicionar": "Adicionar",
+        "Adicionar Nova unidade curricular": "Adicionar Nova unidade curricular",
+        "Ou": "ou",
+
+        "Remover aluno": "Remover aluno",
+        "Adicionar aluno": "Adicionar aluno",
+        "Procurar pelo email do aluno": "Procurar pelo email do aluno",
+        "Aluno a adicionar": "Aluno a adicionar",
+
+        "Estudante removido com sucesso do curso!": "Estudante removido com sucesso do curso!",
+        "Ocorreu um problema ao remover o estudante do curso!": "Ocorreu um problema ao remover o estudante do curso!",
+        "Aluno adicionado com sucesso!": "Aluno adicionado com sucesso!",
+        "Ocorreu um erro ao adicionar o aluno!": "Ocorreu um erro ao adicionar o aluno!",
+
+        "Unidade curricular removida com sucesso do curso!": "Unidade curricular removida com sucesso do curso!",
+        "Ocorreu um problema ao remover a unidade curricular do curso!": "Ocorreu um problema ao remover a unidade curricular do curso!",
+        "Unidade curricular adicionada com sucesso!": "Unidade curricular adicionada com sucesso!",
+        "Ocorreu um erro ao adicionar a unidade curricular!": "Ocorreu um erro ao adicionar a unidade curricular!",
+
+        "Guardou o coordenador de curso com sucesso!": "Guardou o coordenador de curso com sucesso!",
+        "Ocorreu um erro ao guardar o coordenador de curso!": "Ocorreu um erro ao guardar o coordenador de curso!",
+        "Curso atualizado com sucesso!": "Curso atualizado com sucesso!",
+        "Ocorreu um erro ao gravar o curso!": "Ocorreu um erro ao gravar o curso!",
+        "Número de anos": "Número de anos",
+        "Coordenador do Curso": "Coordenador do Curso",
+        "Pesquise o coordenador de curso...": "Pesquise o coordenador de curso...",
+        "Guardar coordenador": "Guardar coordenador"
     }
 }

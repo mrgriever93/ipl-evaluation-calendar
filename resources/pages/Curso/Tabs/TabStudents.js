@@ -1,10 +1,10 @@
-import axios from 'axios';
-import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
-import {Icon, Table, Form, Button, Modal, Dimmer, Loader} from 'semantic-ui-react';
+import axios from 'axios';
+import _, {debounce} from 'lodash';
+import {Icon, Table, Form, Button, Modal, Dimmer, Loader, Segment} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
-import {successConfig, errorConfig} from '../../../utils/toastConfig';
 import {useTranslation} from "react-i18next";
+import {successConfig, errorConfig} from '../../../utils/toastConfig';
 
 const CourseTabsStudents = ({ courseId, isLoading }) => {
     const { t } = useTranslation();
@@ -33,9 +33,9 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
     const removeStudent = (studentId) => {
         axios.delete(`/courses/${courseId}/student/${studentId}`).then((res) => {
             if (res.status === 200) {
-                toast('Estudante removido com sucesso do curso!', successConfig);
+                toast(t('Estudante removido com sucesso do curso!'), successConfig);
             } else {
-                toast('Ocorreu um problema ao remover o estudante do curso!', errorConfig);
+                toast(t('Ocorreu um problema ao remover o estudante do curso!'), errorConfig);
             }
         });
     };
@@ -44,13 +44,7 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
         setSearchStudent(true);
         axios.get(`/search/students?q=${searchQuery}`).then((res) => {
             if (res.status === 200) {
-                setListOfStudents(res.data?.map((students) => ({
-                    key: students.mail,
-                    value: students.mail,
-                    text: `${students.name} - ${students.mail}`,
-                    email: students.mail,
-                    name: students.name,
-                })));
+                setListOfStudents(res.data);
                 setSearchStudent(false);
             }
         });
@@ -58,22 +52,22 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
 
     const addStudent = () => {
         setOpenModal(false);
+        console.log(studentToAdd);
         axios.patch(`/courses/${courseId}/student`, {
-            user_email: studentToAdd.email,
-            user_name: studentToAdd.name,
+            user_email: studentToAdd.value
         }).then((res) => {
             if (res.status === 200) {
                 loadCourseStudents();
-                toast('Aluno adicionado com sucesso!', successConfig);
+                toast(t('Aluno adicionado com sucesso!'), successConfig);
             } else {
-                toast('Ocorreu um erro ao adicionar o aluno!', errorConfig);
+                toast(t('Ocorreu um erro ao adicionar o aluno!'), errorConfig);
             }
         });
     };
 
     return (
         <div>
-            { loading && (                
+            { loading && (
                 <div style={{height: "80px"}}>
                     <Dimmer active inverted>
                         <Loader indeterminate>{t('A carregar os estudantes')}</Loader>
@@ -82,13 +76,17 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
             )}
             {!loading && (
                 <>
-                    <Button color="green" onClick={() => setOpenModal(true)}>Adicionar aluno</Button>
+                    <Segment clearing basic className={"padding-none"}>
+                        <Button floated='right' icon labelPosition='left' positive size='small' onClick={() => setOpenModal(true)}>
+                            <Icon name='add' /> { t("Adicionar aluno") }
+                        </Button>
+                    </Segment>
                     <Table striped color="green">
                         <Table.Header>
                             <Table.Row>
-                                <Table.HeaderCell>Email</Table.HeaderCell>
-                                <Table.HeaderCell>Nome</Table.HeaderCell>
-                                <Table.HeaderCell>Ações</Table.HeaderCell>
+                                <Table.HeaderCell>{ t("Email") }</Table.HeaderCell>
+                                <Table.HeaderCell>{ t("Nome") }</Table.HeaderCell>
+                                <Table.HeaderCell>{ t("Ações") }</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
@@ -99,7 +97,7 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
                                     <Table.Cell width="3">
                                         <Button color="red" onClick={() => removeStudent(student.id)}>
                                             <Icon name="trash"/>
-                                            Remover aluno
+                                            { t("Remover aluno") }
                                         </Button>
                                     </Table.Cell>
                                 </Table.Row>
@@ -111,30 +109,20 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
 
             {openModal && (
                 <Modal dimmer="blurring" open={openModal} onClose={() => setOpenModal(false)}>
-                    <Modal.Header>Adicionar aluno</Modal.Header>
+                    <Modal.Header>{ t("Adicionar aluno") }</Modal.Header>
                     <Modal.Content>
                         <Form>
-                            <Form.Dropdown
-                                placeholder="Procurar pelo email do aluno"
-                                label="Aluno a adicionar"
-                                search
-                                selection
-                                loading={searchStudent}
-                                options={listOfStudents}
+                            <Form.Dropdown placeholder={ t("Procurar pelo email do aluno") } label={ t("Aluno a adicionar") } search selection
+                                loading={searchStudent} options={listOfStudents} onSearchChange={_.debounce(searchStudents, 400)}
                                 onChange={(e, {value}) => setStudentToAdd(
                                     listOfStudents.find((x) => x.value === value),
                                 )}
-                                onSearchChange={_.debounce(searchStudents, 400)}
                             />
                         </Form>
                     </Modal.Content>
                     <Modal.Actions>
-                        <Button negative onClick={() => { setStudentToAdd(undefined);setOpenModal(false); }}>
-                            Cancelar
-                        </Button>
-                        <Button positive onClick={addStudent}>
-                            Adicionar
-                        </Button>
+                        <Button negative onClick={() => { setStudentToAdd(undefined);setOpenModal(false); }}>{ t("Cancelar") }</Button>
+                        <Button positive onClick={addStudent}>{ t("Adicionar") }</Button>
                     </Modal.Actions>
                 </Modal>
             )}

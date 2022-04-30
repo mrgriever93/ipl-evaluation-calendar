@@ -50,12 +50,7 @@ const Detail = () => {
         axios.get(`/search/users?q=${searchQuery}`).then((res) => {
             setSearchCoordinator(false);
             if (res.status === 200) {
-                setTeachers(res.data?.map(({mail, name}) => ({
-                    key: mail,
-                    value: mail,
-                    name,
-                    text: `${name} - ${mail}`,
-                })));
+                setTeachers(res.data);
             }
         });
     };
@@ -66,9 +61,9 @@ const Detail = () => {
             coordinator_user_email: coordinatorUser.email,
         }).then((res) => {
             if (res.status === 200) {
-                toast('Guardou o coordenador de curso com sucesso!', successConfig);
+                toast(t('Guardou o coordenador de curso com sucesso!'), successConfig);
             } else {
-                toast('Ocorreu um erro ao guardar o coordenador de curso!', errorConfig);
+                toast(t('Ocorreu um erro ao guardar o coordenador de curso!'), errorConfig);
             }
         });
     };
@@ -78,7 +73,7 @@ const Detail = () => {
             loadCourseDetail();
         } else {
             navigate('/curso');
-            toast('Ocorreu um erro ao carregar a informacao pretendida', errorConfig);
+            toast(t('Ocorreu um erro ao carregar a informacao pretendida'), errorConfig);
         }
     }, [paramsId]);
 
@@ -92,9 +87,9 @@ const Detail = () => {
         }).then((res) => {
             if (res.status === 200) {
                 loadCourseDetail();
-                toast('Curso atualizado com sucesso!', successConfig);
+                toast(t('Curso atualizado com sucesso!'), successConfig);
             } else {
-                toast('Ocorreu um erro ao gravar o curso!', errorConfig);
+                toast(t('Ocorreu um erro ao gravar o curso!'), errorConfig);
             }
         });
     };
@@ -146,12 +141,12 @@ const Detail = () => {
                             <Form.Group widths="4">
                                 <Field name="code">
                                     {({input: codeInput}) => (
-                                        <Form.Input disabled={loading || !hasPermissionToEdit} label="Código" {...codeInput}/>
+                                        <Form.Input disabled={loading || !hasPermissionToEdit} label={ t("Código") } {...codeInput}/>
                                     )}
                                 </Field>
                                 <Field name="initials">
                                     {({input: initialsInput}) => (
-                                        <Form.Input disabled={loading || !hasPermissionToEdit} label="Sigla" {...initialsInput}/>
+                                        <Form.Input disabled={loading || !hasPermissionToEdit} label={ t("Sigla") } {...initialsInput}/>
                                     )}
                                 </Field>
                                 <Field name="degree_id">
@@ -161,36 +156,28 @@ const Detail = () => {
                                 </Field>
                                 <Field name="duration">
                                     {({input: durationInput}) => (
-                                        <Form.Input disabled={loading || !hasPermissionToEdit} label="Número de anos" {...durationInput}/>
+                                        <Form.Input disabled={loading || !hasPermissionToEdit} label={ t("Número de anos") } {...durationInput}/>
                                     )}
                                 </Field>
                             </Form.Group>
                             <Form.Group widths="3">
                                 <Field name="name_pt">
                                     {({input: namePtInput}) => (
-                                        <Form.Input disabled={loading || !hasPermissionToEdit} label="Nome PT" {...namePtInput}/>
+                                        <Form.Input disabled={loading || !hasPermissionToEdit} label={ t("Nome PT") } {...namePtInput}/>
                                     )}
                                 </Field>
                                 <Field name="name_en">
                                     {({input: nameEnInput}) => (
-                                        <Form.Input disabled={loading || !hasPermissionToEdit} label="Nome EN" {...nameEnInput}/>
+                                        <Form.Input disabled={loading || !hasPermissionToEdit} label={ t("Nome EN") } {...nameEnInput}/>
                                     )}
                                 </Field>
                             </Form.Group>
                             <Form.Group widths="2">
                                 <Field name="coordinator">
                                     {({input: coordinatorInput}) => (
-                                        <Form.Dropdown
-                                            disabled={loading || !hasPermissionToDefineCoordinator}
-                                            label="Coordenador do Curso"
-                                            selectOnBlur={false}
-                                            options={teachers}
-                                            selection
-                                            search
-                                            loading={searchCoordinator}
-                                            placeholder="Pesquise o coordenador de curso..."
-                                            {...coordinatorInput}
-                                            onSearchChange={_.debounce(handleSearchCoordinator, 400)}
+                                        <Form.Dropdown disabled={loading || !hasPermissionToDefineCoordinator} label={ t("Coordenador do Curso") }
+                                            selectOnBlur={false} options={teachers} selection search loading={searchCoordinator} placeholder={ t("Pesquise o coordenador de curso...") }
+                                            {...coordinatorInput} onSearchChange={_.debounce(handleSearchCoordinator, 400)}
                                             onChange={(e, {value, options}) => {
                                                 setCoordinatorUser(
                                                     {
@@ -204,11 +191,8 @@ const Detail = () => {
                                         />
                                     )}
                                 </Field>
-                                <Form.Button disabled={loading || !hasPermissionToDefineCoordinator}
-                                             label="Guardar?" onClick={setCoordinator} color="green" icon
-                                             labelPosition="left">
-                                    <Icon name="save"/>
-                                    Guardar coordenador
+                                <Form.Button disabled={loading || !hasPermissionToDefineCoordinator} label={ t("Guardar") } onClick={setCoordinator} color="green" icon labelPosition="left">
+                                    <Icon name="save"/> { t("Guardar coordenador") }
                                 </Form.Button>
                             </Form.Group>
                         </Form>
