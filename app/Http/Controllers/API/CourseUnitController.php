@@ -9,6 +9,7 @@ use App\Http\Resources\Admin\Edit\CourseUnitEditResource;
 use App\Http\Resources\Admin\LogsResource;
 use App\Http\Resources\Generic\BranchSearchResource;
 use App\Http\Resources\Generic\CourseUnitListResource;
+use App\Http\Resources\Generic\CourseUnitSearchResource;
 use App\Http\Resources\Generic\TeacherResource;
 use App\Http\Resources\MethodResource;
 use App\Models\Calendar;
@@ -83,6 +84,58 @@ class CourseUnitController extends Controller
         return CourseUnitListResource::collection($courseUnits);
     }
 
+    public function search(Request $request, CourseUnitFilters $filters)
+    {
+        $lang = (in_array($request->header("lang"), ["en", "pt"]) ? $request->header("lang") : "pt");
+
+        $courseUnits = CourseUnit::filter($filters)->ofAcademicYear($request->cookie('academic_year'));
+
+        if ($request->has('all') && $request->all === "true") {
+            $courseUnits = $courseUnits->orderBy('name_' . $lang)->get();
+        } else {
+            $userId = Auth::user()->id;
+            $userGroups = Auth::user()->groups();
+            if (
+                Auth::user()->groups()->superAdmin()->exists() &&
+                Auth::user()->groups()->admin()->exists() &&
+                Auth::user()->groups()->responsiblePedagogic()->exists()
+            ) {
+                if (with(clone $userGroups)->responsible()->exists() && $userGroups->count() == 1) {
+                    $courseUnits->where('responsible_user_id', $userId);
+                }
+                if (with(clone $userGroups)->coordinator()->exists()) {
+                    $courseUnits->whereIn('course_id', Course::where('coordinator_user_id', $userId)->pluck('id'));
+                    if (with(clone $userGroups)->isTeacher()->get()->count() > 0) {
+                        $courseUnits->orWhereIn('id', Auth::user()->courseUnits->pluck('id'));
+                    }
+                }
+
+                if (with(clone $userGroups)->isTeacher()->exists()) {
+                    $courseUnits->whereIn('id', Auth::user()->courseUnits->pluck('id'));
+                }
+
+                $schoolsForTheUser = collect();
+
+                if (Auth::user()->gopSchools->pluck('id')->count() > 0) {
+                    $schoolsForTheUser->push(Auth::user()->gopSchools->pluck('id'));
+                }
+                if (Auth::user()->boardSchools->pluck('id')->count() > 0) {
+                    $schoolsForTheUser->push(Auth::user()->boardSchools->pluck('id'));
+                }
+                if (Auth::user()->pedagogicSchools->pluck('id')->count() > 0) {
+                    $schoolsForTheUser->push(Auth::user()->pedagogicSchools->pluck('id'));
+                }
+
+                if ($schoolsForTheUser->count() > 0) {
+                    $courseUnits->whereIn('course_id', Course::whereIn('school_id', $schoolsForTheUser->toArray())->get()->pluck('id'));
+                }
+            }
+            $courseUnits = $courseUnits->orderBy('name_' . $lang)->limit(30)->get();
+        }
+        return CourseUnitSearchResource::collection($courseUnits);
+    }
+
+
     /**
      * Store a newly created resource in storage.
      *
@@ -155,7 +208,7 @@ class CourseUnitController extends Controller
 
         $user = is_null($teacherUser) ? $newUser : $teacherUser;
 
-        if (!$user->groups()->isTeacher()->get()->count() > 0) {
+        if (!$user->groups()->isTeacher()->exists()) {
             $user->groups()->syncWithoutDetaching(Group::isTeacher()->get());
         }
 

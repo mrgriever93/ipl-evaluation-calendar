@@ -211,6 +211,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::controller(CourseUnitController::class)->group(function () {
         Route::get('/course-units',                                     'index'               );
+        Route::get('/course-units/search',                              'search'              );
         Route::get('/course-units/{courseUnit}',                        'show'                );
         Route::post('/course-units',                                    'store'               );
         Route::patch('/course-units/{courseUnit}',                      'update'              );
