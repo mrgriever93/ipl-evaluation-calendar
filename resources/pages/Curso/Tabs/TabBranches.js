@@ -1,14 +1,16 @@
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
-import {Form, Button, List, Grid, Tab, Modal, Header} from 'semantic-ui-react';
+import {Form, Button, Table, Icon, Modal, Dimmer, Loader } from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import {useTranslation} from "react-i18next";
 
 import {successConfig, errorConfig} from '../../../utils/toastConfig';
 const SweetAlertComponent = withReactContent(Swal);
 
 const CourseTabsBranches = ({ courseId }) => {
+    const { t } = useTranslation();
     const [openModal, setOpenModal] = useState(false);
     const [loading, setLoading] = useState(true);
     const [loadingRequest, setLoadingRequest] = useState(false);
@@ -73,60 +75,51 @@ const CourseTabsBranches = ({ courseId }) => {
     };
 
     return (
-        <Tab.Pane loading={loading} key='tab_branches_content'>
+        <div>
+            { loading && (                
+                <div style={{height: "80px"}}>
+                    <Dimmer active inverted>
+                        <Loader indeterminate>{t('A carregar os ramos')}</Loader>
+                    </Dimmer>
+                </div>
+            )}
             {!loading && (
-                <Grid padded="vertically" divided='vertically'>
-                    <Grid.Row textAlign={"right"} >
-                        <Grid.Column floated={"right"}>
-                            <Button color="green" onClick={() => setOpenModal(true)}>
-                                Adicionar ramo
-                            </Button>
-                        </Grid.Column>
-                    </Grid.Row>
-                    {branches?.map((branch) => (
-                        <Grid.Row columns={3} key={branch.id} verticalAlign={"middle"}>
-                            <Grid.Column>
-                                <div>
-                                    <Header size='small'>
-                                        Name - PT
-                                        <Header.Subheader>
-                                            {branch.name_pt}
-                                        </Header.Subheader>
-                                    </Header>
-                                </div>
-                                <div className={'margin-top-s'}>
-                                    <Header size='small'>
-                                        Initials - PT
-                                        <Header.Subheader>
-                                            {branch.initials_pt}
-                                        </Header.Subheader>
-                                    </Header>
-                                </div>
-                            </Grid.Column>
-                            <Grid.Column>
-                                <div>
-                                    <Header size='small'>
-                                        Name - EN
-                                        <Header.Subheader>
-                                            {branch.name_en}
-                                        </Header.Subheader>
-                                    </Header>
-                                </div>
-                                <div className={'margin-top-s'}>
-                                    <Header size='small'>
-                                        Initials - EN
-                                        <Header.Subheader>
-                                            {branch.initials_en}
-                                        </Header.Subheader>
-                                    </Header>
-                                </div>
-                            </Grid.Column>
-                            <Grid.Column textAlign={"right"} floated={"right"}>
-                                <Button color="red" onClick={() => removeBranch(branch.id)}>Remover</Button>
-                            </Grid.Column>
-                        </Grid.Row>
-                    ))}
-                </Grid>
+                <Table compact celled className={"definition-last"}>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell width={4}>Nome - PT</Table.HeaderCell>
+                            <Table.HeaderCell width={2}>Iniciais - PT</Table.HeaderCell>
+                            <Table.HeaderCell width={4}>Nome - EN</Table.HeaderCell>
+                            <Table.HeaderCell width={2}>Iniciais - EN</Table.HeaderCell>
+                            <Table.HeaderCell style={{ width: "1%" }} />
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {branches?.map((branch, index) => (
+                            <Table.Row key={index}>
+                                <Table.Cell>{ branch.name_pt }</Table.Cell>
+                                <Table.Cell>{ branch.initials_pt }</Table.Cell>
+                                <Table.Cell>{ branch.name_en }</Table.Cell>
+                                <Table.Cell>{ branch.initials_en }</Table.Cell>
+                                <Table.Cell collapsing>                                            
+                                    <Button color="red" icon onClick={() => removeBranch(branch.id)}>
+                                        <Icon name={"trash"} />
+                                    </Button>
+                                </Table.Cell>
+                            </Table.Row>
+                        ))}
+                    </Table.Body>
+
+                    <Table.Footer fullWidth>
+                        <Table.Row>
+                            <Table.HeaderCell colSpan='5'>
+                                <Button floated='right' icon labelPosition='left' color={"green"} size='small' onClick={() => setOpenModal(true)} >
+                                    <Icon name='plus' /> Adicionar ramo
+                                </Button>
+                            </Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Footer>
+                </Table>
             )}
 
             {openModal && (
@@ -154,7 +147,7 @@ const CourseTabsBranches = ({ courseId }) => {
                     </Modal.Actions>
                 </Modal>
             )}
-        </Tab.Pane>
+        </div>
     );
 };
 

@@ -341,3 +341,10 @@ div.inline{
     left: unset;
     right: 0;
 }
+
+.ui.segment.padding-none{
+    padding: var(--space-none);
+}
+.ui.placeholder.segment .column .field{
+    max-width: 85%;
+}

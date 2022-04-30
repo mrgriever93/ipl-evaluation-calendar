@@ -3,8 +3,10 @@ import {Field, useField} from 'react-final-form';
 import {DateInput} from 'semantic-ui-calendar-react-yz';
 import {Grid, Button, Card, Form} from 'semantic-ui-react';
 import axios from "axios";
+import {useTranslation} from "react-i18next";
 
 const Step1 = ({setActiveSemester, activeSemester}) => {
+    const { t } = useTranslation();
     const { input: seasons } = useField('step1.seasons');
     const clearSeasons = () => seasons.onChange(null);
     const [semesterList, setSemesterList] = useState([]);
@@ -23,7 +25,7 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
                     {({input: semesterInput}) => (
                         <Button.Group>
                             {semesterList.map((semester, index) => (
-                                <>
+                                <React.Fragment key={index}>
                                     <Button positive={activeSemester === index} key={'step1_button_' + index}
                                         onClick={() => {
                                             clearSeasons();
@@ -32,8 +34,8 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
                                         }}>
                                         {semester.name}
                                     </Button>
-                                    {index + 1 < semesterList.length && (<Button.Or/>)}
-                                </>
+                                    {index + 1 < semesterList.length && (<Button.Or text={ t("Ou") }/>)}
+                                </React.Fragment>
                             ))}
                         </Button.Group>
                     )}
