@@ -228,6 +228,38 @@
         "Professores": "Teachers",
         "Ano curricular": "Curricular Year",
         "Semestre": "Semester",
-        "Todas os Semestres": "All Semesters"
+        "Todas os Semestres": "All Semesters",
+
+        "Adicionar Unidade Curricular": "Add Curricular Unit",
+        "Ano": "Year",
+        "Procurar unidades curriculares existentes": "Search for existing curricular units",
+        "Procurar por unidade curricular": "Search for curricular unit",
+        "Adicionar": "Add",
+        "Adicionar Nova unidade curricular": "Add new curricular unit",
+        "Ou": "Or",
+
+        "Remover aluno": "Remove student",
+        "Adicionar aluno": "Add student",
+        "Procurar pelo email do aluno": "Search by student email",
+        "Aluno a adicionar": "Student to add",
+
+        "Estudante removido com sucesso do curso!": "Student removed with success from the course!",
+        "Ocorreu um problema ao remover o estudante do curso!": "There was a problem removing the Student from the course!",
+        "Aluno adicionado com sucesso!": "Student added with success!",
+        "Ocorreu um erro ao adicionar o aluno!": "There was a problem trying to add the student!",
+
+        "Unidade curricular removida com sucesso do curso!": "Curricular unit removed with success from the course!",
+        "Ocorreu um problema ao remover a unidade curricular do curso!": "There was a problem removing the curricular unit from the course!",
+        "Unidade curricular adicionada com sucesso!": "Curricular unit added with success!",
+        "Ocorreu um erro ao adicionar a unidade curricular!": "There was a problem trying to add the curricular unit!",
+
+        "Guardou o coordenador de curso com sucesso!": "Coordinator of the course was saved with success!",
+        "Ocorreu um erro ao guardar o coordenador de curso!": "There was a problem trying to save the course coordinator!",
+        "Curso atualizado com sucesso!": "Course updated with success!",
+        "Ocorreu um erro ao gravar o curso!": "There was a problem trying to update the course!",
+        "Número de anos": "Number of years",
+        "Coordenador do Curso": "Course Coordinator",
+        "Pesquise o coordenador de curso...": "Search for the course coordinator...",
+        "Guardar coordenador": "Save coordinator"
     }
 }

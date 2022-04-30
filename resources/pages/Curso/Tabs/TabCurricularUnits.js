@@ -1,10 +1,10 @@
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import _ from 'lodash';
-import React, {useEffect, useState} from 'react';
 import {Table, Modal, Form, Button, Icon, Segment, Grid, Divider, Header, Dimmer, Loader} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
-import {successConfig, errorConfig} from '../../../utils/toastConfig';
 import {useTranslation} from "react-i18next";
+import {successConfig, errorConfig} from '../../../utils/toastConfig';
 
 const CourseTabsUnits = ({ courseId, isLoading }) => {
     const { t } = useTranslation();
@@ -34,35 +34,31 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
     const removeCourseUnit = (unitId) => {
         axios.delete(`/courses/${courseId}/unit/${unitId}`).then((res) => {
             if (res.status === 200) {
-                toast('Estudante removido com sucesso do curso!', successConfig);
+                toast(t('Unidade curricular removida com sucesso do curso!'), successConfig);
             } else {
-                toast('Ocorreu um problema ao remover o estudante do curso!', errorConfig);
+                toast(t('Ocorreu um problema ao remover a unidade curricular do curso!'), errorConfig);
             }
         });
     };
-
-    const addCourseUnit = (year) => {
+    // TODO
+    const addCourseUnit = () => {
         setOpenModal(false);
-        axios.post(`/courses/${courseId}/unit`, {unit_id: unitToAdd})
+        axios.post(`/courses/${courseId}/unit`, {unit_id: unitToAdd.value})
             .then((res) => {
                 if (res.status === 200) {
                     loadCourseDetailUnits();
-                    toast('Aluno adicionado com sucesso!', successConfig);
+                    toast(t('Unidade curricular adicionada com sucesso!'), successConfig);
                 } else {
-                    toast('Ocorreu um erro ao adicionar o aluno!', errorConfig);
+                    toast(t('Ocorreu um erro ao adicionar a unidade curricular!'), errorConfig);
                 }
             });
     };
 
     const searchUnits = (e, {searchQuery}) => {
         setSearchCurricularUnit(true);
-        axios.get(`/search/students?q=${searchQuery}`).then((res) => {
+        axios.get(`/course-units/search?search=${searchQuery}`).then((res) => {
             if (res.status === 200) {
-                setListOfUnits(res.data?.map((unit) => ({
-                    key: unit.id,
-                    value: unit.id,
-                    text: `(${unit.code}) - ${unit.label}`
-                })));
+                setListOfUnits(res.data.data);
                 setSearchCurricularUnit(false);
             }
         });
@@ -70,7 +66,7 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
 
     return (
         <div>
-            { loading && (                
+            { loading && (
                 <div style={{height: "80px"}}>
                     <Dimmer active inverted>
                         <Loader indeterminate>{t('A carregar as unidades curriculares')}</Loader>
@@ -79,22 +75,24 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
             )}
             {!loading && (
                 <>
-                    <Button floated='right' icon labelPosition='left' positive size='small' onClick={() => setOpenModal(true)}>
-                        <Icon name='add' /> Add Unit
-                    </Button>
+                    {/* TODO - Maybe future work, add course unit from here
+                    <Segment clearing basic className={"padding-none"}>
+                        <Button floated='right' icon labelPosition='left' positive size='small' onClick={() => setOpenModal(true)}>
+                            <Icon name='add' /> { t("Adicionar Unidade Curricular") }
+                        </Button>
+                    </Segment>
+                    */}
                     { Object.keys(courseUnitsGrouped).map((year, index) => (
                         <Table striped color="green" key={index}>
                             <Table.Header>
                                 <Table.Row>
-                                    <Table.HeaderCell rowSpan="1" colSpan="4">
-                                        Ano{' '}{year}
-                                    </Table.HeaderCell>
+                                    <Table.HeaderCell rowSpan="1" colSpan="4">{ t("Ano") } {year}</Table.HeaderCell>
                                 </Table.Row>
                                 <Table.Row>
-                                    <Table.HeaderCell>Codigo</Table.HeaderCell>
-                                    <Table.HeaderCell>Nome</Table.HeaderCell>
-                                    <Table.HeaderCell>Sigla</Table.HeaderCell>
-                                    <Table.HeaderCell>Ramo</Table.HeaderCell>
+                                    <Table.HeaderCell style={{width: '10%'}}>{ t("Código") }</Table.HeaderCell>
+                                    <Table.HeaderCell style={{width: '55%'}}>{ t("Nome") }</Table.HeaderCell>
+                                    <Table.HeaderCell style={{width: '15%'}}>{ t("Sigla") }</Table.HeaderCell>
+                                    <Table.HeaderCell style={{width: '20%'}}>{ t("Ramo") }</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
@@ -114,46 +112,35 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
 
             {openModal && (
                 <Modal dimmer="blurring" open={openModal} onClose={() => setOpenModal(false)}>
-                    <Modal.Header>Adicionar Unidade curricular</Modal.Header>
+                    <Modal.Header>{ t("Adicionar Unidade Curricular") }</Modal.Header>
                     <div>
                         <Segment placeholder>
                             <Grid columns={2} stackable textAlign='center'>
-                                <Divider vertical>Or</Divider>
+                                <Divider vertical>{ t("Ou") }</Divider>
                                 <Grid.Row verticalAlign='middle'>
                                     <Grid.Column>
-                                        <Header icon>
-                                            <Icon name='search' />
-                                            Procurar unidades curriculares existentes
-                                        </Header>
-                                        <Form.Dropdown width={16} search selection
-                                            placeholder="Procurar por unidade curricular"
-                                            loading={searchCurricularUnit}
-                                            options={listOfUnits}
+                                        <Header icon><Icon name='search' />{ t("Procurar unidades curriculares existentes") }</Header>
+                                        <Form.Dropdown width={16} search fluid selection placeholder={ t("Procurar por unidade curricular") }
+                                            loading={searchCurricularUnit} options={listOfUnits} onSearchChange={_.debounce(searchUnits, 400)}
                                             onChange={(e, {value}) => setUnitToAdd(
                                                 listOfUnits.find((x) => x.value === value),
                                             )}
-                                            onSearchChange={_.debounce(searchUnits, 400)}
                                         />
-                                        <Button positive onClick={addCourseUnit} disabled={!!unitToAdd}>
-                                            Adicionar
-                                        </Button>
+                                        <div className={"margin-top-base"}>
+                                            <Button positive onClick={addCourseUnit} disabled={!unitToAdd}>{ t("Adicionar") }</Button>
+                                        </div>
                                     </Grid.Column>
 
                                     <Grid.Column>
-                                        <Header icon>
-                                            <Icon name='book' />
-                                            Adicionar Nova unidade curricular
-                                        </Header>
-                                        <Button positive>Nova</Button>
+                                        <Header icon><Icon name='book' /> { t("Adicionar Nova unidade curricular") }</Header>
+                                        <Button positive>{ t("Nova") }</Button>
                                     </Grid.Column>
                                 </Grid.Row>
                             </Grid>
                         </Segment>
                     </div>
                     <Modal.Actions>
-                        <Button negative onClick={() => { setUnitToAdd(undefined);setOpenModal(false); }}>
-                            Cancelar
-                        </Button>
+                        <Button negative onClick={() => { setUnitToAdd(undefined);setOpenModal(false); }}>{ t("Cancelar") }</Button>
                     </Modal.Actions>
                 </Modal>
             )}
