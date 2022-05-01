@@ -92,6 +92,10 @@ sdfghy
         
         $> php artisan migrate:fresh --seed
 
+    Create new Personal Token for the Front-End app communicate with the API
+
+        $> php artisan passport:client --personal
+
 ---
 
 ### TODO
@@ -119,3 +123,8 @@ sdfghy
 - [ ] Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;
 - [ ] Users com mais do que um role (validar o que deve ser feito)
 - [ ] Log dos métodos: registar o que foi alterado e quem alterou;
+
+
+### TODO Miguel
+- [ ] Validar dropdown "Grau ensino" detalhe curso
+- [ ] Validar dropdown "semestre" detalhe unidade curricular

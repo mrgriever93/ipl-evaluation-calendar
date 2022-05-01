@@ -18,6 +18,7 @@ class InterruptionType extends Model
     protected $fillable = [
         "name_pt",
         "name_en",
+        "mandatory",
         "enabled"
     ];
 }

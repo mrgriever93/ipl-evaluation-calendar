@@ -13,6 +13,7 @@ class EpochType extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        "code",
         "name_pt",
         "name_en"
     ];

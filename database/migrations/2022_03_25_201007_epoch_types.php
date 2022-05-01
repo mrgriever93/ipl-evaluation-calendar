@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('epoch_types', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
+            $table->string('code');
             $table->string('name_pt');
             $table->string('name_en');
         });
