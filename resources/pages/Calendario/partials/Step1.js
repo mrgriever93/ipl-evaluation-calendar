@@ -58,7 +58,7 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
                                                 </Card.Content>
                                                 <Card.Content>
                                                     <Form.Field>
-                                                        <DateInput name="date" placeholder="Data de Fim" iconPosition="left" label="Data de Fim" closable{...endDateInput} value={endDateInput.value} onChange={(evt, {value}) => {endDateInput.onChange(value);}}/>
+                                                        <DateInput name="date" placeholder="Data de Fim" iconPosition="left" label="Data de Fim" minDate={startDateInput.value} closable{...endDateInput} value={endDateInput.value} onChange={(evt, {value}) => {endDateInput.onChange(value);}}/>
                                                     </Form.Field>
                                                 </Card.Content>
                                             </Card>
