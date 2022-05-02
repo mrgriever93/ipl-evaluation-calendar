@@ -18,6 +18,16 @@ const Step2 = ({additionalInterruptions, setAdditionalInterruptions}) => {
                 })));
             }
         });
+        axios.get('/').then((response) => {
+            if (response.status === 200) {
+                response.data.data.unshift({id: '', label: "Tipo de interrupção"});
+                setInterruptionTypes(response.data.data?.map(({id, label}) => ({
+                    key: id,
+                    value: id,
+                    text: label,
+                })));
+            }
+        });
     }, []);
 
     return (

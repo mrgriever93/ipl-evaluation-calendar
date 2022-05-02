@@ -81,7 +81,9 @@ Route::middleware('auth:api')->group(function () {
         /* Previous Methods */
         Route::get('/available-methods/{calendar}',         'getAvailableMethods'  );
         Route::get('/semesters',                            'listSemesters'        );
-        Route::get('/semesters/new-calendar',               'calendarSemesters'    );
+
+        Route::get('/new-calendar/semesters',               'calendarSemesters'    );
+        Route::get('/new-calendar/interruptions',           'calendarInterruptions');
 
         Route::post('/calendar/{calendar}/publish',         'publish'              );
     });

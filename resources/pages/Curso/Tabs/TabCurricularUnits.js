@@ -40,7 +40,7 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
             }
         });
     };
-    // TODO
+    // TODO - Maybe future work, add course unit from here
     const addCourseUnit = () => {
         setOpenModal(false);
         axios.post(`/courses/${courseId}/unit`, {unit_id: unitToAdd.value})

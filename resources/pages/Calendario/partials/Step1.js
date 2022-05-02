@@ -13,7 +13,7 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
     const clearSeasons = () => seasons.onChange(null);
 
     useEffect(() => {
-        axios.get('/semesters/new-calendar').then((response) => {
+        axios.get('/new-calendar/semesters').then((response) => {
             if (response.status >= 200 && response.status < 300) {
                 setSemesterList(response.data.data);
             }
