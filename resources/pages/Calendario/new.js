@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {Button, Card, Container, Form, Icon, Step} from 'semantic-ui-react';
+import {Button, Card, Container, Form, Icon, Message, Step} from 'semantic-ui-react';
 import {Form as FinalForm} from 'react-final-form';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -9,6 +9,7 @@ import moment from 'moment';
 import Step1 from './partials/Step1';
 import Step2 from './partials/Step2';
 import Step3 from './partials/Step3';
+import {useTranslation} from "react-i18next";
 
 const SEMESTER = {
     FIRST: "1",
@@ -58,6 +59,7 @@ const formInitialValues = {
 
 const NewCalendar = () => {
     const history = useNavigate();
+    const { t } = useTranslation();
     const [activeSemester, setActiveSemester] = useState(0);
     const [additionalInterruptions, setAdditionalInterruptions] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -69,6 +71,7 @@ const NewCalendar = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const [maxStep, setMaxStep] = useState(1);
     const [completedSteps, setCompletedSteps] = useState([]);
+    const [errorMessages, setErrorMessages] = useState([]);
 
     const addCourse = (course) => {
         setCourses([...courses, {...course}]);
@@ -77,34 +80,118 @@ const NewCalendar = () => {
     const removeCourse = (id) => {
         setCourses([...courses.filter((course) => course.id !== id)]);
     };
-    const validateStep = (step, values) => {
-        if(step === 1){
-            console.log( values.step1);
-            const step1 = values.step1;
-            return step1.hasOwnProperty("seasons") && Object.keys(step1.seasons).length > 0 && step1.semester !== "";
+
+    const validateStep1 = (values) => {
+        let isValid = false;
+        // Check for the semester
+        const hasSemester = values.semester !== "";
+        // Check for every type of dates and if has start and end
+        const hasEpochs = values.hasOwnProperty("seasons") && values.seasons && Object.keys(values.seasons).length > 0;
+        let hasAllDates = true;
+        if(hasEpochs) {
+            const keys = Object.keys(values.seasons);
+            keys.forEach((key, index) => {
+                if(!values.seasons[key].hasOwnProperty("start_date") || !values.seasons[key].hasOwnProperty("end_date")){
+                    hasAllDates = false;
+                }
+            });
         }
-        if(step === 2){
-            console.log(values.step2);
-            // TODO check if interruptions are valid
-            return false;
+        let errorTexts = [];
+        if(!hasSemester){
+            errorTexts.push("Tem de selecionar pelo menos um semestre!");
         }
-        if(step === 3){
-            console.log(values.step3);
-            // TODO check if courses are valid
-            return true;
+        if(!hasEpochs){
+            errorTexts.push("Tem de adicionar as datas para o calendario");
         }
+        if(!hasAllDates){
+            errorTexts.push("Tem de preencher todas as datas de inicio e fim dos periodos");
+        }
+        isValid = hasSemester && hasEpochs && hasAllDates;
+        setErrorMessages(errorTexts);
+        if(!isValid){
+            // clear next steps because of changes
+            setCompletedSteps([...completedSteps.filter((step) => step < 1)]);
+            setMaxStep(1);
+        }
+
+        return isValid;
     }
-    const stepHeader = (step) => {
-        if(step <= maxStep){
-            setCurrentStep(step);
+
+    const validateStep2 = (values) => {
+        //additional_interruptions
+        console.log(values);
+        let isValid = false;
+        // TODO check if interruptions are valid
+        const hasSemester = values.semester !== "";
+        const hasEpochs = values.hasOwnProperty("seasons") && values.seasons && Object.keys(values.seasons).length > 0;
+        let hasAllDates = true;
+        if(hasEpochs) {
+            const keys = Object.keys(values.seasons);
+            keys.forEach((key, index) => {
+                if(!values.seasons[key].hasOwnProperty("start_date") || !values.seasons[key].hasOwnProperty("end_date")){
+                    hasAllDates = false;
+                }
+            });
         }
+        let errorTexts = [];
+        if(!hasSemester){
+            errorTexts.push("Tem de selecionar as interrupcoes mandatorias pelo menos!");
+        }
+        if(!hasEpochs){
+            errorTexts.push("Tem de adicionar as datas para o calendario");
+        }
+        if(!hasAllDates){
+            errorTexts.push("Tem de preencher todas as datas de inicio e fim das interrupcoes");
+        }
+        isValid = hasSemester && hasEpochs && hasAllDates;
+        setErrorMessages(errorTexts);
+        if(!isValid){
+            // clear next steps because of changes
+            setCompletedSteps([...completedSteps.filter((step) => step < 2)]);
+            setMaxStep(2);
+        }
+
+        return isValid;
     }
-    const previousStep = (step) => {
-        setCurrentStep(step);
+
+    const validateStep3 = (values) => {
+        // TODO check if courses are valid
+        console.log(values);
+        let isValid = false;
+        // Check for the semester
+        const hasAllCourses = values.semester !== "";
+        // Check for every type of dates and if has start and end
+        const hasAnyCourse = values.hasOwnProperty("seasons") && values.seasons && Object.keys(values.seasons).length > 0;
+        if(hasAnyCourse) {
+            const keys = Object.keys(values.seasons);
+            keys.forEach((key, index) => {
+                if(!values.seasons[key].hasOwnProperty("start_date")){
+                }
+            });
+        }
+        let errorTexts = [];
+        if(!hasAllCourses){
+            errorTexts.push("Tem de escolher se quer criar um calendario para todos os cursos ou apenas alguns");
+        }
+        if(!hasAnyCourse){
+            errorTexts.push("Tem de adicionar pelo menos 1 curso");
+        }
+        isValid = hasAllCourses && hasAnyCourse;
+        setErrorMessages(errorTexts);
+        return isValid;
     }
 
     const nextStep = (stepNumber, values) => {
-        if(validateStep(stepNumber - 1, values)){
+        let stepValid = false;
+
+        if(stepNumber - 1 === 1){
+            stepValid = validateStep1(values.step1);
+        } else if(stepNumber - 1 === 2){
+            stepValid = validateStep2(values.step2);
+        } else if(stepNumber - 1 === 3){
+            stepValid = validateStep3(values.step3);
+        }
+        if(stepValid){
             setCurrentStep(stepNumber);
             if(stepNumber > maxStep) {
                 setMaxStep(stepNumber);
@@ -112,6 +199,12 @@ const NewCalendar = () => {
             }
         }
     };
+
+    const stepHeader = (step) => {
+        if(step <= maxStep){
+            setCurrentStep(step);
+        }
+    }
 
     const onSubmit = (values) => {
         setIsSaving(true);
@@ -127,6 +220,7 @@ const NewCalendar = () => {
                     type: parseInt(key.split('_')[1]),
                 })),
             ],
+            import_holidays: values.step2.importHolidays,
             interruptions: [
                 ...(values.step2.additional_interruptions?.map(({interruption_type_id, start_date, end_date}) => ({
                         interruption_type_id,
@@ -135,7 +229,6 @@ const NewCalendar = () => {
                     }),
                 ) || []),
             ],
-            import_holidays: values.step2.importHolidays,
         };
 
         axios.post('/calendar', body).then((response) => {
@@ -177,20 +270,30 @@ const NewCalendar = () => {
                     </Step.Group>
                     <Card fluid>
                         <Card.Content header="Novo Calendário"/>
-                        <Card.Content>
+                        { errorMessages.length > 0 && (
                             <Card.Content>
-                                <Form autoComplete="off">
-                                    <div className={currentStep === 1 ? "display-block" : "display-none"}>
-                                        <Step1 activeSemester={activeSemester} setActiveSemester={setActiveSemester} />
-                                    </div>
-                                    <div className={currentStep === 2 ? "display-block" : "display-none"}>
-                                        <Step2 additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} />
-                                    </div>
-                                    <div className={currentStep === 3 ? "display-block" : "display-none"}>
-                                        <Step3 allCourses={allCourses} setAllCourses={setAllCourses} courses={courses} removeCourse={removeCourse} addCourse={addCourse} loading={loading} setLoading={setLoading}/>
-                                    </div>
-                                </Form>
+                                <Message warning>
+                                    <Message.Header>{ t('Os seguintes detalhes do Curso precisam da sua atenção:') }</Message.Header>
+                                    <Message.List>
+                                        { errorMessages.map((message, index) => (
+                                            <Message.Item key={index}>{ t(message) }</Message.Item>
+                                        ))}
+                                    </Message.List>
+                                </Message>
                             </Card.Content>
+                        )}
+                        <Card.Content>
+                            <Form autoComplete="off">
+                                <div className={currentStep === 1 ? "display-block" : "display-none"}>
+                                    <Step1 activeSemester={activeSemester} setActiveSemester={setActiveSemester} />
+                                </div>
+                                <div className={currentStep === 2 ? "display-block" : "display-none"}>
+                                    <Step2 additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} />
+                                </div>
+                                <div className={currentStep === 3 ? "display-block" : "display-none"}>
+                                    <Step3 allCourses={allCourses} setAllCourses={setAllCourses} courses={courses} removeCourse={removeCourse} addCourse={addCourse} loading={loading} setLoading={setLoading}/>
+                                </div>
+                            </Form>
                         </Card.Content>
                         <Card.Content extra>
                             {currentStep === 2 && (
@@ -211,7 +314,7 @@ const NewCalendar = () => {
                                 </Button>
                             )}
                             {currentStep > 1 && (
-                                <Button icon labelPosition="left" color="green" floated="right" onClick={() => previousStep(currentStep - 1)}>
+                                <Button icon labelPosition="left" color="green" floated="right" onClick={() => setCurrentStep(currentStep - 1)}>
                                     Anterior
                                     <Icon name="left arrow"/>
                                 </Button>

@@ -7,9 +7,10 @@ import {useTranslation} from "react-i18next";
 
 const Step1 = ({setActiveSemester, activeSemester}) => {
     const { t } = useTranslation();
+    const [semesterList, setSemesterList] = useState([]);
+
     const { input: seasons } = useField('step1.seasons');
     const clearSeasons = () => seasons.onChange(null);
-    const [semesterList, setSemesterList] = useState([]);
 
     useEffect(() => {
         axios.get('/semesters/new-calendar').then((response) => {
@@ -18,6 +19,7 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
             }
         });
     }, []);
+
     return (
         <Grid padded>
             <Grid.Row>
@@ -29,7 +31,7 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
                                     <Button positive={activeSemester === index} key={'step1_button_' + index}
                                         onClick={() => {
                                             clearSeasons();
-                                            semesterInput.onChange(index + 1);
+                                            semesterInput.onChange(semester.code);
                                             setActiveSemester(index);
                                         }}>
                                         {semester.name}
@@ -45,15 +47,15 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
                 <Card.Content>
                     <Card.Group itemsPerRow={semesterList[activeSemester]?.length}>
                         {semesterList[activeSemester]?.epochs?.map((epoch, index) => (
-                            <Field name={`step1.seasons.${epoch?.name}_${epoch?.id}.start_date`} key={'step1_field_start' + index}>
+                            <Field name={`step1.seasons.${epoch?.code}.start_date`} key={'step1_field_start' + index}>
                                 {({input: startDateInput}) => (
-                                    <Field name={`step1.seasons.${epoch?.name}_${epoch?.id}.end_date`} key={'step1_field_end' + index}>
+                                    <Field name={`step1.seasons.${epoch?.code}.end_date`} key={'step1_field_end' + index}>
                                         {({input: endDateInput}) => (
                                             <Card raised>
                                                 <Card.Content header={epoch.name}/>
                                                 <Card.Content>
                                                     <Form.Field>
-                                                        <DateInput name="date" iconPosition="left" label="Data de Ínicio" placeholder="Data de Ínicio" value={ startDateInput.value }{...startDateInput} closable onChange={(evt, {value}) => {startDateInput.onChange(value);}}/>
+                                                        <DateInput name="date" iconPosition="left" label="Data de Ínicio" placeholder="Data de Ínicio" value={startDateInput.value}{...startDateInput} closable onChange={(evt, {value}) => {startDateInput.onChange(value);}}/>
                                                     </Form.Field>
                                                 </Card.Content>
                                                 <Card.Content>

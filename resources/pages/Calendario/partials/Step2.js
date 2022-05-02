@@ -45,7 +45,7 @@ const Step2 = ({additionalInterruptions, setAdditionalInterruptions}) => {
                                                     </Card.Content>
                                                     <Card.Content>
                                                         <Form.Field>
-                                                            <DateInput name="date" value={null} iconPosition="left" closable label="Data de Fim" placeholder="Data de Fim" {...endDateInput} onChange={(evt, {value}) => {endDateInput.onChange(value);}}/>
+                                                            <DateInput name="date" value={null} iconPosition="left" closable label="Data de Fim"minDate={startDateInput.value}  placeholder="Data de Fim" {...endDateInput} onChange={(evt, {value}) => {endDateInput.onChange(value);}}/>
                                                         </Form.Field>
                                                     </Card.Content>
                                                     <Card.Content extra>

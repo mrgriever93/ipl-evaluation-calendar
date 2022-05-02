@@ -115,15 +115,12 @@ class CalendarController extends Controller
                 $query->from("exams")->whereRaw("exams.method_id = methods.id")->where("exams.epoch_id", $request->epoch_id);
             });
 
-            if (Auth::user()->groups()->isTeacher()->get()->count() > 0
+            if (Auth::user()->groups()->isTeacher()->exists()
                 && (
-                    Auth::user()->groups()->coordinator()->get()->count() == 0
-                    && Auth::user()->groups()->board()->get()->count() == 0
-                    && Auth::user()->groups()->superAdmin()->get()->count() == 0
-                    && Auth::user()->groups()->admin()->get()->count() == 0
-                    && Auth::user()->groups()->pedagogic()->get()->count() == 0
-                    && Auth::user()->groups()->responsiblePedagogic()->get()->count() == 0
-                    && Auth::user()->groups()->gop()->get()->count() == 0
+                    Auth::user()->groups()->coordinator()->exists() && Auth::user()->groups()->board()->exists()
+                    && Auth::user()->groups()->superAdmin()->exists() && Auth::user()->groups()->admin()->exists()
+                    && Auth::user()->groups()->pedagogic()->exists() && Auth::user()->groups()->responsiblePedagogic()->exists()
+                    && Auth::user()->groups()->gop()->exists()
                 )
             ) {
                 $availableMethods->whereIn('course_units.id', Auth::user()->courseUnits->pluck('id'));

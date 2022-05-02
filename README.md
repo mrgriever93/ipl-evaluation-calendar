@@ -39,6 +39,8 @@ sdfghy
 3) Run migrations and seeders for the database 
 
         $> sail artisan migrate --seed
+        ---- or -----
+        $> sail artisan migrate:fresh --seed
 
 4) Create personal Token for login
 
