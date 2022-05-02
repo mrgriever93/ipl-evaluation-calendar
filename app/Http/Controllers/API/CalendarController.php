@@ -14,6 +14,7 @@ use App\Http\Resources\AvailableCourseUnitsResource;
 use App\Http\Resources\CalendarResource;
 use App\Http\Resources\Generic\Calendar_SemesterResource;
 use App\Http\Resources\Generic\SemestersSearchResource;
+use App\Models\AcademicYear;
 use App\Models\Calendar;
 use App\Models\CalendarPhase;
 use App\Models\Course;
@@ -21,6 +22,7 @@ use App\Models\CourseUnit;
 use App\Models\Epoch;
 use App\Models\Interruption;
 use App\Models\InterruptionType;
+use App\Models\InterruptionTypesEnum;
 use App\Models\Semester;
 use App\Services\ExternalImports;
 use Carbon\Carbon;
@@ -229,7 +231,22 @@ class CalendarController extends Controller
 
     public function calendarInterruptions(Request $request)
     {
-        // TODO miguel.cerejo
-        // Gerar automaticamente todas as interrupcoes mandatorias e os feriados do WebService
+        $yearOfFirstDay = $request->input("first_year");
+        $yearOfLastDay = $request->input("last_year");
+        $holidays = [];
+        $interruptionTypeId = InterruptionType::where('name_pt', InterruptionTypesEnum::HOLIDAYS)->first()->id;
+        do {
+            $holidayList = ExternalImports::getYearHolidays($yearOfFirstDay);
+            foreach ($holidayList->Holiday as $key => $holiday) {
+                $holidays[] = [
+                    "date"                  => $holiday->Date->__toString(),
+                    "name"                  => $holiday->Name->__toString(),
+                    "type_name"             => $holiday->Type->__toString(),
+                    "interruption_type_id"  => $interruptionTypeId,
+                ];
+            }
+        } while ($yearOfFirstDay++ < $yearOfLastDay);
+        //dd($holidays);
+        return response()->json($holidays, Response::HTTP_OK);
     }
 }

@@ -46,7 +46,6 @@ const formInitialValues = {
     },
     step2: {
         interruptions: {},
-        importHolidays: true,
     },
     step3: {
         allCourses: true,
@@ -72,6 +71,14 @@ const NewCalendar = () => {
     const [maxStep, setMaxStep] = useState(1);
     const [completedSteps, setCompletedSteps] = useState([]);
     const [errorMessages, setErrorMessages] = useState([]);
+    // step 2
+    const [firstYear, setFirstYear] = useState(0);
+    const [lastYear, setLastYear] = useState(0);
+    const [initialDate, setInitialDate] = useState(0);
+    const [finalDate, setFinalDate] = useState(0);
+    const [holidaysList, setHolidaysList] = useState([]);
+    const [mandatoryInterruptions, setMandatoryInterruptions] = useState([]);
+
 
     const addCourse = (course) => {
         setCourses([...courses, {...course}]);
@@ -90,11 +97,32 @@ const NewCalendar = () => {
         let hasAllDates = true;
         if(hasEpochs) {
             const keys = Object.keys(values.seasons);
+            let initialYear = 0;
+            let finalYear = 0;
+            let initialDate = 0;
+            let finalDate = 0;
             keys.forEach((key, index) => {
                 if(!values.seasons[key].hasOwnProperty("start_date") || !values.seasons[key].hasOwnProperty("end_date")){
                     hasAllDates = false;
+                } else {
+                    let startDate = (values.seasons[key].start_date).split("-");
+                    let compStartDate = new Date(startDate[2], startDate[1], startDate[0]);
+                    if(initialYear > compStartDate.getFullYear() || initialYear === 0) {
+                        initialYear = compStartDate.getFullYear();
+                        initialDate = compStartDate;
+                    }
+                    let endDate = (values.seasons[key].end_date).split("-");
+                    let compEndDate = new Date(endDate[2], endDate[1], endDate[0]);
+                    if(finalYear < compEndDate.getFullYear() || finalYear === 0) {
+                        finalYear = compEndDate.getFullYear();
+                        finalDate = compEndDate;
+                    }
                 }
             });
+            setFirstYear(initialYear);
+            setLastYear(finalYear);
+            setInitialDate(initialDate);
+            setFinalDate(finalDate);
         }
         let errorTexts = [];
         if(!hasSemester){
@@ -118,32 +146,38 @@ const NewCalendar = () => {
     }
 
     const validateStep2 = (values) => {
-        //additional_interruptions
-        console.log(values);
         let isValid = false;
-        // TODO check if interruptions are valid
-        const hasSemester = values.semester !== "";
-        const hasEpochs = values.hasOwnProperty("seasons") && values.seasons && Object.keys(values.seasons).length > 0;
+        const hasInterruptions = values.hasOwnProperty("additional_interruptions") && values.additional_interruptions && values.additional_interruptions.length > 0;
         let hasAllDates = true;
-        if(hasEpochs) {
-            const keys = Object.keys(values.seasons);
+        let hasAllInterruptionsTypes = true;
+        let hasAllMandatoryInterruptions = true;
+        if(hasInterruptions) {
+            const keys = Object.keys(values.additional_interruptions);
             keys.forEach((key, index) => {
-                if(!values.seasons[key].hasOwnProperty("start_date") || !values.seasons[key].hasOwnProperty("end_date")){
+                if(!values.additional_interruptions[key].hasOwnProperty("start_date") || !values.additional_interruptions[key].hasOwnProperty("end_date")){
                     hasAllDates = false;
                 }
+                if(!values.additional_interruptions[key].hasOwnProperty("interruption_type_id")){
+                    hasAllInterruptionsTypes = false;
+                }
+                // TODO finalize all mandatory interruptions
+                //if(values.additional_interruptions[key].hasOwnProperty("interruption_type_id") || values.additional_interruptions[key].interruption_type_id.includes(mandatoryInterruptions)){
+                //    hasAllMandatoryInterruptions = false;
+                //}
             });
         }
+
         let errorTexts = [];
-        if(!hasSemester){
+        if(!hasInterruptions || !hasAllMandatoryInterruptions){
             errorTexts.push("Tem de selecionar as interrupcoes mandatorias pelo menos!");
-        }
-        if(!hasEpochs){
-            errorTexts.push("Tem de adicionar as datas para o calendario");
         }
         if(!hasAllDates){
             errorTexts.push("Tem de preencher todas as datas de inicio e fim das interrupcoes");
         }
-        isValid = hasSemester && hasEpochs && hasAllDates;
+        if(!hasAllInterruptionsTypes){
+            errorTexts.push("Tem de selecionar os tipos das interrupcoes!");
+        }
+        isValid = hasInterruptions && hasAllDates && hasAllInterruptionsTypes && hasAllMandatoryInterruptions;
         setErrorMessages(errorTexts);
         if(!isValid){
             // clear next steps because of changes
@@ -155,28 +189,17 @@ const NewCalendar = () => {
     }
 
     const validateStep3 = (values) => {
-        // TODO check if courses are valid
-        console.log(values);
         let isValid = false;
         // Check for the semester
-        const hasAllCourses = values.semester !== "";
-        // Check for every type of dates and if has start and end
-        const hasAnyCourse = values.hasOwnProperty("seasons") && values.seasons && Object.keys(values.seasons).length > 0;
-        if(hasAnyCourse) {
-            const keys = Object.keys(values.seasons);
-            keys.forEach((key, index) => {
-                if(!values.seasons[key].hasOwnProperty("start_date")){
-                }
-            });
-        }
+        const hasAllCourses = values.allCourses;
+        // Check if there is any course
+        const hasAnyCourse = values.courses && values.courses.length > 0;
+
         let errorTexts = [];
-        if(!hasAllCourses){
-            errorTexts.push("Tem de escolher se quer criar um calendario para todos os cursos ou apenas alguns");
-        }
-        if(!hasAnyCourse){
+        if(!hasAllCourses && !hasAnyCourse){
             errorTexts.push("Tem de adicionar pelo menos 1 curso");
         }
-        isValid = hasAllCourses && hasAnyCourse;
+        isValid = hasAllCourses || hasAnyCourse;
         setErrorMessages(errorTexts);
         return isValid;
     }
@@ -207,55 +230,65 @@ const NewCalendar = () => {
     }
 
     const onSubmit = (values) => {
-        setIsSaving(true);
-        const body = {
-            semester: values.step1.semester,
-            is_all_courses: values.step3.allCourses,
-            ...(values.step3.allCourses ? null : {courses: [...values.step3.courses.map((x) => x.id)]}),
-            epochs: [
-                ...Object.keys(values.step1.seasons).map((key) => ({
-                    name: key.split('_')[0],
-                    start_date: moment(values.step1.seasons[key].start_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
-                    end_date: moment(values.step1.seasons[key].end_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
-                    type: parseInt(key.split('_')[1]),
-                })),
-            ],
-            import_holidays: values.step2.importHolidays,
-            interruptions: [
-                ...(values.step2.additional_interruptions?.map(({interruption_type_id, start_date, end_date}) => ({
-                        interruption_type_id,
-                        start_date: moment(start_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
-                        end_date: moment(end_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
-                    }),
-                ) || []),
-            ],
-        };
+        if(validateStep3(values.step3)) {
+            setIsSaving(true);
+            const body = {
+                semester: values.step1.semester,
+                is_all_courses: values.step3.allCourses,
+                ...(values.step3.allCourses ? null : {courses: [...values.step3.courses.map((x) => x.id)]}),
+                epochs: [
+                    ...Object.keys(values.step1.seasons).map((key) => ({
+                        name: key.split('_')[0],
+                        start_date: moment(values.step1.seasons[key].start_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+                        end_date: moment(values.step1.seasons[key].end_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+                        type: parseInt(key.split('_')[1]),
+                    })),
+                ],
+                holidays: holidaysList,
+                interruptions: [
+                    ...(values.step2.additional_interruptions?.map(({interruption_type_id, start_date, end_date}) => ({
+                            interruption_type_id,
+                            start_date: moment(start_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+                            end_date: moment(end_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+                        }),
+                    ) || []),
+                ],
+            };
 
-        axios.post('/calendar', body).then((response) => {
-            setIsSaving(false);
-            const pluralOrSingularForm = values.step3.allCourses || values.step3.courses?.length > 1 ? 's' : '';
-            if (response.status === 201) {
-                SweetAlertComponent.fire({
-                    title: 'Sucesso!',
-                    text: `Calendário${pluralOrSingularForm} criado${pluralOrSingularForm} com sucesso!`,
-                    icon: 'success',
-                    confirmButtonColor: '#21ba45',
-                });
-                history('/calendario');
-            } else {
-                SweetAlertComponent.fire({
-                    title: 'Erro!',
-                    text: `Ocorreu um erro ao tentar criar o${pluralOrSingularForm} calendário${pluralOrSingularForm} de avaliação`,
-                    icon: 'error',
-                    confirmButtonColor: 'red',
-                });
-            }
-        });
+            axios.post('/calendar', body).then((response) => {
+                setIsSaving(false);
+                const pluralOrSingularForm = values.step3.allCourses || values.step3.courses?.length > 1 ? 's' : '';
+                if (response.status === 201) {
+                    SweetAlertComponent.fire({
+                        title: 'Sucesso!',
+                        text: `Calendário${pluralOrSingularForm} criado${pluralOrSingularForm} com sucesso!`,
+                        icon: 'success',
+                        confirmButtonColor: '#21ba45',
+                    });
+                    history('/calendario');
+                } else {
+                    SweetAlertComponent.fire({
+                        title: 'Erro!',
+                        text: `Ocorreu um erro ao tentar criar o${pluralOrSingularForm} calendário${pluralOrSingularForm} de avaliação`,
+                        icon: 'error',
+                        confirmButtonColor: 'red',
+                    });
+                }
+            });
+        }
     };
+
+    const addNewInterruption = () => {
+        console.log(additionalInterruptions);
+        setAdditionalInterruptions((current) => [...current, current.length]);
+    }
+    const getHolidays = (holidays) => {
+        setHolidaysList(holidays);
+    }
 
     return (
         <Container>
-            <FinalForm onSubmit={onSubmit} initialValues={formInitialValues}  key={'form_new_calendar'} render={({handleSubmit, values}) => (
+            <FinalForm onSubmit={onSubmit} initialValues={formInitialValues} key={'form_new_calendar'} render={({handleSubmit, values}) => (
                 <div>
                     <Step.Group widths={stepsData.length}>
                         {stepsData.map((step) => (
@@ -288,7 +321,7 @@ const NewCalendar = () => {
                                     <Step1 activeSemester={activeSemester} setActiveSemester={setActiveSemester} />
                                 </div>
                                 <div className={currentStep === 2 ? "display-block" : "display-none"}>
-                                    <Step2 additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} />
+                                    <Step2 holidays={getHolidays} firstYear={firstYear} lastYear={lastYear} finalDate={finalDate} initialDate={initialDate} isActive={currentStep === 2} additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} />
                                 </div>
                                 <div className={currentStep === 3 ? "display-block" : "display-none"}>
                                     <Step3 allCourses={allCourses} setAllCourses={setAllCourses} courses={courses} removeCourse={removeCourse} addCourse={addCourse} loading={loading} setLoading={setLoading}/>
@@ -297,7 +330,7 @@ const NewCalendar = () => {
                         </Card.Content>
                         <Card.Content extra>
                             {currentStep === 2 && (
-                                <Button icon labelPosition="left" color="teal" floated="left" onClick={() => {setAdditionalInterruptions((current) => [...current, current.length]);}}>
+                                <Button icon labelPosition="left" color="teal" floated="left" onClick={addNewInterruption}>
                                     Adicionar interrupção
                                     <Icon name="plus"/>
                                 </Button>

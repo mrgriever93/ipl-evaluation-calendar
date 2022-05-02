@@ -21,6 +21,15 @@ use LdapRecord\Connection;
 class ExternalImports
 {
 
+    public static function getYearHolidays($yearToImport)
+    {
+        $apiEndpoint = Config::get('constants.api.sapo_holidays_endpoint');
+        $url = "{$apiEndpoint}?year={$yearToImport}";
+        $holidays = simplexml_load_file($url);
+        //dd($holidays->GetNationalHolidaysResult->Holiday);
+        return $holidays->GetNationalHolidaysResult;//->Holiday;
+    }
+
     public static function importYearHolidays($yearToImport, $calendarId)
     {
         $apiEndpoint = Config::get('constants.api.sapo_holidays_endpoint');

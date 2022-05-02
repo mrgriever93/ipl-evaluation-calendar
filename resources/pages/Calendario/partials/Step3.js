@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
-import {Button, Container, Dimmer, Form, Grid, Icon, Label, List, Loader, Segment, Table} from 'semantic-ui-react';
+import {Button, Container, Dimmer, Form, Grid, Icon, Label, Loader, Table} from 'semantic-ui-react';
 import {Field, useField} from 'react-final-form';
 import axios from "axios";
 import PaginationDetail from "../../../components/Pagination";
@@ -63,8 +63,7 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
                                         onClick={() => {
                                             setAllCourses(true);
                                             allCoursesInput.onChange(true);
-                                        }}
-                                    >
+                                        }}>
                                         Todos os Cursos
                                     </Button>
                                     <Button.Or/>
@@ -72,8 +71,7 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
                                         onClick={() => {
                                             setAllCourses(false);
                                             allCoursesInput.onChange(false);
-                                        }}
-                                    >
+                                        }}>
                                         Selecionar Cursos
                                     </Button>
                                 </Button.Group>

@@ -47,20 +47,20 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
                 <Card.Content>
                     <Card.Group itemsPerRow={semesterList[activeSemester]?.length}>
                         {semesterList[activeSemester]?.epochs?.map((epoch, index) => (
-                            <Field name={`step1.seasons.${epoch?.code}.start_date`} key={'step1_field_start' + index}>
+                            <Field name={`step1.seasons.${epoch?.code}_${epoch?.id}.start_date`} key={'step1_field_start' + index}>
                                 {({input: startDateInput}) => (
-                                    <Field name={`step1.seasons.${epoch?.code}.end_date`} key={'step1_field_end' + index}>
+                                    <Field name={`step1.seasons.${epoch?.code}_${epoch?.id}.end_date`} key={'step1_field_end' + index}>
                                         {({input: endDateInput}) => (
                                             <Card raised>
                                                 <Card.Content header={epoch.name}/>
                                                 <Card.Content>
                                                     <Form.Field>
-                                                        <DateInput name="date" iconPosition="left" label="Data de Ínicio" placeholder="Data de Ínicio" value={startDateInput.value}{...startDateInput} closable onChange={(evt, {value}) => {startDateInput.onChange(value);}}/>
+                                                        <DateInput name="date" iconPosition="left" label="Data de Ínicio" placeholder="Data de Ínicio" value={startDateInput.value} {...startDateInput} closable onChange={(evt, {value}) => {startDateInput.onChange(value);}}/>
                                                     </Form.Field>
                                                 </Card.Content>
                                                 <Card.Content>
                                                     <Form.Field>
-                                                        <DateInput name="date" placeholder="Data de Fim" iconPosition="left" label="Data de Fim" minDate={startDateInput.value} closable{...endDateInput} value={endDateInput.value} onChange={(evt, {value}) => {endDateInput.onChange(value);}}/>
+                                                        <DateInput name="date" placeholder="Data de Fim" iconPosition="left" label="Data de Fim" minDate={startDateInput.value} closable {...endDateInput} value={endDateInput.value} onChange={(evt, {value}) => {endDateInput.onChange(value);}}/>
                                                     </Form.Field>
                                                 </Card.Content>
                                             </Card>
