@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\v1;
 
 use App\Models\Dicionario;
-use App\Http\Resources\DicionarioResource;
-
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UtilizadorAutenticadoPermissoesCalendarioResource extends JsonResource
+class UtilizadorAutenticadoPermissoesResource extends JsonResource
 {
 
     public function toArray($request)
@@ -17,8 +15,8 @@ class UtilizadorAutenticadoPermissoesCalendarioResource extends JsonResource
             'categoria'              => $this->categoria,
             'nome'                   => $this->nome,
             'isolada'                => $this->isolada,
-            'grupo_id'               => $this->grupo_id,
-            'fase_calendario_id'     => $this->fase_calendario_id,
+            //'grupo_id'               => $this->grupo_id,
+            //'fase_calendario_id'     => $this->fase_calendario_id,
             'consultar'              => $this->consultar,
             'consultar_todos'        => $this->consultar_todos,
             'adicionar'              => $this->adicionar,

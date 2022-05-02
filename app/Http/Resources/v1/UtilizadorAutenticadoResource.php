@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\v1;
 
 use App\Models\Dicionario;
-use App\Http\Resources\DicionarioResource;
-
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UtilizadorAutenticadoResource extends JsonResource
@@ -26,3 +24,4 @@ class UtilizadorAutenticadoResource extends JsonResource
         ];
     }
 }
+

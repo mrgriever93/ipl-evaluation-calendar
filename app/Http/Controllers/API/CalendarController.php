@@ -222,9 +222,14 @@ class CalendarController extends Controller
         return SemestersSearchResource::collection(Semester::where("special", 0)->get());
     }
 
-    public function calendarSemesters(Request $request)
+    public function calendarSemesters()
     {
         return Calendar_SemesterResource::collection(Semester::all());
     }
 
+    public function calendarInterruptions(Request $request)
+    {
+        // TODO miguel.cerejo
+        // Gerar automaticamente todas as interrupcoes mandatorias e os feriados do WebService
+    }
 }

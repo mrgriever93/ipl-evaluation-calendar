@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\v1;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UnidadeCurricularForMetodosResource extends JsonResource
+class GrupoUserAuthResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,8 +15,9 @@ class UnidadeCurricularForMetodosResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'                            => $this->id,
-            'nome'                          => $this->nome,
+            'id'                                => $this->id,
+            'nome'                              => $this->nome,
+            'descricao'                         => $this->descricao,
         ];
     }
 }
