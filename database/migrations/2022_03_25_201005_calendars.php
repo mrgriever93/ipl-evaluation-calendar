@@ -23,7 +23,8 @@ return new class extends Migration
             $table->foreign('course_id')->references('id')->on('courses');
             $table->foreign('calendar_phase_id')->references('id')->on('calendar_phases');
             $table->foreign('academic_year_id')->references('id')->on('academic_years');
-            $table->integer('semester');
+            $table->integer('semester_id');
+            $table->foreign('semester_id')->references('id')->on('semesters');
             $table->string('observations_pt')->nullable();
             $table->string('observations_en')->nullable();
             $table->boolean('temporary')->default(true);

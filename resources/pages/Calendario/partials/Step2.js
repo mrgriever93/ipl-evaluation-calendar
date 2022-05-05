@@ -41,7 +41,6 @@ const Step2 = ({isActive, firstYear, lastYear, initialDate, finalDate, additiona
     }, []);
 
     useEffect(() => {
-        console.log(additionalInterruptions);
         if(isActive && additionalInterruptions.length === 0) {
             importHolidays();
         }

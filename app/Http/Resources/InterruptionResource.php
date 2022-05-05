@@ -12,7 +12,7 @@ class InterruptionResource extends JsonResource
         return [
             'id'            => $this->id,
             'description'   => $this->description,
-            'isHoliday'     => InterruptionType::where('name', InterruptionTypesEnum::HOLIDAYS)->first()->id === $this->interruption_type_id,
+            'isHoliday'     => InterruptionType::where(($request->header("lang") == "en" ? 'name_en' : 'name_pt'), InterruptionTypesEnum::HOLIDAYS)->first()->id === $this->interruption_type_id,
             'start_date'    => $this->start_date,
             'end_date'      => $this->end_date,
             'interruption_type_id' => $this->interruption_type_id,

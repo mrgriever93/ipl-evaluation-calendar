@@ -47,9 +47,9 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
                 <Card.Content>
                     <Card.Group itemsPerRow={semesterList[activeSemester]?.length}>
                         {semesterList[activeSemester]?.epochs?.map((epoch, index) => (
-                            <Field name={`step1.seasons.${epoch?.code}_${epoch?.id}.start_date`} key={'step1_field_start' + index}>
+                            <Field name={`step1.seasons.${epoch?.code}.start_date`} key={'step1_field_start' + index}>
                                 {({input: startDateInput}) => (
-                                    <Field name={`step1.seasons.${epoch?.code}_${epoch?.id}.end_date`} key={'step1_field_end' + index}>
+                                    <Field name={`step1.seasons.${epoch?.code}.end_date`} key={'step1_field_end' + index}>
                                         {({input: endDateInput}) => (
                                             <Card raised>
                                                 <Card.Content header={epoch.name}/>

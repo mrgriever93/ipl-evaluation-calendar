@@ -93,7 +93,8 @@ const CourseUnitsList = () => {
         {name: t('Nome')},
         {name: t('Ramo')},
         {name: t('Agrupamento')},
-        {name: t('Ações'),  align: 'center', style: {width: '10%'} },
+        {name: t('Semestre'),   align: 'center', style: {width: '10%'} },
+        {name: t('Ações'),      align: 'center', style: {width: '10%'} },
     ];
     return (
         <Container>
@@ -134,7 +135,7 @@ const CourseUnitsList = () => {
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
-                                    {courseUnits.map(({id, name, code, has_methods, branch_label, group_name, course_description}) => (
+                                    {courseUnits.map(({id, name, code, has_methods, branch_label, group_name, course_description, semester}) => (
                                         <Table.Row key={id} warning={!has_methods}>
                                             <Table.Cell>
                                                 { !has_methods && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher os métodos de avaliação.')} position='top center'/> }
@@ -142,6 +143,7 @@ const CourseUnitsList = () => {
                                             </Table.Cell>
                                             <Table.Cell>{branch_label}</Table.Cell>
                                             <Table.Cell>{group_name || '-'}</Table.Cell>
+                                            <Table.Cell>{semester}</Table.Cell>
                                             <Table.Cell>
                                                 <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]}>
                                                     <Link to={`/unidade-curricular/edit/${id}`}>

@@ -20,4 +20,7 @@ class Semester extends Model
     public function epochTypes() {
         return $this->belongsToMany(EpochType::class);
     }
+    public function calendar() {
+        return $this->belongsToMany(Calendar::class);
+    }
 }

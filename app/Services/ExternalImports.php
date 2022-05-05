@@ -156,11 +156,13 @@ class ExternalImports
                         );
                         // Retrieve CourseUnit by code or create it if it doesn't exist...
                         $newestCourseUnit = CourseUnit::firstOrCreate(
-                            ["code" => $info[$school->index_course_unit_code]],
+                            [
+                                "code" => $info[$school->index_course_unit_code],
+                                "semester" => $semester
+                            ],
                             [
                                 "course_id" => $course->id,
                                 "branch_id" => $branch->id,
-                                "semester" => $semester,
                                 "curricular_year" => $info[$school->index_course_unit_curricular_year],
                                 "name_pt" => $info[$school->index_course_unit_name],
                                 "name_en" => $info[$school->index_course_unit_name] // this will duplicate the value as default, to prevent empty states

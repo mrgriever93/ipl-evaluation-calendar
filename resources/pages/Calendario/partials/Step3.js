@@ -113,7 +113,7 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
                                             <Table.Cell>{course.initials}</Table.Cell>
                                             <Table.Cell>{course.name}</Table.Cell>
                                             <Table.Cell>
-                                                <Button onClick={() => addCourse(course)} color="teal" disabled={courses.find(({id: courseId}) => courseId === course.id)} >
+                                                <Button onClick={() => addCourse(course)} color="teal" disabled={!!courses.find(({id: courseId}) => courseId === course.id)} >
                                                     Adicionar
                                                 </Button>
                                             </Table.Cell>

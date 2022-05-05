@@ -77,7 +77,6 @@ const NewCalendar = () => {
     const [initialDate, setInitialDate] = useState(0);
     const [finalDate, setFinalDate] = useState(0);
     const [holidaysList, setHolidaysList] = useState([]);
-    const [mandatoryInterruptions, setMandatoryInterruptions] = useState([]);
 
 
     const addCourse = (course) => {
@@ -238,10 +237,9 @@ const NewCalendar = () => {
                 ...(values.step3.allCourses ? null : {courses: [...values.step3.courses.map((x) => x.id)]}),
                 epochs: [
                     ...Object.keys(values.step1.seasons).map((key) => ({
-                        name: key.split('_')[0],
+                        code: key.split('__')[0],
                         start_date: moment(values.step1.seasons[key].start_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
                         end_date: moment(values.step1.seasons[key].end_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
-                        type: parseInt(key.split('_')[1]),
                     })),
                 ],
                 holidays: holidaysList,
@@ -267,6 +265,9 @@ const NewCalendar = () => {
                     });
                     history('/calendario');
                 } else {
+                    let errors = [];
+                    Object.keys(response.response.data.errors).map((key) => errors.push(...response.response.data.errors[key]));
+                    setErrorMessages(errors);
                     SweetAlertComponent.fire({
                         title: 'Erro!',
                         text: `Ocorreu um erro ao tentar criar o${pluralOrSingularForm} calendário${pluralOrSingularForm} de avaliação`,
@@ -279,7 +280,6 @@ const NewCalendar = () => {
     };
 
     const addNewInterruption = () => {
-        console.log(additionalInterruptions);
         setAdditionalInterruptions((current) => [...current, current.length]);
     }
     const getHolidays = (holidays) => {

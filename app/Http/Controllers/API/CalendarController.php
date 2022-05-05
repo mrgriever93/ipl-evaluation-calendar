@@ -13,6 +13,7 @@ use App\Http\Requests\UpdateCalendarRequest;
 use App\Http\Resources\AvailableCourseUnitsResource;
 use App\Http\Resources\CalendarResource;
 use App\Http\Resources\Generic\Calendar_SemesterResource;
+use App\Http\Resources\Generic\EpochTypesResource;
 use App\Http\Resources\Generic\SemestersSearchResource;
 use App\Models\AcademicYear;
 use App\Models\Calendar;
@@ -20,6 +21,7 @@ use App\Models\CalendarPhase;
 use App\Models\Course;
 use App\Models\CourseUnit;
 use App\Models\Epoch;
+use App\Models\EpochType;
 use App\Models\Interruption;
 use App\Models\InterruptionType;
 use App\Models\InterruptionTypesEnum;
@@ -49,13 +51,17 @@ class CalendarController extends Controller
         foreach ($courses as $key => $course) {
             $newCalendar = new Calendar($request->all());
             $newCalendar->academic_year_id = $request->cookie('academic_year');
+            $newCalendar->semester_id = Semester::where('code', $request->semester)->firstOrFail()->id;
             $newCalendar->course_id = $course["id"] ?? $course;
-            $newCalendar->calendar_phase_id = CalendarPhase::first('id')->id;
+            // TODO garantir que este valor e sempre o correto
+            $newCalendar->calendar_phase_id = CalendarPhase::where('code', 'created')->firstOrFail()->id;
             $newCalendar->save();
 
             foreach ($request->epochs as $key => $epoch) {
+                $epochType = EpochType::where('code', $epoch['code'])->firstOrFail();
                 $newEpoch = new Epoch($epoch);
-                $newEpoch->epoch_type_id = $epoch['type'];
+                $newEpoch->name = $epochType->name_pt;
+                $newEpoch->epoch_type_id = $epochType->id;
                 $newCalendar->epochs()->save($newEpoch);
 
                 foreach (CourseUnit::where('course_id', $newCalendar->course_id)->get() as $courseUnit) {
@@ -80,6 +86,7 @@ class CalendarController extends Controller
                 $newInterruption->save();
             }
 
+            // TODO ja recebemos os feriados que vao haver
             if ($request->import_holidays) {
                 $yearOfFirstDay = Carbon::parse($newCalendar->firstDayOfSchool())->year;
                 $yearOfLastDay = Carbon::parse($newCalendar->lastDayOfSchool())->year;
