@@ -16,8 +16,15 @@ sdfghy
 
 2) Install PHP and Composer based on the following docs:
 
+        https://linuxize.com/post/how-to-install-php-8-on-ubuntu-20-04/
+        https://www.itsolutionstuff.com/post/how-to-install-laravel-in-ubuntu-serverexample.html
+
         https://www.digitalocean.com/community/tutorials/how-to-install-and-use-composer-on-ubuntu-20-04-pt
-        https://www.vultr.com/docs/upgrade-from-php-7-to-php-8-on-ubuntu-20-04-with-apache/        
+        https://www.vultr.com/docs/upgrade-from-php-7-to-php-8-on-ubuntu-20-04-with-apache/ 
+
+        https://oauth2.thephpleague.com/installation/
+
+        
 
 4) Change to your project folder with `cd` command
 
