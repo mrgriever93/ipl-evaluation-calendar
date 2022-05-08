@@ -301,15 +301,16 @@ class PermissionsAndGroupsSeeder extends Seeder
         }
 
         $semesters = [
-            ["code" => "first_semester",    "name_pt" => "1º Semestre",     "name_en" => "1st Semester",  "special" => 0, "epoch_types" => [1, 2, 3]   ],
-            ["code" => "second_semester",   "name_pt" => "2º Semestre",     "name_en" => "2nd Semester",  "special" => 0, "epoch_types" => [1, 2, 3]   ],
-            ["code" => "special",           "name_pt" => "Especial",        "name_en" => "Special",       "special" => 1, "epoch_types" => [4]         ],
-            ["code" => "very_special",      "name_pt" => "Especialíssima",  "name_en" => "Very Special",  "special" => 1, "epoch_types" => [5]         ],
+            ["code" => "first_semester",    "number" => 1, "name_pt" => "1º Semestre",     "name_en" => "1st Semester",  "special" => 0, "epoch_types" => [1, 2, 3]   ],
+            ["code" => "second_semester",   "number" => 2, "name_pt" => "2º Semestre",     "name_en" => "2nd Semester",  "special" => 0, "epoch_types" => [1, 2, 3]   ],
+            ["code" => "special",           "number" => 0, "name_pt" => "Especial",        "name_en" => "Special",       "special" => 1, "epoch_types" => [4]         ],
+            ["code" => "very_special",      "number" => 0, "name_pt" => "Especialíssima",  "name_en" => "Very Special",  "special" => 1, "epoch_types" => [5]         ],
         ];
 
         foreach ($semesters as $semester) {
             $newSemester = new Semester();
             $newSemester->code    = $semester["code"];
+            $newSemester->number  = $semester["number"];
             $newSemester->name_pt = $semester["name_pt"];
             $newSemester->name_en = $semester["name_en"];
             $newSemester->special = $semester["special"];

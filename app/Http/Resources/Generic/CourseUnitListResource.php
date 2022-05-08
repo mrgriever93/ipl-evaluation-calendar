@@ -16,7 +16,7 @@ class CourseUnitListResource extends JsonResource
             'initials'              => $this->initials,
             'code'                  => $this->code,
             'curricularYear'        => $this->curricular_year,
-            'semester'              => $this->semester,
+            'semester'              => $this->semester->number,
             //'branch_label'        => ($lang_header == "en" ? $this->branch()->first()->name_en : $this->branch()->first()->name_pt),
             'branch_label'          => ($lang_header == "en" ? $this->branch->name_en : $this->branch->name_pt),
             'has_methods'           => $this->methods()->exists()

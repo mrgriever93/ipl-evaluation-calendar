@@ -11,9 +11,9 @@ class MethodResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->evaluationType->description,
-            'epoch' => EpochResource::collection($this->epochs),
             'minimum' => $this->minimum,
             'weight' => $this->weight
+            //'epoch' => EpochResource::collection($this->epochs),
         ];
     }
 }

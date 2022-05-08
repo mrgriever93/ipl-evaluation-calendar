@@ -87,8 +87,8 @@ class Calendar extends Model
         return $this->belongsTo(CalendarPhase::class, 'calendar_phase_id');
     }
 
-    public function semesters() {
-        return $this->hasMany(Semester::class);
+    public function semester() {
+        return $this->belongsTo(Semester::class);
     }
 
     public function epochs()

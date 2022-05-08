@@ -25,4 +25,14 @@ class EpochType extends Model
     public function semesters() {
         return $this->hasMany(Semester::class);
     }
+
+    public function methods()
+    {
+        return $this->hasMany(Method::class);
+    }
+
+    public function courseUnits()
+    {
+        return $this->belongsToMany(CourseUnit::class);
+    }
 }

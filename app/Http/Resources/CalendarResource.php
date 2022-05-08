@@ -16,7 +16,7 @@ class CalendarResource extends JsonResource
             'phase' => new PhaseResource($this->phase),
             'published' => $this->published,
             'temporary' => $this->temporary,
-            'semester'  => $this->semester > 2 ? "Especial" : $this->semester,
+            'semester'  => $this->semester->special ? "Especial" : $this->semester->number,
             'epochs' => EpochResource::collection($this->whenLoaded('epochs', $this->epochs()->with(['exams', 'exams.comments'])->get())),
             'interruptions' => InterruptionResource::collection($this->whenLoaded('interruptions')),
             'general_info'  => new CalendarGeneralInfoResource([

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
-import {Table, Form, Button, Card, Checkbox, Dimmer, Loader} from 'semantic-ui-react';
+import {Table, Form, Button, Checkbox, Dimmer, Loader} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import {successConfig, errorConfig} from '../../../utils/toastConfig';
 import ShowComponentIfAuthorized from "../../../components/ShowComponentIfAuthorized";

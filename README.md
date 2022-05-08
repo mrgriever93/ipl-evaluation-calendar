@@ -110,10 +110,10 @@ sdfghy
 ### TODO
 - [ ] Mostrar um alerta quando estiver acima de 100% (métodos) para confirmar que quer submeter com mais de 100%;
 - [ ] Guardar nos métodos nem sempre funciona;
-- [ ] Erros na utilização 
-  - ***(Detalhes?)***
+- [ ] Rever Tabs dos Cursos
+  - [ ] Erros na utilização
 - [ ] Rever HTML e detalhe dos Agrupamentos de UC
-- [ ] Traduções
+  - [ ] Traduções
 - [ ] Rework Novo calendario
 - [ ] Adicionar flag nos tipos de interrupções para obrigatórios (Natal e Páscoa);
 ---

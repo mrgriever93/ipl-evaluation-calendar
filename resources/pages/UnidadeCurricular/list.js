@@ -114,7 +114,7 @@ const CourseUnitsList = () => {
                 <Card.Content>
                     <Form>
                         <Form.Group>
-                            <Form.Input icon='search' iconPosition='left' width={5} onChange={_.debounce(handleSearchCourseUnits, 400)} search placeholder={t("Pesquisar por nome")} label={t("Pesquisar por nome")} />
+                            <Form.Input icon='search' iconPosition='left' width={5} onChange={_.debounce(handleSearchCourseUnits, 400)} placeholder={t("Pesquisar por nome")} label={t("Pesquisar por nome")} />
                             <Courses widthSize={5} eventHandler={filterByCourse} />
                             <Semesters widthSize={5} eventHandler={filterBySemester} withSpecial={false} />
                             <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />

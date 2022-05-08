@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('methods', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
+            $table->unsignedBigInteger('academic_year_id');
+            $table->foreign('academic_year_id')->references('id')->on('academic_years');
             $table->unsignedBigInteger('evaluation_type_id');
             $table->decimal("minimum");
             $table->decimal("weight");

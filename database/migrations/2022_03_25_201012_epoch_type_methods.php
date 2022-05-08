@@ -13,11 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('epoch_method', function (Blueprint $table) {
+        Schema::create('epoch_type_method', function (Blueprint $table) {
             $table->unsignedBigInteger('method_id');
-            $table->unsignedBigInteger('epoch_id');
+            $table->unsignedBigInteger('epoch_type_id');
             $table->foreign('method_id')->references('id')->on('methods')->onDelete('cascade');
-            $table->foreign('epoch_id')->references('id')->on('epochs');
+            $table->foreign('epoch_type_id')->references('id')->on('epoch_types');
         });
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('epoch_method');
+        Schema::dropIfExists('epoch_type_method');
     }
 };

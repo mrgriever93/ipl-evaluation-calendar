@@ -9,11 +9,15 @@ class Method extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["evaluation_type_id", "minimum", "weight", "enabled"];
+    protected $fillable = ["evaluation_type_id", "academic_year_id", "minimum", "weight", "enabled"];
 
-    public function epochs()
+    public function academicYear() {
+        return $this->belongsTo(AcademicYear::class);
+    }
+
+    public function epochType()
     {
-        return $this->belongsToMany(Epoch::class);
+        return $this->belongsToMany(EpochType::class);
     }
 
     public function evaluationType()

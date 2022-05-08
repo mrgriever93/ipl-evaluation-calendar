@@ -11,12 +11,6 @@ import Step2 from './partials/Step2';
 import Step3 from './partials/Step3';
 import {useTranslation} from "react-i18next";
 
-const SEMESTER = {
-    FIRST: "1",
-    SECOND: "2",
-    SPECIAL: "3",
-};
-
 const SweetAlertComponent = withReactContent(Swal);
 
 const stepsData = [
@@ -42,7 +36,7 @@ const stepsData = [
 
 const formInitialValues = {
     step1: {
-        semester: SEMESTER.FIRST,
+        semester: "first_semester",
     },
     step2: {
         interruptions: {},

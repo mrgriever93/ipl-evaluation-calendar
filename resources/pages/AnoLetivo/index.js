@@ -79,6 +79,7 @@ const AnoLetivo = () => {
                 if (res.status === 200) {
                     setAcademicYearsList(res?.data?.data);
                     toast(t('ano_letivo.Ano letivo atualizado com sucesso!'), successConfig);
+                    location.reload();
                 } else {
                     toast(t('ano_letivo.Ocorreu um problema ao atualizar o ano letivo!'), errorConfig);
                 }
@@ -193,14 +194,14 @@ const AnoLetivo = () => {
                                             <Button disabled={s1_sync_active || s1_sync_waiting} loading={s1_sync_active} icon color="olive" onClick={() => syncSemester(id, 1, display, index)}>
                                                 <Icon name={'sync'}/>
                                             </Button>
-                                            { s1_sync ? moment(s1_sync).fromNow() : 'N/A' }
+                                            { s1_sync ? (<span title={moment.utc(s1_sync).local().format('YYYY-MM-DD HH:mm:ss')}> {moment.utc(s1_sync).local().fromNow()}</span>) : 'N/A' }
                                             { s1_sync_waiting && <div> Waiting to be synced </div> }
                                         </Table.Cell>
                                         <Table.Cell>
                                             <Button disabled={s2_sync_active || s2_sync_waiting} loading={s2_sync_active} icon color="olive" onClick={() => syncSemester(id, 2, display, index)}>
                                                 <Icon name={'sync'}/>
                                             </Button>
-                                            { s2_sync ? moment(s2_sync).fromNow() : 'N/A' }
+                                            { s2_sync ? (<span title={moment.utc(s2_sync).local().format('YYYY-MM-DD HH:mm:ss')}> {moment.utc(s2_sync).local().fromNow()}</span>) : 'N/A' }
                                             { s2_sync_waiting && <div> Waiting to be synced </div> }
                                         </Table.Cell>
                                         <Table.Cell textAlign="center">

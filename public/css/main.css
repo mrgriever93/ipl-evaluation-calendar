@@ -136,6 +136,24 @@ body {
 .margin-top-xl   { margin-top: var(--space-xl);   }
 .margin-top-xxl  { margin-top: var(--space-xxl);  }
 
+.margin-left-none { margin-left: var(--space-none); }
+.margin-left-xs   { margin-left: var(--space-xs);   }
+.margin-left-s    { margin-left: var(--space-s);    }
+.margin-left-base { margin-left: var(--space-base); }
+.margin-left-m    { margin-left: var(--space-m);    }
+.margin-left-l    { margin-left: var(--space-l);    }
+.margin-left-xl   { margin-left: var(--space-xl);   }
+.margin-left-xxl  { margin-left: var(--space-xxl);  }
+
+.margin-right-none { margin-right: var(--space-none); }
+.margin-right-xs   { margin-right: var(--space-xs);   }
+.margin-right-s    { margin-right: var(--space-s);    }
+.margin-right-base { margin-right: var(--space-base); }
+.margin-right-m    { margin-right: var(--space-m);    }
+.margin-right-l    { margin-right: var(--space-l);    }
+.margin-right-xl   { margin-right: var(--space-xl);   }
+.margin-right-xxl  { margin-right: var(--space-xxl);  }
+
 /*
  * Padding values
  */
@@ -348,3 +366,7 @@ div.inline{
 .ui.placeholder.segment .column .field{
     max-width: 85%;
 }
+
+ .ui.menu .item>i.icon:last-child {
+     margin-left: var(--space-s);
+ }

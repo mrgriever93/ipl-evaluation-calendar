@@ -17,7 +17,7 @@ class CourseUnitEditResource extends JsonResource
             'name_en'           => $this->name_en,
             'initials'          => $this->initials,
             'curricularYear'    => $this->curricular_year,
-            'semester'          => $this->semester,
+            'semester'          => $this->semester_id,
 
             'course'            => $this->course_id,
             'branch'            => $this->branch_id,

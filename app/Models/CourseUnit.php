@@ -22,12 +22,17 @@ class CourseUnit extends Model
         "name_en",
         "initials",
         "curricular_year",
-        "semester",
+        "semester_id",
     ];
 
     public function course()
     {
         return $this->belongsTo(Course::class);
+    }
+
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class);
     }
 
     public function log()
@@ -53,6 +58,11 @@ class CourseUnit extends Model
         return $this->belongsToMany(Method::class);
     }
 
+    public function epochTypes()
+    {
+        return $this->belongsToMany(EpochType::class);
+    }
+
     public function teachers()
     {
         return $this->belongsToMany(User::class);
@@ -76,4 +86,5 @@ class CourseUnit extends Model
     public function school() {
         return $this->belongsToThrough(School::class, Course::class);
     }
+
 }

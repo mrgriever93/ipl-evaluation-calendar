@@ -13,6 +13,7 @@ class Semester extends Model
 
     protected $fillable = [
         "code",
+        "number",
         "name_pt",
         "name_en"
     ];
@@ -20,7 +21,12 @@ class Semester extends Model
     public function epochTypes() {
         return $this->belongsToMany(EpochType::class);
     }
+
     public function calendar() {
-        return $this->belongsToMany(Calendar::class);
+        return $this->hasMany(Calendar::class);
+    }
+
+    public function courseUnit() {
+        return $this->hasOne(CourseUnit::class);
     }
 }

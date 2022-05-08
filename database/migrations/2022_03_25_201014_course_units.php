@@ -24,7 +24,10 @@ return new class extends Migration
             $table->string('name_en');
             $table->string('initials')->nullable();
             $table->integer('curricular_year');
-            $table->string('semester');
+
+            $table->unsignedBigInteger('semester_id');
+            $table->foreign('semester_id')->references('id')->on('semesters');
+
             $table->foreign('course_id')->references('id')->on('courses');
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('set null');
             $table->foreign('responsible_user_id')->references('id')->on('users');

@@ -27,6 +27,14 @@ class MethodController extends Controller
 
     public function store(NewMethodRequest $request)
     {
+
+        // TODO
+        /*
+         * Get course_unit semester
+         *      > add special semesters
+         * Get each epoch_Types (this already include all "seasons"
+         *      Add each epoch_type by course_unit by academic_year
+         */
         foreach ($request->methods as $method) {
             $courseUnit = CourseUnit::find($method['course_unit_id']);
             $newMethod = new Method($method);

@@ -40,6 +40,7 @@ Route::get('/version', function () {
     return 'v2';
 });
 
+
 Route::get('/initials', function () {
     $courses = Course::all();
     foreach ($courses as $course){
@@ -213,9 +214,9 @@ Route::middleware('auth:api')->group(function () {
 
     Route::controller(CourseUnitController::class)->group(function () {
         Route::get('/course-units',                                     'index'               );
+        Route::post('/course-units',                                    'store'               );
         Route::get('/course-units/search',                              'search'              );
         Route::get('/course-units/{courseUnit}',                        'show'                );
-        Route::post('/course-units',                                    'store'               );
         Route::patch('/course-units/{courseUnit}',                      'update'              );
         Route::delete('/course-units/{courseUnit}',                     'destroy'             );
 
@@ -226,13 +227,12 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/course-units/{courseUnit}/teacher',               'addTeacher'          );
         Route::delete('/course-units/{courseUnit}/teacher/{teacherId}', 'removeTeacher'       );
         // methods for the course unit
-        Route::get('/course-units/{courseUnit}/methods',                'methods'             );
+        Route::get('/course-units/{courseUnit}/methods',                'methodsForCourseUnit');
+        Route::get('/course-units/{courseUnit}/epochs',                 'epochsForCourseUnit' );
+        Route::patch('/course-units/{courseUnit}/responsible',          'assignResponsible'   );
         // get all logs for this course unit
         Route::get('/course-units/{courseUnit}/logs',                   'logs'                );
 
-        Route::get('/course-units/{courseUnit}/epochs',                 'epochsForCourseUnit' );
-        Route::get('/course-units/{courseUnit}/methods',                'methodsForCourseUnit');
-        Route::patch('/course-units/{courseUnit}/responsible',          'assignResponsible'   );
     });
 
     Route::controller(CourseUnitGroupController::class)->group(function () {
