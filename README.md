@@ -34,32 +34,32 @@ sdfghy
 
         $> alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
 
-5) Run 
+6) Init docker with sail
+
+        $> sail up -d
+
+7) Instal laravel vendor stuff
 
         $> composer install
 
 
-2) To do sail command:
-
-        $> <command here>
-
-3) Run migrations and seeders for the database 
+8) Run migrations and seeders for the database 
 
         $> sail artisan migrate --seed
         ---- or -----
         $> sail artisan migrate:fresh --seed
 
-4) Create personal Token for login
+9) Create personal Token for login
 
         $> sail artisan passport:client --personal
 
-5) Test LDAP connection
+10) Test LDAP connection
 
         $> sail artisan ldap:test
 
 -----
 
-6) To run React frontend
+11) To run React frontend
 
         $> npm install
 
@@ -70,12 +70,12 @@ sdfghy
         
         $> npm run dev          // compile once
 
-7) Plugins
+12) Plugins
 
    [Translations](https://react.i18next.com/)
 
 
-8) Links
+13) Links
 
    https://laravel-mix.com/
    
@@ -84,12 +84,12 @@ sdfghy
    https://bobbyhadz.com/blog/javascript-remove-object-from-array-by-value
 
     
-9) Best practices
+14) Best practices
 
    https://github.com/alexeymezenin/laravel-best-practices
 
 
-10) Server commands
+15) Server commands
 
         $> composer install --optimize-autoloader --no-dev
 
@@ -116,6 +116,12 @@ sdfghy
   - [ ] Traduções
 - [ ] Rework Novo calendario
 - [ ] Adicionar flag nos tipos de interrupções para obrigatórios (Natal e Páscoa);
+- [ ] Rever sync/refresh ano letivo
+- [ ] No curso, qdo pede para rever cenas tipo Coordenador:
+  - [ ]  Dps de preencheres e gravar n atualiza para tirar o erro
+  - [ ]  E mantem o triangulo a dizer q faltam coisas na listagem
+
+
 ---
 - [x] Falta testar a pesquisa do coordenador de curso no detalhe do curso
 - [x] Rever Tabs dos Cursos

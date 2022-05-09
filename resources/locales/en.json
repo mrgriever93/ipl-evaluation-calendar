@@ -62,6 +62,8 @@
         "Anos letivos disponivies para os utilizadores selecionarem.": "Academic years available for users to select.",
         "ano_letivo.Irá começar brevemente a sincronização do ano letivo": "It will start shortly the synchronization for the academic year",
         "ano_letivo.Ocorreu um problema ao tentar começar sincronizar o ano letivo": "There was a problem trying to start the synchronization for the academic year",
+        "ano_letivo.Não consigo ativar um ano letivo.. Porquê?": "Can't activate an Academic year.. Why?",
+        "ano_letivo.Para ativar um Ano Letivo é necessário correr 1º a sincronização de um semestre.": "To activate an Academic Year it's necessary to first run a semester sync.",
         "ano_letivo.A sincronização vai sempre acontecer quando clicarmos no botão?": "The synchronization will always happen when we click the button?",
         "ano_letivo.Não. Irá ser iniciada a sincronização quando não houver trabalho para o servidor.": "No. The synchronization will be initialized when the server has no work to do.",
         "ano_letivo.Todos os semestres e ano letivos que estejam ativos e que já tenham sido sincronizados antes, vão ser atualizados todos os dias as 3 da manhã.": "And all the semesters and academic years that are active and have already been synchronized once, will be synchronized again every day at 3am.",

@@ -219,6 +219,9 @@ const AnoLetivo = () => {
                 </Card.Content>
             </Card>
             <Message info>
+                <Message.Header>{t('ano_letivo.Não consigo ativar um ano letivo.. Porquê?')}</Message.Header>
+                <p>{ t('ano_letivo.Para ativar um Ano Letivo é necessário correr 1º a sincronização de um semestre.') }</p>
+                <br/>
                 <Message.Header>{t('ano_letivo.A sincronização vai sempre acontecer quando clicarmos no botão?')}</Message.Header>
                 <p>{ t('ano_letivo.Não. Irá ser iniciada a sincronização quando não houver trabalho para o servidor.') }</p>
                 <br/>
