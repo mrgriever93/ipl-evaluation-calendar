@@ -9,11 +9,11 @@ import About from './pages/About';
 import MultiPageBase from "./pages/MultiPageBase";
 
 // Calendar pages
-const CalendarList = lazy(() => import('./pages/Calendario/list'));
-const CalendarNew = lazy(() => import('./pages/Calendario/new'));
-const CalendarDetail = lazy(() => import('./pages/Calendario/calendar'));
-const PhasesNew = lazy(() => import('./pages/Calendario/Phases/new'));
-const PhasesList = lazy(() => import('./pages/Calendario/Phases/list'));
+const CalendarList = lazy(() => import('./pages/Calendar/list'));
+const CalendarNew = lazy(() => import('./pages/Calendar/new'));
+const CalendarDetail = lazy(() => import('./pages/Calendar/calendar'));
+const PhasesNew = lazy(() => import('./pages/CalendarPhases/new'));
+const PhasesList = lazy(() => import('./pages/CalendarPhases/list'));
     // Curso Pages
 const CursoList = lazy(() => import('./pages/Curso/list'));
 const CursoDetail = lazy(() => import('./pages/Curso/detail'));

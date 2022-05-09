@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import {useTranslation} from "react-i18next";
-import { errorConfig, successConfig } from '../../../utils/toastConfig';
-import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
-import SCOPES from '../../../utils/scopesConstants';
-import EmptyTable from "../../../components/EmptyTable";
+import { errorConfig, successConfig } from '../../utils/toastConfig';
+import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
+import SCOPES from '../../utils/scopesConstants';
+import EmptyTable from "../../components/EmptyTable";
 
 const List = () => {
     const { t } = useTranslation();
