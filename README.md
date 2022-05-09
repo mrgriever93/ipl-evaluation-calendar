@@ -115,6 +115,9 @@ sdfghy
 - [ ] Rever HTML e detalhe dos Agrupamentos de UC
   - [ ] Traduções
 - [ ] Rework Novo calendario
+  - [x] Traduções
+  - [ ] Otimizar load de permissões
+  - [ ] Na criação de um novo calendário, os feriados não estão a ser guardados
 - [ ] Adicionar flag nos tipos de interrupções para obrigatórios (Natal e Páscoa);
 - [ ] Rever sync/refresh ano letivo
 - [ ] No curso, qdo pede para rever cenas tipo Coordenador:

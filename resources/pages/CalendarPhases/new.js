@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import {useTranslation} from "react-i18next";
-import { errorConfig, successConfig } from '../../../utils/toastConfig';
+import { errorConfig, successConfig } from '../../utils/toastConfig';
 
 const New = () => {
     const { t } = useTranslation();
