@@ -1,0 +1,445 @@
+import axios from 'axios';
+import _ from 'lodash';
+import moment from 'moment';
+import React, {useEffect, useState} from 'react';
+import { useParams, useNavigate} from "react-router-dom";
+import { useTranslation} from "react-i18next";
+import { Container, Card, Button, Accordion, Grid, Header, Icon, List, Modal, Segment, Table, TextArea, Popup, Dropdown, Comment, Message} from 'semantic-ui-react';
+import { toast} from 'react-toastify';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+import PageLoader from '../../../components/PageLoader';
+import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
+import SCOPES from '../../../utils/scopesConstants';
+import {errorConfig, successConfig} from '../../../utils/toastConfig';
+
+const SweetAlertComponent = withReactContent(Swal);
+
+const InfosAndActions = () => {
+    const history = useNavigate();
+    const { t } = useTranslation();
+    // get URL params
+    let { id } = useParams();
+    let paramsId = id;
+
+    const [calendarPermissions, setCalendarPermissions] = useState(JSON.parse(localStorage.getItem('calendarPermissions')) || []);
+    const [interruptionsList, setInterruptions] = useState([]);
+    const [epochsList, setEpochs] = useState([]);
+    const [generalInfo, setGeneralInfo] = useState();
+    const [differences, setDifferences] = useState();
+    const [openModal, setOpenModal] = useState(false);
+    const [interruptionTypes, setInterruptionTypesList] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [modalInfo, setModalInfo] = useState({});
+    const [activeIndex, setActiveIndex] = useState(undefined);
+    const [loadInterruptionTypes, setLoadInterruptionTypes] = useState(false);
+    const [examInfoModal, setExamInfoModal] = useState({});
+    const [openExamModal, setOpenExamModal] = useState(false);
+    const [loadRemainingCourseUnits, setLoadRemainingCourseUnits] = useState(false);
+    const [selectedEpoch, setSelectedEpoch] = useState();
+    const [courseUnits, setCourseUnits] = useState(undefined);
+    const [methodList, setMethodList] = useState(undefined);
+    const [calendarPhases, setCalendarPhases] = useState([]);
+    const [examList, setExamList] = useState([]);
+    const [publishLoading, setPublishLoading] = useState(false);
+    const [creatingCopy, setCreatingCopy] = useState(false);
+
+    const [isTemporary, setIsTemporary] = useState(true);
+    const [isPublished, setIsPublished] = useState(false);
+    const [calendarPhase, setCalendarPhase] = useState(true);
+    const [updatingCalendarPhase, setUpdatingCalendarPhase] = useState(false);
+    const [removingExam, setRemovingExam] = useState(undefined);
+    const [changeData, setChangeData] = useState(false);
+    const [savingExam, setSavingExam] = useState(false);
+    const [viewExamInformation, setViewExamInformation] = useState(false);
+    const [showIgnoredComments, setShowIgnoredComments] = useState(false);
+    const [commentText, setCommentText] = useState(undefined);
+    const [previousFromDefinitive, setPreviousFromDefinitive] = useState(false);
+    const [noMethods, setNoMethods] = useState(false);
+
+
+     const calendarId = paramsId;
+
+    const patchCalendar = (fieldToUpdate, value) => axios.patch(`/calendar/${calendarId}`, {
+        [fieldToUpdate]: value,
+    });
+
+    const updateCalendarStatus = (newTemporaryStatus) => {
+        patchCalendar('temporary', newTemporaryStatus).then((response) => {
+            if (response.status === 200) {
+                setIsTemporary(newTemporaryStatus);
+                toast(t('calendar.Estado do calendário atualizado!'), successConfig);
+            }
+        });
+    };
+
+    const updateCalendarPhase = (newCalendarPhase) => {
+        setUpdatingCalendarPhase(true);
+        patchCalendar('calendar_phase_id', newCalendarPhase).then(
+            (response) => {
+                setUpdatingCalendarPhase(false);
+                if (response.status === 200) {
+                    setCalendarPhase(newCalendarPhase);
+                    toast(t('calendar.Fase do calendário atualizada!'), successConfig);
+                }
+            },
+        );
+    };
+
+
+    useEffect(() => {
+        // check if URL params are just numbers or else redirects to previous page
+        if(!/\d+/.test(paramsId)){
+            history(-1);
+            toast(t('calendar.Ocorreu um erro ao carregar a informacao pretendida'), errorConfig);
+        }
+        axios.get('/permissions/calendar').then((res) => {
+            if (res.status === 200) {
+                localStorage.setItem('calendarPermissions', JSON.stringify(res.data.data));
+            }
+        });
+    }, []);
+
+    const loadCalendar = (calId) => {
+        setIsLoading(true);
+        setExamList([]);
+        axios
+            .get(`/calendar/${calId}`)
+            .then((response) => {
+                if (response?.status >= 200 && response?.status < 300) {
+                    const {
+                        data: {
+                            data: {
+                                phase,
+                                published,
+                                interruptions,
+                                epochs,
+                                general_info,
+                                differences,
+                                previous_from_definitive,
+                            },
+                        },
+                    } = response;
+                    setIsTemporary(!!general_info?.temporary);
+                    setCalendarPhase(general_info?.phase?.id);
+                    setIsPublished(!!published);
+                    setInterruptions(interruptions);
+                    setEpochs(epochs);
+                    epochs.forEach((epoch) => {
+                        setExamList((current) => [...current, ...epoch.exams]);
+                    });
+                    setGeneralInfo(general_info);
+                    setDifferences(differences);
+                    setIsLoading(false);
+                    setPreviousFromDefinitive(previous_from_definitive);
+                } else {
+                    history('/calendario');
+                }
+            })
+            .catch((r) => alert(r));
+    };
+
+
+    useEffect(() => {
+        if (typeof calendarPhase === 'number') {
+            setCalendarPermissions(JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((perm) => perm.phase_id === calendarPhase) || []);
+        }
+    }, [calendarPhase]);
+
+        
+    const handleFaqClick = (e, titleProps) => {
+        const {index} = titleProps;
+        const newIndex = activeIndex === index ? -1 : index;
+        setActiveIndex(newIndex);
+    };
+    
+    useEffect(() => {
+        loadCalendar(calendarId);
+    }, [calendarId, history]);
+
+    useEffect(() => {
+        axios.get('/calendar-phases').then((response) => {
+            if (response.status === 200) {
+                setCalendarPhases(
+                    response.data.data?.map(({id, description, name}) => ({
+                        key: id,
+                        value: id,
+                        text: description,
+                        name,
+                    })),
+                );
+            }
+        });
+    }, []);
+
+    const publishCalendar = () => {
+        setPublishLoading(true);
+        axios.post(`/calendar/${calendarId}/publish`).then((res) => {
+            setPublishLoading(false);
+            loadCalendar(calendarId);
+            if (res.status === 200) {
+                toast('Calendário publicado com sucesso!', successConfig);
+            } else {
+                toast('Ocorreu um erro ao tentar publicar o calendário!', errorConfig);
+            }
+        });
+    };
+
+    const createCopy = () => {
+        SweetAlertComponent.fire({
+            title: 'Atenção!',
+
+            html: 'Ao criar uma cópia deste calendário, irá eliminar todas as cópias criadas anteriormente deste mesmo calendário!<br/><br/><strong>Tem a certeza que deseja criar uma cópia do calendário?</strong>',
+            denyButtonText: 'Não',
+            confirmButtonText: 'Sim',
+            showConfirmButton: true,
+            showDenyButton: true,
+            confirmButtonColor: '#21ba45',
+            denyButtonColor: '#db2828',
+        })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    setCreatingCopy(true);
+                    axios.post(`/calendar/${calendarId}/publish`, {
+                        createCopy: true,
+                    }).then((res) => {
+                        setCreatingCopy(false);
+                        if (res.status === 200) {
+                            toast('Cópia do calendário criada com sucesso!', successConfig);
+                        } else {
+                            toast('Ocorreu um erro ao tentar criar uma cópia do calendário!', errorConfig);
+                        }
+                    });
+                }
+            });
+    };
+
+
+
+    return (
+        <Container>
+            <Header as="h3">Calendário de Avaliação</Header>
+            <Header as="h4">
+                Curso:
+                {' '}
+                {generalInfo?.course?.name}
+            </Header>
+            <Header as="h5">Legenda:</Header>
+            <div style={{display: 'flex'}}>
+                <Popup
+                    content="Toda a avaliação que possua esta legenda, foi modificada em relação à versão anterior do calendário."
+                    trigger={( <div>Modificado</div>
+                        // <LegendBox backgroundColor="rgb(237, 170, 0)">
+                        //     Modificado
+                        // </LegendBox>
+                    )}
+                />
+                {/* <LegendBox backgroundColor="#ddd9c1">Avaliação</LegendBox> */}
+            </div>
+            <Segment>
+                <Card>
+                    <Card.Content>
+                        <Card.Header>Informações</Card.Header>
+                    </Card.Content>
+                    <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
+                        <Card.Content>
+                            {!isPublished ? (
+                                <ShowComponentIfAuthorized permission={[SCOPES.PUBLISH_CALENDAR]}>
+                                    <div>
+                                        <span>
+                                        <Header as="h5">Publicar</Header>
+                                        <Button color="teal" loading={publishLoading} onClick={publishCalendar}>Publicar esta versão</Button>
+                                        </span>
+                                    </div>
+                                </ShowComponentIfAuthorized>
+                            ) : (
+                                <ShowComponentIfAuthorized permission={[SCOPES.CREATE_COPY]}>
+                                    <div>
+                                        <span>
+                                        <Header as="h5">Criar cópia editável</Header>
+                                        <Button color="teal" loading={creatingCopy} onClick={createCopy}>Criar um cópia desta versão</Button>
+                                        </span>
+                                    </div>
+                                </ShowComponentIfAuthorized>
+                            )}
+                            {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0 ?
+                                (
+                                    <div>
+                                        <span>
+                                            <Header as="h5">Fase:</Header>
+                                            <Dropdown
+                                                options={calendarPhases.filter((x) => x.name !== 'system' && x.name !== 'published')}
+                                                selection
+                                                search
+                                                label="Fase do Calendário"
+                                                loading={!calendarPhases.length || updatingCalendarPhase}
+                                                onChange={(e, {value}) => {updateCalendarPhase(value);}}
+                                                value={calendarPhase}
+                                            />
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
+                                        <Header as="h5">Fase:</Header>
+                                        <span>{calendarPhases.find((x) => x.key === calendarPhase)?.text || generalInfo?.phase?.description}</span>
+                                    </ShowComponentIfAuthorized>
+                                )
+                            }
+                            <div>
+                                <span>
+                                    <Header as="h5">Estado:</Header>
+                                    <Button.Group>
+                                        <Button compact onClick={() => updateCalendarStatus(true)} positive={isTemporary} disabled={isPublished || previousFromDefinitive}>
+                                            Temporário
+                                        </Button>
+                                        <Button compact onClick={() => updateCalendarStatus(false)} positive={!isTemporary} disabled={isPublished || previousFromDefinitive}>
+                                            Definitivo
+                                        </Button>
+                                    </Button.Group>
+                                </span>
+                            </div>
+                            <div>
+                                <span>
+                                    <Header as="h5">Ano Letivo:</Header>
+                                    2019-20
+                                </span>
+                            </div>
+                            <div>
+                                <span>
+                                    <Header as="h5">Curso: </Header>
+                                    {generalInfo?.course?.name}
+                                </span>
+                            </div>
+                            <div>
+                                <span>
+                                    <Header as="h5">Última alteração:</Header>
+                                    {moment(generalInfo?.calendar_last_update,).format('DD MMMM, YYYY HH:mm')}
+                                </span>
+                            </div>
+                        </Card.Content>
+                    </ShowComponentIfAuthorized>
+                    <Card.Content>
+                        <Header as="h4">Épocas</Header>
+                        <List divided relaxed>
+                            {epochsList.map((epoch) => (
+                                <List.Item>
+                                    <List.Icon name="calendar alternate" size="large" verticalAlign="middle"/>
+                                    <List.Content>
+                                        <List.Header>{epoch.name}</List.Header>
+                                        <List.Description>
+                                            <b>Ínicio:</b>
+                                            {' '}{moment(epoch.start_date).format('DD MMMM, YYYY')}
+                                        </List.Description>
+                                        <List.Description>
+                                            <b>Fim:</b>
+                                            {' '}{moment(epoch.end_date).format('DD MMMM, YYYY')}
+                                        </List.Description>
+                                    </List.Content>
+                                </List.Item>
+                            ))}
+                        </List>
+                    </Card.Content>
+                    <Card.Content>
+                        <Header as="h4">Interrupções letivas</Header>
+                        <List divided relaxed>
+                            {interruptionsList.filter((x) => !x.isHoliday && x.start_date > _.min(epochsList.map((x) => x.start_date)) && x.end_date < _.max(epochsList.map((x) => x.end_date)))
+                                .map((interruption) => (
+                                    <List.Item>
+                                        <List.Icon name="calendar alternate" size="large"/>
+                                        <List.Content>
+                                            <List.Header>{interruption.description}</List.Header>
+                                            {moment(interruption.start_date).isSame(moment(interruption.end_date)) ?
+                                                (
+                                                <>
+                                                    <List.Description>
+                                                        <b>Dia:</b>
+                                                        {' '}{moment(interruption.start_date).format('DD MMMM, YYYY')}
+                                                    </List.Description>
+                                                    {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.EDIT_INTERRUPTION).length > 0 &&
+                                                        (
+                                                            <Button icon color="yellow" onClick={() => onEditInterruptionClick(interruption)}>
+                                                                <Icon name="edit"/>
+                                                            </Button>
+                                                        )}
+                                                    {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.REMOVE_INTERRUPTION).length > 0 &&
+                                                        (
+                                                            <Button icon color="red" onClick={() => removeInterruption(interruption.id)}>
+                                                                <Icon name="trash"/>
+                                                            </Button>
+                                                        )
+                                                    }
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <List.Description>
+                                                        <b>Ínicio:</b>
+                                                        {' '}{moment(interruption.start_date).format('DD MMMM, YYYY')}
+                                                    </List.Description>
+                                                    <List.Description>
+                                                        <b>Fim:</b>
+                                                        {' '}{moment(interruption.end_date).format('DD MMMM, YYYY')}
+                                                    </List.Description>
+                                                    {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.EDIT_INTERRUPTION).length > 0 &&
+                                                        (
+                                                            <Button icon color="yellow" onClick={() => onEditInterruptionClick(interruption)}>
+                                                                <Icon name="edit"/>
+                                                            </Button>
+                                                        )}
+                                                    {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.REMOVE_INTERRUPTION).length > 0 &&
+                                                        (
+                                                            <Button icon color="red" onClick={() => removeInterruption(interruption.id)}>
+                                                                <Icon name="trash"/>
+                                                            </Button>
+                                                        )
+                                                    }
+                                                </>
+                                            )}
+                                        </List.Content>
+                                    </List.Item>
+                                ))}
+                        </List>
+                    </Card.Content>
+                </Card>
+                <ShowComponentIfAuthorized permission={[SCOPES.ADD_EXAMS]}>
+                    <Segment inverted>
+                        <Header as="h3">Ajuda</Header>
+                        <Accordion inverted>
+                            <Accordion.Title active={activeIndex === 0} index={0} onClick={handleFaqClick}>
+                                <Icon name="dropdown"/>
+                                Como marcar uma avaliação?
+                            </Accordion.Title>
+                            <Accordion.Content active={activeIndex === 0}>
+                                <p>
+                                    Para marcar uma avaliação, deve
+                                    procurar no calendário o dia
+                                    apropriado e carregar na opção
+                                    "Marcar" que aparecerá na célula
+                                    correspondente. De seguida, deverá
+                                    preencher todas as informações
+                                    necessárias.
+                                </p>
+                            </Accordion.Content>
+                            <Accordion.Title active={activeIndex === 1} index={1} onClick={handleFaqClick}>
+                                <Icon name="dropdown"/>
+                                Como marcar uma nova interrupção?
+                            </Accordion.Title>
+                            <Accordion.Content active={activeIndex === 1}>
+                                <p>
+                                    Para marcar uma nova interrupção,
+                                    deve procurar no calendário o dia de
+                                    ínicio da interrupção, e utilizar o
+                                    clique direito do rato sobre essa
+                                    célula. De seguida, deverá preencher
+                                    todas as informações necessárias.
+                                </p>
+                            </Accordion.Content>
+                        </Accordion>
+                    </Segment>
+                </ShowComponentIfAuthorized>
+            </Segment>
+        </Container>
+    );
+};
+
+export default InfosAndActions;
