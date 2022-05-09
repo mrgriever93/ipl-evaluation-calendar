@@ -18,6 +18,8 @@ import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorize
 import SCOPES from '../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../utils/toastConfig';
 
+import InfosAndActions from './detail/infos-and-actions';
+
 const SweetAlertComponent = withReactContent(Swal);
 
 const CellButton = styled.div`
@@ -484,7 +486,7 @@ const Calendar = () => {
 
     useEffect(() => {
         loadCalendar(calendarId);
-    }, [calendarId, history]);
+    }, [calendarId]);
 
     useEffect(() => {
         axios.get('/calendar-phases').then((response) => {
@@ -571,6 +573,7 @@ const Calendar = () => {
 
     return (
         <Container>
+            <InfosAndActions></InfosAndActions>
             <AnimatePresence>
                 {isLoading && (
                     <PageLoader
@@ -613,11 +616,11 @@ const Calendar = () => {
             <Grid stackable>
                 <Grid.Row>
                     <Grid.Column width="12">
-                        {weekData.map(({week, year, days}) => {
+                        {weekData.map(({week, year, days}, tableIndex) => {
                             interruptionDays = 0;
                             alreadyAddedColSpan = false;
                             return (
-                                <Table celled style={{userSelect: 'none'}}>
+                                <Table key={tableIndex} celled style={{userSelect: 'none'}}>
                                     <Table.Header>
                                         <Table.Row textAlign="center">
                                             <Table.HeaderCell width="2">
@@ -646,21 +649,21 @@ const Calendar = () => {
                                             <Table.HeaderCell textAlign="center">
                                                 {year}
                                             </Table.HeaderCell>
-                                            {weekDays.map((weekDay) => {
+                                            {weekDays.map((weekDay, index) => {
                                                 const day = days.find((day) => day.weekDay === weekDay);
                                                 const firstDayAvailable = moment(days[0].date);
                                                 const lastDayAvailable = moment(days[days.length - 1].date);
                                                 if (!day?.date) {
                                                     if (weekDay === 1 || (lastDayAvailable.day() < 6 && !alreadyAddedColSpan)) {
                                                         alreadyAddedColSpan = true;
-                                                        return (<Table.HeaderCell colSpan={lastDayAvailable.day() < 6 ? 6 - lastDayAvailable.day() : firstDayAvailable.day() - 1}/>);
+                                                        return (<Table.HeaderCell key={index} colSpan={lastDayAvailable.day() < 6 ? 6 - lastDayAvailable.day() : firstDayAvailable.day() - 1}/>);
                                                     }
                                                     if (!alreadyAddedColSpan) {
-                                                        return (<Table.HeaderCell/>);
+                                                        return (<Table.HeaderCell key={index} />);
                                                     }
                                                 } else if (day?.date) {
-                                                    return (
-                                                        <Table.HeaderCell textAlign="center">
+                                                    return ( 
+                                                        <Table.HeaderCell key={index} textAlign="center">
                                                             {moment(day.date).format('DD-MM-YYYY')}
                                                         </Table.HeaderCell>
                                                     );
@@ -673,10 +676,10 @@ const Calendar = () => {
                                         {courseYears.map((year, courseIndex) => {
                                                 alreadyAddedColSpan = false;
                                                 return (
-                                                    <Table.Row>
+                                                    <Table.Row key={courseIndex}>
                                                         <Table.Cell textAlign="center">{year} º Ano</Table.Cell>
                                                         {weekDays.map(
-                                                            (weekDay) => {
+                                                            (weekDay, weekDayIndex) => {
                                                                 const day = days.find((day) => day.weekDay === weekDay);
                                                                 const firstDayAvailable = moment(days[0].date);
                                                                 const lastDayAvailable = moment(days[days.length - 1].date);
@@ -692,12 +695,12 @@ const Calendar = () => {
                                                                 if ((year === 1 && !day?.date) || isInterruption) {
                                                                     if (!isInterruption && (weekDay === 1 || (lastDayAvailable.day() < 6 && !alreadyAddedColSpan))) {
                                                                         alreadyAddedColSpan = true;
-                                                                        return (<Table.Cell colSpan={isInterruption && lastDayAvailable.day() < 6 ? 6 - lastDayAvailable.day() : firstDayAvailable.day() - 1} rowSpan={courseYears.length}/>);
+                                                                        return (<Table.Cell key={weekDayIndex} colSpan={isInterruption && lastDayAvailable.day() < 6 ? 6 - lastDayAvailable.day() : firstDayAvailable.day() - 1} rowSpan={courseYears.length}/>);
                                                                     }
                                                                     if (!alreadyAddedColSpan || (isInterruption && courseIndex === 0)) {
                                                                         alreadyAddedRowSpan = true;
                                                                         return (
-                                                                            <Table.Cell
+                                                                            <Table.Cell key={weekDayIndex} 
                                                                                 textAlign="center"
                                                                                 style={isInterruption ? {backgroundColor: '#c9c9c9', fontWeight: 'bold'} : null}
                                                                                 rowSpan={courseYears.length}
@@ -756,27 +759,25 @@ const Calendar = () => {
                                                                         );
                                                                     }
                                                                     return (
-                                                                        <>
-                                                                            <Table.Cell textAlign="center" onContextMenu={(e,) => {
-                                                                                    e.preventDefault();
-                                                                                    if (!isPublished && existingExamsAtThisDate?.length === 0 && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) {
-                                                                                        setModalInfo({start_date: day.date});
-                                                                                        setOpenModal(true);
-                                                                                        setLoadInterruptionTypes(true);
-                                                                                    }
-                                                                                }}>
-                                                                                {examsComponents}
-                                                                                {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.ADD_EXAMS).length > 0 && (
-                                                                                        <CellButton
-                                                                                            onClick={() => {
-                                                                                                setExamInfoModal({date: day.date, year, existingExamsAtThisDate});
-                                                                                                setOpenExamModal(true);
-                                                                                            }}>
-                                                                                            Marcar
-                                                                                        </CellButton>
-                                                                                    )}
-                                                                            </Table.Cell>
-                                                                        </>
+                                                                        <Table.Cell key={weekDayIndex}  textAlign="center" onContextMenu={(e,) => {
+                                                                                e.preventDefault();
+                                                                                if (!isPublished && existingExamsAtThisDate?.length === 0 && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) {
+                                                                                    setModalInfo({start_date: day.date});
+                                                                                    setOpenModal(true);
+                                                                                    setLoadInterruptionTypes(true);
+                                                                                }
+                                                                            }}>
+                                                                            {examsComponents}
+                                                                            {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.ADD_EXAMS).length > 0 && (
+                                                                                    <CellButton
+                                                                                        onClick={() => {
+                                                                                            setExamInfoModal({date: day.date, year, existingExamsAtThisDate});
+                                                                                            setOpenExamModal(true);
+                                                                                        }}>
+                                                                                        Marcar
+                                                                                    </CellButton>
+                                                                                )}
+                                                                        </Table.Cell>
                                                                     );
                                                                 }
                                                                 return null;
@@ -802,12 +803,12 @@ const Calendar = () => {
                                     <Card.Content>
                                         {!isPublished ? (
                                             <ShowComponentIfAuthorized permission={[SCOPES.PUBLISH_CALENDAR]}>
-                                                <p>
+                                                <div>
                                                   <span>
                                                     <Header as="h5">Publicar</Header>
                                                     <Button color="teal" loading={publishLoading} onClick={publishCalendar}>Publicar esta versão</Button>
                                                   </span>
-                                                </p>
+                                                </div>
                                             </ShowComponentIfAuthorized>
                                         ) : (
                                             <ShowComponentIfAuthorized permission={[SCOPES.CREATE_COPY]}>
@@ -821,7 +822,7 @@ const Calendar = () => {
                                         )}
                                         {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0 ?
                                             (
-                                                <p>
+                                                <div>
                                                     <span>
                                                         <Header as="h5">Fase:</Header>
                                                         <Dropdown
@@ -834,7 +835,7 @@ const Calendar = () => {
                                                             value={calendarPhase}
                                                         />
                                                     </span>
-                                                </p>
+                                                </div>
                                             ) : (
                                                 <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
                                                     <Header as="h5">Fase:</Header>
@@ -842,7 +843,7 @@ const Calendar = () => {
                                                 </ShowComponentIfAuthorized>
                                             )
                                         }
-                                        <p>
+                                        <div>
                                             <span>
                                                 <Header as="h5">Estado:</Header>
                                                 <Button.Group>
@@ -854,32 +855,32 @@ const Calendar = () => {
                                                     </Button>
                                                 </Button.Group>
                                             </span>
-                                        </p>
-                                        <p>
+                                        </div>
+                                        <div>
                                             <span>
                                                 <Header as="h5">Ano Letivo:</Header>
                                                 2019-20
                                             </span>
-                                        </p>
-                                        <p>
+                                        </div>
+                                        <div>
                                             <span>
                                                 <Header as="h5">Curso: </Header>
                                                 {generalInfo?.course?.name}
                                             </span>
-                                        </p>
-                                        <p>
+                                        </div>
+                                        <div>
                                             <span>
                                                 <Header as="h5">Última alteração:</Header>
                                                 {moment(generalInfo?.calendar_last_update,).format('DD MMMM, YYYY HH:mm')}
                                             </span>
-                                        </p>
+                                        </div>
                                     </Card.Content>
                                 </ShowComponentIfAuthorized>
                                 <Card.Content>
                                     <Header as="h4">Épocas</Header>
                                     <List divided relaxed>
-                                        {epochsList.map((epoch) => (
-                                            <List.Item>
+                                        {epochsList.map((epoch, listIndex) => (
+                                            <List.Item key={listIndex} >
                                                 <List.Icon name="calendar alternate" size="large" verticalAlign="middle"/>
                                                 <List.Content>
                                                     <List.Header>{epoch.name}</List.Header>
@@ -900,8 +901,8 @@ const Calendar = () => {
                                     <Header as="h4">Interrupções letivas</Header>
                                     <List divided relaxed>
                                         {interruptionsList.filter((x) => !x.isHoliday && x.start_date > _.min(epochsList.map((x) => x.start_date)) && x.end_date < _.max(epochsList.map((x) => x.end_date)))
-                                            .map((interruption) => (
-                                                <List.Item>
+                                            .map((interruption, interruptionIndex) => (
+                                                <List.Item key={interruptionIndex}>
                                                     <List.Icon name="calendar alternate" size="large"/>
                                                     <List.Content>
                                                         <List.Header>{interruption.description}</List.Header>
@@ -1099,7 +1100,7 @@ const Calendar = () => {
                                 <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS, SCOPES.ADD_COMMENTS]}>
                                     <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS]}>
                                         <Button icon color={!showIgnoredComments ? 'green' : 'red'} labelPosition="left" onClick={() => setShowIgnoredComments((cur) => !cur)}>
-                                            <Icon name={`eye ${showIgnoredComments ? 'slash' : ''}`}/>
+                                            <Icon name={'eye' + (showIgnoredComments ? ' slash' : '') }/>
                                             {!showIgnoredComments ? 'Mostrar' : 'Esconder'}
                                             {' '}
                                             ignorados
@@ -1108,8 +1109,8 @@ const Calendar = () => {
                                     <Comment.Group>
                                         <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS]}>
                                             <Header as="h3" dividing>Comentários</Header>
-                                            {examInfoModal?.comments?.filter((x) => (showIgnoredComments ? true : !x.ignored))?.map((comment) => (
-                                                <Comment>
+                                            {examInfoModal?.comments?.filter((x) => (showIgnoredComments ? true : !x.ignored))?.map((comment, commentIndex) => (
+                                                <Comment key={commentIndex}>
                                                     <Comment.Avatar src={`https://avatars.dicebear.com/api/human/${comment.user.id}.svg?w=50&h=50&mood[]=sad&mood[]=happy`}/>
                                                     <Comment.Content style={comment.ignored ? {backgroundColor: 'lightgrey'} : {}}>
                                                         <Comment.Author as="a">{comment.user.name}</Comment.Author>
