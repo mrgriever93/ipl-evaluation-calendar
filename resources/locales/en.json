@@ -262,6 +262,9 @@
         "Número de anos": "Number of years",
         "Coordenador do Curso": "Course Coordinator",
         "Pesquise o coordenador de curso...": "Search for the course coordinator...",
-        "Guardar coordenador": "Save coordinator"
+        "Guardar coordenador": "Save coordinator",
+
+        "Mandatório": "Mandatory",
+        "Caso seja mandatório, quando criar um novo calendário, terá de preencher a interrupção": "If mandatory, when creating a new calendar, you will have to fill in the interruption"
     }
 }

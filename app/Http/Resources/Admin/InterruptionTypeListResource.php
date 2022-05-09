@@ -12,6 +12,7 @@ class InterruptionTypeListResource extends JsonResource
             'id'        => $this->id,
             'label'     => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
             'enabled'   => $this->enabled,
+            'mandatory' => $this->mandatory,
         ];
     }
 }

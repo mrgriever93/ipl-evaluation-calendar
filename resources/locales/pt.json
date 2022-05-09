@@ -262,6 +262,9 @@
         "Número de anos": "Número de anos",
         "Coordenador do Curso": "Coordenador do Curso",
         "Pesquise o coordenador de curso...": "Pesquise o coordenador de curso...",
-        "Guardar coordenador": "Guardar coordenador"
+        "Guardar coordenador": "Guardar coordenador",
+
+        "Mandatório": "Mandatório",
+        "Caso seja mandatório, quando criar um novo calendário, terá de preencher a interrupção": "Caso seja mandatório, quando criar um novo calendário, terá de preencher a interrupção"
     }
 }

@@ -143,5 +143,8 @@ sdfghy
 ### TODO Miguel
 - [ ] Validar dropdown "Grau ensino" detalhe curso
 - [ ] Validar dropdown "semestre" detalhe unidade curricular
+- [ ] Limpeza "Requests Folder"
 
 
+### Perguntas
+- [ ] Tipos de interrupcoes ligadas a alguma coisa? Semestre? Data? Feriado?
