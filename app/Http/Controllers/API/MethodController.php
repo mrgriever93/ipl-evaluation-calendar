@@ -35,9 +35,12 @@ class MethodController extends Controller
          * Get each epoch_Types (this already include all "seasons"
          *      Add each epoch_type by course_unit by academic_year
          */
+        // search course unit
+        $courseUnit = CourseUnit::find($request->methods[0]['course_unit_id']);
+
         foreach ($request->methods as $method) {
-            $courseUnit = CourseUnit::find($method['course_unit_id']);
             $newMethod = new Method($method);
+            $newMethod->academic_year_id = $request->cookie('academic_year');
             if (array_key_exists('id', $method)) {
                 $newMethod = Method::find($method['id']);
                 $newMethod->fill($method);
@@ -50,20 +53,14 @@ class MethodController extends Controller
                 // navigate through all the unit courses in that group and
                 // insert the new method
                 $groupCourseUnits = CourseUnitGroup::find($courseUnit->course_unit_group_id)->courseUnits()->get();
-                foreach ($groupCourseUnits as $courseUnit) {
-                    $calendarsIds = Calendar::where('course_id', $courseUnit->course_id)->whereIn('semester', [$courseUnit->semester, 3])->get('id');
-                    $epochs = Epoch::where('epoch_type_id', $method['epoch_type_id'])->whereIn('calendar_id', $calendarsIds)->get()->pluck('id');
-                    $newMethod->epochs()->syncWithoutDetaching($epochs);
-                    $newMethod->courseUnits()->syncWithoutDetaching($courseUnit);
+                foreach ($groupCourseUnits as $groupCourseUnit) {
+                    $newMethod->epochType()->syncWithoutDetaching($method['epoch_type_id']);
+                    $newMethod->courseUnits()->syncWithoutDetaching($groupCourseUnit);
                     $newMethod->save();
                 }
             } else {
+                $newMethod->epochType()->syncWithoutDetaching($method['epoch_type_id']);
                 $newMethod->courseUnits()->syncWithoutDetaching($courseUnit);
-                $newMethod->save();
-
-                $calendarsIds = Calendar::where('course_id', $courseUnit->course_id)->whereIn('semester', [$courseUnit->semester, 3])->get('id');
-                $epochs = Epoch::where('epoch_type_id', $method['epoch_type_id'])->whereIn('calendar_id', $calendarsIds)->get()->pluck('id');
-                $newMethod->epochs()->syncWithoutDetaching($epochs);
                 $newMethod->save();
             }
         }

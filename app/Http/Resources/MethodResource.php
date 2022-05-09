@@ -9,10 +9,11 @@ class MethodResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'name' => $this->evaluationType->description,
-            'minimum' => $this->minimum,
-            'weight' => $this->weight
+            'id'                    => $this->id,
+            'evaluation_type_id'    => $this->evaluation_type_id,
+            'name'                  => ($request->header("lang") == "en" ? $this->evaluationType->name_en : $this->evaluationType->name_pt),
+            'minimum'               => (float) $this->minimum,
+            'weight'                => (float) $this->weight
             //'epoch' => EpochResource::collection($this->epochs),
         ];
     }

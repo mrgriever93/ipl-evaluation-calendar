@@ -20,7 +20,6 @@ use App\Models\Epoch;
 use App\Models\EpochType;
 use App\Models\Group;
 use App\Models\Method;
-use App\Models\Semester;
 use App\Models\UnitLog;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -271,17 +270,28 @@ class CourseUnitController extends Controller
     /**
      * List methods associated to the unit
      */
-    public function methodsForCourseUnit(CourseUnit $courseUnit)
+    public function methodsForCourseUnit(CourseUnit $courseUnit, Request $request)
     {
         $epochTypesList = EpochType::all();
         $list = EpochMethodResource::collection($epochTypesList);
-        foreach ($list as $epochType) {
-            //$methods = Method::whereIn(DB::select('method_id')->where('epoch_type_id', ))
-            $epochType->methods = MethodResource::collection($courseUnit->methods); //->epochType->where('epoch_type_id', $epochType->id)->get()
-            //$epochs = $method->epochType();
-            //$method['epoch_type_id'] = $epochs->count() > 0 ? $epochs->first()->epoch_type_id : null;
-        }
-        return $list;
+        $yearId = $request->cookie('academic_year');
+        $courseUnitId = $courseUnit->id;
+        $newCollection = collect($list);
+
+        $finalList = $newCollection->map(function ($item, $key) use ($yearId, $courseUnitId){
+            $methods = Method::ofAcademicYear($yearId)
+                            ->join('epoch_type_method', 'epoch_type_method.method_id', '=', 'methods.id')
+                                ->where('epoch_type_method.epoch_type_id', $item['id'])
+                            ->join('course_unit_method', 'course_unit_method.method_id', '=', 'methods.id')
+                                ->where('course_unit_method.course_unit_id', $courseUnitId)
+                            ->get();
+            //byCourseUnit($courseUnit->id)->byEpochType($epochType->id)->ofAcademicYear($yearId)->get();
+
+            $item['methods'] = MethodResource::collection($methods);
+            return $item;
+        });
+
+        return $finalList->all();
     }
 
     public function epochsForCourseUnit(CourseUnit $courseUnit)

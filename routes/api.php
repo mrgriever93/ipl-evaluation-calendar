@@ -228,7 +228,7 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/course-units/{courseUnit}/teacher/{teacherId}', 'removeTeacher'       );
         // methods for the course unit
         Route::get('/course-units/{courseUnit}/methods',                'methodsForCourseUnit');
-        Route::get('/course-units/{courseUnit}/epochs',                 'epochsForCourseUnit' );
+        //Route::get('/course-units/{courseUnit}/epochs',                 'epochsForCourseUnit' );
         Route::patch('/course-units/{courseUnit}/responsible',          'assignResponsible'   );
         // get all logs for this course unit
         Route::get('/course-units/{courseUnit}/logs',                   'logs'                );

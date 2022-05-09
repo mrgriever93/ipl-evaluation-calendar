@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, Header, Icon, Label, Message, Table} from 'semantic-ui-react';
+import {Button, Form, Header, Icon, Label, Message, Segment, Table} from 'semantic-ui-react';
 import axios from "axios";
 import {toast} from "react-toastify";
 import {errorConfig, successConfig} from "../../../utils/toastConfig";
@@ -17,6 +17,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
     const [hasOverWeight, setHasOverWeight] = useState(false);
     const [isUncomplete, setIsUncomplete] = useState(false);
     const [missingTypes, setMissingTypes] = useState(false);
+    const [emptyWeight, setEmptyWeight] = useState(false);
 
     const [epochs, setEpochs] = useState([]);
     const [evaluationTypes, setEvaluationTypes] = useState([]);
@@ -27,25 +28,31 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
         let hasOverValue = false;
         let HasUncompleteData = false;
         let hasMissingTypes = false;
-
-        methodList.forEach((item) => {
-            if (!item.methods?.length) {
-                isValid = false;
-                HasUncompleteData = true;
-            }
-            if (item.methods.reduce((acc, curr) => curr.weight + acc, 0) > 100) {
-                hasOverValue = true;
-            }
-            item.methods?.forEach((method) => {
-                if(!method.evaluation_type_id){
-                    hasMissingTypes = true;
-                }
-                if (!(method.weight && method.evaluation_type_id && method.minimum >= 0 && method.minimum <= 20)) {
+        let hasEmptyWeight = false;
+        if(methodList?.length > 0 ) {
+            methodList.forEach((item) => {
+                if (!item.methods?.length) {
                     isValid = false;
+                    HasUncompleteData = true;
                 }
+                if (item.methods.reduce((acc, curr) => curr.weight + acc, 0) > 100) {
+                    hasOverValue = true;
+                }
+                item.methods?.forEach((method) => {
+                    if (!method.evaluation_type_id) {
+                        hasMissingTypes = true;
+                    }
+                    if (!method.weight) {
+                        hasEmptyWeight = true;
+                    }
+                    if (!(method.weight && method.evaluation_type_id && method.minimum >= 0 && method.minimum <= 20)) {
+                        isValid = false;
+                    }
+                });
             });
-        });
-        setHasWarnings(HasUncompleteData || hasMissingTypes || hasOverValue);
+        }
+        setHasWarnings(HasUncompleteData || hasMissingTypes || hasOverValue || hasEmptyWeight);
+        setEmptyWeight(hasEmptyWeight);
         setIsUncomplete(HasUncompleteData);
         setMissingTypes(hasMissingTypes);
         setHasOverWeight(hasOverValue);
@@ -78,7 +85,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
         setEpochs([]);
         axios.get(`/course-units/${unitId}/methods`).then((res) => {
             if (res.status === 200) {
-                setEpochs(res.data.data);
+                setEpochs(res.data);
                 setIsLoading(false);
             }
         });
@@ -87,23 +94,22 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
     const onSubmit = () => {
         if (!isSaving) {
             setIsSaving(true);
-
-            const body = epochs.map((item) =>{
+            let methods = [];
+            epochs.map((item) =>{
                 item.methods.map((method) => {
-                    return {
+                    methods.push({
                         id: method.id || undefined,
                         course_unit_id: unitId,
                         epoch_type_id: item.id,
                         evaluation_type_id: method.evaluation_type_id,
                         minimum: method.minimum,
                         weight: method.weight
-                    }
+                    })
                 });
             });
-
-            axios.post('/methods', {methods: [...body], removed: [...removedMethods]}).then((res) => {
+            axios.post('/methods', {methods: [...methods], removed: [...removedMethods]}).then((res) => {
                 setIsSaving(false);
-                loadMethods();
+                //loadMethods();
                 if (res.status === 200) {
                     toast('Métodos de avaliação criados com sucesso!', successConfig);
                 } else {
@@ -163,32 +169,36 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
 
     return (
         <div>
-            { hasWarnings && (
-                <Message warning>
-                    <Message.Header>{ t('Os seguintes detalhes do Curso precisam da sua atenção:') }</Message.Header>
-                    <Message.List>
-                        { hasOverWeight && (
-                            <Message.Item>{ t('Existem métodos com mais de 100% na avaliacao') }</Message.Item>
-                        )}
-                        { isUncomplete && (
-                            <Message.Item>{ t('É necessário configurar os métodos para todas as épocas') }</Message.Item>
-                        )}
-                        { missingTypes && (
-                            <Message.Item>{ t('É necessário configurar o todos os tipos de avaliação nos métodos') }</Message.Item>
-                        )}
-                    </Message.List>
-                </Message>
-            )}
-            { epochs.length < 1 || isLoading ? (
+            { epochs?.length < 1 || isLoading ? (
                 <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar metodos para esta Unidade Curricular!")}/>
             ) : (
                 <div>
-                    <Header as="span">Métodos de Avaliação</Header>
-                    <Button onClick={onSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} disabled={!formValid}>
-                        <Icon name="save"/>
-                        Guardar
-                    </Button>
-                    {epochs.map((item, index) => (
+                    { hasWarnings && (
+                        <Message warning>
+                            <Message.Header>{ t('Os seguintes detalhes do Curso precisam da sua atenção:') }</Message.Header>
+                            <Message.List>
+                                { hasOverWeight && (
+                                    <Message.Item>{ t('Existem métodos com mais de 100% na avaliacao') }</Message.Item>
+                                )}
+                                { isUncomplete && (
+                                    <Message.Item>{ t('É necessário configurar os métodos para todas as épocas') }</Message.Item>
+                                )}
+                                { missingTypes && (
+                                    <Message.Item>{ t('É necessário configurar o todos os tipos de avaliação nos métodos') }</Message.Item>
+                                )}
+                                { emptyWeight && (
+                                    <Message.Item>{ t('É necessário ter o peso de avaliação em todos os métodos') }</Message.Item>
+                                )}
+                            </Message.List>
+                        </Message>
+                    )}
+                    <Segment basic>
+                        <Button onClick={onSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} disabled={!formValid}>
+                            <Icon name="save"/>
+                            Guardar
+                        </Button>
+                    </Segment>
+                    {epochs?.map((item, index) => (
                         <div className={"margin-top-base"} key={index}>
                             <Header as="span">{item.name}</Header>
                             <Table compact celled className={"definition-last"}>
