@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name_pt');
             $table->string('name_en');
             $table->boolean('enabled')->default(true);
+            $table->boolean('mandatory')->default(false);
 
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();

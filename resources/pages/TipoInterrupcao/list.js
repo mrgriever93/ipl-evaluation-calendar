@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {Card, Container, Table, Form, Button, Header, Icon, Modal } from 'semantic-ui-react';
+import {Card, Container, Table, Form, Button, Header, Icon, Modal, Popup} from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -14,8 +14,9 @@ const List = () => {
 
     const columns = [
         {name: t('Nome')},
-        {name: t('Ativo?'), align: 'center', style: {width: '15%'} },
-        {name: t('Ações'),  align: 'center', style: {width: '15%'} },
+        {name: t('Mandatório'), align: 'center', style: {width: '15%'}, popup: <Popup trigger={<Icon name="info circle" />} content={t('Caso seja mandatório, quando criar um novo calendário, terá de preencher a interrupção')} position='top center'/>},
+        {name: t('Ativo?'),     align: 'center', style: {width: '15%'} },
+        {name: t('Ações'),      align: 'center', style: {width: '15%'} },
     ];
     const [filteredResults, setFilteredResults] = useState([]);
     const [interruptionList, setInterruptionList] = useState([]);
@@ -102,14 +103,17 @@ const List = () => {
                         <Table.Header>
                             <Table.Row>
                                 {columns.map((col, index) => (
-                                    <Table.HeaderCell key={index} textAlign={col.align} style={ col.style } >{col.name}</Table.HeaderCell>
+                                    <Table.HeaderCell key={index} textAlign={col.align} style={ col.style } >{col.name} {col.popup}</Table.HeaderCell>
                                 ))}
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            { filteredResults?.map(({ id, label, enabled, removable }, index ) => (
+                            { filteredResults?.map(({ id, label, enabled, mandatory, removable }, index ) => (
                                 <Table.Row key={index}>
                                     <Table.Cell>{label}</Table.Cell>
+                                    <Table.Cell textAlign="center">
+                                       { !!mandatory && ( <Icon name='check' /> ) }
+                                    </Table.Cell>
                                     <Table.Cell textAlign="center">
                                         <Icon name={!enabled ? 'close' : 'check'} />
                                     </Table.Cell>

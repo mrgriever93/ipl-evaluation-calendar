@@ -30,18 +30,18 @@ class PermissionsAndGroupsSeeder extends Seeder
             ["code" => "ESECS",     "name_pt" => "Escola Superior de Educação e Ciências Sociais",         "name_en" => "School of Education and Social Sciences"       ],
             ["code" => "ESSLEI",    "name_pt" => "Escola Superior de Saúde",                               "name_en" => "School of Health Sciences"                     ],
             [
-                "code" => "ESTG",
-                "name_pt" => "Escola Superior de Tecnologia e Gestão",
-                "name_en" => "School of Technology and Management",
-                "base_link" => "http://www.dei.estg.ipleiria.pt/intranet/horarios/ws/inscricoes/cursos_ucs.php",
-                "index_course_code" => "0",
-                "index_course_name" => "1",
-                "index_course_unit_name" => "3",
-                "index_course_unit_curricular_year" => "5",
-                "index_course_unit_code" => "2",
-                "index_course_unit_teachers"=> "4",
-                "query_param_academic_year"=> "anoletivo",
-                "query_param_semester" => "periodo"
+                "code"                              => "ESTG",
+                "name_pt"                           => "Escola Superior de Tecnologia e Gestão",
+                "name_en"                           => "School of Technology and Management",
+                "base_link"                         => "http://www.dei.estg.ipleiria.pt/intranet/horarios/ws/inscricoes/cursos_ucs.php",
+                "index_course_code"                 => "3",//"0",
+                "index_course_name"                 => "4",//"1",
+                "index_course_unit_code"            => "5",//"2",
+                "index_course_unit_name"            => "6",//"3",
+                "index_course_unit_teachers"        => "7",//"4",
+                "index_course_unit_curricular_year" => "2",//"5",
+                "query_param_academic_year"         => "anoletivo",
+                "query_param_semester"              => "periodo"
             ],
             ["code" => "ESTM",  "name_pt" => "Escola Superior de Turismo e Tecnologia do Mar - Peniche",    "name_en" => "School of Tourism and Maritime Technology - Peniche" ],
         ];
@@ -103,21 +103,21 @@ class PermissionsAndGroupsSeeder extends Seeder
         }
 
         $interruptionTypes = [
-            ["name_pt" => "Natal",               "name_en" => "Christmas"       ],
-            ["name_pt" => "Páscoa",              "name_en" => "Easter"          ],
-            ["name_pt" => "Desfile do caloiro",  "name_en" => "Freshman Parade" ],
-            ["name_pt" => "Abertura solene",     "name_en" => "Solemn Opening"  ],
-            ["name_pt" => "Desfile académico",   "name_en" => "Academic parade" ],
-            ["name_pt" => "Feriado",             "name_en" => "Holiday"         ],
-            ["name_pt" => "Semana académica",    "name_en" => "Academic week"   ],
-            ["name_pt" => "Dia aberto",          "name_en" => "Open Day"        ],
-            ["name_pt" => "Carnaval",            "name_en" => "Carnival"        ],
+            ["name_pt" => "Natal",               "name_en" => "Christmas",       "mandatory" => true  ],
+            ["name_pt" => "Páscoa",              "name_en" => "Easter",          "mandatory" => true  ],
+            ["name_pt" => "Desfile do caloiro",  "name_en" => "Freshman Parade", "mandatory" => false ],
+            ["name_pt" => "Abertura solene",     "name_en" => "Solemn Opening",  "mandatory" => false ],
+            ["name_pt" => "Desfile académico",   "name_en" => "Academic parade", "mandatory" => false ],
+            ["name_pt" => "Feriado",             "name_en" => "Holiday",         "mandatory" => false ],
+            ["name_pt" => "Semana académica",    "name_en" => "Academic week",   "mandatory" => false ],
+            ["name_pt" => "Dia aberto",          "name_en" => "Open Day",        "mandatory" => false ],
+            ["name_pt" => "Carnaval",            "name_en" => "Carnival",        "mandatory" => false ],
         ];
 
         foreach ($interruptionTypes as $interruptionType) {
-            $newInterruptionType = new InterruptionType();
-            $newInterruptionType->name_pt = $interruptionType["name_pt"];
-            $newInterruptionType->name_en = $interruptionType["name_en"];
+            $newInterruptionType = new InterruptionType($interruptionType);
+            //$newInterruptionType->name_pt = $interruptionType["name_pt"];
+            //$newInterruptionType->name_en = $interruptionType["name_en"];
             $newInterruptionType->save();
         }
 
@@ -176,13 +176,13 @@ class PermissionsAndGroupsSeeder extends Seeder
         $permissionSections = [
             ["code" => "calendar",          "name_pt" => "Calendário",               "name_en" => "Calendar"            ],
             ["code" => "ucs",               "name_pt" => "UCs",                      "name_en" => "CUs"                 ],
+            ["code" => "uc_grouping",       "name_pt" => "Agrupamentos de UCs",      "name_en" => "CUs Grouping"        ],
             ["code" => "users",             "name_pt" => "Utilizadores",             "name_en" => "Users"               ],
             ["code" => "user_groups",       "name_pt" => "Grupos de Utilizador",     "name_en" => "Users Groups"        ],
             ["code" => "courses",           "name_pt" => "Cursos",                   "name_en" => "Courses"             ],
-            ["code" => "evaluation",        "name_pt" => "Avaliações",               "name_en" => "Evaluation"          ],
-            ["code" => "interruption",      "name_pt" => "Interrupções",             "name_en" => "Interruption"        ],
+            ["code" => "evaluation",        "name_pt" => "Tipos de Avaliações",      "name_en" => "Evaluation Types"    ],
+            ["code" => "interruption",      "name_pt" => "Tipos de Interrupções",    "name_en" => "Interruption Types"  ],
             ["code" => "calendar_phases",   "name_pt" => "Fases do calendário",      "name_en" => "Calendar Phases"     ],
-            ["code" => "languages",         "name_pt" => "Linguagens",               "name_en" => "languages"           ],
             ["code" => "schools",           "name_pt" => "Escolas",                  "name_en" => "schools"             ],
             ["code" => "academic_years",    "name_pt" => "Anos Letivos",             "name_en" => "Academic Years"      ],
             ["code" => "permissions",       "name_pt" => "Permissões",               "name_en" => "Permissions"         ],
@@ -197,70 +197,72 @@ class PermissionsAndGroupsSeeder extends Seeder
         }
 
         $newPermissions = [
-            ["code" => "create_calendar",                  "section_code" => "calendar",        "name_pt" => "Criar calendário",                                "name_en" => "Create calendar"               , "is_general" => true  ],
-            ["code" => "delete_calendar",                  "section_code" => "calendar",        "name_pt" => "Eliminar calendário",                             "name_en" => "Delete calendar"               , "is_general" => true  ],
-            ["code" => "view_calendar_info",               "section_code" => "calendar",        "name_pt" => "Ver informações do calendário",                   "name_en" => "View calendar information"     , "is_general" => true  ],
-            ["code" => "view_comments",                    "section_code" => "calendar",        "name_pt" => "Ver comentários",                                 "name_en" => "See comments"                  , "is_general" => true  ],
-            ["code" => "view_calendar_history",            "section_code" => "calendar",        "name_pt" => "Ver o histórico do calendário",                   "name_en" => "View calendar history"         , "is_general" => true  ],
-            ["code" => "view_actual_phase",                "section_code" => "calendar",        "name_pt" => "Ver fase atual",                                  "name_en" => "See current phase"             , "is_general" => true  ],
+            ["code" => "create_calendar",                   "section_code" => "calendar",           "name_pt" => "Criar calendário",                                "name_en" => "Create calendar",                 "is_general" => true  ],
+            ["code" => "delete_calendar",                   "section_code" => "calendar",           "name_pt" => "Eliminar calendário",                             "name_en" => "Delete calendar",                 "is_general" => true  ],
+            ["code" => "view_calendar_info",                "section_code" => "calendar",           "name_pt" => "Ver informações do calendário",                   "name_en" => "View calendar information",       "is_general" => true  ],
+            ["code" => "view_comments",                     "section_code" => "calendar",           "name_pt" => "Ver comentários",                                 "name_en" => "See comments",                    "is_general" => true  ],
+            ["code" => "view_calendar_history",             "section_code" => "calendar",           "name_pt" => "Ver o histórico do calendário",                   "name_en" => "View calendar history",           "is_general" => true  ],
+            ["code" => "view_actual_phase",                 "section_code" => "calendar",           "name_pt" => "Ver fase atual",                                  "name_en" => "See current phase",               "is_general" => true  ],
 
-            ["code" => "publish_calendar",                 "section_code" => "calendar",        "name_pt" => "Publicar calendário",                             "name_en" => "Publish calendar"              , "is_general" => true  ],
-            ["code" => "create_copy",                      "section_code" => "calendar",        "name_pt" => "Criar cópia",                                     "name_en" => "Create copy"                   , "is_general" => true  ],
+            ["code" => "publish_calendar",                  "section_code" => "calendar",           "name_pt" => "Publicar calendário",                             "name_en" => "Publish calendar",                "is_general" => true  ],
+            ["code" => "create_copy",                       "section_code" => "calendar",           "name_pt" => "Criar cópia",                                     "name_en" => "Create copy",                     "is_general" => true  ],
 
-            ["code" => "view_course_units",                "section_code" => "ucs",             "name_pt" => "Ver UCs",                                         "name_en" => "See CUs"                       , "is_general" => true  ],
-            ["code" => "create_course_units",              "section_code" => "ucs",             "name_pt" => "Criar UCs",                                       "name_en" => "Create CUs"                    , "is_general" => true  ],
-            ["code" => "edit_course_units",                "section_code" => "ucs",             "name_pt" => "Editar UCs",                                      "name_en" => "Edit CUs"                      , "is_general" => true  ],
-            ["code" => "delete_course_units",              "section_code" => "ucs",             "name_pt" => "Eliminar UCs",                                    "name_en" => "Delete CUs"                    , "is_general" => true  ],
+            ["code" => "view_course_units",                 "section_code" => "ucs",                "name_pt" => "Ver UCs",                                         "name_en" => "See CUs",                         "is_general" => true  ],
+            ["code" => "create_course_units",               "section_code" => "ucs",                "name_pt" => "Criar UCs",                                       "name_en" => "Create CUs",                      "is_general" => true  ],
+            ["code" => "edit_course_units",                 "section_code" => "ucs",                "name_pt" => "Editar UCs",                                      "name_en" => "Edit CUs",                        "is_general" => true  ],
+            ["code" => "delete_course_units",               "section_code" => "ucs",                "name_pt" => "Eliminar UCs",                                    "name_en" => "Delete CUs",                      "is_general" => true  ],
+            ["code" => "manage_evaluation_methods",         "section_code" => "ucs",                "name_pt" => "Gerir métodos de Avaliação",                      "name_en" => "Manage evaluations Methods",      "is_general" => true  ],
 
-            ["code" => "edit_user_groups",                 "section_code" => "user_groups",     "name_pt" => "Editar Grupos de Utilizador",                     "name_en" => "Edit User Groups"              , "is_general" => true  ],
-            ["code" => "delete_user_groups",               "section_code" => "user_groups",     "name_pt" => "Eliminar Grupos de Utilizador",                   "name_en" => "Delete User Groups"            , "is_general" => true  ],
-            ["code" => "create_user_groups",               "section_code" => "user_groups",     "name_pt" => "Criar Grupos de Utilizador",                      "name_en" => "Create User Groups"            , "is_general" => true  ],
+            ["code" => "view_uc_groups",                    "section_code" => "uc_grouping",        "name_pt" => "Ver Agrupamentos de UCs",                         "name_en" => "See CUs Grouping",                "is_general" => true  ],
+            ["code" => "create_uc_groups",                  "section_code" => "uc_grouping",        "name_pt" => "Criar Agrupamentos de UCs",                       "name_en" => "Create CUs Grouping",             "is_general" => true  ],
+            ["code" => "edit_uc_groups",                    "section_code" => "uc_grouping",        "name_pt" => "Editar Agrupamentos de UCs",                      "name_en" => "Edit CUs Grouping",               "is_general" => true  ],
+            ["code" => "delete_uc_groups",                  "section_code" => "uc_grouping",        "name_pt" => "Eliminar Agrupamentos de UCs",                    "name_en" => "Delete CUs Grouping",             "is_general" => true  ],
 
-            ["code" => "edit_users",                       "section_code" => "users",           "name_pt" => "Editar utilizadores",                             "name_en" => "Edit users"                    , "is_general" => true  ],
-            ["code" => "lock_users",                       "section_code" => "users",           "name_pt" => "Bloquear utilizadores",                           "name_en" => "Block users"                   , "is_general" => true  ],
+            ["code" => "edit_user_groups",                  "section_code" => "user_groups",        "name_pt" => "Editar Grupos de Utilizador",                     "name_en" => "Edit User Groups",                "is_general" => true  ],
+            ["code" => "delete_user_groups",                "section_code" => "user_groups",        "name_pt" => "Eliminar Grupos de Utilizador",                   "name_en" => "Delete User Groups",              "is_general" => true  ],
+            ["code" => "create_user_groups",                "section_code" => "user_groups",        "name_pt" => "Criar Grupos de Utilizador",                      "name_en" => "Create User Groups",              "is_general" => true  ],
 
-            ["code" => "create_evaluation_types",          "section_code" => "evaluation",      "name_pt" => "Criar tipos de avaliações",                       "name_en" => "Create types of evaluations"   , "is_general" => true  ],
-            ["code" => "edit_evaluation_types",            "section_code" => "evaluation",      "name_pt" => "Editar tipos de avaliações",                      "name_en" => "Edit types of evaluations"     , "is_general" => true  ],
-            ["code" => "delete_evaluation_types",          "section_code" => "evaluation",      "name_pt" => "Eliminar tipos de avaliações",                    "name_en" => "Delete types of evaluations"   , "is_general" => true  ],
-            ["code" => "manage_evaluation_methods",        "section_code" => "evaluation",      "name_pt" => "Gerir métodos de Avaliação",                      "name_en" => "Manage evaluations Methods"    , "is_general" => true  ],
+            ["code" => "edit_users",                        "section_code" => "users",              "name_pt" => "Editar utilizadores",                             "name_en" => "Edit users",                      "is_general" => true  ],
+            ["code" => "lock_users",                        "section_code" => "users",              "name_pt" => "Bloquear utilizadores",                           "name_en" => "Block users",                     "is_general" => true  ],
 
-            ["code" => "create_interruption_types",        "section_code" => "interruption",    "name_pt" => "Criar tipos de interrupções",                     "name_en" => "Create types of interruptions" , "is_general" => true  ],
-            ["code" => "edit_interruption_types",          "section_code" => "interruption",    "name_pt" => "Editar tipos de interrupções",                    "name_en" => "Edit types of interruptions"   , "is_general" => true  ],
-            ["code" => "delete_interruption_types",        "section_code" => "interruption",    "name_pt" => "Eliminar tipos de interrupções",                  "name_en" => "Delete types of interruptions" , "is_general" => true  ],
+            ["code" => "create_evaluation_types",           "section_code" => "evaluation",         "name_pt" => "Criar tipos de avaliações",                       "name_en" => "Create types of evaluations",     "is_general" => true  ],
+            ["code" => "edit_evaluation_types",             "section_code" => "evaluation",         "name_pt" => "Editar tipos de avaliações",                      "name_en" => "Edit types of evaluations",       "is_general" => true  ],
+            ["code" => "delete_evaluation_types",           "section_code" => "evaluation",         "name_pt" => "Eliminar tipos de avaliações",                    "name_en" => "Delete types of evaluations",     "is_general" => true  ],
 
-            ["code" => "create_calendar_phases",           "section_code" => "calendar_phases", "name_pt" => "Criar fases de calendário",                       "name_en" => "Create calendar phases"        , "is_general" => true  ],
-            ["code" => "edit_calendar_phases",             "section_code" => "calendar_phases", "name_pt" => "Editar fases de calendário",                      "name_en" => "Edit calendar phases"          , "is_general" => true  ],
-            ["code" => "delete_calendar_phases",           "section_code" => "calendar_phases", "name_pt" => "Eliminar fases de calendário",                    "name_en" => "Delete calendar phases"        , "is_general" => true  ],
+            ["code" => "create_interruption_types",         "section_code" => "interruption",       "name_pt" => "Criar tipos de interrupções",                     "name_en" => "Create types of interruptions",   "is_general" => true  ],
+            ["code" => "edit_interruption_types",           "section_code" => "interruption",       "name_pt" => "Editar tipos de interrupções",                    "name_en" => "Edit types of interruptions",     "is_general" => true  ],
+            ["code" => "delete_interruption_types",         "section_code" => "interruption",       "name_pt" => "Eliminar tipos de interrupções",                  "name_en" => "Delete types of interruptions",   "is_general" => true  ],
 
-            ["code" => "create_languages",                 "section_code" => "languages",       "name_pt" => "Criar idiomas",                                   "name_en" => "Create languages"              , "is_general" => true  ],
-            ["code" => "edit_languages",                   "section_code" => "languages",       "name_pt" => "Editar idiomas",                                  "name_en" => "Edit languages"                , "is_general" => true  ],
-            ["code" => "translate",                        "section_code" => "languages",       "name_pt" => "Traduzir idiomas",                                "name_en" => "Translate languages"           , "is_general" => true  ],
+            ["code" => "create_calendar_phases",            "section_code" => "calendar_phases",    "name_pt" => "Criar fases de calendário",                       "name_en" => "Create calendar phases",          "is_general" => true  ],
+            ["code" => "edit_calendar_phases",              "section_code" => "calendar_phases",    "name_pt" => "Editar fases de calendário",                      "name_en" => "Edit calendar phases",            "is_general" => true  ],
+            ["code" => "delete_calendar_phases",            "section_code" => "calendar_phases",    "name_pt" => "Eliminar fases de calendário",                    "name_en" => "Delete calendar phases",          "is_general" => true  ],
 
-            ["code" => "create_schools",                   "section_code" => "schools",         "name_pt" => "Criar escolas",                                   "name_en" => "Create schools"                , "is_general" => true  ],
-            ["code" => "edit_schools",                     "section_code" => "schools",         "name_pt" => "Editar escolas",                                  "name_en" => "Edit schools"                  , "is_general" => true  ],
+            ["code" => "create_schools",                    "section_code" => "schools",            "name_pt" => "Criar escolas",                                   "name_en" => "Create schools",                  "is_general" => true  ],
+            ["code" => "edit_schools",                      "section_code" => "schools",            "name_pt" => "Editar escolas",                                  "name_en" => "Edit schools",                    "is_general" => true  ],
 
-            ["code" => "create_academic_years",            "section_code" => "academic_years",  "name_pt" => "Criar anos letivos",                              "name_en" => "Create academic years"         , "is_general" => true  ],
-            ["code" => "edit_academic_years",              "section_code" => "academic_years",  "name_pt" => "Editar anos letivos",                             "name_en" => "Edit academic years"           , "is_general" => true  ],
-            ["code" => "delete_academic_years",            "section_code" => "academic_years",  "name_pt" => "Eliminar anos letivos",                           "name_en" => "Delete academic years"         , "is_general" => true  ],
+            ["code" => "create_academic_years",             "section_code" => "academic_years",     "name_pt" => "Criar anos letivos",                              "name_en" => "Create academic years",           "is_general" => true  ],
+            ["code" => "edit_academic_years",               "section_code" => "academic_years",     "name_pt" => "Editar anos letivos",                             "name_en" => "Edit academic years",             "is_general" => true  ],
+            ["code" => "delete_academic_years",             "section_code" => "academic_years",     "name_pt" => "Eliminar anos letivos",                           "name_en" => "Delete academic years",           "is_general" => true  ],
 
-            ["code" => "change_permissions",               "section_code" => "permissions",     "name_pt" => "Gerir permissões",                                "name_en" => "Manage permissions"            , "is_general" => true  ],
-            ["code" => "define_course_coordinator",        "section_code" => "permissions",     "name_pt" => "Definir Coordenador de Curso",                    "name_en" => "Define course coordinator"     , "is_general" => true  ],
-            ["code" => "define_course_unit_responsible",   "section_code" => "permissions",     "name_pt" => "Definir Responsável da Unidade Curricular",       "name_en" => "Define course unit responsible", "is_general" => true  ],
-            ["code" => "define_course_unit_teachers",      "section_code" => "permissions",     "name_pt" => "Definir Professores das Unidades Curriculares",   "name_en" => "Define course unit teachers"   , "is_general" => true  ],
+            ["code" => "change_permissions",                "section_code" => "permissions",        "name_pt" => "Gerir permissões",                                "name_en" => "Manage permissions",              "is_general" => true  ],
+            ["code" => "define_course_coordinator",         "section_code" => "permissions",        "name_pt" => "Definir Coordenador de Curso",                    "name_en" => "Define course coordinator",       "is_general" => true  ],
+            ["code" => "define_course_unit_responsible",    "section_code" => "permissions",        "name_pt" => "Definir Responsável da Unidade Curricular",       "name_en" => "Define course unit responsible",  "is_general" => true  ],
+            ["code" => "define_course_unit_teachers",       "section_code" => "permissions",        "name_pt" => "Definir Professores das Unidades Curriculares",   "name_en" => "Define course unit teachers",     "is_general" => true  ],
 
-            ["code" => "create_courses",                   "section_code" => "courses",         "name_pt" => "Criar cursos",                                    "name_en" => "Create courses"                , "is_general" => true  ],
-            ["code" => "edit_courses",                     "section_code" => "courses",         "name_pt" => "Editar cursos",                                   "name_en" => "Edit courses"                  , "is_general" => true  ],
-            ["code" => "delete_courses",                   "section_code" => "courses",         "name_pt" => "Eliminar cursos",                                 "name_en" => "Delete courses"                , "is_general" => true  ],
+            ["code" => "view_courses",                      "section_code" => "courses",            "name_pt" => "Ver cursos",                                      "name_en" => "See courses",                     "is_general" => true  ],
+            ["code" => "create_courses",                    "section_code" => "courses",            "name_pt" => "Criar cursos",                                    "name_en" => "Create courses",                  "is_general" => true  ],
+            ["code" => "edit_courses",                      "section_code" => "courses",            "name_pt" => "Editar cursos",                                   "name_en" => "Edit courses",                    "is_general" => true  ],
+            ["code" => "delete_courses",                    "section_code" => "courses",            "name_pt" => "Eliminar cursos",                                 "name_en" => "Delete courses",                  "is_general" => true  ],
 
             // for each phase
-            ["code" => "add_comments",                     "section_code" => "calendar",        "name_pt" => "Adicionar comentários",                           "name_en" => "Add comments"                  , "is_general" => false ],
-            ["code" => "change_calendar_phase",            "section_code" => "calendar",        "name_pt" => "Mudar fase de calendário",                        "name_en" => "Change calendar phase"         , "is_general" => false ],
-            ["code" => "add_exams",                        "section_code" => "evaluation",      "name_pt" => "Adicionar avaliações",                            "name_en" => "Add exams"                     , "is_general" => false ],
-            ["code" => "edit_exams",                       "section_code" => "evaluation",      "name_pt" => "Editar avaliações",                               "name_en" => "Edit exams"                    , "is_general" => false ],
-            ["code" => "remove_exams",                     "section_code" => "evaluation",      "name_pt" => "Remover avaliações",                              "name_en" => "Remove exams"                  , "is_general" => false ],
-            ["code" => "add_interruption",                 "section_code" => "interruption",    "name_pt" => "Adicionar interrupções",                          "name_en" => "Add interruption"              , "is_general" => false ],
-            ["code" => "edit_interruption",                "section_code" => "interruption",    "name_pt" => "Editar interrupções",                             "name_en" => "Edit interruptions"            , "is_general" => false ],
-            ["code" => "remove_interruption",              "section_code" => "interruption",    "name_pt" => "Remover interrupções",                            "name_en" => "Remove interruptions"          , "is_general" => false ],
+            ["code" => "add_comments",                      "section_code" => "calendar",           "name_pt" => "Adicionar comentários",                           "name_en" => "Add comments",                    "is_general" => false ],
+            ["code" => "change_calendar_phase",             "section_code" => "calendar",           "name_pt" => "Mudar fase de calendário",                        "name_en" => "Change calendar phase",           "is_general" => false ],
+            ["code" => "add_exams",                         "section_code" => "evaluation",         "name_pt" => "Adicionar avaliações",                            "name_en" => "Add exams",                       "is_general" => false ],
+            ["code" => "edit_exams",                        "section_code" => "evaluation",         "name_pt" => "Editar avaliações",                               "name_en" => "Edit exams",                      "is_general" => false ],
+            ["code" => "remove_exams",                      "section_code" => "evaluation",         "name_pt" => "Remover avaliações",                              "name_en" => "Remove exams",                    "is_general" => false ],
+            ["code" => "add_interruption",                  "section_code" => "interruption",       "name_pt" => "Adicionar interrupções",                          "name_en" => "Add interruption",                "is_general" => false ],
+            ["code" => "edit_interruption",                 "section_code" => "interruption",       "name_pt" => "Editar interrupções",                             "name_en" => "Edit interruptions",              "is_general" => false ],
+            ["code" => "remove_interruption",               "section_code" => "interruption",       "name_pt" => "Remover interrupções",                            "name_en" => "Remove interruptions",            "is_general" => false ],
         ];
 
         $super_admin_id = Group::where('code', 'super_admin')->first()->id;
@@ -287,11 +289,11 @@ class PermissionsAndGroupsSeeder extends Seeder
         }
 
         $epochTypes = [
-            ["name_pt" => "Época Periódica",        "name_en" => "Periodic Season"      ],
-            ["name_pt" => "Época Normal",           "name_en" => "Normal Season"        ],
-            ["name_pt" => "Época Recurso",          "name_en" => "Resource Season"      ],
-            ["name_pt" => "Época Especial",         "name_en" => "Special Season"       ],
-            ["name_pt" => "Época Especialíssima",   "name_en" => "Very Special Season"  ],
+            ["name_pt" => "Época Periódica",        "name_en" => "Periodic Season",      "code" => "periodic_season"       ],
+            ["name_pt" => "Época Normal",           "name_en" => "Normal Season",        "code" => "normal_season"         ],
+            ["name_pt" => "Época Recurso",          "name_en" => "Resource Season",      "code" => "resource_season"       ],
+            ["name_pt" => "Época Especial",         "name_en" => "Special Season",       "code" => "special_season"        ],
+            ["name_pt" => "Época Especialíssima",   "name_en" => "Very Special Season",  "code" => "very_special_season"   ],
         ];
         foreach ($epochTypes as $epochType) {
             $newEpochType = new EpochType($epochType);
@@ -299,14 +301,16 @@ class PermissionsAndGroupsSeeder extends Seeder
         }
 
         $semesters = [
-            ["name_pt" => "1º Semestre",     "name_en" => "1st Semester",  "special" => 0, "epoch_types" => [1, 2, 3]   ],
-            ["name_pt" => "2º Semestre",     "name_en" => "2nd Semester",  "special" => 0, "epoch_types" => [1, 2, 3]   ],
-            ["name_pt" => "Especial",        "name_en" => "Special",       "special" => 1, "epoch_types" => [4]         ],
-            ["name_pt" => "Especialíssima",  "name_en" => "Very Special",  "special" => 1, "epoch_types" => [5]         ],
+            ["code" => "first_semester",    "number" => 1, "name_pt" => "1º Semestre",     "name_en" => "1st Semester",  "special" => 0, "epoch_types" => [1, 2, 3]   ],
+            ["code" => "second_semester",   "number" => 2, "name_pt" => "2º Semestre",     "name_en" => "2nd Semester",  "special" => 0, "epoch_types" => [1, 2, 3]   ],
+            ["code" => "special",           "number" => 0, "name_pt" => "Especial",        "name_en" => "Special",       "special" => 1, "epoch_types" => [4]         ],
+            ["code" => "very_special",      "number" => 0, "name_pt" => "Especialíssima",  "name_en" => "Very Special",  "special" => 1, "epoch_types" => [5]         ],
         ];
 
         foreach ($semesters as $semester) {
             $newSemester = new Semester();
+            $newSemester->code    = $semester["code"];
+            $newSemester->number  = $semester["number"];
             $newSemester->name_pt = $semester["name_pt"];
             $newSemester->name_en = $semester["name_en"];
             $newSemester->special = $semester["special"];

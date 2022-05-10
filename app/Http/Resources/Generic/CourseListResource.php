@@ -17,7 +17,7 @@ class CourseListResource extends JsonResource
             'initials' => $this->initials,
             'name' => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
             'duration' => $this->num_years,
-            'has_issues' => $this->responsible_user_id == null,
+            'has_issues' => $this->coordinator_user_id == null,
             'level' => DegreesUtil::getDegreeLabel($this->degree),
             'school' => $this->whenLoaded('school')->code
         ];

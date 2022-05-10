@@ -40,16 +40,17 @@ const New = () => {
     }, [paramsId, loading, interruptionDetail, navigate]);
 
     const initialValues = useMemo(() => {
-        const { id, name_pt, name_en, enabled = true } = interruptionDetail;
-        return { id, name_pt, name_en, enabled };
+        console.log(interruptionDetail);
+        const { id, name_pt, name_en, enabled = true, mandatory } = interruptionDetail;
+        return { id, name_pt, name_en, enabled, mandatory };
     }, [interruptionDetail]);
 
-    const onSubmit = ({ id, name_pt, name_en, enabled }) => {
+    const onSubmit = ({ id, name_pt, name_en, enabled, mandatory }) => {
         setIsSaving(true);
         const isNew = !id;
         const axiosFn = isNew ? axios.post : axios.patch;
 
-        axiosFn(`/interruption-types/${!isNew ? id : ''}`, { name_pt, name_en, enabled }).then((res) => {
+        axiosFn(`/interruption-types/${!isNew ? id : ''}`, { name_pt, name_en, enabled, mandatory }).then((res) => {
             setIsSaving(false);
             setFormErrors([]);
             if (res.status === 200) {
@@ -98,11 +99,22 @@ const New = () => {
                                     )}
                                 </Field>
                             </Form.Group>
-                            <Field name="enabled" type="checkbox">
-                                {({ input: isEnabled }) => (
-                                    <Checkbox label={t('Ativo?')} toggle defaultChecked={isEnabled.checked} onClick={() => isEnabled.onChange( !isEnabled.checked) } />
-                                )}
-                            </Field>
+                            <Form.Group widths="4">
+                                <Form.Field>
+                                    <Field name="enabled" type="checkbox">
+                                        {({ input: isEnabled }) => (
+                                            <Checkbox label={t('Ativo?')} toggle checked={isEnabled.checked} onClick={() => isEnabled.onChange( !isEnabled.checked) } />
+                                        )}
+                                    </Field>
+                                </Form.Field>
+                                <Form.Field>
+                                    <Field name="mandatory" type="checkbox">
+                                        {({ input: isMandatory }) => (
+                                            <Checkbox label={t('Mandatório')} toggle checked={isMandatory.checked} onClick={() => isMandatory.onChange( !isMandatory.checked) } />
+                                        )}
+                                    </Field>
+                                </Form.Field>
+                            </Form.Group>
                         </Card.Content>
                         { formErrors.length > 0 &&
                             <Card.Content>

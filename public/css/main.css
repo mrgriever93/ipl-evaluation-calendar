@@ -20,8 +20,9 @@
 }
 
 html, body {
-    height: 100%;
+    height: auto;
     margin: 0;
+    min-height: 100%;
 }
 
 body {
@@ -88,6 +89,31 @@ body {
     pointer-events: none !important; /* to make sure you can't click twice on the same button, while it's loading */
 }
 
+.heading-description {
+    color: #999;
+    font-weight: 400;
+}
+
+.main-content-title-section {
+    align-items: center;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    margin-bottom: var(--space-base);
+}
+
+.main-content-title {
+    flex: 4 2;
+}
+
+.main-content-actions {
+    align-items: center;
+    display: flex;
+    flex: 3 1;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+}
+
 /*
  * Margin values
  */
@@ -135,6 +161,24 @@ body {
 .margin-top-l    { margin-top: var(--space-l);    }
 .margin-top-xl   { margin-top: var(--space-xl);   }
 .margin-top-xxl  { margin-top: var(--space-xxl);  }
+
+.margin-left-none { margin-left: var(--space-none); }
+.margin-left-xs   { margin-left: var(--space-xs);   }
+.margin-left-s    { margin-left: var(--space-s);    }
+.margin-left-base { margin-left: var(--space-base); }
+.margin-left-m    { margin-left: var(--space-m);    }
+.margin-left-l    { margin-left: var(--space-l);    }
+.margin-left-xl   { margin-left: var(--space-xl);   }
+.margin-left-xxl  { margin-left: var(--space-xxl);  }
+
+.margin-right-none { margin-right: var(--space-none); }
+.margin-right-xs   { margin-right: var(--space-xs);   }
+.margin-right-s    { margin-right: var(--space-s);    }
+.margin-right-base { margin-right: var(--space-base); }
+.margin-right-m    { margin-right: var(--space-m);    }
+.margin-right-l    { margin-right: var(--space-l);    }
+.margin-right-xl   { margin-right: var(--space-xl);   }
+.margin-right-xxl  { margin-right: var(--space-xxl);  }
 
 /*
  * Padding values
@@ -341,3 +385,14 @@ div.inline{
     left: unset;
     right: 0;
 }
+
+.ui.segment.padding-none{
+    padding: var(--space-none);
+}
+.ui.placeholder.segment .column .field{
+    max-width: 85%;
+}
+
+ .ui.menu .item>i.icon:last-child {
+     margin-left: var(--space-s);
+ }

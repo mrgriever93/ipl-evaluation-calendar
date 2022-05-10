@@ -33,7 +33,7 @@ class CourseController extends Controller
         $utils = new Utils();
         $courseList = Course::with('school')->ofAcademicYear($utils->getCurrentAcademicYear($request));
         if( request('school') ){
-            $courseList->where('school_id', request('semester'));
+            $courseList->where('school_id', request('school'));
         }
         if( request('degree') ){
             $courseList->where('degree', request('degree'));
@@ -204,10 +204,12 @@ class CourseController extends Controller
     }
 
     public function addUnit(Course $course){
+        // TODO - maybe add later this from the course detail
         return response()->json("Unit added", Response::HTTP_OK);
     }
 
     public function removeUnit(Course $course){
+        // TODO - maybe add later this from the course detail
         return response()->json("Unit removed", Response::HTTP_OK);
     }
 

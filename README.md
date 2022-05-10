@@ -7,64 +7,8 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-
-
-
+## About Project
+sdfghy
 
 ## Installation
 
@@ -72,8 +16,15 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 2) Install PHP and Composer based on the following docs:
 
+        https://linuxize.com/post/how-to-install-php-8-on-ubuntu-20-04/
+        https://www.itsolutionstuff.com/post/how-to-install-laravel-in-ubuntu-serverexample.html
+
         https://www.digitalocean.com/community/tutorials/how-to-install-and-use-composer-on-ubuntu-20-04-pt
-        https://www.vultr.com/docs/upgrade-from-php-7-to-php-8-on-ubuntu-20-04-with-apache/        
+        https://www.vultr.com/docs/upgrade-from-php-7-to-php-8-on-ubuntu-20-04-with-apache/ 
+
+        https://oauth2.thephpleague.com/installation/
+
+        
 
 4) Change to your project folder with `cd` command
 
@@ -83,30 +34,32 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
         $> alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
 
-5) Run 
+6) Init docker with sail
+
+        $> sail up -d
+
+7) Instal laravel vendor stuff
 
         $> composer install
 
 
-2) To do sail command:
-
-        $> <command here>
-
-3) Run migrations and seeders for the database 
+8) Run migrations and seeders for the database 
 
         $> sail artisan migrate --seed
+        ---- or -----
+        $> sail artisan migrate:fresh --seed
 
-4) Create personal Token for login
+9) Create personal Token for login
 
         $> sail artisan passport:client --personal
 
-5) Test LDAP connection
+10) Test LDAP connection
 
         $> sail artisan ldap:test
 
 -----
 
-6) To run React frontend
+11) To run React frontend
 
         $> npm install
 
@@ -117,12 +70,12 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
         
         $> npm run dev          // compile once
 
-7) Plugins
+12) Plugins
 
    [Translations](https://react.i18next.com/)
 
 
-8) Links
+13) Links
 
    https://laravel-mix.com/
    
@@ -131,12 +84,12 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
    https://bobbyhadz.com/blog/javascript-remove-object-from-array-by-value
 
     
-9) Best practices
+14) Best practices
 
    https://github.com/alexeymezenin/laravel-best-practices
 
 
-10) Server commands
+15) Server commands
 
         $> composer install --optimize-autoloader --no-dev
 
@@ -147,3 +100,52 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
     Rewrite DB tables and seed
         
         $> php artisan migrate:fresh --seed
+
+    Create new Personal Token for the Front-End app communicate with the API
+
+        $> php artisan passport:client --personal
+
+---
+
+### TODO
+- [ ] Rever HTML e detalhe dos Agrupamentos de UC
+  - [ ] Traduções
+- [ ] Rework Novo calendario
+  - [x] Traduções
+  - [ ] Otimizar load de permissões
+  - [ ] validar interrupções obrigatórios (ex: Natal e Páscoa);
+  - [ ] Na criação de um novo calendário, os feriados não são guardados
+- [ ] Rever sync/refresh ano letivo
+
+
+---
+- [x] No curso, qdo pede para rever cenas tipo Coordenador:
+    - [x]  Dps de preencheres e gravar n atualiza para tirar o erro
+    - [x]  E mantem o triangulo a dizer q faltam coisas na listagem
+- [x] Mostrar um alerta quando estiver acima de 100% (métodos) para confirmar que quer submeter com mais de 100%;
+- [x] Guardar nos métodos nem sempre funciona;
+- [x] Rever Tabs dos Cursos
+    - [x] Erros na utilização
+- [x] Falta testar a pesquisa do coordenador de curso no detalhe do curso
+- [x] Rever Tabs dos Cursos
+    - Comentei botao de adicionar unidades curriculares, talvez trabalho futuro
+- [x] Mensagem de erro no detalhe do curso com infos que faltam
+- [x] Faltam traduções e validar se há mais mensagens a aparecer
+- [x] Refeita tab dos ramos para usar a tabela
+- [x] Para adicionar mantém-se a modal?
+- [x] Atualizadas as permissões do lado da BD e do React
+- [x] Falta testar. O seeder das permissões agora está mal porque os id's mudaram... Devia ser refeito para quando formos testar isto melhor por user na VM
+
+### TRABALHO FUTURO:
+- [ ] Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos);
+- [ ] Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;
+- [ ] Users com mais do que um role (validar o que deve ser feito)
+- [ ] Log dos métodos: registar o que foi alterado e quem alterou;
+
+
+### TODO Miguel
+- [ ] Limpeza "Requests Folder"
+
+
+### Perguntas
+- [ ] Tipos de interrupcoes ligadas a alguma coisa? Semestre? Data? Feriado?

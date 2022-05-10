@@ -19,7 +19,7 @@ class CourseUnitResource extends JsonResource
             'course_description' => "{$this->course->name} ({$this->course->code})",
             'code' => $this->code,
             'curricularYear' => $this->curricular_year,
-            'semester' => $this->semester,
+            'semester' => $this->semester->number,
             'responsible_name' => $this->whenLoaded('responsibleUser', is_null($this->responsibleUser) ? null :  $this->responsibleUser->name),
             'responsible_email' => $this->whenLoaded('responsibleUser', is_null($this->responsibleUser) ? null :  $this->responsibleUser->email),
             'responsible_id' => $this->whenLoaded('responsibleUser', $this->responsible_user_id),

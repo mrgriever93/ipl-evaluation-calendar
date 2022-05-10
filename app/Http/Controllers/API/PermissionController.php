@@ -7,7 +7,6 @@ use App\Models\Group;
 use App\Models\GroupPermission;
 use App\Models\Permission;
 use App\Models\PermissionCategory;
-use App\Models\PermissionTypes;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PermissionRequest;
@@ -16,10 +15,8 @@ use App\Http\Resources\GroupsPermissionsResource;
 use App\Http\Resources\GroupsResource;
 use App\Http\Resources\PermissionsResource;
 use App\Http\Resources\PhaseResource;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class PermissionController extends Controller

@@ -34,11 +34,6 @@ class Epoch extends Model
         return $this->hasMany(Exam::class);
     }
 
-    public function methods()
-    {
-        return $this->belongsToMany(Method::class);
-    }
-
     public function epochType()
     {
         return $this->belongsTo(EpochType::class);

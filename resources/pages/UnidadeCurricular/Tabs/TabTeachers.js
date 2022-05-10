@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
-import {Table, Form, Button, Card, Checkbox, Dimmer, Loader} from 'semantic-ui-react';
+import {Table, Form, Button, Checkbox, Dimmer, Loader} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import {successConfig, errorConfig} from '../../../utils/toastConfig';
 import ShowComponentIfAuthorized from "../../../components/ShowComponentIfAuthorized";
@@ -47,10 +47,10 @@ const UnitTabTeacher = ({ unitId, isLoading }) => {
         axios.delete(`/course-units/${unitId}/teacher/${teacherId}`).then((res) => {
             if (res.status === 200) {
                 loadCourseUnitTeachers();
-                toast('Professor removido com sucesso da unidade curricular!', successConfig);
+                toast(t('Professor removido com sucesso da unidade curricular!'), successConfig);
             } else {
                 setContentLoading(false);
-                toast('Ocorreu um problema ao remover o professor da unidade curricular!', errorConfig);
+                toast(t('Ocorreu um problema ao remover o professor da unidade curricular!'), errorConfig);
             }
         });
     };
@@ -62,10 +62,10 @@ const UnitTabTeacher = ({ unitId, isLoading }) => {
         }).then((res) => {
             if (res.status === 200) {
                 loadCourseUnitTeachers();
-                toast('Guardou o responsável da UC com sucesso!', successConfig);
+                toast(t('Guardou o responsável da UC com sucesso!'), successConfig);
             } else {
                 setContentLoading(false);
-                toast('Ocorreu um erro ao guardar o responsável da UC!', errorConfig);
+                toast(t('Ocorreu um erro ao guardar o responsável da UC!'), errorConfig);
             }
         });
     };
@@ -85,7 +85,8 @@ const UnitTabTeacher = ({ unitId, isLoading }) => {
                     <Form.Group widths="2">
                         <Teachers isSearch={false} eventHandler={(value) => handleSearchTeachers(value)} isDisabled={loading}/>
                         <Form.Field className={"align-bottom"}>
-                            <Button onClick={addTeacher} color={"green"}>Add Teacher</Button>
+                            <Button onClick={addTeacher} color={"green"}>{ t("Adicionar professor")}</Button>
+
                         </Form.Field>
                     </Form.Group>
                 </Form>

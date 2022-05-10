@@ -2,7 +2,7 @@ import axios from 'axios';
 import _ from 'lodash';
 import React, {useEffect, useMemo, useState} from 'react';
 import {Link, useNavigate, useParams} from 'react-router-dom';
-import {Container, Card, Icon, Form, Button, Dimmer, Loader} from 'semantic-ui-react';
+import {Container, Card, Icon, Form, Button, Dimmer, Loader, Header, Message } from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import {Field, Form as FinalForm} from 'react-final-form';
 
@@ -25,6 +25,7 @@ const Detail = () => {
     const [teachers, setTeachers] = useState([]);
     const [coordinatorUser, setCoordinatorUser] = useState(undefined);
     const [searchCoordinator, setSearchCoordinator] = useState(false);
+    const [hasCoordinator, setHasCoordinator] = useState(false);
 
 
     const hasPermissionToEdit = useComponentIfAuthorized([SCOPES.EDIT_COURSES]);
@@ -37,10 +38,13 @@ const Detail = () => {
         axios.get(`/courses/${paramsId}`).then((res) => {
             setLoading(false);
             const {coordinator} = res.data.data;
-            setTeachers((current) => {
-                current.push({key: coordinator?.id, value: coordinator?.id, text: coordinator?.name});
-                return current;
-            });
+            if(coordinator) {
+                setHasCoordinator(true);
+                setTeachers((current) => {
+                    current.push({key: coordinator?.id, value: coordinator?.id, text: coordinator?.name});
+                    return current;
+                });
+            }
             setCourseDetail(res.data.data);
         });
     };
@@ -50,12 +54,7 @@ const Detail = () => {
         axios.get(`/search/users?q=${searchQuery}`).then((res) => {
             setSearchCoordinator(false);
             if (res.status === 200) {
-                setTeachers(res.data?.map(({mail, name}) => ({
-                    key: mail,
-                    value: mail,
-                    name,
-                    text: `${name} - ${mail}`,
-                })));
+                setTeachers(res.data);
             }
         });
     };
@@ -66,9 +65,11 @@ const Detail = () => {
             coordinator_user_email: coordinatorUser.email,
         }).then((res) => {
             if (res.status === 200) {
-                toast('Guardou o coordenador de curso com sucesso!', successConfig);
+                setCoordinatorUser(undefined);
+                setHasCoordinator(true);
+                toast(t('Guardou o coordenador de curso com sucesso!'), successConfig);
             } else {
-                toast('Ocorreu um erro ao guardar o coordenador de curso!', errorConfig);
+                toast(t('Ocorreu um erro ao guardar o coordenador de curso!'), errorConfig);
             }
         });
     };
@@ -78,7 +79,7 @@ const Detail = () => {
             loadCourseDetail();
         } else {
             navigate('/curso');
-            toast('Ocorreu um erro ao carregar a informacao pretendida', errorConfig);
+            toast(t('Ocorreu um erro ao carregar a informacao pretendida'), errorConfig);
         }
     }, [paramsId]);
 
@@ -92,9 +93,9 @@ const Detail = () => {
         }).then((res) => {
             if (res.status === 200) {
                 loadCourseDetail();
-                toast('Curso atualizado com sucesso!', successConfig);
+                toast(t('Curso atualizado com sucesso!'), successConfig);
             } else {
-                toast('Ocorreu um erro ao gravar o curso!', errorConfig);
+                toast(t('Ocorreu um erro ao gravar o curso!'), errorConfig);
             }
         });
     };
@@ -109,6 +110,22 @@ const Detail = () => {
             <div className="margin-bottom-base">
                 <Link to="/curso"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
+            { !loading && initialValues && ((!initialValues?.coordinator && !hasCoordinator) || !initialValues?.initials || !initialValues?.degree_id ) && (
+                <Message warning>
+                    <Message.Header>{ t('Os seguintes detalhes do Curso precisam da sua atenção:') }</Message.Header>
+                    <Message.List>
+                        { (!initialValues?.coordinator || !hasCoordinator) && (
+                            <Message.Item>{ t('É necessário configurar o docente Coordenador de Curso') }</Message.Item>
+                        )}
+                        { !initialValues.initials && (
+                            <Message.Item>{ t('É necessário configurar a Sigla do Curso') }</Message.Item>
+                        )}
+                        { !initialValues.degree_id && (
+                            <Message.Item>{ t('É necessário configurar o Grau de Ensino do Curso') }</Message.Item>
+                        )}
+                    </Message.List>
+                </Message>
+            )}
             <FinalForm initialValues={initialValues} onSubmit={onSaveCourse} render={({handleSubmit}) => (
                 <Card fluid>
                     { loading && (
@@ -117,22 +134,25 @@ const Detail = () => {
                         </Dimmer>
                     )}
                     <Card.Content>
-                        <Card.Header>
-                            Curso: { courseDetail && courseDetail?.display_name }
-                            <Button floated="right" color="green" onClick={handleSubmit} icon labelPosition="left"><Icon name="save"/>Guardar curso</Button>
-                        </Card.Header>
+                        <div className='card-header-alignment'>
+                            <Header as="span">{ t('Curso') + ": " + ( courseDetail?.display_name || "") }</Header>
+                            <Button onClick={handleSubmit} color="green" icon labelPosition="left" floated="right">
+                                <Icon name={'save'}/>
+                                { t('Guardar') }
+                            </Button>
+                        </div>
                     </Card.Content>
                     <Card.Content>
                         <Form>
                             <Form.Group widths="4">
                                 <Field name="code">
                                     {({input: codeInput}) => (
-                                        <Form.Input disabled={loading || !hasPermissionToEdit} label="Código" {...codeInput}/>
+                                        <Form.Input disabled={loading || !hasPermissionToEdit} label={ t("Código") } {...codeInput}/>
                                     )}
                                 </Field>
                                 <Field name="initials">
                                     {({input: initialsInput}) => (
-                                        <Form.Input disabled={loading || !hasPermissionToEdit} label="Sigla" {...initialsInput}/>
+                                        <Form.Input disabled={loading || !hasPermissionToEdit} label={ t("Sigla") } {...initialsInput}/>
                                     )}
                                 </Field>
                                 <Field name="degree_id">
@@ -142,61 +162,49 @@ const Detail = () => {
                                 </Field>
                                 <Field name="duration">
                                     {({input: durationInput}) => (
-                                        <Form.Input disabled={loading || !hasPermissionToEdit} label="Número de anos" {...durationInput}/>
+                                        <Form.Input disabled={loading || !hasPermissionToEdit} label={ t("Número de anos") } {...durationInput}/>
                                     )}
                                 </Field>
                             </Form.Group>
                             <Form.Group widths="3">
                                 <Field name="name_pt">
                                     {({input: namePtInput}) => (
-                                        <Form.Input disabled={loading || !hasPermissionToEdit} label="Nome PT" {...namePtInput}/>
+                                        <Form.Input disabled={loading || !hasPermissionToEdit} label={ t("Nome PT") } {...namePtInput}/>
                                     )}
                                 </Field>
                                 <Field name="name_en">
                                     {({input: nameEnInput}) => (
-                                        <Form.Input disabled={loading || !hasPermissionToEdit} label="Nome EN" {...nameEnInput}/>
+                                        <Form.Input disabled={loading || !hasPermissionToEdit} label={ t("Nome EN") } {...nameEnInput}/>
                                     )}
                                 </Field>
                             </Form.Group>
                             <Form.Group widths="2">
                                 <Field name="coordinator">
                                     {({input: coordinatorInput}) => (
-                                        <Form.Dropdown
-                                            disabled={loading || !hasPermissionToDefineCoordinator}
-                                            label="Coordenador do Curso"
-                                            selectOnBlur={false}
-                                            options={teachers}
-                                            selection
-                                            search
-                                            loading={searchCoordinator}
-                                            placeholder="Pesquise o coordenador de curso..."
-                                            {...coordinatorInput}
-                                            onSearchChange={_.debounce(handleSearchCoordinator, 400)}
-                                            onChange={(e, {value, options}) => {
-                                                setCoordinatorUser(
-                                                    {
-                                                        email: value,
-                                                        name: options.find((x) => x.value === value).name
-                                                    },
-                                                );
-                                                coordinatorInput.onChange(value);
-                                            }}
-
+                                        <Form.Dropdown disabled={loading || !hasPermissionToDefineCoordinator} label={ t("Coordenador do Curso") }
+                                                       selectOnBlur={false} options={teachers} selection search loading={searchCoordinator} placeholder={ t("Pesquise o coordenador de curso...") }
+                                                       {...coordinatorInput} onSearchChange={_.debounce(handleSearchCoordinator, 400)}
+                                                       onChange={(e, {value, options}) => {
+                                                           setCoordinatorUser(
+                                                               {
+                                                                   email: value,
+                                                                   name: options.find((x) => x.value === value).name
+                                                               },
+                                                           );
+                                                           coordinatorInput.onChange(value);
+                                                       }}
                                         />
                                     )}
                                 </Field>
-                                <Form.Button disabled={loading || !hasPermissionToDefineCoordinator}
-                                             label="Guardar?" onClick={setCoordinator} color="green" icon
-                                             labelPosition="left">
-                                    <Icon name="save"/>
-                                    Guardar coordenador
+                                <Form.Button disabled={loading || !hasPermissionToDefineCoordinator} label={ t("Guardar") } onClick={setCoordinator} color="green" icon labelPosition="left">
+                                    <Icon name="save"/> { t("Guardar coordenador") }
                                 </Form.Button>
                             </Form.Group>
                         </Form>
                     </Card.Content>
                 </Card>
             )} />
-            { paramsId && <CourseTabs courseId={paramsId}/> }
+            { paramsId && <CourseTabs courseId={paramsId} /> }
         </Container>
     );
 };

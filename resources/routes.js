@@ -9,11 +9,11 @@ import About from './pages/About';
 import MultiPageBase from "./pages/MultiPageBase";
 
 // Calendar pages
-const CalendarList = lazy(() => import('./pages/Calendario/list'));
-const CalendarNew = lazy(() => import('./pages/Calendario/new'));
-const CalendarDetail = lazy(() => import('./pages/Calendario/calendar'));
-const PhasesNew = lazy(() => import('./pages/Calendario/Phases/new'));
-const PhasesList = lazy(() => import('./pages/Calendario/Phases/list'));
+const CalendarList = lazy(() => import('./pages/Calendar/list'));
+const CalendarNew = lazy(() => import('./pages/Calendar/new'));
+const CalendarDetail = lazy(() => import('./pages/Calendar/calendar'));
+const PhasesNew = lazy(() => import('./pages/CalendarPhases/new'));
+const PhasesList = lazy(() => import('./pages/CalendarPhases/list'));
     // Curso Pages
 const CursoList = lazy(() => import('./pages/Curso/list'));
 const CursoDetail = lazy(() => import('./pages/Curso/detail'));
@@ -50,8 +50,8 @@ import {useComponentIfAuthorized} from "./components/ShowComponentIfAuthorized";
 import {
     ACADEMIC_YEAR_SCOPES,
     CALENDAR_PHASES_SCOPES,
-    COURSE_SCOPES, COURSE_UNIT_SCOPES, EVALUATION_TYPE_SCOPES, INTERRUPTION_TYPES_SCOPES,
-    LANGUAGE_SCOPES, PERMISSIONS_SCOPES,
+    COURSE_SCOPES, COURSE_UNIT_SCOPES, UC_GROUPS_SCOPES,
+    EVALUATION_TYPE_SCOPES, INTERRUPTION_TYPES_SCOPES,
     SCHOOLS_SCOPES, USER_GROUPS_SCOPES, USER_SCOPES
 } from "./utils/scopesConstants";
 
@@ -59,14 +59,13 @@ const isAuthorized = useComponentIfAuthorized([
     ...ACADEMIC_YEAR_SCOPES,
     ...SCHOOLS_SCOPES,
     ...COURSE_SCOPES,
-    ...LANGUAGE_SCOPES,
     ...CALENDAR_PHASES_SCOPES,
     ...INTERRUPTION_TYPES_SCOPES,
     ...EVALUATION_TYPE_SCOPES,
     ...USER_GROUPS_SCOPES,
     ...USER_SCOPES,
-    ...PERMISSIONS_SCOPES,
     ...COURSE_UNIT_SCOPES,
+    ...UC_GROUPS_SCOPES,
 ], true);
 
 const RouterList = (isLoggedIn) => {
@@ -95,16 +94,20 @@ const RouterList = (isLoggedIn) => {
                     ],
                 },
                 {
-                    path:"/curso",
+                    path: "/unidade-curricular",
+                    element: (isAuthorized.VIEW_COURSE_UNITS) ? <MultiPageBase /> : <Navigate to="/no-permissions" />,
                     children: [
-                        { path: ':id', exact: true, element: <CursoDetail />},
-                        { path: '', exact: true, element: <CursoList /> },
+                        { path: 'novo', exact: true, element: <UnidadeCurricularNew />},
+                        { path: ':id', exact: true, element: <UnidadeCurricularNew />},
+                        { path: 'edit/:id', exact: true, element: <UnidadeCurricularNew />},
+                        { path: ':id/metodos', exact: true, element: <UnidadeCurricularMethods />},
+                        { path: '', exact: true, element: <UnidadeCurricularList /> },
                         { path: '*', element: <NotFoundPage />}
                     ]
                 },
                 {
                     path: "/agrupamento-unidade-curricular",
-                    element: (isAuthorized.CREATE_COURSE_UNITS || isAuthorized.VIEW_COURSE_UNITS || isAuthorized.EDIT_COURSE_UNITS || isAuthorized.DELETE_COURSE_UNITS) ? <MultiPageBase /> : <Navigate to="/no-permissions" />,
+                    element: (isAuthorized.VIEW_UC_GROUPS) ? <MultiPageBase /> : <Navigate to="/no-permissions" />,
                     children: [
                         { path: 'novo', exact: true, element: <AgrupamentoUnidadeCurricularNew />},
                         { path: 'edit/:id', exact: true, element: <AgrupamentoUnidadeCurricularNew />},
@@ -114,14 +117,11 @@ const RouterList = (isLoggedIn) => {
                     ]
                 },
                 {
-                    path: "/unidade-curricular",
-                    element: (isAuthorized.CREATE_COURSE_UNITS || isAuthorized.VIEW_COURSE_UNITS || isAuthorized.EDIT_COURSE_UNITS || isAuthorized.DELETE_COURSE_UNITS) ? <MultiPageBase /> : <Navigate to="/no-permissions" />,
+                    path:"/curso",
+                    element: (isAuthorized.VIEW_COURSES) ? <MultiPageBase /> : <Navigate to="/no-permissions" />,
                     children: [
-                        { path: 'novo', exact: true, element: <UnidadeCurricularNew />},
-                        { path: ':id', exact: true, element: <UnidadeCurricularNew />},
-                        { path: 'edit/:id', exact: true, element: <UnidadeCurricularNew />},
-                        { path: ':id/metodos', exact: true, element: <UnidadeCurricularMethods />},
-                        { path: '', exact: true, element: <UnidadeCurricularList /> },
+                        { path: ':id', exact: true, element: <CursoDetail />},
+                        { path: '', exact: true, element: <CursoList /> },
                         { path: '*', element: <NotFoundPage />}
                     ]
                 },

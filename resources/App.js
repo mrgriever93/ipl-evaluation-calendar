@@ -15,7 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import RoutesList from './routes';
 import PageLoader from "./components/PageLoader";
 
-axios.defaults.baseURL = 'http://localhost/api';
+axios.defaults.baseURL = process.env.MIX_APP_API_URL;
 
 let selectedLanguage = localStorage.getItem('language');
 if(selectedLanguage === null){
@@ -35,18 +35,15 @@ axios.interceptors.response.use(
     (res) => res,
     (error) => {
         if (
-            (error?.response?.status === 401
-                || jwtDecode(localStorage.getItem('authToken')).exp
-                < Date.now() / 1000)
+            (error?.response?.status === 401 || jwtDecode(localStorage.getItem('authToken')).exp < Date.now() / 1000)
             && !error.response.config.url.includes('login')
         ) {
             localStorage.removeItem('authToken');
             window.location = '/login';
             return;
         }
-
         return error;
-    },
+    }
 );
 
 function App() {

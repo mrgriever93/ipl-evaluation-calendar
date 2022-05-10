@@ -42,7 +42,7 @@ class LdapController extends Controller
 
             foreach ($records as $foundObj) {
                 if (isset($foundObj['mail'])) {
-                    $results[] = ["value" => $foundObj['mail'][0], "text" => "(" . $foundObj['mail'][0] . ") - " . $foundObj["cn"][0]];
+                    $results[] = ["value" => $foundObj['mail'][0], "text" => $foundObj["cn"][0] ." - (" . $foundObj['mail'][0] . ")" ];
                 }
             }
        }
@@ -50,7 +50,7 @@ class LdapController extends Controller
         $usersFound = User::where('name', 'like', "%$search%")->orWhere('email', 'like', "%$search%")->limit(30)->get();
         foreach ($usersFound as $user) {
             if (array_search($user->email, array_column($results, 'mail')) === false) {
-                $results[] = ["value" => $user->email, "text" => "(" . $user->email . ") - " . $user->name];
+                $results[] = ["value" => $user->email, "text" => $user->name . " - (" . $user->email . ")"];
             }
         }
         return response()->json($results);
@@ -65,7 +65,7 @@ class LdapController extends Controller
 
             foreach ($records as $foundObj) {
                 if (isset($foundObj['mail'])) {
-                    $results = ["email" => $foundObj['mail'][0], "name" => $foundObj["cn"][0]];
+                    $results = ["value" => $foundObj['mail'][0], "text" => $foundObj["cn"][0] ." - (" . $foundObj['mail'][0] . ")" ];
                 }
             }
         }

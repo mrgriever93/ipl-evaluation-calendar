@@ -1,99 +1,92 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Dimmer, Form, Header, Icon, Label, List, Loader, Progress, Table} from 'semantic-ui-react';
+import {Button, Form, Header, Icon, Label, Message, Segment, Table} from 'semantic-ui-react';
 import axios from "axios";
 import {toast} from "react-toastify";
 import {errorConfig, successConfig} from "../../../utils/toastConfig";
 import Slider from "../../../components/Slider";
+import EmptyTable from "../../../components/EmptyTable";
+import {useTranslation} from "react-i18next";
 
-const UnitTabMethods = ({ unitId }) => {
-    const [epochs, setEpochs] = useState([]);
-    const [noCalendarCreated, setNoCalendarCreated] = useState(true);
+const UnitTabMethods = ({ unitId, warningsHandler }) => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(true);
-    const [loadingMethods, setLoadingMethods] = useState(true);
-    const [methods, setMethods] = useState([]);
+    const [isSaving, setIsSaving] = useState(false);
+    const [formValid, setFormValid] = useState(false);
+    // Warnings
+    const [hasWarnings, setHasWarnings] = useState(false);
+    const [hasOverWeight, setHasOverWeight] = useState(false);
+    const [isUncomplete, setIsUncomplete] = useState(false);
+    const [missingTypes, setMissingTypes] = useState(false);
+    const [emptyWeight, setEmptyWeight] = useState(false);
+
+    const [epochs, setEpochs] = useState([]);
     const [evaluationTypes, setEvaluationTypes] = useState([]);
     const [removedMethods, setRemovedMethods] = useState([]);
 
-    const [isSaving, setIsSaving] = useState(false);
-    const [formValid, setFormValid] = useState(false);
-
     const isFormValid = (methodList) => {
-        let isValid = methodList.length > 0 && methodList.filter((x) => x).length === epochs.length;
-
-        methodList.forEach((epochMethods) => {
-            if (!epochMethods?.length) {
-                isValid = false;
-            }
-            epochMethods?.forEach((method) => {
-                if (epochMethods.reduce((acc, curr) => curr.weight + acc, 0) !== 100) {
+        let isValid = true;
+        let hasOverValue = false;
+        let HasUncompleteData = false;
+        let hasMissingTypes = false;
+        let hasEmptyWeight = false;
+        if(methodList?.length > 0 ) {
+            methodList.forEach((item) => {
+                if (!item.methods?.length) {
                     isValid = false;
-                    return;
+                    HasUncompleteData = true;
                 }
-                if (!(method.weight && method.evaluation_type_id && method.minimum >= 0 && method.minimum <= 20)) {
-                    isValid = false;
+                if (item.methods.reduce((acc, curr) => curr.weight + acc, 0) > 100) {
+                    hasOverValue = true;
                 }
+                item.methods?.forEach((method) => {
+                    if (!method.evaluation_type_id) {
+                        hasMissingTypes = true;
+                    }
+                    if (!method.weight) {
+                        hasEmptyWeight = true;
+                    }
+                    if (!(method.weight && method.evaluation_type_id && method.minimum >= 0 && method.minimum <= 20)) {
+                        isValid = false;
+                    }
+                });
             });
-        });
-
-        return isValid;
+        }
+        setHasWarnings(HasUncompleteData || hasMissingTypes || hasOverValue || hasEmptyWeight);
+        setEmptyWeight(hasEmptyWeight);
+        setIsUncomplete(HasUncompleteData);
+        setMissingTypes(hasMissingTypes);
+        setHasOverWeight(hasOverValue);
+        setFormValid(isValid);
     };
-
 
     useEffect(() => {
         axios.get('/evaluation-types').then((res) => {
             if (res.status === 200) {
-                res.data.data.unshift({id: '', name: "Selecionar Tipo de avaliação", enabled: true});
+                res.data.data.unshift({id: '', name: t("Selecionar Tipo de avaliação"), enabled: true});
                 setEvaluationTypes(res.data.data);
             }
         });
     }, []);
 
     useEffect(() => {
-        if (epochs.length > 0) {
-            loadMethods();
-        }
-    }, [epochs]);
-
-    useEffect(() => {
-        axios.get(`/course-units/${unitId}/epochs`).then((res) => {
-            setIsLoading(false);
-            if (res.status === 200) {
-                console.log(res.data);
-                if (res.data?.length) {
-                    setNoCalendarCreated(false);
-                    setEpochs(res.data);
-                }
-            }
-        });
+        loadMethods();
     }, [unitId]);
 
     useEffect(() => {
-        setFormValid(isFormValid(methods));
-    }, [methods]);
+        warningsHandler(hasWarnings);
+    }, [hasWarnings]);
+
+    useEffect(() => {
+        isFormValid(epochs);
+    }, [epochs]);
 
     const loadMethods = () => {
-        setLoadingMethods(true);
-        setMethods([]);
+        setIsLoading(true);
+        setEpochs([]);
         axios.get(`/course-units/${unitId}/methods`).then((res) => {
-            setLoadingMethods(false);
             if (res.status === 200) {
-                res.data.forEach((method) => {
-                    const index = epochs.findIndex((x) => x.epoch_type_id === method.epoch_type_id);
-                    setMethods((current) => {
-                        const copy = [...current];
-                        if (!copy[index]?.length) {
-                            copy[index] = [];
-                        }
-                        copy[index].push({
-                            id: method.id,
-                            epoch_type_id: method.epoch_type_id,
-                            weight: parseInt(method.weight, 10),
-                            minimum: parseFloat(method.minimum),
-                            evaluation_type_id: method.evaluation_type_id,
-                        });
-                        return copy;
-                    });
-                });
+                setEpochs(res.data);
+                setIsLoading(false);
             }
         });
     };
@@ -101,54 +94,58 @@ const UnitTabMethods = ({ unitId }) => {
     const onSubmit = () => {
         if (!isSaving) {
             setIsSaving(true);
-
-            const body = methods.reduce((acc, curr, epochIndex) => [...acc, ...curr.map((x) => ({
-                            id: x.id || undefined,
-                            course_unit_id: unitId,
-                            epoch_type_id: epochs[epochIndex].epoch_type_id,
-                            evaluation_type_id: x.evaluation_type_id,
-                            minimum: x.minimum,
-                            weight: x.weight
-                        }))],
-                    []
-                );
-
-            axios.post('/methods', {methods: [...body], removed: [...removedMethods]}).then((res) => {
+            let methods = [];
+            epochs.map((item) =>{
+                item.methods.map((method) => {
+                    methods.push({
+                        id: method.id || undefined,
+                        course_unit_id: unitId,
+                        epoch_type_id: item.id,
+                        evaluation_type_id: method.evaluation_type_id,
+                        minimum: method.minimum,
+                        weight: method.weight
+                    })
+                });
+            });
+            axios.post('/methods', {methods: [...methods], removed: [...removedMethods]}).then((res) => {
                 setIsSaving(false);
-                loadMethods();
+                //loadMethods();
                 if (res.status === 200) {
-                    toast('Métodos de avaliação criados com sucesso!', successConfig);
+                    toast(t('Métodos de avaliação criados com sucesso!'), successConfig);
                 } else {
-                    toast('Não foi possível criar os métodos de avaliação!', errorConfig);
+                    toast(t('Não foi possível criar os métodos de avaliação!'), errorConfig);
                 }
             });
         }
     };
+    // Get Epoch Type Total Value
+    const getEpochValue = (index) => {
+        return (epochs[index].methods || [])?.reduce((a, b) => a + (b?.weight || 0), 0);
+    }
 
+    //Remove method from epoch type record
     const removeMethod = (epochIndex, methodIndex) => {
-        const removedId = methods[epochIndex][methodIndex]?.id;
+        const removedId = epochs[epochIndex].methods[methodIndex]?.id;
         if (removedId) {
             setRemovedMethods((current) => [...current, removedId]);
         }
-        setMethods((current) => {
+        setEpochs((current) => {
             const copy = [...current];
-            copy[epochIndex].splice(methodIndex, 1);
+            copy[epochIndex].methods.splice(methodIndex, 1);
             return copy;
         });
     };
-    const getEpochValue = (index) => {
-        return (methods[index] || [])?.reduce((a, b) => a + (b?.weight || 0), 0);
-    }
 
+    //Remove method to epoch type record
     const addNewMethod = (index, epoch_id) => {
-        setMethods((prevMethods) => {
-            const copy = [...prevMethods];
-            if (!copy[index]?.length) {
-                copy[index] = [];
+        setEpochs((prevEpochs) => {
+            const copy = [...prevEpochs];
+            if (!copy[index].methods?.length) {
+                copy[index].methods = [];
             }
-            copy[index].push({
+            copy[index].methods.push({
                 epoch_type_id: epoch_id,
-                weight: 100 - copy[index].reduce((a, b) => a + (b?.weight || 0), 0,),
+                weight: 100 - copy[index].methods.reduce((a, b) => a + (b?.weight || 0), 0,),
                 minimum: 9.5,
                 evaluation_type_id: undefined,
             });
@@ -156,62 +153,77 @@ const UnitTabMethods = ({ unitId }) => {
         });
     }
     const updateMethodMinimum = (index, methodIndex, value) => {
-        setMethods((current) => {
+        setEpochs((current) => {
             const copy = [...current];
-            copy[index][methodIndex].minimum = parseFloat(value);
+            copy[index].methods[methodIndex].minimum = parseFloat(value);
             return copy;
         })
     }
     const updateMethodWeight = (index, methodIndex, value) => {
-        setMethods((current) => {
+        setEpochs((current) => {
             const copy = [...current];
-            copy[index][methodIndex].weight = parseFloat(value);
+            copy[index].methods[methodIndex].weight = parseFloat(value);
             return copy;
         })
     }
 
     return (
         <div>
-            {isLoading && (
-                <Dimmer active inverted>
-                    <Loader indeterminate>A carregar os métodos</Loader>
-                </Dimmer>
-            )}
-            { isLoading ? null : noCalendarCreated ? (
-                <div> Não existem calendários criados que incluam esta unidade curricular! </div>
+            { epochs?.length < 1 || isLoading ? (
+                <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar metodos para esta Unidade Curricular!")}/>
             ) : (
                 <div>
-                    <Header as="span">Métodos de Avaliação</Header>
-                    <Button onClick={onSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} disabled={!formValid}>
-                        <Icon name="save"/>
-                        Guardar
-                    </Button>
-                    {epochs.map((x, index) => (
+                    { hasWarnings && (
+                        <Message warning>
+                            <Message.Header>{ t('Os seguintes detalhes do Curso precisam da sua atenção:') }</Message.Header>
+                            <Message.List>
+                                { hasOverWeight && (
+                                    <Message.Item>{ t('Existem métodos com mais de 100% na avaliacao') }</Message.Item>
+                                )}
+                                { isUncomplete && (
+                                    <Message.Item>{ t('É necessário configurar os métodos para todas as épocas') }</Message.Item>
+                                )}
+                                { missingTypes && (
+                                    <Message.Item>{ t('É necessário configurar o todos os tipos de avaliação nos métodos') }</Message.Item>
+                                )}
+                                { emptyWeight && (
+                                    <Message.Item>{ t('É necessário ter o peso de avaliação em todos os métodos') }</Message.Item>
+                                )}
+                            </Message.List>
+                        </Message>
+                    )}
+                    <Segment basic>
+                        <Button onClick={onSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} disabled={!formValid}>
+                            <Icon name="save"/>
+                            { t("Guardar") }
+                        </Button>
+                    </Segment>
+                    {epochs?.map((item, index) => (
                         <div className={"margin-top-base"} key={index}>
-                            <Header as="span">{x.name}</Header>
+                            <Header as="span">{item.name}</Header>
                             <Table compact celled className={"definition-last"}>
                                 <Table.Header>
                                     <Table.Row>
-                                        <Table.HeaderCell width={5}>Tipo de avaliação</Table.HeaderCell>
-                                        <Table.HeaderCell width={5}>Nota mínima</Table.HeaderCell>
-                                        <Table.HeaderCell width={5}>Peso da avaliação (%)</Table.HeaderCell>
+                                        <Table.HeaderCell width={5}>{ t("Tipo de avaliação") }</Table.HeaderCell>
+                                        <Table.HeaderCell width={5}>{ t("Nota mínima") }</Table.HeaderCell>
+                                        <Table.HeaderCell width={5}>{ t("Peso da avaliação") } (%)</Table.HeaderCell>
                                         <Table.HeaderCell width={1} />
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
-                                    {methods[index]?.map((method, methodIndex) => (
+                                    {item.methods?.map((method, methodIndex) => (
                                         <Table.Row key={methodIndex}>
                                             <Table.Cell width={5}>
-                                                <Form.Dropdown placeholder={"Selecionar Tipo de avaliação"} value={method.evaluation_type_id} selection search
+                                                <Form.Dropdown placeholder={t("Selecionar Tipo de avaliação")} fluid value={method.evaluation_type_id} selection search
                                                     options={evaluationTypes.map(({id, name, enabled}) => (enabled ? ({
                                                         key: id,
                                                         value: id,
                                                         text: name,
                                                     }) : undefined))}
                                                     onChange={
-                                                        (ev, {value}) => setMethods((current) => {
+                                                        (ev, {value}) => setEpochs((current) => {
                                                             const copy = [...current];
-                                                            copy[index][methodIndex].evaluation_type_id = value;
+                                                            copy[index].methods[methodIndex].evaluation_type_id = value;
                                                             return copy;
                                                         })
                                                     }
@@ -233,9 +245,9 @@ const UnitTabMethods = ({ unitId }) => {
                                 <Table.Footer fullWidth>
                                     <Table.Row>
                                         <Table.HeaderCell colSpan='4'>
-                                            Total pesos avaliacao: <Label color={(getEpochValue(index) > 100 ? "red" : (getEpochValue(index) === 100 ? "green" : "yellow"))}>{ (methods[index] || [])?.reduce((a, b) => a + (b?.weight || 0), 0)  }%</Label>
-                                            <Button floated='right' icon labelPosition='left' color={"green"} size='small' onClick={() => {addNewMethod(index, x.epoch_type_id);}}>
-                                                <Icon name='plus' /> Adicionar novo método
+                                            { t("Total pesos avaliacao:") } <Label color={(getEpochValue(index) > 100 ? "red" : (getEpochValue(index) === 100 ? "green" : "yellow"))}>{ (epochs[index].methods || [])?.reduce((a, b) => a + (b?.weight || 0), 0)  }%</Label>
+                                            <Button floated='right' icon labelPosition='left' color={"green"} size='small' onClick={() => {addNewMethod(index, item.id);}}>
+                                                <Icon name='plus' /> { t("Adicionar novo método") }
                                             </Button>
                                         </Table.HeaderCell>
                                     </Table.Row>

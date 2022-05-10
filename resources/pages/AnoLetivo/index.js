@@ -67,28 +67,30 @@ const AnoLetivo = () => {
             }
         });
     };
-
-    const handleYearSelected = (id) => {
+    // TODO miguel.cerejo
+    // UPDATE local list from index in next functions
+    const handleYearSelected = (id, index) => {
         const toUpdateSelectedIndex = academicYearsList.findIndex((el) => el.id === id);
         const toUpdateUnSelectedIndex = academicYearsList.findIndex((el) => el.selected);
-        if(toUpdateSelectedIndex !== toUpdateUnSelectedIndex && toUpdateSelectedIndex > -1 && toUpdateUnSelectedIndex > -1){
+        //if(toUpdateSelectedIndex !== toUpdateUnSelectedIndex && toUpdateSelectedIndex > -1 && toUpdateUnSelectedIndex > -1){
             setLoading(true);
             axios.post('/academic-year/' + id + "/selected").then((res) => {
                 setLoading(false);
                 if (res.status === 200) {
                     setAcademicYearsList(res?.data?.data);
                     toast(t('ano_letivo.Ano letivo atualizado com sucesso!'), successConfig);
+                    location.reload();
                 } else {
                     toast(t('ano_letivo.Ocorreu um problema ao atualizar o ano letivo!'), errorConfig);
                 }
                 //getAcademicYearsList();
             });
-        } else {
-            alert("There is always one selected");
-        }
+        //} else {
+          //  alert("There is always one selected");
+        //}
     };
 
-    const handleYearActive = (id) => {
+    const handleYearActive = (id, index) => {
         const toUpdateSelectedIndex = academicYearsList.findIndex((el) => el.id === id);
         academicYearsList[toUpdateSelectedIndex].isActiveLoading = true;
         axios.post('/academic-year/' + id + "/active").then((res) => {
@@ -101,7 +103,7 @@ const AnoLetivo = () => {
             }
         });
     };
-    const syncSemester = (id, semester, year) => {
+    const syncSemester = (id, semester, year, index) => {
         axios.get('/academic-year/' + id + "/sync/" + semester).then((res) => {
             if (res.status === 200) {
                 toast(() => <div>{t('ano_letivo.Irá começar brevemente a sincronização do ano letivo')} <b>{year}</b>!
@@ -172,34 +174,34 @@ const AnoLetivo = () => {
                                 </Table.Row>
                             </Table.Header>
                             <Table.Body>
-                                { academicYearsList.map(({id, active, selected, display, code, isActiveLoading, isSelectedLoading, s1_sync, s2_sync, s1_sync_active, s2_sync_active, s1_sync_waiting, s2_sync_waiting}) => (
+                                { academicYearsList.map(({id, active, selected, display, code, isActiveLoading, isSelectedLoading, s1_sync, s2_sync, s1_sync_active, s2_sync_active, s1_sync_waiting, s2_sync_waiting}, index) => (
                                     <Table.Row key={id}>
                                         <Table.Cell><b>{display}</b> <small>({code})</small></Table.Cell>
                                         <Table.Cell textAlign="center">
                                             <ShowComponentIfAuthorized permission={[SCOPES.EDIT_ACADEMIC_YEARS]} renderIfNotAllowed={<Checkbox toggle disabled defaultChecked={active}/>}>
                                                 { isActiveLoading && (<Icon loading name='spinner'/>)}
                                                 { /* TODO - Only be able to activate, if 2 syncs are done at least once */ }
-                                                <Checkbox toggle defaultChecked={active} disabled={!(s1_sync && s2_sync)} onChange={() => handleYearActive(id)} />
+                                                <Checkbox toggle checked={active} disabled={!(s1_sync || s2_sync)} onChange={() => handleYearActive(id, index)} />
                                             </ShowComponentIfAuthorized>
                                         </Table.Cell>
                                         <Table.Cell textAlign="center">
                                             <ShowComponentIfAuthorized permission={[SCOPES.EDIT_ACADEMIC_YEARS]} renderIfNotAllowed={<Checkbox toggle disabled defaultChecked={selected}/>}>
                                                 { isSelectedLoading && (<Icon loading name='spinner'/>)}
-                                                <Checkbox toggle defaultChecked={selected} disabled={selected} onChange={() => handleYearSelected(id)} />
+                                                <Checkbox toggle checked={selected} disabled={selected} onChange={() => handleYearSelected(id, index)} />
                                             </ShowComponentIfAuthorized>
                                         </Table.Cell>
                                         <Table.Cell>
-                                            <Button disabled={s1_sync_active || s1_sync_waiting} loading={s1_sync_active} icon color="olive" onClick={() => {syncSemester(id, 1, display); s1_sync_active=true;}}>
+                                            <Button disabled={s1_sync_active || s1_sync_waiting} loading={s1_sync_active} icon color="olive" onClick={() => syncSemester(id, 1, display, index)}>
                                                 <Icon name={'sync'}/>
                                             </Button>
-                                            { s1_sync ? moment(s1_sync).fromNow() : 'N/A' }
-                                            {s1_sync_waiting && <div> Waiting to be synced </div> }
+                                            { s1_sync ? (<span title={moment.utc(s1_sync).local().format('YYYY-MM-DD HH:mm:ss')}> {moment.utc(s1_sync).local().fromNow()}</span>) : 'N/A' }
+                                            { s1_sync_waiting && <div> Waiting to be synced </div> }
                                         </Table.Cell>
                                         <Table.Cell>
-                                            <Button disabled={s2_sync_active || s2_sync_waiting} loading={s2_sync_active} icon color="olive" onClick={() => {syncSemester(id, 2, display); s2_sync_active=true;}}>
+                                            <Button disabled={s2_sync_active || s2_sync_waiting} loading={s2_sync_active} icon color="olive" onClick={() => syncSemester(id, 2, display, index)}>
                                                 <Icon name={'sync'}/>
                                             </Button>
-                                            { s2_sync ? moment(s2_sync).fromNow() : 'N/A' }
+                                            { s2_sync ? (<span title={moment.utc(s2_sync).local().format('YYYY-MM-DD HH:mm:ss')}> {moment.utc(s2_sync).local().fromNow()}</span>) : 'N/A' }
                                             { s2_sync_waiting && <div> Waiting to be synced </div> }
                                         </Table.Cell>
                                         <Table.Cell textAlign="center">
@@ -217,6 +219,9 @@ const AnoLetivo = () => {
                 </Card.Content>
             </Card>
             <Message info>
+                <Message.Header>{t('ano_letivo.Não consigo ativar um ano letivo.. Porquê?')}</Message.Header>
+                <p>{ t('ano_letivo.Para ativar um Ano Letivo é necessário correr 1º a sincronização de um semestre.') }</p>
+                <br/>
                 <Message.Header>{t('ano_letivo.A sincronização vai sempre acontecer quando clicarmos no botão?')}</Message.Header>
                 <p>{ t('ano_letivo.Não. Irá ser iniciada a sincronização quando não houver trabalho para o servidor.') }</p>
                 <br/>
