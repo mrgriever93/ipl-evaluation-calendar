@@ -255,7 +255,7 @@
         "Unidade curricular adicionada com sucesso!": "Unidade curricular adicionada com sucesso!",
         "Ocorreu um erro ao adicionar a unidade curricular!": "Ocorreu um erro ao adicionar a unidade curricular!",
 
-        "calendar.O comentário foi adicionado com sucesso!": "O comentário foi adicionado com sucesso!",        
+        "calendar.O comentário foi adicionado com sucesso!": "O comentário foi adicionado com sucesso!",
         "calendar.Ocorreu um erro ao adicionar o comentário!": "Ocorreu um erro ao adicionar o comentário!",
         "calendar.Estado do calendário atualizado!": "Estado do calendário atualizado!",
         "calendar.Fase do calendário atualizada!": "Fase do calendário atualizada!",
@@ -281,6 +281,18 @@
         "Guardar coordenador": "Guardar coordenador",
 
         "Mandatório": "Mandatório",
-        "Caso seja mandatório, quando criar um novo calendário, terá de preencher a interrupção": "Caso seja mandatório, quando criar um novo calendário, terá de preencher a interrupção"
+        "Caso seja mandatório, quando criar um novo calendário, terá de preencher a interrupção": "Caso seja mandatório, quando criar um novo calendário, terá de preencher a interrupção",
+
+        "Ramos": "Ramos",
+        "Alunos": "Alunos",
+        "Ramo adicionado com sucesso!": "Branch added successfully!",
+        "Ocorreu um erro ao gravar o ramo!": "There was an error writing the branch!",
+        "Ao eliminar este ramo, todas as UCs deste ramo, terão de ser atualizadas posteriormente!": "By deleting this branch, all CUs in this branch will have to be updated later!",
+        "Tem a certeza que deseja eliminar este ramo?": "Are you sure you want to delete this branch?",
+        "Ramo eliminado com sucesso!": "Branch successfully deleted!",
+        "Ocorreu um problema ao eliminar este ramo!": "There was a problem deleting this branch!",
+        "Nome do ramo": "Branch name",
+        "Iniciais do ramo": "Branch initials",
+        "Adicionar ramo":  "Add branch"
     }
 }

@@ -7,7 +7,7 @@ const FilterOptionSemester = ({withSpecial, widthSize, eventHandler, value, isSe
     const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [semestersOptions, setSemestersOptions] = useState([]);
-    const [semester, setSemester] = useState(value);
+    const [semester, setSemester] = useState();
 
     useEffect(() => {
         setLoading(true);
@@ -22,6 +22,10 @@ const FilterOptionSemester = ({withSpecial, widthSize, eventHandler, value, isSe
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        setSemester(value);
+    }, [value]);
 
     const filterBySemester = (e, {value}) => {
         setSemester(value);
