@@ -594,7 +594,7 @@ const Calendar = () => {
                     />
                 )}
             </AnimatePresence>
-            <br/>
+            {/* <br/>
             <Header as="h3">Calendário de Avaliação</Header>
             <Header as="h4">
                 Curso:
@@ -612,10 +612,11 @@ const Calendar = () => {
                     )}
                 />
                 <LegendBox backgroundColor="#ddd9c1">Avaliação</LegendBox>
-            </div>
+            </div> */}
+            <div className='margin-top-l'>
             <Grid stackable>
                 <Grid.Row>
-                    <Grid.Column width="12">
+                    <Grid.Column width="16">
                         {weekData.map(({week, year, days}, tableIndex) => {
                             interruptionDays = 0;
                             alreadyAddedColSpan = false;
@@ -793,7 +794,7 @@ const Calendar = () => {
                         })}
                     </Grid.Column>
                     {/* <ShowComponentIfAuthorized permission={[SCOPES]}> */}
-                    <Grid.Column width="4">
+                    {/* <Grid.Column width="4">
                         <Segment>
                             <Card>
                                 <Card.Content>
@@ -995,10 +996,11 @@ const Calendar = () => {
                                 </Segment>
                             </ShowComponentIfAuthorized>
                         </Segment>
-                    </Grid.Column>
+                    </Grid.Column> */}
                     {/* </ShowComponentIfAuthorized> */}
                 </Grid.Row>
             </Grid>
+            </div>
             <FinalForm onSubmit={onSubmitInterruption} initialValues={{
                     id: modalInfo?.id || null,
                     startDate: moment(modalInfo?.start_date).format('DD MMMM, YYYY'),
