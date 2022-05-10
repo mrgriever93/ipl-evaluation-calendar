@@ -4,7 +4,7 @@ import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import { useParams, useNavigate} from "react-router-dom";
 import { useTranslation} from "react-i18next";
-import { Container, Card, Button, Accordion, Grid, Header, Icon, List, Modal, Segment, Table, TextArea, Popup, Dropdown, Comment, Message, GridColumn} from 'semantic-ui-react';
+import { Card, Button, Sticky, Grid, Header, Icon, List, Modal, Dropdown, GridColumn} from 'semantic-ui-react';
 import { toast} from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -184,6 +184,20 @@ const InfosAndActions = () => {
         });
     };
 
+    const submitToNextPhase = () => {
+        // setPublishLoading(true);
+        // axios.post(`/calendar/${calendarId}/publish`).then((res) => {
+        //     setPublishLoading(false);
+        //     loadCalendar(calendarId);
+        //     if (res.status === 200) {
+        //         toast('Calendário publicado com sucesso!', successConfig);
+        //     } else {
+        //         toast('Ocorreu um erro ao tentar publicar o calendário!', errorConfig);
+        //     }
+        // });
+        alert("submitted! (not)")
+    };
+
     const createCopy = () => {
         SweetAlertComponent.fire({
             title: 'Atenção!',
@@ -226,9 +240,17 @@ const InfosAndActions = () => {
                 </div>
                 <div className='main-content-actions'>
                     {!isPublished ? (
-                        <ShowComponentIfAuthorized permission={[SCOPES.PUBLISH_CALENDAR]}>
-                            <Button color="teal" loading={publishLoading} onClick={publishCalendar}>Publicar esta versão</Button>
-                        </ShowComponentIfAuthorized>
+                        <>
+                            <ShowComponentIfAuthorized permission={[SCOPES.PUBLISH_CALENDAR]}>
+                                <Button color="teal" loading={publishLoading} onClick={publishCalendar}>Publicar esta versão</Button>
+                            </ShowComponentIfAuthorized>
+                            { calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0 && (
+                                    <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE]}>
+                                        <Button color="teal" loading={publishLoading} onClick={submitToNextPhase}>Submeter</Button>
+                                    </ShowComponentIfAuthorized>
+                                )
+                            }
+                        </>
                     ) : (
                         <ShowComponentIfAuthorized permission={[SCOPES.CREATE_COPY]}>
                             <Button color="teal" loading={creatingCopy} onClick={createCopy}>Criar um cópia desta versão</Button>
@@ -237,93 +259,99 @@ const InfosAndActions = () => {
                 </div>
             </div>
             <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
-                <Card fluid >
-                    <Card.Content>
-                        <Grid columns={4} divided>
-                            <GridColumn>
-                                <div>
-                                    <span>
-                                        <Header as="h5">Ano Letivo:</Header>
-                                        2019-20
-                                    </span>
-                                </div>
-                                <div>
-                                    <span>
-                                        <Header as="h5">Curso: </Header>
-                                        {generalInfo?.course?.name}
-                                    </span>
-                                </div>
-                                <div>
-                                    <span>
-                                        <Header as="h5">Última alteração:</Header>
-                                        {moment(generalInfo?.calendar_last_update,).format('DD MMMM, YYYY HH:mm')}
-                                    </span>
-                                </div>
-                            </GridColumn>
-                            <GridColumn>
-                                {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0 ?
-                                    (
-                                        <div>
-                                            <span>
-                                                <Header as="h5">Fase:</Header>
-                                                <Dropdown
-                                                    options={calendarPhases.filter((x) => x.name !== 'system' && x.name !== 'published')}
-                                                    selection
-                                                    search
-                                                    label="Fase do Calendário"
-                                                    loading={!calendarPhases.length || updatingCalendarPhase}
-                                                    onChange={(e, {value}) => {updateCalendarPhase(value);}}
-                                                    value={calendarPhase}
-                                                />
-                                            </span>
-                                        </div>
-                                    ) : (
-                                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
-                                            <Header as="h5">Fase:</Header>
-                                            <span>{calendarPhases.find((x) => x.key === calendarPhase)?.text || generalInfo?.phase?.description}</span>
-                                        </ShowComponentIfAuthorized>
-                                    )
-                                }
-                            </GridColumn>
-                            <GridColumn>
-                                <div>
-                                    <span>
-                                        <Header as="h5">Estado:</Header>
-                                        <Button.Group>
-                                            <Button compact onClick={() => updateCalendarStatus(true)} positive={isTemporary} disabled={isPublished || previousFromDefinitive}>
-                                                Temporário
-                                            </Button>
-                                            <Button compact onClick={() => updateCalendarStatus(false)} positive={!isTemporary} disabled={isPublished || previousFromDefinitive}>
-                                                Definitivo
-                                            </Button>
-                                        </Button.Group>
-                                    </span>
-                                </div>
-                            </GridColumn>
-                            <GridColumn>                                
-                                <Header as="h4">Épocas</Header>
-                                <List divided relaxed>
-                                    {epochsList.map((epoch) => (
-                                        <List.Item>
-                                            <List.Icon name="calendar alternate" size="large" verticalAlign="middle"/>
-                                            <List.Content>
-                                                <List.Header>{epoch.name}</List.Header>
-                                                <List.Description>
-                                                    <b>Ínicio:</b>
-                                                    {' '}{moment(epoch.start_date).format('DD MMMM, YYYY')}
-                                                </List.Description>
-                                                <List.Description>
-                                                    <b>Fim:</b>
-                                                    {' '}{moment(epoch.end_date).format('DD MMMM, YYYY')}
-                                                </List.Description>
-                                            </List.Content>
-                                        </List.Item>
-                                    ))}
-                                </List>
-                            </GridColumn>
-                        </Grid>
-                    </Card.Content>
-                </Card>
+                <Sticky offset={24} >
+                    <Card fluid >
+                        <Card.Content>
+                            <Grid columns={4} divided>
+                                <GridColumn>                                
+                                    <Header as="h4">Épocas</Header>
+                                    <List divided relaxed>
+                                        {epochsList.map((epoch) => (
+                                            <List.Item>
+                                                <List.Icon name="calendar alternate" size="large" verticalAlign="middle"/>
+                                                <List.Content>
+                                                    <List.Header>{epoch.name}</List.Header>
+                                                    <List.Description>
+                                                        <b>Ínicio:</b>
+                                                        {' '}{moment(epoch.start_date).format('DD MMMM, YYYY')}
+                                                    </List.Description>
+                                                    <List.Description>
+                                                        <b>Fim:</b>
+                                                        {' '}{moment(epoch.end_date).format('DD MMMM, YYYY')}
+                                                    </List.Description>
+                                                </List.Content>
+                                            </List.Item>
+                                        ))}
+                                    </List>
+                                </GridColumn>
+                                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
+                                    <GridColumn>
+                                        {/* {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0 ?
+                                            (
+                                                <div>
+                                                    <span>
+                                                        <Header as="h5">Fase:</Header>
+                                                        <Dropdown
+                                                            options={calendarPhases.filter((x) => x.name !== 'system' && x.name !== 'published')}
+                                                            selection
+                                                            search
+                                                            label="Fase do Calendário"
+                                                            loading={!calendarPhases.length || updatingCalendarPhase}
+                                                            onChange={(e, {value}) => {updateCalendarPhase(value);}}
+                                                            value={calendarPhase}
+                                                        />
+                                                    </span>
+                                                </div>
+                                            ) : (
+                                                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
+                                                    <Header as="h5">Fase:</Header>
+                                                    <span>{calendarPhases.find((x) => x.key === calendarPhase)?.text || generalInfo?.phase?.description}</span>
+                                                </ShowComponentIfAuthorized>
+                                            )
+                                        } */}                                
+                                        <Header as="h5">Fase:</Header>
+                                        <span>{calendarPhases.find((x) => x.key === calendarPhase)?.text || generalInfo?.phase?.description}</span>
+                                    </GridColumn>
+                                </ShowComponentIfAuthorized>
+                                <GridColumn>
+                                    <div>
+                                        <span>
+                                            <Header as="h5">Estado:</Header>
+                                            <Button.Group>
+                                                <Button compact onClick={() => updateCalendarStatus(true)} positive={isTemporary} disabled={isPublished || previousFromDefinitive}>
+                                                    Temporário
+                                                </Button>
+                                                <Button compact onClick={() => updateCalendarStatus(false)} positive={!isTemporary} disabled={isPublished || previousFromDefinitive}>
+                                                    Definitivo
+                                                </Button>
+                                            </Button.Group>
+                                        </span>
+                                    </div>
+                                </GridColumn>
+                                <GridColumn>
+                                    {/* <div>
+                                        <span>
+                                            <Header as="h5">Ano Letivo:</Header>
+                                            2019-20
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span>
+                                            <Header as="h5">Curso: </Header>
+                                            {generalInfo?.course?.name_pt}
+                                        </span>
+                                    </div> */}
+                                    <div>
+                                        <span>
+                                            <Header as="h5">Última alteração:</Header>
+                                            {moment(generalInfo?.calendar_last_update,).format('DD MMMM, YYYY HH:mm')}
+                                        </span>
+                                    </div>
+                                </GridColumn>
+                            </Grid>
+                        </Card.Content>
+                    </Card>
+                </Sticky>
             </ShowComponentIfAuthorized>
         </>
     );
