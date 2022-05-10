@@ -16,8 +16,15 @@ sdfghy
 
 2) Install PHP and Composer based on the following docs:
 
+        https://linuxize.com/post/how-to-install-php-8-on-ubuntu-20-04/
+        https://www.itsolutionstuff.com/post/how-to-install-laravel-in-ubuntu-serverexample.html
+
         https://www.digitalocean.com/community/tutorials/how-to-install-and-use-composer-on-ubuntu-20-04-pt
-        https://www.vultr.com/docs/upgrade-from-php-7-to-php-8-on-ubuntu-20-04-with-apache/        
+        https://www.vultr.com/docs/upgrade-from-php-7-to-php-8-on-ubuntu-20-04-with-apache/ 
+
+        https://oauth2.thephpleague.com/installation/
+
+        
 
 4) Change to your project folder with `cd` command
 
@@ -27,30 +34,32 @@ sdfghy
 
         $> alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
 
-5) Run 
+6) Init docker with sail
+
+        $> sail up -d
+
+7) Instal laravel vendor stuff
 
         $> composer install
 
 
-2) To do sail command:
-
-        $> <command here>
-
-3) Run migrations and seeders for the database 
+8) Run migrations and seeders for the database 
 
         $> sail artisan migrate --seed
+        ---- or -----
+        $> sail artisan migrate:fresh --seed
 
-4) Create personal Token for login
+9) Create personal Token for login
 
         $> sail artisan passport:client --personal
 
-5) Test LDAP connection
+10) Test LDAP connection
 
         $> sail artisan ldap:test
 
 -----
 
-6) To run React frontend
+11) To run React frontend
 
         $> npm install
 
@@ -61,12 +70,12 @@ sdfghy
         
         $> npm run dev          // compile once
 
-7) Plugins
+12) Plugins
 
    [Translations](https://react.i18next.com/)
 
 
-8) Links
+13) Links
 
    https://laravel-mix.com/
    
@@ -75,12 +84,12 @@ sdfghy
    https://bobbyhadz.com/blog/javascript-remove-object-from-array-by-value
 
     
-9) Best practices
+14) Best practices
 
    https://github.com/alexeymezenin/laravel-best-practices
 
 
-10) Server commands
+15) Server commands
 
         $> composer install --optimize-autoloader --no-dev
 
@@ -92,17 +101,30 @@ sdfghy
         
         $> php artisan migrate:fresh --seed
 
+    Create new Personal Token for the Front-End app communicate with the API
+
+        $> php artisan passport:client --personal
+
 ---
 
 ### TODO
 - [ ] Mostrar um alerta quando estiver acima de 100% (métodos) para confirmar que quer submeter com mais de 100%;
 - [ ] Guardar nos métodos nem sempre funciona;
-- [ ] Erros na utilização 
-  - ***(Detalhes?)***
+- [ ] Rever Tabs dos Cursos
+  - [ ] Erros na utilização
 - [ ] Rever HTML e detalhe dos Agrupamentos de UC
-- [ ] Traduções
+  - [ ] Traduções
 - [ ] Rework Novo calendario
+  - [x] Traduções
+  - [ ] Otimizar load de permissões
+  - [ ] Na criação de um novo calendário, os feriados não estão a ser guardados
 - [ ] Adicionar flag nos tipos de interrupções para obrigatórios (Natal e Páscoa);
+- [ ] Rever sync/refresh ano letivo
+- [ ] No curso, qdo pede para rever cenas tipo Coordenador:
+  - [ ]  Dps de preencheres e gravar n atualiza para tirar o erro
+  - [ ]  E mantem o triangulo a dizer q faltam coisas na listagem
+
+
 ---
 - [x] Falta testar a pesquisa do coordenador de curso no detalhe do curso
 - [x] Rever Tabs dos Cursos
@@ -119,3 +141,13 @@ sdfghy
 - [ ] Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;
 - [ ] Users com mais do que um role (validar o que deve ser feito)
 - [ ] Log dos métodos: registar o que foi alterado e quem alterou;
+
+
+### TODO Miguel
+- [ ] Validar dropdown "Grau ensino" detalhe curso
+- [ ] Validar dropdown "semestre" detalhe unidade curricular
+- [ ] Limpeza "Requests Folder"
+
+
+### Perguntas
+- [ ] Tipos de interrupcoes ligadas a alguma coisa? Semestre? Data? Feriado?

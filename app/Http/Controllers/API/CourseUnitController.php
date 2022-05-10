@@ -10,24 +10,27 @@ use App\Http\Resources\Admin\LogsResource;
 use App\Http\Resources\Generic\BranchSearchResource;
 use App\Http\Resources\Generic\CourseUnitListResource;
 use App\Http\Resources\Generic\CourseUnitSearchResource;
+use App\Http\Resources\Generic\EpochMethodResource;
 use App\Http\Resources\Generic\TeacherResource;
 use App\Http\Resources\MethodResource;
 use App\Models\Calendar;
 use App\Models\Course;
 use App\Models\CourseUnit;
 use App\Models\Epoch;
+use App\Models\EpochType;
 use App\Models\Group;
+use App\Models\Method;
 use App\Models\UnitLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CourseUnitController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
      */
     public function index(Request $request, CourseUnitFilters $filters)
     {
@@ -77,7 +80,7 @@ class CourseUnitController extends Controller
                 }
             }
             if( request('semester') ){
-                $courseUnits->where('semester', request('semester'));
+                $courseUnits->where('semester_id', request('semester'));
             }
             $courseUnits = $courseUnits->orderBy('name_' . $lang)->paginate($perPage);
         }
@@ -135,10 +138,8 @@ class CourseUnitController extends Controller
         return CourseUnitSearchResource::collection($courseUnits);
     }
 
-
     /**
      * Store a newly created resource in storage.
-     *
      */
     public function store(CourseUnitRequest $request)
     {
@@ -153,10 +154,8 @@ class CourseUnitController extends Controller
         return response()->json("Created!", Response::HTTP_CREATED);
     }
 
-
     /**
      * Display the specified resource.
-     *
      */
     public function show(CourseUnit $courseUnit)
     {
@@ -165,7 +164,6 @@ class CourseUnitController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
      */
     public function update(CourseUnitRequest $request, CourseUnit $courseUnit)
     {
@@ -180,11 +178,39 @@ class CourseUnitController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
      */
     public function destroy(Request $request, CourseUnit $courseUnit)
     {
         $courseUnit->academicYears()->detach($request->cookie('academic_year'));
+    }
+
+    /******************************************
+     *             RELATIONS CALLS
+     *  - Branches
+     *  - Teachers
+     *  - Methods
+     *  - Logs
+     ******************************************/
+
+    /**
+     * List branches for the COURSE of the unit
+     */
+    public function branches(CourseUnit $courseUnit)
+    {
+        return  BranchSearchResource::collection($courseUnit->course->branches);
+    }
+
+    /**
+     * List teachers associated to the unit
+     */
+    public function teachers(CourseUnit $courseUnit)
+    {
+        $teachers = $courseUnit->teachers;
+        $responsible_id = $courseUnit->responsible_user_id;
+        foreach ($teachers as $teacher){
+            $teacher['isResponsible'] = $teacher->id == $responsible_id;
+        }
+        return  TeacherResource::collection($teachers);
     }
 
 
@@ -241,68 +267,41 @@ class CourseUnitController extends Controller
         return response()->json("user removed", Response::HTTP_OK);
     }
 
-    /******************************************
-     *             RELATIONS CALLS
-     *  - Branches
-     *  - Teachers
-     *  - Methods
-     *  - Logs
-     ******************************************/
-
-    /**
-     * List branches for the COURSE of the unit
-     */
-    public function branches(CourseUnit $courseUnit)
-    {
-        return  BranchSearchResource::collection($courseUnit->course->branches);
-    }
-
-    /**
-     * List teachers associated to the unit
-     */
-    public function teachers(CourseUnit $courseUnit)
-    {
-        $teachers = $courseUnit->teachers;
-        $responsible_id = $courseUnit->responsible_user_id;
-        foreach ($teachers as $teacher){
-            $teacher['isResponsible'] = $teacher->id == $responsible_id;
-        }
-        return  TeacherResource::collection($teachers);
-    }
-
     /**
      * List methods associated to the unit
      */
-    public function methods(CourseUnit $courseUnit)
+    public function methodsForCourseUnit(CourseUnit $courseUnit, Request $request)
     {
-        return  MethodResource::collection($courseUnit->methods);
-    }
+        $epochTypesList = EpochType::all();
+        $list = EpochMethodResource::collection($epochTypesList);
+        $yearId = $request->cookie('academic_year');
+        $courseUnitId = $courseUnit->id;
+        $newCollection = collect($list);
 
-    /**
-     * List logs associated to the unit
-     */
-    public function logs(CourseUnit $courseUnit)
-    {
-        return  LogsResource::collection($courseUnit->log);
+        $finalList = $newCollection->map(function ($item, $key) use ($yearId, $courseUnitId){
+            $methods = Method::ofAcademicYear($yearId)
+                            ->join('epoch_type_method', 'epoch_type_method.method_id', '=', 'methods.id')
+                                ->where('epoch_type_method.epoch_type_id', $item['id'])
+                            ->join('course_unit_method', 'course_unit_method.method_id', '=', 'methods.id')
+                                ->where('course_unit_method.course_unit_id', $courseUnitId)
+                            ->get();
+            //byCourseUnit($courseUnit->id)->byEpochType($epochType->id)->ofAcademicYear($yearId)->get();
+
+            $item['methods'] = MethodResource::collection($methods);
+            return $item;
+        });
+
+        return $finalList->all();
     }
 
     public function epochsForCourseUnit(CourseUnit $courseUnit)
     {
-        $availableCalendarsForCourseUnit = Calendar::where('course_id', $courseUnit->course_id)->whereIn('semester', [$courseUnit->semester, 3])->get()->pluck('id');
+        $availableCalendarsForCourseUnit = Calendar::where('course_id', $courseUnit->course_id)->whereIn('semester_id', [$courseUnit->semester_id, 3])->get()->pluck('id');
         $epochs = Epoch::whereIn('calendar_id', $availableCalendarsForCourseUnit)->groupBy(['epoch_type_id', 'name'])->get(['epoch_type_id', 'name']);
 
         return response()->json($epochs);
     }
 
-    public function methodsForCourseUnit(CourseUnit $courseUnit)
-    {
-        foreach ($courseUnit->methods as $method) {
-            $epochs = $method->epochs();
-            $method['epoch_type_id'] = $epochs->count() > 0 ? $epochs->first()->epoch_type_id : null;
-        }
-
-        return response()->json($courseUnit->methods);
-    }
 
     public function assignResponsible(Request $request, CourseUnit $courseUnit)
     {
@@ -318,5 +317,14 @@ class CourseUnitController extends Controller
             "user_id"           => Auth::id(),
             "description"       => "Professor responsavel por esta Unidade curricular alterado para '$user->email' por '" . Auth::user()->name . "'."
         ]);
+    }
+
+
+    /**
+     * List logs associated to the unit
+     */
+    public function logs(CourseUnit $courseUnit)
+    {
+        return  LogsResource::collection($courseUnit->log);
     }
 }

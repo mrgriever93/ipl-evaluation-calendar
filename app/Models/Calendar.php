@@ -16,7 +16,7 @@ class Calendar extends Model
 
     protected $fillable = [
         "calendar_phase_id",
-        "semester",
+        "semester_id",
         "observations_pt",
         "observations_en",
         "temporary",
@@ -85,6 +85,10 @@ class Calendar extends Model
     public function phase()
     {
         return $this->belongsTo(CalendarPhase::class, 'calendar_phase_id');
+    }
+
+    public function semester() {
+        return $this->belongsTo(Semester::class);
     }
 
     public function epochs()

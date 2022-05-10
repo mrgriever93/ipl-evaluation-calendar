@@ -13,14 +13,18 @@ use App\Http\Requests\UpdateCalendarRequest;
 use App\Http\Resources\AvailableCourseUnitsResource;
 use App\Http\Resources\CalendarResource;
 use App\Http\Resources\Generic\Calendar_SemesterResource;
+use App\Http\Resources\Generic\EpochTypesResource;
 use App\Http\Resources\Generic\SemestersSearchResource;
+use App\Models\AcademicYear;
 use App\Models\Calendar;
 use App\Models\CalendarPhase;
 use App\Models\Course;
 use App\Models\CourseUnit;
 use App\Models\Epoch;
+use App\Models\EpochType;
 use App\Models\Interruption;
 use App\Models\InterruptionType;
+use App\Models\InterruptionTypesEnum;
 use App\Models\Semester;
 use App\Services\ExternalImports;
 use Carbon\Carbon;
@@ -47,13 +51,17 @@ class CalendarController extends Controller
         foreach ($courses as $key => $course) {
             $newCalendar = new Calendar($request->all());
             $newCalendar->academic_year_id = $request->cookie('academic_year');
+            $newCalendar->semester_id = Semester::where('code', $request->semester)->firstOrFail()->id;
             $newCalendar->course_id = $course["id"] ?? $course;
-            $newCalendar->calendar_phase_id = CalendarPhase::first('id')->id;
+            // TODO garantir que este valor e sempre o correto
+            $newCalendar->calendar_phase_id = CalendarPhase::where('code', 'created')->firstOrFail()->id;
             $newCalendar->save();
 
             foreach ($request->epochs as $key => $epoch) {
+                $epochType = EpochType::where('code', $epoch['code'])->firstOrFail();
                 $newEpoch = new Epoch($epoch);
-                $newEpoch->epoch_type_id = $epoch['type'];
+                $newEpoch->name = $epochType->name_pt;
+                $newEpoch->epoch_type_id = $epochType->id;
                 $newCalendar->epochs()->save($newEpoch);
 
                 foreach (CourseUnit::where('course_id', $newCalendar->course_id)->get() as $courseUnit) {
@@ -78,6 +86,7 @@ class CalendarController extends Controller
                 $newInterruption->save();
             }
 
+            // TODO ja recebemos os feriados que vao haver
             if ($request->import_holidays) {
                 $yearOfFirstDay = Carbon::parse($newCalendar->firstDayOfSchool())->year;
                 $yearOfLastDay = Carbon::parse($newCalendar->lastDayOfSchool())->year;
@@ -115,15 +124,12 @@ class CalendarController extends Controller
                 $query->from("exams")->whereRaw("exams.method_id = methods.id")->where("exams.epoch_id", $request->epoch_id);
             });
 
-            if (Auth::user()->groups()->isTeacher()->get()->count() > 0
+            if (Auth::user()->groups()->isTeacher()->exists()
                 && (
-                    Auth::user()->groups()->coordinator()->get()->count() == 0
-                    && Auth::user()->groups()->board()->get()->count() == 0
-                    && Auth::user()->groups()->superAdmin()->get()->count() == 0
-                    && Auth::user()->groups()->admin()->get()->count() == 0
-                    && Auth::user()->groups()->pedagogic()->get()->count() == 0
-                    && Auth::user()->groups()->responsiblePedagogic()->get()->count() == 0
-                    && Auth::user()->groups()->gop()->get()->count() == 0
+                    Auth::user()->groups()->coordinator()->exists() && Auth::user()->groups()->board()->exists()
+                    && Auth::user()->groups()->superAdmin()->exists() && Auth::user()->groups()->admin()->exists()
+                    && Auth::user()->groups()->pedagogic()->exists() && Auth::user()->groups()->responsiblePedagogic()->exists()
+                    && Auth::user()->groups()->gop()->exists()
                 )
             ) {
                 $availableMethods->whereIn('course_units.id', Auth::user()->courseUnits->pluck('id'));
@@ -225,9 +231,29 @@ class CalendarController extends Controller
         return SemestersSearchResource::collection(Semester::where("special", 0)->get());
     }
 
-    public function calendarSemesters(Request $request)
+    public function calendarSemesters()
     {
         return Calendar_SemesterResource::collection(Semester::all());
     }
 
+    public function calendarInterruptions(Request $request)
+    {
+        $yearOfFirstDay = $request->input("first_year");
+        $yearOfLastDay = $request->input("last_year");
+        $holidays = [];
+        $interruptionTypeId = InterruptionType::where('name_pt', InterruptionTypesEnum::HOLIDAYS)->first()->id;
+        do {
+            $holidayList = ExternalImports::getYearHolidays($yearOfFirstDay);
+            foreach ($holidayList->Holiday as $key => $holiday) {
+                $holidays[] = [
+                    "date"                  => $holiday->Date->__toString(),
+                    "name"                  => $holiday->Name->__toString(),
+                    "type_name"             => $holiday->Type->__toString(),
+                    "interruption_type_id"  => $interruptionTypeId,
+                ];
+            }
+        } while ($yearOfFirstDay++ < $yearOfLastDay);
+        //dd($holidays);
+        return response()->json($holidays, Response::HTTP_OK);
+    }
 }

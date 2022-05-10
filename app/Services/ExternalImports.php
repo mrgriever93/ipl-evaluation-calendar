@@ -11,6 +11,7 @@ use App\Models\Interruption;
 use App\Models\InterruptionType;
 use App\Models\InterruptionTypesEnum;
 use App\Models\School;
+use App\Models\Semester;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
@@ -20,6 +21,15 @@ use LdapRecord\Connection;
 
 class ExternalImports
 {
+
+    public static function getYearHolidays($yearToImport)
+    {
+        $apiEndpoint = Config::get('constants.api.sapo_holidays_endpoint');
+        $url = "{$apiEndpoint}?year={$yearToImport}";
+        $holidays = simplexml_load_file($url);
+        //dd($holidays->GetNationalHolidaysResult->Holiday);
+        return $holidays->GetNationalHolidaysResult;//->Holiday;
+    }
 
     public static function importYearHolidays($yearToImport, $calendarId)
     {
@@ -56,6 +66,7 @@ class ExternalImports
             if( !$academicYear ){
                 exit();
             }
+            $semester_code = "first_semester";
             // update flags for front-end
             if( $semester == 1) {
                 $academicYear->s1_sync_waiting = false;
@@ -63,8 +74,12 @@ class ExternalImports
             } else {
                 $academicYear->s2_sync_waiting = false;
                 $academicYear->s2_sync_active = true;
+                $semester_code = "second_semester";
             }
             $academicYear->save();
+
+            // save semester ID instead of just a number
+            $semester_id = Semester::where("code", $semester_code)->first()->id;
 
             $academicYearId = $academicYear->id;
             // get list of schools that have "base_link" data
@@ -147,11 +162,13 @@ class ExternalImports
                         );
                         // Retrieve CourseUnit by code or create it if it doesn't exist...
                         $newestCourseUnit = CourseUnit::firstOrCreate(
-                            ["code" => $info[$school->index_course_unit_code]],
+                            [
+                                "code" => $info[$school->index_course_unit_code],
+                                "semester_id" => $semester_id
+                            ],
                             [
                                 "course_id" => $course->id,
                                 "branch_id" => $branch->id,
-                                "semester" => $semester,
                                 "curricular_year" => $info[$school->index_course_unit_curricular_year],
                                 "name_pt" => $info[$school->index_course_unit_name],
                                 "name_en" => $info[$school->index_course_unit_name] // this will duplicate the value as default, to prevent empty states
@@ -219,7 +236,7 @@ class ExternalImports
             $academicYear = AcademicYear::where('code', $academicYearCode)->firstOrFail();
             if($semester === 1) {
                 $academicYear->s1_sync_active = false;
-            } else if($semester === 2) {
+            } else {
                 $academicYear->s2_sync_active = false;
             }
             $academicYear->save();

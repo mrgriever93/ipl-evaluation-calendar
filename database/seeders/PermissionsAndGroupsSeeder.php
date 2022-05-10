@@ -103,21 +103,21 @@ class PermissionsAndGroupsSeeder extends Seeder
         }
 
         $interruptionTypes = [
-            ["name_pt" => "Natal",               "name_en" => "Christmas"       ],
-            ["name_pt" => "Páscoa",              "name_en" => "Easter"          ],
-            ["name_pt" => "Desfile do caloiro",  "name_en" => "Freshman Parade" ],
-            ["name_pt" => "Abertura solene",     "name_en" => "Solemn Opening"  ],
-            ["name_pt" => "Desfile académico",   "name_en" => "Academic parade" ],
-            ["name_pt" => "Feriado",             "name_en" => "Holiday"         ],
-            ["name_pt" => "Semana académica",    "name_en" => "Academic week"   ],
-            ["name_pt" => "Dia aberto",          "name_en" => "Open Day"        ],
-            ["name_pt" => "Carnaval",            "name_en" => "Carnival"        ],
+            ["name_pt" => "Natal",               "name_en" => "Christmas",       "mandatory" => true  ],
+            ["name_pt" => "Páscoa",              "name_en" => "Easter",          "mandatory" => true  ],
+            ["name_pt" => "Desfile do caloiro",  "name_en" => "Freshman Parade", "mandatory" => false ],
+            ["name_pt" => "Abertura solene",     "name_en" => "Solemn Opening",  "mandatory" => false ],
+            ["name_pt" => "Desfile académico",   "name_en" => "Academic parade", "mandatory" => false ],
+            ["name_pt" => "Feriado",             "name_en" => "Holiday",         "mandatory" => false ],
+            ["name_pt" => "Semana académica",    "name_en" => "Academic week",   "mandatory" => false ],
+            ["name_pt" => "Dia aberto",          "name_en" => "Open Day",        "mandatory" => false ],
+            ["name_pt" => "Carnaval",            "name_en" => "Carnival",        "mandatory" => false ],
         ];
 
         foreach ($interruptionTypes as $interruptionType) {
-            $newInterruptionType = new InterruptionType();
-            $newInterruptionType->name_pt = $interruptionType["name_pt"];
-            $newInterruptionType->name_en = $interruptionType["name_en"];
+            $newInterruptionType = new InterruptionType($interruptionType);
+            //$newInterruptionType->name_pt = $interruptionType["name_pt"];
+            //$newInterruptionType->name_en = $interruptionType["name_en"];
             $newInterruptionType->save();
         }
 
@@ -289,11 +289,11 @@ class PermissionsAndGroupsSeeder extends Seeder
         }
 
         $epochTypes = [
-            ["name_pt" => "Época Periódica",        "name_en" => "Periodic Season"      ],
-            ["name_pt" => "Época Normal",           "name_en" => "Normal Season"        ],
-            ["name_pt" => "Época Recurso",          "name_en" => "Resource Season"      ],
-            ["name_pt" => "Época Especial",         "name_en" => "Special Season"       ],
-            ["name_pt" => "Época Especialíssima",   "name_en" => "Very Special Season"  ],
+            ["name_pt" => "Época Periódica",        "name_en" => "Periodic Season",      "code" => "periodic_season"       ],
+            ["name_pt" => "Época Normal",           "name_en" => "Normal Season",        "code" => "normal_season"         ],
+            ["name_pt" => "Época Recurso",          "name_en" => "Resource Season",      "code" => "resource_season"       ],
+            ["name_pt" => "Época Especial",         "name_en" => "Special Season",       "code" => "special_season"        ],
+            ["name_pt" => "Época Especialíssima",   "name_en" => "Very Special Season",  "code" => "very_special_season"   ],
         ];
         foreach ($epochTypes as $epochType) {
             $newEpochType = new EpochType($epochType);
@@ -301,14 +301,16 @@ class PermissionsAndGroupsSeeder extends Seeder
         }
 
         $semesters = [
-            ["name_pt" => "1º Semestre",     "name_en" => "1st Semester",  "special" => 0, "epoch_types" => [1, 2, 3]   ],
-            ["name_pt" => "2º Semestre",     "name_en" => "2nd Semester",  "special" => 0, "epoch_types" => [1, 2, 3]   ],
-            ["name_pt" => "Especial",        "name_en" => "Special",       "special" => 1, "epoch_types" => [4]         ],
-            ["name_pt" => "Especialíssima",  "name_en" => "Very Special",  "special" => 1, "epoch_types" => [5]         ],
+            ["code" => "first_semester",    "number" => 1, "name_pt" => "1º Semestre",     "name_en" => "1st Semester",  "special" => 0, "epoch_types" => [1, 2, 3]   ],
+            ["code" => "second_semester",   "number" => 2, "name_pt" => "2º Semestre",     "name_en" => "2nd Semester",  "special" => 0, "epoch_types" => [1, 2, 3]   ],
+            ["code" => "special",           "number" => 0, "name_pt" => "Especial",        "name_en" => "Special",       "special" => 1, "epoch_types" => [4]         ],
+            ["code" => "very_special",      "number" => 0, "name_pt" => "Especialíssima",  "name_en" => "Very Special",  "special" => 1, "epoch_types" => [5]         ],
         ];
 
         foreach ($semesters as $semester) {
             $newSemester = new Semester();
+            $newSemester->code    = $semester["code"];
+            $newSemester->number  = $semester["number"];
             $newSemester->name_pt = $semester["name_pt"];
             $newSemester->name_en = $semester["name_en"];
             $newSemester->special = $semester["special"];

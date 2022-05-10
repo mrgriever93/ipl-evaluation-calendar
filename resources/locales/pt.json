@@ -62,6 +62,8 @@
         "Anos letivos disponivies para os utilizadores selecionarem.": "Anos letivos disponivies para os utilizadores selecionarem.",
         "ano_letivo.Irá começar brevemente a sincronização do ano letivo": "Irá começar brevemente a sincronização do ano letivo",
         "ano_letivo.Ocorreu um problema ao tentar começar sincronizar o ano letivo": "Ocorreu um problema ao tentar começar sincronizar o ano letivo",
+        "ano_letivo.Não consigo ativar um ano letivo.. Porquê?": "Não consigo ativar um ano letivo.. Porquê?",
+        "ano_letivo.Para ativar um Ano Letivo é necessário correr 1º a sincronização de um semestre.": "Para ativar um Ano Letivo é necessário correr 1º a sincronização de um semestre.",
         "ano_letivo.A sincronização vai sempre acontecer quando clicarmos no botão?": "A sincronização vai sempre acontecer quando clicarmos no botão?",
         "ano_letivo.Não. Irá ser iniciada a sincronização quando não houver trabalho para o servidor.": "Não. Irá ser iniciada a sincronização quando não houver trabalho para o servidor.",
         "ano_letivo.Todos os semestres e ano letivos que estejam ativos e que já tenham sido sincronizados antes, vão ser atualizados todos os dias as 3 da manhã.": "Todos os semestres e ano letivos que estejam ativos e que já tenham sido sincronizados antes, vão ser atualizados todos os dias as 3 da manhã.",
@@ -253,6 +255,22 @@
         "Unidade curricular adicionada com sucesso!": "Unidade curricular adicionada com sucesso!",
         "Ocorreu um erro ao adicionar a unidade curricular!": "Ocorreu um erro ao adicionar a unidade curricular!",
 
+        "calendar.O comentário foi adicionado com sucesso!": "O comentário foi adicionado com sucesso!",        
+        "calendar.Ocorreu um erro ao adicionar o comentário!": "Ocorreu um erro ao adicionar o comentário!",
+        "calendar.Estado do calendário atualizado!": "Estado do calendário atualizado!",
+        "calendar.Fase do calendário atualizada!": "Fase do calendário atualizada!",
+        "calendar.Comentário ignorado com sucesso!": "Comentário ignorado com sucesso!",
+        "calendar.Ocorreu um erro ao ignorar o comentário!": "Ocorreu um erro ao ignorar o comentário!",
+        "calendar.Ocorreu um erro ao carregar a informacao pretendida": "Ocorreu um erro ao carregar a informacao pretendida",
+        "calendar.Interrupção eliminada com sucesso deste calendário!": "Interrupção eliminada com sucesso deste calendário!",
+        "calendar.Ocorreu um problema ao eliminar a interrupção deste calendário!": "Ocorreu um problema ao eliminar a interrupção deste calendário!",
+        "calendar.2ª Feira": "2ª Feira",
+        "calendar.3ª Feira": "3ª Feira",
+        "calendar.4ª Feira": "4ª Feira",
+        "calendar.5ª Feira": "5ª Feira",
+        "calendar.6ª Feira": "6ª Feira",
+        "calendar.Sábado": "Sábado",
+
         "Guardou o coordenador de curso com sucesso!": "Guardou o coordenador de curso com sucesso!",
         "Ocorreu um erro ao guardar o coordenador de curso!": "Ocorreu um erro ao guardar o coordenador de curso!",
         "Curso atualizado com sucesso!": "Curso atualizado com sucesso!",
@@ -260,6 +278,9 @@
         "Número de anos": "Número de anos",
         "Coordenador do Curso": "Coordenador do Curso",
         "Pesquise o coordenador de curso...": "Pesquise o coordenador de curso...",
-        "Guardar coordenador": "Guardar coordenador"
+        "Guardar coordenador": "Guardar coordenador",
+
+        "Mandatório": "Mandatório",
+        "Caso seja mandatório, quando criar um novo calendário, terá de preencher a interrupção": "Caso seja mandatório, quando criar um novo calendário, terá de preencher a interrupção"
     }
 }
