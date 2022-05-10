@@ -293,6 +293,27 @@
         "Ocorreu um problema ao eliminar este ramo!": "There was a problem deleting this branch!",
         "Nome do ramo": "Branch name",
         "Iniciais do ramo": "Branch initials",
-        "Adicionar ramo":  "Add branch"
+        "Adicionar ramo":  "Add branch",
+
+        "Adicionar professor": "Adicionar professor",
+        "Responsável": "Responsável",
+        "Professor removido com sucesso da unidade curricular!":  "Professor removido com sucesso da unidade curricular!",
+        "Ocorreu um problema ao remover o professor da unidade curricular!": "Ocorreu um problema ao remover o professor da unidade curricular!",
+        "Guardou o responsável da UC com sucesso!":  "Guardou o responsável da UC com sucesso!",
+        "Ocorreu um erro ao guardar o responsável da UC!": "Ocorreu um erro ao guardar o responsável da UC!",
+        "Selecionar Tipo de avaliação": "Selecionar Tipo de avaliação",
+        "Métodos de avaliação criados com sucesso!": "Métodos de avaliação criados com sucesso!",
+        "Não foi possível criar os métodos de avaliação!":  "Não foi possível criar os métodos de avaliação!",
+        "Existem métodos com mais de 100% na avaliação": "Existem métodos com mais de 100% na avaliação",
+        "Ohh! Não foi possível encontrar metodos para esta Unidade Curricular!": "Ohh! Não foi possível encontrar metodos para esta Unidade Curricular!",
+        "Os seguintes detalhes do Curso precisam da sua atenção:": "Os seguintes detalhes do Curso precisam da sua atenção:",
+        "É necessário configurar os métodos para todas as épocas": "É necessário configurar os métodos para todas as épocas",
+        "É necessário configurar o todos os tipos de avaliação nos métodos": "É necessário configurar o todos os tipos de avaliação nos métodos",
+        "É necessário ter o peso de avaliação em todos os métodos": "É necessário ter o peso de avaliação em todos os métodos",
+        "Tipo de avaliação": "Tipo de avaliação",
+        "Nota mínima": "Nota mínima",
+        "Peso da avaliação": "Peso da avaliação",
+        "Total pesos avaliacao:": "Total pesos avaliacao:",
+        "Adicionar novo método": "Adicionar novo método"
     }
 }
