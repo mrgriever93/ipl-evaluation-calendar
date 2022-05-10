@@ -43,6 +43,7 @@ class CalendarController extends Controller
 
     public function store(NewCalendarRequest $request)
     {
+        //dd($request->interruptions);
         $courses = $request->courses;
         if ($request->is_all_courses) {
             $courses = Course::all();
@@ -62,18 +63,21 @@ class CalendarController extends Controller
                 $newEpoch = new Epoch($epoch);
                 $newEpoch->name = $epochType->name_pt;
                 $newEpoch->epoch_type_id = $epochType->id;
-                $newCalendar->epochs()->save($newEpoch);
 
-                foreach (CourseUnit::where('course_id', $newCalendar->course_id)->get() as $courseUnit) {
-                    foreach ($courseUnit->methods as $method) {
-                        $existingEpochToCopy = $method->epochs()->first();
-                        $isSameEpochType = !is_null($existingEpochToCopy) ? $existingEpochToCopy->epoch_type_id == $newEpoch->epoch_type_id : false;
-                        if ($isSameEpochType) {
-                            $method->epochs()->syncWithoutDetaching($newEpoch);
-                        }
-                    }
-                }
+                // Error creating new Calendar
+                //$newCalendar->epochs()->save($newEpoch);
+                $newEpoch->calendar_id = $newCalendar->id;
+                $newEpoch->save();
 
+                //foreach (CourseUnit::where('course_id', $newCalendar->course_id)->get() as $courseUnit) {
+                //    foreach ($courseUnit->methods as $method) {
+                //        $existingEpochToCopy = $method->epochs()->first();
+                //        $isSameEpochType = !is_null($existingEpochToCopy) ? $existingEpochToCopy->epoch_type_id == $newEpoch->epoch_type_id : false;
+                //        if ($isSameEpochType) {
+                //            $method->epochs()->syncWithoutDetaching($newEpoch);
+                //        }
+                //    }
+                //}
             }
 
             foreach ($request->interruptions as $key => $interruption) {
@@ -86,13 +90,17 @@ class CalendarController extends Controller
                 $newInterruption->save();
             }
 
-            // TODO ja recebemos os feriados que vao haver
-            if ($request->import_holidays) {
-                $yearOfFirstDay = Carbon::parse($newCalendar->firstDayOfSchool())->year;
-                $yearOfLastDay = Carbon::parse($newCalendar->lastDayOfSchool())->year;
-                do {
-                    ExternalImports::importYearHolidays($yearOfFirstDay, $newCalendar->id);
-                } while ($yearOfFirstDay++ < $yearOfLastDay);
+            if ($request->holidays) {
+                foreach ($request->holidays as $key => $holiday) {
+                    $newInterruption = new Interruption();
+                    $newInterruption->start_date            = $holiday['date'];
+                    $newInterruption->end_date              = $holiday['date'];
+                    $newInterruption->description_pt        = $holiday['name'];
+                    $newInterruption->description_en        = $holiday['name'];
+                    $newInterruption->interruption_type_id  = $holiday['interruption_type_id'];//InterruptionType::where('name_pt', InterruptionTypesEnum::HOLIDAYS)->first()->id;
+                    $newInterruption->calendar_id           = $newCalendar->id;
+                    $newInterruption->save();
+                }
             }
         }
 

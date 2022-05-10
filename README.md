@@ -108,24 +108,24 @@ sdfghy
 ---
 
 ### TODO
-- [ ] Mostrar um alerta quando estiver acima de 100% (métodos) para confirmar que quer submeter com mais de 100%;
-- [ ] Guardar nos métodos nem sempre funciona;
-- [ ] Rever Tabs dos Cursos
-  - [ ] Erros na utilização
 - [ ] Rever HTML e detalhe dos Agrupamentos de UC
   - [ ] Traduções
 - [ ] Rework Novo calendario
   - [x] Traduções
   - [ ] Otimizar load de permissões
-  - [ ] Na criação de um novo calendário, os feriados não estão a ser guardados
-- [ ] Adicionar flag nos tipos de interrupções para obrigatórios (Natal e Páscoa);
+  - [ ] validar interrupções obrigatórios (ex: Natal e Páscoa);
+  - [ ] Na criação de um novo calendário, os feriados não são guardados
 - [ ] Rever sync/refresh ano letivo
-- [ ] No curso, qdo pede para rever cenas tipo Coordenador:
-  - [ ]  Dps de preencheres e gravar n atualiza para tirar o erro
-  - [ ]  E mantem o triangulo a dizer q faltam coisas na listagem
 
 
 ---
+- [x] No curso, qdo pede para rever cenas tipo Coordenador:
+    - [x]  Dps de preencheres e gravar n atualiza para tirar o erro
+    - [x]  E mantem o triangulo a dizer q faltam coisas na listagem
+- [x] Mostrar um alerta quando estiver acima de 100% (métodos) para confirmar que quer submeter com mais de 100%;
+- [x] Guardar nos métodos nem sempre funciona;
+- [x] Rever Tabs dos Cursos
+    - [x] Erros na utilização
 - [x] Falta testar a pesquisa do coordenador de curso no detalhe do curso
 - [x] Rever Tabs dos Cursos
     - Comentei botao de adicionar unidades curriculares, talvez trabalho futuro
@@ -144,8 +144,6 @@ sdfghy
 
 
 ### TODO Miguel
-- [ ] Validar dropdown "Grau ensino" detalhe curso
-- [ ] Validar dropdown "semestre" detalhe unidade curricular
 - [ ] Limpeza "Requests Folder"
 
 

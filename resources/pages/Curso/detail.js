@@ -25,6 +25,7 @@ const Detail = () => {
     const [teachers, setTeachers] = useState([]);
     const [coordinatorUser, setCoordinatorUser] = useState(undefined);
     const [searchCoordinator, setSearchCoordinator] = useState(false);
+    const [hasCoordinator, setHasCoordinator] = useState(false);
 
 
     const hasPermissionToEdit = useComponentIfAuthorized([SCOPES.EDIT_COURSES]);
@@ -37,10 +38,13 @@ const Detail = () => {
         axios.get(`/courses/${paramsId}`).then((res) => {
             setLoading(false);
             const {coordinator} = res.data.data;
-            setTeachers((current) => {
-                current.push({key: coordinator?.id, value: coordinator?.id, text: coordinator?.name});
-                return current;
-            });
+            if(coordinator) {
+                setHasCoordinator(true);
+                setTeachers((current) => {
+                    current.push({key: coordinator?.id, value: coordinator?.id, text: coordinator?.name});
+                    return current;
+                });
+            }
             setCourseDetail(res.data.data);
         });
     };
@@ -61,6 +65,8 @@ const Detail = () => {
             coordinator_user_email: coordinatorUser.email,
         }).then((res) => {
             if (res.status === 200) {
+                setCoordinatorUser(undefined);
+                setHasCoordinator(true);
                 toast(t('Guardou o coordenador de curso com sucesso!'), successConfig);
             } else {
                 toast(t('Ocorreu um erro ao guardar o coordenador de curso!'), errorConfig);
@@ -104,11 +110,11 @@ const Detail = () => {
             <div className="margin-bottom-base">
                 <Link to="/curso"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
-            { initialValues && (!initialValues?.coordinator || !initialValues?.initials || !initialValues?.degree_id ) && (
+            { !loading && initialValues && ((!initialValues?.coordinator && !hasCoordinator) || !initialValues?.initials || !initialValues?.degree_id ) && (
                 <Message warning>
                     <Message.Header>{ t('Os seguintes detalhes do Curso precisam da sua atenção:') }</Message.Header>
                     <Message.List>
-                        { !initialValues.coordinator && (
+                        { (!initialValues?.coordinator || !hasCoordinator) && (
                             <Message.Item>{ t('É necessário configurar o docente Coordenador de Curso') }</Message.Item>
                         )}
                         { !initialValues.initials && (
@@ -176,18 +182,17 @@ const Detail = () => {
                                 <Field name="coordinator">
                                     {({input: coordinatorInput}) => (
                                         <Form.Dropdown disabled={loading || !hasPermissionToDefineCoordinator} label={ t("Coordenador do Curso") }
-                                            selectOnBlur={false} options={teachers} selection search loading={searchCoordinator} placeholder={ t("Pesquise o coordenador de curso...") }
-                                            {...coordinatorInput} onSearchChange={_.debounce(handleSearchCoordinator, 400)}
-                                            onChange={(e, {value, options}) => {
-                                                setCoordinatorUser(
-                                                    {
-                                                        email: value,
-                                                        name: options.find((x) => x.value === value).name
-                                                    },
-                                                );
-                                                coordinatorInput.onChange(value);
-                                            }}
-
+                                                       selectOnBlur={false} options={teachers} selection search loading={searchCoordinator} placeholder={ t("Pesquise o coordenador de curso...") }
+                                                       {...coordinatorInput} onSearchChange={_.debounce(handleSearchCoordinator, 400)}
+                                                       onChange={(e, {value, options}) => {
+                                                           setCoordinatorUser(
+                                                               {
+                                                                   email: value,
+                                                                   name: options.find((x) => x.value === value).name
+                                                               },
+                                                           );
+                                                           coordinatorInput.onChange(value);
+                                                       }}
                                         />
                                     )}
                                 </Field>

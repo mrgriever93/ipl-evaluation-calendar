@@ -33,7 +33,7 @@ class CourseController extends Controller
         $utils = new Utils();
         $courseList = Course::with('school')->ofAcademicYear($utils->getCurrentAcademicYear($request));
         if( request('school') ){
-            $courseList->where('school_id', request('semester'));
+            $courseList->where('school_id', request('school'));
         }
         if( request('degree') ){
             $courseList->where('degree', request('degree'));

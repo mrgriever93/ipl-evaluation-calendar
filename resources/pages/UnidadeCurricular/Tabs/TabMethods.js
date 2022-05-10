@@ -62,7 +62,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
     useEffect(() => {
         axios.get('/evaluation-types').then((res) => {
             if (res.status === 200) {
-                res.data.data.unshift({id: '', name: "Selecionar Tipo de avaliação", enabled: true});
+                res.data.data.unshift({id: '', name: t("Selecionar Tipo de avaliação"), enabled: true});
                 setEvaluationTypes(res.data.data);
             }
         });
@@ -111,9 +111,9 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                 setIsSaving(false);
                 //loadMethods();
                 if (res.status === 200) {
-                    toast('Métodos de avaliação criados com sucesso!', successConfig);
+                    toast(t('Métodos de avaliação criados com sucesso!'), successConfig);
                 } else {
-                    toast('Não foi possível criar os métodos de avaliação!', errorConfig);
+                    toast(t('Não foi possível criar os métodos de avaliação!'), errorConfig);
                 }
             });
         }
@@ -195,7 +195,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                     <Segment basic>
                         <Button onClick={onSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} disabled={!formValid}>
                             <Icon name="save"/>
-                            Guardar
+                            { t("Guardar") }
                         </Button>
                     </Segment>
                     {epochs?.map((item, index) => (
@@ -204,9 +204,9 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                             <Table compact celled className={"definition-last"}>
                                 <Table.Header>
                                     <Table.Row>
-                                        <Table.HeaderCell width={5}>Tipo de avaliação</Table.HeaderCell>
-                                        <Table.HeaderCell width={5}>Nota mínima</Table.HeaderCell>
-                                        <Table.HeaderCell width={5}>Peso da avaliação (%)</Table.HeaderCell>
+                                        <Table.HeaderCell width={5}>{ t("Tipo de avaliação") }</Table.HeaderCell>
+                                        <Table.HeaderCell width={5}>{ t("Nota mínima") }</Table.HeaderCell>
+                                        <Table.HeaderCell width={5}>{ t("Peso da avaliação") } (%)</Table.HeaderCell>
                                         <Table.HeaderCell width={1} />
                                     </Table.Row>
                                 </Table.Header>
@@ -214,7 +214,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                     {item.methods?.map((method, methodIndex) => (
                                         <Table.Row key={methodIndex}>
                                             <Table.Cell width={5}>
-                                                <Form.Dropdown placeholder={"Selecionar Tipo de avaliação"} value={method.evaluation_type_id} selection search
+                                                <Form.Dropdown placeholder={t("Selecionar Tipo de avaliação")} fluid value={method.evaluation_type_id} selection search
                                                     options={evaluationTypes.map(({id, name, enabled}) => (enabled ? ({
                                                         key: id,
                                                         value: id,
@@ -245,9 +245,9 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                 <Table.Footer fullWidth>
                                     <Table.Row>
                                         <Table.HeaderCell colSpan='4'>
-                                            Total pesos avaliacao: <Label color={(getEpochValue(index) > 100 ? "red" : (getEpochValue(index) === 100 ? "green" : "yellow"))}>{ (epochs[index].methods || [])?.reduce((a, b) => a + (b?.weight || 0), 0)  }%</Label>
+                                            { t("Total pesos avaliacao:") } <Label color={(getEpochValue(index) > 100 ? "red" : (getEpochValue(index) === 100 ? "green" : "yellow"))}>{ (epochs[index].methods || [])?.reduce((a, b) => a + (b?.weight || 0), 0)  }%</Label>
                                             <Button floated='right' icon labelPosition='left' color={"green"} size='small' onClick={() => {addNewMethod(index, item.id);}}>
-                                                <Icon name='plus' /> Adicionar novo método
+                                                <Icon name='plus' /> { t("Adicionar novo método") }
                                             </Button>
                                         </Table.HeaderCell>
                                     </Table.Row>

@@ -7,7 +7,7 @@ const FilterOptionDegree = ({widthSize, eventHandler, disabled, value, isSearch=
     const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [degreeOptions, setDegreeOptions] = useState([]);
-    const [degree, setDegree] = useState(value);
+    const [degree, setDegree] = useState();
 
     useEffect(() => {
         setLoading(true);
@@ -20,8 +20,11 @@ const FilterOptionDegree = ({widthSize, eventHandler, disabled, value, isSearch=
                 setLoading(false);
             }
         });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        setDegree(value);
+    }, [value]);
 
     const filterByDegree = (e, {value}) => {
         setDegree(value);

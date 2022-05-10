@@ -281,6 +281,39 @@
         "Guardar coordenador": "Save coordinator",
 
         "Mandatório": "Mandatory",
-        "Caso seja mandatório, quando criar um novo calendário, terá de preencher a interrupção": "If mandatory, when creating a new calendar, you will have to fill in the interruption"
+        "Caso seja mandatório, quando criar um novo calendário, terá de preencher a interrupção": "If mandatory, when creating a new calendar, you will have to fill in the interruption",
+
+        "Ramos": "Branches",
+        "Alunos": "Students",
+        "Ramo adicionado com sucesso!": "Ramo adicionado com sucesso!",
+        "Ocorreu um erro ao gravar o ramo!": "Ocorreu um erro ao gravar o ramo!",
+        "Ao eliminar este ramo, todas as UCs deste ramo, terão de ser atualizadas posteriormente!": "Ao eliminar este ramo, todas as UCs deste ramo, terão de ser atualizadas posteriormente!",
+        "Tem a certeza que deseja eliminar este ramo?": "Tem a certeza que deseja eliminar este ramo?",
+        "Ramo eliminado com sucesso!": "Ramo eliminado com sucesso!",
+        "Ocorreu um problema ao eliminar este ramo!": "Ocorreu um problema ao eliminar este ramo!",
+        "Nome do ramo": "Nome do ramo",
+        "Iniciais do ramo": "Iniciais do ramo",
+        "Adicionar ramo":  "Adicionar ramo",
+
+        "Adicionar professor": "Add teacher",
+        "Responsável": "Responsible",
+        "Professor removido com sucesso da unidade curricular!":  "Teacher successfully removed from the curricular unit!",
+        "Ocorreu um problema ao remover o professor da unidade curricular!": "There was a problem removing the teacher from the course!",
+        "Guardou o responsável da UC com sucesso!":  "Saved the UC responsible successfully!",
+        "Ocorreu um erro ao guardar o responsável da UC!": "There was an error saving the UC responsible!",
+        "Selecionar Tipo de avaliação": "Select Assessment Type",
+        "Métodos de avaliação criados com sucesso!": "Assessment methods successfully created!",
+        "Não foi possível criar os métodos de avaliação!":  "Unable to create assessment methods!",
+        "Existem métodos com mais de 100% na avaliação": "There are methods with more than 100% in the evaluation",
+        "Ohh! Não foi possível encontrar metodos para esta Unidade Curricular!": "Ohh! It was not possible to find methods for this Curricular Unit!",
+        "Os seguintes detalhes do Curso precisam da sua atenção:": "The following Course details need your attention:",
+        "É necessário configurar os métodos para todas as épocas": "It is necessary to configure the methods for all epochs",
+        "É necessário configurar o todos os tipos de avaliação nos métodos": "It is necessary to configure all evaluation types in the methods",
+        "É necessário ter o peso de avaliação em todos os métodos": "It is necessary to have the evaluation weight in all methods",
+        "Tipo de avaliação": "Type of assessment",
+        "Nota mínima": "Minimum grade",
+        "Peso da avaliação": "Evaluation weight",
+        "Total pesos avaliacao:": "Total evaluation weights:",
+        "Adicionar novo método": "Add new method"
     }
 }
