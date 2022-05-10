@@ -88,6 +88,30 @@ body {
     pointer-events: none !important; /* to make sure you can't click twice on the same button, while it's loading */
 }
 
+.heading-description {
+    color: #999;
+    font-weight: 400;
+}
+
+.main-content-title-section {
+    align-items: center;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+}
+
+.main-content-title {
+    flex: 4 2;
+}
+
+.main-content-actions {
+    align-items: center;
+    display: flex;
+    flex: 3 1;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+}
+
 /*
  * Margin values
  */

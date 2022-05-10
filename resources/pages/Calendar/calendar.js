@@ -624,7 +624,7 @@ const Calendar = () => {
                                     <Table.Header>
                                         <Table.Row textAlign="center">
                                             <Table.HeaderCell width="2">
-                                                {week}
+                                                Week #{week}
                                             </Table.HeaderCell>
                                             <Table.HeaderCell width="2">
                                                 {t('calendar.2ª Feira')}
