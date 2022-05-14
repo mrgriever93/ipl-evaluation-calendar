@@ -116,6 +116,7 @@ sdfghy
   - [ ] validar interrupções obrigatórios (ex: Natal e Páscoa);
   - [ ] Na criação de um novo calendário, os feriados não são guardados
 - [ ] Rever sync/refresh ano letivo
+- [ ] Rever falta de warning das configs da escola, quando as opções não estão todas preenchidas
 
 
 ---
