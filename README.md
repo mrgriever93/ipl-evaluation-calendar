@@ -77,12 +77,13 @@ sdfghy
 
 13) Links
 
-   https://laravel-mix.com/
-   
-    https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE
+https://laravel-mix.com/
 
-   https://bobbyhadz.com/blog/javascript-remove-object-from-array-by-value
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE
 
+https://bobbyhadz.com/blog/javascript-remove-object-from-array-by-value
+    
+https://github.com/rap2hpoutre/laravel-log-viewer
     
 14) Best practices
 
@@ -92,6 +93,8 @@ sdfghy
 15) Server commands
 
         $> composer install --optimize-autoloader --no-dev
+        $> php artisan config:cache
+        $> php artisan route:cache
 
     compile JS
     

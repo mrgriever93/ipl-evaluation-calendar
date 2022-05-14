@@ -1,3 +1,4 @@
+@import url("stopwatch.css");
 /* ================================================================ */
 /*                   Calendários de Avaliação                       */
 /*      Base Theme                                                  */
@@ -419,3 +420,30 @@ div.inline{
  .ui.menu .item>i.icon:last-child {
      margin-left: var(--space-s);
  }
+
+ /*
+  * Space Invaders
+  */
+.center{text-align:center}
+#space-invaders {
+    width: 100%;
+    margin: 0 auto;
+    display: block;
+    background: white
+}
+.calendar-footer{
+    align-items: center;
+    align-content: center;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    flex-grow: 1;
+    border: none;
+    border-top: 1px solid rgba(34,36,38,.1);
+    background: 0 0;
+    margin: 0;
+    padding: 1em 1em;
+    box-shadow: none;
+    font-size: 1em;
+    border-radius: 0;
+}

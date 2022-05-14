@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {Button, Card, Container, Form, Icon, Message, Step} from 'semantic-ui-react';
-import {Form as FinalForm} from 'react-final-form';
+import {Button, Card, Checkbox, Container, Form, Icon, Message, Popup, Step} from 'semantic-ui-react';
+import {Field, Form as FinalForm} from 'react-final-form';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -40,6 +40,7 @@ const formInitialValues = {
     },
     step2: {
         interruptions: {},
+        noInterruptions: false,
     },
     step3: {
         allCourses: true,
@@ -66,12 +67,9 @@ const NewCalendar = () => {
     const [completedSteps, setCompletedSteps] = useState([]);
     const [errorMessages, setErrorMessages] = useState([]);
     // step 2
-    const [firstYear, setFirstYear] = useState(0);
-    const [lastYear, setLastYear] = useState(0);
     const [initialDate, setInitialDate] = useState(0);
     const [finalDate, setFinalDate] = useState(0);
     const [holidaysList, setHolidaysList] = useState([]);
-
 
     const addCourse = (course) => {
         setCourses([...courses, {...course}]);
@@ -90,30 +88,27 @@ const NewCalendar = () => {
         let hasAllDates = true;
         if(hasEpochs) {
             const keys = Object.keys(values.seasons);
-            let initialYear = 0;
-            let finalYear = 0;
             let initialDate = 0;
             let finalDate = 0;
+            // get lower and higher dates
             keys.forEach((key, index) => {
                 if(!values.seasons[key].hasOwnProperty("start_date") || !values.seasons[key].hasOwnProperty("end_date")){
                     hasAllDates = false;
                 } else {
+                    // create date from  different format
                     let startDate = (values.seasons[key].start_date).split("-");
-                    let compStartDate = new Date(startDate[2], startDate[1], startDate[0]);
-                    if(initialYear > compStartDate.getFullYear() || initialYear === 0) {
-                        initialYear = compStartDate.getFullYear();
+                    let compStartDate = new Date(startDate[2] + "-" + startDate[1] + "-" + startDate[0]);
+                    // check if year is lower than the current one
+                    if(initialDate > compStartDate || initialDate === 0) {
                         initialDate = compStartDate;
                     }
                     let endDate = (values.seasons[key].end_date).split("-");
-                    let compEndDate = new Date(endDate[2], endDate[1], endDate[0]);
-                    if(finalYear < compEndDate.getFullYear() || finalYear === 0) {
-                        finalYear = compEndDate.getFullYear();
+                    let compEndDate = new Date(endDate[2] + "-" + endDate[1] + "-" + endDate[0]);
+                    if(finalDate < compEndDate || finalDate === 0) {
                         finalDate = compEndDate;
                     }
                 }
             });
-            setFirstYear(initialYear);
-            setLastYear(finalYear);
             setInitialDate(initialDate);
             setFinalDate(finalDate);
         }
@@ -140,6 +135,11 @@ const NewCalendar = () => {
 
     const validateStep2 = (values) => {
         let isValid = false;
+        // validate if the no interruptions was clicked, and go to next phase
+        if(values.hasOwnProperty("noInterruptions") && values.noInterruptions){
+            setErrorMessages([]);
+            return true;
+        }
         const hasInterruptions = values.hasOwnProperty("additional_interruptions") && values.additional_interruptions && values.additional_interruptions.length > 0;
         let hasAllDates = true;
         let hasAllInterruptionsTypes = true;
@@ -303,7 +303,9 @@ const NewCalendar = () => {
                                     <Message.Header>{ t('Os seguintes detalhes do Curso precisam da sua atenção:') }</Message.Header>
                                     <Message.List>
                                         { errorMessages.map((message, index) => (
-                                            <Message.Item key={index}>{ t(message) }</Message.Item>
+                                            <Message.Item key={index}>
+                                                { t(message) }
+                                            </Message.Item>
                                         ))}
                                     </Message.List>
                                 </Message>
@@ -315,38 +317,50 @@ const NewCalendar = () => {
                                     <Step1 activeSemester={activeSemester} setActiveSemester={setActiveSemester} />
                                 </div>
                                 <div className={currentStep === 2 ? "display-block" : "display-none"}>
-                                    <Step2 holidays={getHolidays} firstYear={firstYear} lastYear={lastYear} finalDate={finalDate} initialDate={initialDate} isActive={currentStep === 2} additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} />
+                                    <Step2 holidays={getHolidays} finalDate={finalDate} initialDate={initialDate} isActive={currentStep === 2} additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} />
                                 </div>
                                 <div className={currentStep === 3 ? "display-block" : "display-none"}>
                                     <Step3 allCourses={allCourses} setAllCourses={setAllCourses} courses={courses} removeCourse={removeCourse} addCourse={addCourse} loading={loading} setLoading={setLoading}/>
                                 </div>
                             </Form>
                         </Card.Content>
-                        <Card.Content extra>
-                            {currentStep === 2 && (
-                                <Button icon labelPosition="left" color="teal" floated="left" onClick={addNewInterruption}>
-                                    Adicionar interrupção
-                                    <Icon name="plus"/>
-                                </Button>
-                            )}
-                            {currentStep === 3 && (
-                                <Button icon labelPosition="left" color="blue" floated="right" loading={isSaving} onClick={handleSubmit}>
-                                    Criar Calendário
-                                    <Icon name="send"/>
-                                </Button>
-                            )}
-                            {currentStep < 3 && (
-                                <Button icon labelPosition="right" color="green" floated="right" onClick={() => nextStep(currentStep + 1, values)}>
-                                    Seguinte <Icon name="right arrow"/>
-                                </Button>
-                            )}
-                            {currentStep > 1 && (
-                                <Button icon labelPosition="left" color="green" floated="right" onClick={() => setCurrentStep(currentStep - 1)}>
-                                    Anterior
-                                    <Icon name="left arrow"/>
-                                </Button>
-                            )}
-                        </Card.Content>
+                        <Card.Meta className={"calendar-footer"}>
+                            <div>
+                                {currentStep === 2 && (
+                                    <>
+                                        <Button icon labelPosition="left" color="teal" disabled={values.step2.noInterruptions} onClick={addNewInterruption}>
+                                            Adicionar interrupção
+                                            <Icon name="plus"/>
+                                        </Button>
+                                        <Field name="step2.noInterruptions" type="checkbox">
+                                            {({ input: noInterruptions }) => (
+                                                <Checkbox label={t('Sem Interrupções')} toggle checked={noInterruptions.checked} onClick={() => noInterruptions.onChange( !noInterruptions.checked) } />
+                                            )}
+                                        </Field>
+                                        <Popup content={<>Este calendário não terá interrupções, por isso não precisam de ser adicionadas.<br/><br/>As interrupções já adicionadas irão ser criadas na mesma. Caso não pretenda criar, apague-as.</>} header={"Sem Interrupções"} trigger={<Icon name={"info circle"} />}/>
+                                    </>
+                                )}
+                            </div>
+                            <div>
+                                {currentStep > 1 && (
+                                    <Button icon labelPosition="left" color="green" onClick={() => setCurrentStep(currentStep - 1)}>
+                                        Anterior
+                                        <Icon name="left arrow"/>
+                                    </Button>
+                                )}
+                                {currentStep < 3 && (
+                                    <Button icon labelPosition="right" color="green" onClick={() => nextStep(currentStep + 1, values)}>
+                                        Seguinte <Icon name="right arrow"/>
+                                    </Button>
+                                )}
+                                {currentStep === 3 && (
+                                    <Button icon labelPosition="left" color="blue" loading={isSaving} onClick={handleSubmit}>
+                                        Criar Calendário
+                                        <Icon name="send"/>
+                                    </Button>
+                                )}
+                            </div>
+                        </Card.Meta>
                     </Card>
                 </div>
             )} />

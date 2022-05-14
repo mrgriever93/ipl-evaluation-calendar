@@ -181,6 +181,7 @@ return [
          * Customer Service Providers...
          */
         App\Providers\CustomValidatorServiceProvider::class,
+        Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
     ],
 
     /*

@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {DateInput} from 'semantic-ui-calendar-react-yz';
-import {Container, Card, Form, Button, Icon, Checkbox, Table} from 'semantic-ui-react';
+import {Container, Card, Form, Button, Icon, Table} from 'semantic-ui-react';
 import {Field} from 'react-final-form';
 import axios from "axios";
 
-const Step2 = ({isActive, firstYear, lastYear, initialDate, finalDate, additionalInterruptions, setAdditionalInterruptions, holidays}) => {
+const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAdditionalInterruptions, holidays}) => {
     const [interruptionTypes, setInterruptionTypes] = useState([]);
     const [holidaysList, setHolidaysList] = useState([]);
+    const [firstYear, setFirstYear] = useState(0);
+    const [lastYear, setLastYear] = useState(0);
 
     const importHolidays = () => {
         axios.get('/new-calendar/interruptions?first_year=' + firstYear + "&last_year=" + lastYear).then((response) => {
@@ -23,10 +25,31 @@ const Step2 = ({isActive, firstYear, lastYear, initialDate, finalDate, additiona
         });
     }
 
+    // First it will get the years -> 1
+    useEffect(() => {
+        if(initialDate !== 0 && finalDate !== 0) {
+            setFirstYear(initialDate.getFullYear());
+            setLastYear(finalDate.getFullYear());
+        }
+    }, [initialDate, finalDate]);
+
+    // Secondly will get the holidays -> 2
+    useEffect(() => {
+        if(isActive && additionalInterruptions.length === 0) {
+            // making sure the values are not empty to then call the action with the dates
+            if(firstYear !== 0 && lastYear !== 0) {
+                importHolidays();
+            }
+        }
+    }, [firstYear, lastYear, isActive]);
+
+    // This will update the PARENT component that
+    // the holidays where updated
     useEffect(() => {
         holidays(holidaysList);
     }, [holidaysList]);
 
+    // This will get the type of interruptions
     useEffect(() => {
         axios.get('/interruption-types').then((response) => {
             if (response.status === 200) {
@@ -40,12 +63,8 @@ const Step2 = ({isActive, firstYear, lastYear, initialDate, finalDate, additiona
         });
     }, []);
 
-    useEffect(() => {
-        if(isActive && additionalInterruptions.length === 0) {
-            importHolidays();
-        }
-    }, [firstYear, lastYear, isActive]);
-
+    // Options to create the date on the list
+    // -> new Date(item.date).toLocaleDateString(lang, options) <-
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const lang = (localStorage.getItem('language') === "en" ? "en-US" : "pt-PT");
 
@@ -56,8 +75,7 @@ const Step2 = ({isActive, firstYear, lastYear, initialDate, finalDate, additiona
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell width={5}>Feriado</Table.HeaderCell>
-                            <Table.HeaderCell width={5}>Data Inicio</Table.HeaderCell>
-                            <Table.HeaderCell width={5}>Data Fim</Table.HeaderCell>
+                            <Table.HeaderCell width={10} textAlign={"center"}>Data do Feriado</Table.HeaderCell>
                             <Table.HeaderCell width={1} />
                         </Table.Row>
                     </Table.Header>
@@ -67,7 +85,7 @@ const Step2 = ({isActive, firstYear, lastYear, initialDate, finalDate, additiona
                                 <Table.Cell width={5}>
                                     { item.name }
                                 </Table.Cell>
-                                <Table.Cell width={5} colSpan='2' textAlign={"center"}>
+                                <Table.Cell width={10} textAlign={"center"}>
                                     { new Date(item.date).toLocaleDateString(lang, options) }
                                 </Table.Cell>
                                 <Table.Cell width={5}>
@@ -81,6 +99,29 @@ const Step2 = ({isActive, firstYear, lastYear, initialDate, finalDate, additiona
                                 </Table.Cell>
                             </Table.Row>
                         ))}
+                    </Table.Body>
+
+                    <Table.Footer fullWidth>
+                        <Table.Row>
+                            <Table.HeaderCell colSpan='4'>
+                                <Button icon labelPosition='right' color={"green"} size='small' onClick={importHolidays}>
+                                    <Icon name='calendar' /> Importar Feriados
+                                </Button>
+                            </Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Footer>
+                </Table>
+
+                <Table compact celled className={"definition-last"}>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell width={5}>Feriado</Table.HeaderCell>
+                            <Table.HeaderCell width={5}>Data Inicio</Table.HeaderCell>
+                            <Table.HeaderCell width={5}>Data Fim</Table.HeaderCell>
+                            <Table.HeaderCell width={1} />
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
                         {additionalInterruptions.map((_, index) => (
                             <Field name={`step2.additional_interruptions.${index}.start_date`} key={'step2_field_' + index} >
                                 {({input: startDateInput}) => (
@@ -121,16 +162,6 @@ const Step2 = ({isActive, firstYear, lastYear, initialDate, finalDate, additiona
                             </Field>
                         ))}
                     </Table.Body>
-
-                    <Table.Footer fullWidth>
-                        <Table.Row>
-                            <Table.HeaderCell colSpan='4'>
-                                <Button icon labelPosition='right' color={"green"} size='small' onClick={importHolidays}>
-                                    <Icon name='calendar' /> Importar Feriados
-                                </Button>
-                            </Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Footer>
                 </Table>
             </Card.Content>
         </Container>

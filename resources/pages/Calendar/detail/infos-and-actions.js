@@ -1,15 +1,13 @@
 import axios from 'axios';
-import _ from 'lodash';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import { useParams, useNavigate} from "react-router-dom";
 import { useTranslation} from "react-i18next";
-import { Card, Button, Sticky, Grid, Header, Icon, List, Modal, Dropdown, GridColumn} from 'semantic-ui-react';
+import { Card, Button, Sticky, Grid, Header, List, GridColumn} from 'semantic-ui-react';
 import { toast} from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
-import PageLoader from '../../../components/PageLoader';
 import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
 import SCOPES from '../../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
@@ -29,15 +27,7 @@ const InfosAndActions = () => {
     const [generalInfo, setGeneralInfo] = useState();
     const [differences, setDifferences] = useState();
     const [isLoading, setIsLoading] = useState(true);
-    const [modalInfo, setModalInfo] = useState({});
     const [activeIndex, setActiveIndex] = useState(undefined);
-    const [loadInterruptionTypes, setLoadInterruptionTypes] = useState(false);
-    const [examInfoModal, setExamInfoModal] = useState({});
-    const [openExamModal, setOpenExamModal] = useState(false);
-    const [loadRemainingCourseUnits, setLoadRemainingCourseUnits] = useState(false);
-    const [selectedEpoch, setSelectedEpoch] = useState();
-    const [courseUnits, setCourseUnits] = useState(undefined);
-    const [methodList, setMethodList] = useState(undefined);
     const [calendarPhases, setCalendarPhases] = useState([]);
     const [examList, setExamList] = useState([]);
     const [publishLoading, setPublishLoading] = useState(false);
@@ -47,14 +37,7 @@ const InfosAndActions = () => {
     const [isPublished, setIsPublished] = useState(false);
     const [calendarPhase, setCalendarPhase] = useState(true);
     const [updatingCalendarPhase, setUpdatingCalendarPhase] = useState(false);
-    const [removingExam, setRemovingExam] = useState(undefined);
-    const [changeData, setChangeData] = useState(false);
-    const [savingExam, setSavingExam] = useState(false);
-    const [viewExamInformation, setViewExamInformation] = useState(false);
-    const [showIgnoredComments, setShowIgnoredComments] = useState(false);
-    const [commentText, setCommentText] = useState(undefined);
     const [previousFromDefinitive, setPreviousFromDefinitive] = useState(false);
-    const [noMethods, setNoMethods] = useState(false);
 
 
      const calendarId = paramsId;
@@ -145,13 +128,13 @@ const InfosAndActions = () => {
         }
     }, [calendarPhase]);
 
-        
+
     const handleFaqClick = (e, titleProps) => {
         const {index} = titleProps;
         const newIndex = activeIndex === index ? -1 : index;
         setActiveIndex(newIndex);
     };
-    
+
     useEffect(() => {
         loadCalendar(calendarId);
     }, [calendarId, history]);
@@ -201,7 +184,6 @@ const InfosAndActions = () => {
     const createCopy = () => {
         SweetAlertComponent.fire({
             title: 'Atenção!',
-
             html: 'Ao criar uma cópia deste calendário, irá eliminar todas as cópias criadas anteriormente deste mesmo calendário!<br/><br/><strong>Tem a certeza que deseja criar uma cópia do calendário?</strong>',
             denyButtonText: 'Não',
             confirmButtonText: 'Sim',
@@ -209,8 +191,7 @@ const InfosAndActions = () => {
             showDenyButton: true,
             confirmButtonColor: '#21ba45',
             denyButtonColor: '#db2828',
-        })
-            .then((result) => {
+        }).then((result) => {
                 if (result.isConfirmed) {
                     setCreatingCopy(true);
                     axios.post(`/calendar/${calendarId}/publish`, {
@@ -263,11 +244,11 @@ const InfosAndActions = () => {
                     <Card fluid >
                         <Card.Content>
                             <Grid columns={4} divided>
-                                <GridColumn>                                
+                                <GridColumn>
                                     <Header as="h4">Épocas</Header>
                                     <List divided relaxed>
-                                        {epochsList.map((epoch) => (
-                                            <List.Item>
+                                        {epochsList.map((epoch, index) => (
+                                            <List.Item key={index}>
                                                 <List.Icon name="calendar alternate" size="large" verticalAlign="middle"/>
                                                 <List.Content>
                                                     <List.Header>{epoch.name}</List.Header>
@@ -308,7 +289,7 @@ const InfosAndActions = () => {
                                                     <span>{calendarPhases.find((x) => x.key === calendarPhase)?.text || generalInfo?.phase?.description}</span>
                                                 </ShowComponentIfAuthorized>
                                             )
-                                        } */}                                
+                                        } */}
                                         <Header as="h5">Fase:</Header>
                                         <span>{calendarPhases.find((x) => x.key === calendarPhase)?.text || generalInfo?.phase?.description}</span>
                                     </GridColumn>

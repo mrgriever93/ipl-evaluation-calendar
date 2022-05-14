@@ -44,6 +44,9 @@ const AnoLetivo = lazy(() => import('./pages/AnoLetivo'));
     //Escola Pages
 const EscolaNew = lazy(() => import('./pages/Escola/new'));
 const EscolaList = lazy(() => import('./pages/Escola/list'));
+//404 pages
+const SpaceInvaders = lazy(() => import('./pages/404/SpaceInvaders'));
+const StopWatch = lazy(() => import('./pages/404/Stopwatch'));
 
 //auth and roles
 import {useComponentIfAuthorized} from "./components/ShowComponentIfAuthorized";
@@ -69,6 +72,34 @@ const isAuthorized = useComponentIfAuthorized([
 ], true);
 
 const RouterList = (isLoggedIn) => {
+    function weightedSample(pairs) {
+        const n = Math.random() * 100;
+        const match = pairs.find(({value, probability}) => n <= probability);
+        return match ? match.value : last(pairs).value;
+    }
+
+    function last(array) {
+        return array[array.length - 1];
+    }
+    const pages = [
+        {value: 'invaders', probability: 0},
+        {value: 'watch', probability: 5},
+        {value: 'normal', probability: 95}
+    ];
+    const get404Page = () => {
+        const result = weightedSample(pages);
+        if(result === 'normal') {
+            return <NotFoundPage />;
+        }
+        if(result === 'watch') {
+            return <StopWatch />;
+        }
+        if(result === 'invaders') {
+            return <SpaceInvaders />;
+        }
+        return <NotFoundPage />;
+    }
+
     return useRoutes([
         {
             element: isLoggedIn ? <Layout /> : <Navigate to="/no-permissions" />,
@@ -183,7 +214,7 @@ const RouterList = (isLoggedIn) => {
         { path: "/login", element: <Login /> },
         { path: "/404", element: <NotFoundPage /> },
         { path: "/no-permissions", element: <NoPermissionsPage /> },
-        { path: "*", element: <NotFoundPage /> },
+        { path: "*", element: get404Page() },
     ]);
 }
 

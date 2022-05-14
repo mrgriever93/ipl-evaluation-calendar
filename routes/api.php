@@ -40,21 +40,6 @@ Route::get('/version', function () {
     return 'v2';
 });
 
-
-Route::get('/initials', function () {
-    $courses = Course::all();
-    foreach ($courses as $course){
-        $course_initials = preg_match_all("/[A-Z]/", $course->name_pt, $matches, PREG_SET_ORDER, 0);
-        $test = "";
-        for ($i = 0; $i < $course_initials; $i++) {
-            $test .= implode("", $matches[$i]);
-        }
-        $course->initials = $test;
-        $course->save();
-    }
-});
-
-
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
