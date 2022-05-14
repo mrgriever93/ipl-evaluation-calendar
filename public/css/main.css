@@ -114,6 +114,29 @@ body {
     justify-content: flex-end;
 }
 
+/* Cursos readonly */
+.ui.form .field.input-readonly.disabled,
+.ui.form .field.input-readonly.disabled > label,
+.ui.form .field.input-readonly.disabled .ui.disabled.input {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.ui.form .field.input-readonly .ui.input input,
+.ui.form .field.input-readonly .dropdown.disabled {
+    background: #f9f9f9;
+    border: 1px solid rgba(34,36,38, .05);
+    cursor: not-allowed;
+    opacity: 1;
+    pointer-events: all;
+}
+
+.ui.form .field.input-readonly .dropdown.disabled .dropdown.icon.clear {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+}
+
 /*
  * Margin values
  */
