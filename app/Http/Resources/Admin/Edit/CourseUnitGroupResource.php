@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Admin\Edit;
 
 use App\Http\Resources\Generic\CourseUnitResource;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -11,7 +11,8 @@ class CourseUnitGroupResource extends JsonResource
     {
         return [
             'id'  => $this->id,
-            'description' => $this->description,
+            'description_pt' => $this->description_pt,
+            'description_en' => $this->description_en,
             'course_units' => CourseUnitResource::collection($this->whenLoaded('courseUnits')),
             'num_course_units' => count($this->courseUnits),
         ];
