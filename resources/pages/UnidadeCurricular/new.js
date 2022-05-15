@@ -102,7 +102,7 @@ const New = () => {
                             <Form.Group widths="3">
                                 <Field name="code">
                                     {({input: codeInput}) => (
-                                        <Form.Input label={t("Código")} placeholder={t("Código")} {...codeInput} />
+                                        <Form.Input className='input-readonly' disabled={isEditMode} label={t("Código")} placeholder={t("Código")} {...codeInput} />
                                     )}
                                 </Field>
                                 <Field name="initials">
@@ -115,7 +115,7 @@ const New = () => {
                             <Form.Group widths="equal">
                                 <Field name="name_pt">
                                     {({input: namePtInput}) => (
-                                        <Form.Input label={t("Nome PT")} placeholder={t("Nome PT")} {...namePtInput} />
+                                        <Form.Input className='input-readonly' disabled={isEditMode} label={t("Nome PT")} placeholder={t("Nome PT")} {...namePtInput} />
                                     )}
                                 </Field>
                                 <Field name="name_en">
@@ -127,12 +127,12 @@ const New = () => {
                             <Form.Group widths="3">
                                 <Field name="curricularYear">
                                     {({input: curricularYearInput}) => (
-                                        <Form.Input label={t("Ano curricular")} placeholder={t("Ano curricular")} {...curricularYearInput} />
+                                        <Form.Input className='input-readonly' disabled={isEditMode } label={t("Ano curricular")} placeholder={t("Ano curricular")} {...curricularYearInput} />
                                     )}
                                 </Field>
                                 <Field name="semester">
                                     {({input: semesterInput}) => (
-                                        <Semesters eventHandler={(value) => {semesterInput.onChange(value);}} value={semesterInput.value} isSearch={false}/>
+                                        <Semesters className='input-readonly' disabled={isEditMode } eventHandler={(value) => {semesterInput.onChange(value);}} value={semesterInput.value} isSearch={false}/>
                                     )}
                                 </Field>
                                 <Field name="branch">

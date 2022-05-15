@@ -3,8 +3,11 @@ import {DateInput} from 'semantic-ui-calendar-react-yz';
 import {Container, Card, Form, Button, Icon, Table} from 'semantic-ui-react';
 import {Field} from 'react-final-form';
 import axios from "axios";
+import {useTranslation} from "react-i18next";
 
 const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAdditionalInterruptions, holidays}) => {
+    const { t } = useTranslation();
+
     const [interruptionTypes, setInterruptionTypes] = useState([]);
     const [holidaysList, setHolidaysList] = useState([]);
     const [firstYear, setFirstYear] = useState(0);
@@ -71,24 +74,20 @@ const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAd
     return (
         <Container>
             <Card.Content>
-                <Table compact celled className={"definition-last"}>
+                <Table compact celled>
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell width={5}>Feriado</Table.HeaderCell>
-                            <Table.HeaderCell width={10} textAlign={"center"}>Data do Feriado</Table.HeaderCell>
+                            <Table.HeaderCell width={6}>{t("Feriado")}</Table.HeaderCell>
+                            <Table.HeaderCell width={9} textAlign={"center"} >{t("Data do Feriado")}</Table.HeaderCell>
                             <Table.HeaderCell width={1} />
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
                         { holidaysList.map((item, index) => (
                             <Table.Row key={index} active>
-                                <Table.Cell width={5}>
-                                    { item.name }
-                                </Table.Cell>
-                                <Table.Cell width={10} textAlign={"center"}>
-                                    { new Date(item.date).toLocaleDateString(lang, options) }
-                                </Table.Cell>
-                                <Table.Cell width={5}>
+                                <Table.Cell>{ item.name }</Table.Cell>
+                                <Table.Cell textAlign={"center"}>{ new Date(item.date).toLocaleDateString(lang, options) }</Table.Cell>
+                                <Table.Cell textAlign={"center"}>
                                     <Button onClick={() => setHolidaysList((current) => {
                                         const copy = [...current];
                                         copy.splice(index, 1);
@@ -105,7 +104,7 @@ const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAd
                         <Table.Row>
                             <Table.HeaderCell colSpan='4'>
                                 <Button icon labelPosition='right' color={"green"} size='small' onClick={importHolidays}>
-                                    <Icon name='calendar' /> Importar Feriados
+                                    <Icon name='calendar' /> {t("Importar Feriados")}
                                 </Button>
                             </Table.HeaderCell>
                         </Table.Row>
@@ -115,9 +114,9 @@ const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAd
                 <Table compact celled className={"definition-last"}>
                     <Table.Header>
                         <Table.Row>
-                            <Table.HeaderCell width={5}>Feriado</Table.HeaderCell>
-                            <Table.HeaderCell width={5}>Data Inicio</Table.HeaderCell>
-                            <Table.HeaderCell width={5}>Data Fim</Table.HeaderCell>
+                            <Table.HeaderCell width={5}>{t("Tipo de Interrupção")}</Table.HeaderCell>
+                            <Table.HeaderCell width={5}>{t("Data de Início")}</Table.HeaderCell>
+                            <Table.HeaderCell width={5}>{t("Data de Fim")}</Table.HeaderCell>
                             <Table.HeaderCell width={1} />
                         </Table.Row>
                     </Table.Header>
@@ -132,16 +131,16 @@ const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAd
                                                     <Table.Row key={index}>
                                                         <Table.Cell width={5}>
                                                             {_.name}
-                                                            <Form.Dropdown value={_.interruption_type_id} selectOnBlur={false} clearable={true} placeholder="Tipo de interrupção" label="Tipo de interrupção" selection search options={interruptionTypes} onChange={(e, {value}) => interruptionTypeInput.onChange(value)}/>
+                                                            <Form.Dropdown value={_.interruption_type_id} selectOnBlur={false} clearable={true} placeholder={t("Tipo de Interrupção")} selection search options={interruptionTypes} onChange={(e, {value}) => interruptionTypeInput.onChange(value)}/>
                                                         </Table.Cell>
                                                         <Table.Cell width={5}>
                                                             <Form.Field>
-                                                                <DateInput name="date" value={startDateInput.value} iconPosition="left" closable label="Data de Ínicio" placeholder="Data de Ínicio" onChange={(evt, {value}) => {startDateInput.onChange(value);}}/>
+                                                                <DateInput name="date" value={startDateInput.value} iconPosition="left" closable placeholder={t("Data de Início")} onChange={(evt, {value}) => {startDateInput.onChange(value);}}/>
                                                             </Form.Field>
                                                         </Table.Cell>
                                                         <Table.Cell width={5}>
                                                             <Form.Field>
-                                                                <DateInput name="date" value={endDateInput.value} iconPosition="left" closable label="Data de Fim" minDate={startDateInput.value}  placeholder="Data de Fim" {...endDateInput} onChange={(evt, {value}) => {endDateInput.onChange(value);}}/>
+                                                                <DateInput name="date" value={endDateInput.value} iconPosition="left" closable placeholder={t("Data de Fim")} minDate={startDateInput.value} {...endDateInput} onChange={(evt, {value}) => {endDateInput.onChange(value);}}/>
                                                             </Form.Field>
                                                         </Table.Cell>
                                                         <Table.Cell width={5}>
