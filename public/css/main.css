@@ -343,6 +343,33 @@ body {
     height: 40px;
 }
 
+/* Calendar > Legend List Item */
+.legend-list-item {
+    align-items: center;
+    display: flex;
+    position: relative;
+    width: 100%;
+}
+
+.legend-list-item:not(:first-child) {
+    margin-top: var(--space-s);
+    /* border-top: 1px solid #eee;    
+    padding-top: var(--space-s); */
+}
+
+.legend-list-item-square {
+    border: 1px solid #ccc;
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+    margin: var(--space-none) var(--space-s) var(--space-none) var(--space-none);
+}
+
+.legend-list-item-content {
+    position: relative;
+    font-size: 12px;
+}
+
 /* Other stuff */
 
 .card-header-alignment {
@@ -420,6 +447,7 @@ div.inline{
  .ui.menu .item>i.icon:last-child {
      margin-left: var(--space-s);
  }
+
 
  /*
   * Space Invaders

@@ -417,6 +417,11 @@ const Calendar = () => {
                         if (foundMultipleDaysWithSameInterruption?.length) {
                             foundMultipleDaysWithSameInterruption[0].interruptionDays = foundMultipleDaysWithSameInterruption.length;
                         }
+
+                        week.epoch = {
+                            name: curr.name,
+                            color: curr.name === "Época Periódica" ? '#ecfff0' : curr.name === "Época Normal" ? '#f5e6da' : '#f9dddd',
+                        };
                     }
 
                     start_date.add(1, 'days');
@@ -617,34 +622,20 @@ const Calendar = () => {
             <Grid stackable>
                 <Grid.Row>
                     <Grid.Column width="16">
-                        {weekData.map(({week, year, days}, tableIndex) => {
+                        {weekData.map(({week, year, days, epoch}, tableIndex) => {
                             interruptionDays = 0;
                             alreadyAddedColSpan = false;
                             return (
                                 <Table key={tableIndex} celled style={{userSelect: 'none'}}>
                                     <Table.Header>
                                         <Table.Row textAlign="center">
-                                            <Table.HeaderCell width="2">
-                                                Week #{week}
-                                            </Table.HeaderCell>
-                                            <Table.HeaderCell width="2">
-                                                {t('calendar.2ª Feira')}
-                                            </Table.HeaderCell>
-                                            <Table.HeaderCell width="2">
-                                                {t('calendar.3ª Feira')}
-                                            </Table.HeaderCell>
-                                            <Table.HeaderCell width="2">
-                                                {t('calendar.4ª Feira')}
-                                            </Table.HeaderCell>
-                                            <Table.HeaderCell width="2">
-                                                {t('calendar.5ª Feira')}
-                                            </Table.HeaderCell>
-                                            <Table.HeaderCell width="2">
-                                                {t('calendar.6ª Feira')}
-                                            </Table.HeaderCell>
-                                            <Table.HeaderCell width="2">
-                                                {t('calendar.Sábado')}
-                                            </Table.HeaderCell>
+                                            <Table.HeaderCell width="2">Week #{week}</Table.HeaderCell>
+                                            <Table.HeaderCell width="2">{t('calendar.2ª Feira')}</Table.HeaderCell>
+                                            <Table.HeaderCell width="2">{t('calendar.3ª Feira')}</Table.HeaderCell>
+                                            <Table.HeaderCell width="2">{t('calendar.4ª Feira')}</Table.HeaderCell>
+                                            <Table.HeaderCell width="2">{t('calendar.5ª Feira')}</Table.HeaderCell>
+                                            <Table.HeaderCell width="2">{t('calendar.6ª Feira')}</Table.HeaderCell>
+                                            <Table.HeaderCell width="2">{t('calendar.Sábado')}</Table.HeaderCell>
                                         </Table.Row>
                                         <Table.Row>
                                             <Table.HeaderCell textAlign="center">
@@ -696,14 +687,17 @@ const Calendar = () => {
                                                                 if ((year === 1 && !day?.date) || isInterruption) {
                                                                     if (!isInterruption && (weekDay === 1 || (lastDayAvailable.day() < 6 && !alreadyAddedColSpan))) {
                                                                         alreadyAddedColSpan = true;
-                                                                        return (<Table.Cell key={weekDayIndex} colSpan={isInterruption && lastDayAvailable.day() < 6 ? 6 - lastDayAvailable.day() : firstDayAvailable.day() - 1} rowSpan={courseYears.length}/>);
+                                                                        return (<Table.Cell 
+                                                                            key={weekDayIndex} 
+                                                                            colSpan={isInterruption && lastDayAvailable.day() < 6 ? 6 - lastDayAvailable.day() : firstDayAvailable.day() - 1} 
+                                                                            rowSpan={courseYears.length}/>);
                                                                     }
                                                                     if (!alreadyAddedColSpan || (isInterruption && courseIndex === 0)) {
                                                                         alreadyAddedRowSpan = true;
                                                                         return (
                                                                             <Table.Cell key={weekDayIndex} 
                                                                                 textAlign="center"
-                                                                                style={isInterruption ? {backgroundColor: '#c9c9c9', fontWeight: 'bold'} : null}
+                                                                                style={isInterruption ? {backgroundColor: '#c9c9c9', fontWeight: 'bold'} : null  }
                                                                                 rowSpan={courseYears.length}
                                                                                 colSpan={isInterruption ? day?.interruptionDays : null}
                                                                             >
@@ -760,7 +754,11 @@ const Calendar = () => {
                                                                         );
                                                                     }
                                                                     return (
-                                                                        <Table.Cell key={weekDayIndex}  textAlign="center" onContextMenu={(e,) => {
+                                                                        <Table.Cell 
+                                                                            key={weekDayIndex}
+                                                                            style={ {backgroundColor: epoch.color} }
+                                                                            textAlign="center" 
+                                                                            onContextMenu={(e,) => {
                                                                                 e.preventDefault();
                                                                                 if (!isPublished && existingExamsAtThisDate?.length === 0 && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) {
                                                                                     setModalInfo({start_date: day.date});

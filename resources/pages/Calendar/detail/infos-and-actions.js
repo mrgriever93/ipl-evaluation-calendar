@@ -245,23 +245,26 @@ const InfosAndActions = () => {
                         <Card.Content>
                             <Grid columns={4} divided>
                                 <GridColumn>
-                                    <Header as="h4">Épocas</Header>
+                                    <Header as="h4">Legenda</Header>
                                     <List divided relaxed>
                                         {epochsList.map((epoch, index) => (
-                                            <List.Item key={index}>
-                                                <List.Icon name="calendar alternate" size="large" verticalAlign="middle"/>
-                                                <List.Content>
-                                                    <List.Header>{epoch.name}</List.Header>
-                                                    <List.Description>
-                                                        <b>Ínicio:</b>
-                                                        {' '}{moment(epoch.start_date).format('DD MMMM, YYYY')}
-                                                    </List.Description>
-                                                    <List.Description>
-                                                        <b>Fim:</b>
-                                                        {' '}{moment(epoch.end_date).format('DD MMMM, YYYY')}
-                                                    </List.Description>
-                                                </List.Content>
-                                            </List.Item>
+                                            <div className='legend-list-item' key={index}>
+                                                <div className='legend-list-item-square' style={ { backgroundColor: epoch.name === "Época Periódica" ? '#ecfff0' : epoch.name === "Época Normal" ? '#f5e6da' : '#f9dddd' } }></div>
+                                                <div className='legend-list-item-content'>
+                                                    {epoch.name}
+                                                    {/* <List.Content>
+                                                        <List.Header>{epoch.name}</List.Header>
+                                                        <List.Description>
+                                                            <b>Ínicio:</b>
+                                                            {' '}{moment(epoch.start_date).format('DD MMMM, YYYY')}
+                                                        </List.Description>
+                                                        <List.Description>
+                                                            <b>Fim:</b>
+                                                            {' '}{moment(epoch.end_date).format('DD MMMM, YYYY')}
+                                                        </List.Description>
+                                                    </List.Content> */}
+                                                </div>
+                                            </div>
                                         ))}
                                     </List>
                                 </GridColumn>
