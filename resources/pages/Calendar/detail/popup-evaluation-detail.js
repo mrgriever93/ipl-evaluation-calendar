@@ -7,67 +7,15 @@ import {useTranslation} from "react-i18next";
 import {Field, Form as FinalForm} from 'react-final-form';
 import {DateInput, TimeInput} from 'semantic-ui-calendar-react-yz';
 import {Accordion, Button, Card, Container, Divider, Form, Grid, Header, Icon, List, Modal, Segment, Table, TextArea, Popup, Dropdown, Comment, Message} from 'semantic-ui-react';
-import styled, {css} from 'styled-components';
-import {AnimatePresence} from 'framer-motion';
 import {toast} from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
-import PageLoader from '../../components/PageLoader';
-import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
-import SCOPES from '../../utils/scopesConstants';
-import {errorConfig, successConfig} from '../../utils/toastConfig';
-
-import InfosAndActions from './detail/infos-and-actions';
+import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
+import SCOPES from '../../../utils/scopesConstants';
+import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
 const SweetAlertComponent = withReactContent(Swal);
-
-const CellButton = styled.div`
-    width: 100%;
-    height: ${({height}) => (height || '40px')};
-    vertical-align: middle;
-    text-align: center;
-    cursor: pointer;
-    color: ${({color}) => color || 'transparent'};
-    ${({backgroundColor}) => (backgroundColor ? css`background-color: ${backgroundColor};` : null)}
-    ${({fontSize}) => (fontSize ? css`font-size: ${fontSize};` : css`line-height: 40px;`)}
-    ${({margin}) => (margin ? css`margin: ${margin};` : null)}
-    ${({isModified}) => (isModified ? css`background-color: rgb(237, 170, 0);` : null)}
-    &:hover {
-        background-color: #dee2e6;
-        color: black;
-    }`;
-
-const LegendBox = styled.div`
-    user-select: none;
-    border-radius: 0.28571429rem;
-    border: 1px solid rgba(34, 36, 38, 0.1);
-    width: 140px;
-    height: 50px;
-    background-color: ${({backgroundColor}) => backgroundColor};
-    margin: 0 20px 20px 0;
-    color: black;
-    display: flex;
-    align-content: center;
-    align-items: center;
-    justify-content: center;
-`;
-
-const EditExamButton = styled.div`
-    position: absolute;
-    left: 5px;
-    &:hover {
-        color: #edaa00;
-    }
-`;
-
-const RemoveExamButton = styled.div`
-    position: absolute;
-    right: 0;
-    &:hover {
-      color: #db2828;
-    }
-`;
 
 const PopupEvaluationDetail = () => {
     const history = useNavigate();
@@ -75,6 +23,7 @@ const PopupEvaluationDetail = () => {
     // get URL params
     let { id } = useParams();
     let paramsId = id;
+    const calendarId = paramsId;
 
     const [calendarPermissions, setCalendarPermissions] = useState(JSON.parse(localStorage.getItem('calendarPermissions')) || []);
     const [interruptionsList, setInterruptions] = useState([]);
@@ -123,8 +72,6 @@ const PopupEvaluationDetail = () => {
             }
         });
     };
-
-    const calendarId = paramsId;
 
     const patchCalendar = (fieldToUpdate, value) => axios.patch(`/calendar/${calendarId}`, {
         [fieldToUpdate]: value,

@@ -6,75 +6,24 @@ import {useParams, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {Field, Form as FinalForm} from 'react-final-form';
 import {DateInput, TimeInput} from 'semantic-ui-calendar-react-yz';
-import {Accordion, Button, Card, Container, Divider, Form, Grid, Header, Icon, List, Modal, Segment, Table, TextArea, Popup, Dropdown, Comment, Message} from 'semantic-ui-react';
-import styled, {css} from 'styled-components';
-import {AnimatePresence} from 'framer-motion';
+import {Button, Divider, Form, Grid, GridColumn, Header, Icon, Modal, TextArea, Message} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
-import PageLoader from '../../components/PageLoader';
-import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
-import SCOPES from '../../utils/scopesConstants';
-import {errorConfig, successConfig} from '../../utils/toastConfig';
-
-import InfosAndActions from './detail/infos-and-actions';
+import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
+import SCOPES from '../../../utils/scopesConstants';
+import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const CellButton = styled.div`
-    width: 100%;
-    height: ${({height}) => (height || '40px')};
-    vertical-align: middle;
-    text-align: center;
-    cursor: pointer;
-    color: ${({color}) => color || 'transparent'};
-    ${({backgroundColor}) => (backgroundColor ? css`background-color: ${backgroundColor};` : null)}
-    ${({fontSize}) => (fontSize ? css`font-size: ${fontSize};` : css`line-height: 40px;`)}
-    ${({margin}) => (margin ? css`margin: ${margin};` : null)}
-    ${({isModified}) => (isModified ? css`background-color: rgb(237, 170, 0);` : null)}
-    &:hover {
-        background-color: #dee2e6;
-        color: black;
-    }`;
-
-const LegendBox = styled.div`
-    user-select: none;
-    border-radius: 0.28571429rem;
-    border: 1px solid rgba(34, 36, 38, 0.1);
-    width: 140px;
-    height: 50px;
-    background-color: ${({backgroundColor}) => backgroundColor};
-    margin: 0 20px 20px 0;
-    color: black;
-    display: flex;
-    align-content: center;
-    align-items: center;
-    justify-content: center;
-`;
-
-const EditExamButton = styled.div`
-    position: absolute;
-    left: 5px;
-    &:hover {
-        color: #edaa00;
-    }
-`;
-
-const RemoveExamButton = styled.div`
-    position: absolute;
-    right: 0;
-    &:hover {
-      color: #db2828;
-    }
-`;
-
-const PopupScheduleEvaluation = () => {
+const PopupScheduleEvaluation = ( {isOpen, onClose} ) => {
     const history = useNavigate();
     const { t } = useTranslation();
     // get URL params
     let { id } = useParams();
     let paramsId = id;
+    const calendarId = paramsId;
 
     const [calendarPermissions, setCalendarPermissions] = useState(JSON.parse(localStorage.getItem('calendarPermissions')) || []);
     const [interruptionsList, setInterruptions] = useState([]);
@@ -88,79 +37,16 @@ const PopupScheduleEvaluation = () => {
     const [activeIndex, setActiveIndex] = useState(undefined);
     const [loadInterruptionTypes, setLoadInterruptionTypes] = useState(false);
     const [examInfoModal, setExamInfoModal] = useState({});
-    const [openExamModal, setOpenExamModal] = useState(false);
+    // const [openExamModal, setOpenExamModal] = useState(false);
     const [loadRemainingCourseUnits, setLoadRemainingCourseUnits] = useState(false);
     const [selectedEpoch, setSelectedEpoch] = useState();
     const [courseUnits, setCourseUnits] = useState(undefined);
     const [methodList, setMethodList] = useState(undefined);
-    const [calendarPhases, setCalendarPhases] = useState([]);
-    const [examList, setExamList] = useState([]);
-    const [publishLoading, setPublishLoading] = useState(false);
-    const [creatingCopy, setCreatingCopy] = useState(false);
 
-    const [isTemporary, setIsTemporary] = useState(true);
-    const [isPublished, setIsPublished] = useState(false);
     const [calendarPhase, setCalendarPhase] = useState(true);
-    const [updatingCalendarPhase, setUpdatingCalendarPhase] = useState(false);
-    const [removingExam, setRemovingExam] = useState(undefined);
     const [changeData, setChangeData] = useState(false);
     const [savingExam, setSavingExam] = useState(false);
-    const [viewExamInformation, setViewExamInformation] = useState(false);
-    const [showIgnoredComments, setShowIgnoredComments] = useState(false);
-    const [commentText, setCommentText] = useState(undefined);
-    const [previousFromDefinitive, setPreviousFromDefinitive] = useState(false);
     const [noMethods, setNoMethods] = useState(false);
-
-    const addComment = (examId) => {
-        axios.post('/comment/', {
-            exam_id: examId,
-            comment: commentText,
-        }).then((res) => {
-            if (res.status === 201) {
-                toast(t('calendar.O comentário foi adicionado com sucesso!'), successConfig);
-            } else {
-                toast(t('calendar.Ocorreu um erro ao adicionar o comentário!'), errorConfig);
-            }
-        });
-    };
-
-    const calendarId = paramsId;
-
-    const patchCalendar = (fieldToUpdate, value) => axios.patch(`/calendar/${calendarId}`, {
-        [fieldToUpdate]: value,
-    });
-
-    const updateCalendarStatus = (newTemporaryStatus) => {
-        patchCalendar('temporary', newTemporaryStatus).then((response) => {
-            if (response.status === 200) {
-                setIsTemporary(newTemporaryStatus);
-                toast(t('calendar.Estado do calendário atualizado!'), successConfig);
-            }
-        });
-    };
-
-    const updateCalendarPhase = (newCalendarPhase) => {
-        setUpdatingCalendarPhase(true);
-        patchCalendar('calendar_phase_id', newCalendarPhase).then(
-            (response) => {
-                setUpdatingCalendarPhase(false);
-                if (response.status === 200) {
-                    setCalendarPhase(newCalendarPhase);
-                    toast(t('calendar.Fase do calendário atualizada!'), successConfig);
-                }
-            },
-        );
-    };
-
-    const ignoreComment = (commentId) => {
-        axios.post(`/comment/${commentId}/ignore`).then((res) => {
-            if (res.status === 200) {
-                toast(t('calendar.Comentário ignorado com sucesso!'), successConfig);
-            } else {
-                toast(t('calendar.Ocorreu um erro ao ignorar o comentário!'), successConfig);
-            }
-        });
-    };
 
     useEffect(() => {
         // check if URL params are just numbers or else redirects to previous page
@@ -177,70 +63,41 @@ const PopupScheduleEvaluation = () => {
 
     const loadCalendar = (calId) => {
         setIsLoading(true);
-        setExamList([]);
-        axios
-            .get(`/calendar/${calId}`)
-            .then((response) => {
-                if (response?.status >= 200 && response?.status < 300) {
-                    const {
-                        data: {
-                            data: {
-                                phase,
-                                published,
-                                interruptions,
-                                epochs,
-                                general_info,
-                                differences,
-                                previous_from_definitive,
-                            },
-                        },
-                    } = response;
-                    setIsTemporary(!!general_info?.temporary);
-                    setCalendarPhase(general_info?.phase?.id);
-                    setIsPublished(!!published);
-                    setInterruptions(interruptions);
-                    setEpochs(epochs);
-                    epochs.forEach((epoch) => {
-                        setExamList((current) => [...current, ...epoch.exams]);
-                    });
-                    setGeneralInfo(general_info);
-                    setDifferences(differences);
-                    setIsLoading(false);
-                    setPreviousFromDefinitive(previous_from_definitive);
-                } else {
-                    history('/calendario');
-                }
-            })
-            .catch((r) => alert(r));
+        // axios.get(`/calendar/${calId}`)
+        //     .then((response) => {
+        //         if (response?.status >= 200 && response?.status < 300) {
+        //             const {
+        //                 data: {
+        //                     data: {
+        //                         phase,
+        //                         published,
+        //                         interruptions,
+        //                         epochs,
+        //                         general_info,
+        //                         differences,
+        //                         previous_from_definitive,
+        //                     },
+        //                 },
+        //             } = response;
+        //             setIsTemporary(!!general_info?.temporary);
+        //             setCalendarPhase(general_info?.phase?.id);
+        //             setIsPublished(!!published);
+        //             setInterruptions(interruptions);
+        //             setEpochs(epochs);
+        //             epochs.forEach((epoch) => {
+        //                 setExamList((current) => [...current, ...epoch.exams]);
+        //             });
+        //             setGeneralInfo(general_info);
+        //             setDifferences(differences);
+        //             setIsLoading(false);
+        //             setPreviousFromDefinitive(previous_from_definitive);
+        //         } else {
+        //             history('/calendario');
+        //         }
+        //     })
+        //     .catch((r) => alert(r));
     };
-
-    const onSubmitInterruption = (values) => {
-        const axiosFn = values?.id ? axios.patch : axios.post;
-        axiosFn(`/interruptions/${values?.id ? values.id : ''}`, {
-            calendar_id: parseInt(calendarId, 10),
-            interruption_type_id: values.interruptionType,
-            description: values.description,
-            start_date: moment(values.startDate).format('YYYY-MM-DD'),
-            end_date: moment(values.endDate).format('YYYY-MM-DD'),
-        })
-            .then((res) => {
-                if (res.status === 200 || res.status === 201) {
-                    toast(`Interrupção ${values?.id ? 'guardada' : 'marcada'} com sucesso!`, successConfig);
-                    loadCalendar(calendarId);
-                } else {
-                    toast(`Ocorreu um erro ao ${values?.id ? 'guardar' : 'marcar'} a interrupção!`, errorConfig);
-                }
-            });
-        setOpenModal(false);
-        setIsLoading(true);
-    };
-
-    useEffect(() => {
-        if (typeof calendarPhase === 'number') {
-            setCalendarPermissions(JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((perm) => perm.phase_id === calendarPhase) || []);
-        }
-    }, [calendarPhase]);
-
+    
     const onSubmitExam = (values) => {
         setSavingExam(true);
         const axiosFn = values?.id ? axios.patch : axios.post;
@@ -259,7 +116,8 @@ const PopupScheduleEvaluation = () => {
             .then((res) => {
                 setSavingExam(false);
                 if (res.status === 200 || res.status === 201) {
-                    setOpenExamModal(false);
+                    // setOpenExamModal(false);
+                    onClose();
                     toast(`Avaliação ${values?.id ? 'guardada' : 'marcada'} com sucesso!`, successConfig);
                     loadCalendar(calendarId);
                 } else {
@@ -268,43 +126,15 @@ const PopupScheduleEvaluation = () => {
             });
     };
 
-    const removeInterruption = (interruptionId) => {
-        SweetAlertComponent.fire({
-            title: t('Atenção!'),
-
-            html: 'Ao eliminar a interrupção, todo o período compreendido entre o ínicio e o fim desta interrupção, ficará aberto para avaliações!<br/><strong>Tem a certeza que deseja eliminar esta interrupção, em vez de editar?</strong>',
-            denyButtonText: t('Não'),
-            confirmButtonText: t('Sim'),
-            showConfirmButton: true,
-            showDenyButton: true,
-            confirmButtonColor: '#21ba45',
-            denyButtonColor: '#db2828',
-        })
-            .then((result) => {
-                if (result.isConfirmed) {
-                    setRemovingExam(interruptionId);
-                    axios.delete(`/interruptions/${interruptionId}`).then((res) => {
-                        setRemovingExam(null);
-                        loadCalendar(calendarId);
-                        if (res.status === 200) {
-                            toast(t('calendar.Interrupção eliminada com sucesso deste calendário!'), successConfig);
-                        } else {
-                            toast(t('calendar.Ocorreu um problema ao eliminar a interrupção deste calendário!'), errorConfig);
-                        }
-                    });
-                }
-            });
-    };
-
     useEffect(() => {
-        if (!openExamModal) {
+        if (!isOpen) {
             setExamInfoModal(undefined);
             setNoMethods(false);
             setSelectedEpoch(undefined);
             setCourseUnits([]);
             setMethodList([]);
         }
-    }, [openExamModal]);
+    }, [isOpen]);
 
     const removeExam = (examId) => {
         SweetAlertComponent.fire({
@@ -334,247 +164,9 @@ const PopupScheduleEvaluation = () => {
             });
     };
 
-    const handleFaqClick = (e, titleProps) => {
-        const {index} = titleProps;
-        const newIndex = activeIndex === index ? -1 : index;
-        setActiveIndex(newIndex);
-    };
-
-    const weekData = useMemo(
-        () => _.orderBy(
-            epochsList.reduce((acc, curr) => {
-                const start_date = moment(curr.start_date);
-                const end_date = moment(curr.end_date);
-                while (start_date <= end_date) {
-                    if (start_date.day() !== 0) {
-                        if (
-                            !acc.filter(
-                                ({week}) => week === start_date.isoWeek(),
-                            ).length
-                        ) {
-                            acc.push({
-                                week: start_date.isoWeek(),
-                                year: start_date.year(),
-                                days: [],
-                            });
-                        }
-
-                        const currentInterruption = interruptionsList.find(
-                            (interruption) => {
-                                const interruptionStartDate = moment(
-                                    interruption.start_date,
-                                    'YYYY-MM-DD',
-                                );
-                                const interruptionEndDate = moment(
-                                    interruption.end_date,
-                                    'YYYY-MM-DD',
-                                );
-
-                                return (
-                                    (start_date.isAfter(
-                                            interruptionStartDate,
-                                        )
-                                        && start_date.isBefore(
-                                            interruptionEndDate,
-                                        ))
-                                    || start_date.isSame(
-                                        interruptionStartDate,
-                                        'day',
-                                    )
-                                    || start_date.isSame(
-                                        interruptionEndDate,
-                                        'day',
-                                    )
-                                );
-                            },
-                        );
-
-                        const week = acc.find(
-                            ({week}) => week === start_date.isoWeek(),
-                        );
-                        if (
-                            !week.days.find(
-                                (day) => day.weekDay === start_date.day(),
-                            )
-                        ) {
-                            week.days.push({
-                                weekDay: start_date.day(),
-                                date: start_date.format(),
-                                interruption: currentInterruption,
-                                interruptionDays: 1,
-                            });
-                        }
-
-                        const foundMultipleDaysWithSameInterruption = acc
-                            .find(
-                                ({week}) => week === start_date.isoWeek(),
-                            )
-                            .days.filter(
-                                (x) => x.interruption?.id
-                                    === currentInterruption?.id,
-                            );
-
-                        if (foundMultipleDaysWithSameInterruption?.length) {
-                            foundMultipleDaysWithSameInterruption[0].interruptionDays = foundMultipleDaysWithSameInterruption.length;
-                        }
-
-                        week.epoch = {
-                            name: curr.name,
-                            color: curr.name === "Época Periódica" ? '#ecfff0' : curr.name === "Época Normal" ? '#f5e6da' : '#f9dddd',
-                        };
-                    }
-
-                    start_date.add(1, 'days');
-                }
-
-                return acc;
-            }, []),
-            ['year', 'week'],
-        ),
-        [epochsList, interruptionsList],
-    );
-
-    useEffect(() => {
-        if (loadRemainingCourseUnits) {
-            axios
-                .get(
-                    `/available-methods/${calendarId}/?epoch_id=${selectedEpoch}&year=${examInfoModal.year}`,
-                )
-                .then((response) => {
-                    if (response.status === 200) {
-                        const branches = examInfoModal
-                            .existingExamsAtThisDate?.filter((x) => x.academic_year === examInfoModal.year)
-                            ?.map((y) => y?.course_unit?.branch?.id);
-                        const beforeSetCourseUnits = response.data.data?.filter(
-                            (x) => !(branches.length ? branches?.includes(x?.branch?.id) : false),
-                        );
-
-                        const mapped = beforeSetCourseUnits?.map(
-                            ({
-                                 id, name, methods, branch,
-                             }) => ({
-                                key: id,
-                                value: id,
-                                text: name,
-                                methods,
-                                branch,
-                            }),
-                        );
-
-                        setCourseUnits(mapped);
-                        setNoMethods(response.data.data?.length === 0 || beforeSetCourseUnits?.length === 0);
-                    }
-                });
-            setLoadRemainingCourseUnits(false);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [loadRemainingCourseUnits, examInfoModal]);
-
-    useEffect(() => {
-        if (loadInterruptionTypes) {
-            if (!interruptionTypes?.length) {
-                axios.get('/interruption-types').then((response) => {
-                    if (response.status === 200) {
-                        setInterruptionTypesList(
-                            response.data.data?.map(({id, description}) => ({
-                                key: id,
-                                value: id,
-                                text: description,
-                            })),
-                        );
-                    }
-                });
-            }
-            setLoadInterruptionTypes(false);
-        }
-    }, [loadInterruptionTypes, interruptionTypes]);
-
     useEffect(() => {
         loadCalendar(calendarId);
     }, [calendarId]);
-
-    useEffect(() => {
-        axios.get('/calendar-phases').then((response) => {
-            if (response.status === 200) {
-                setCalendarPhases(
-                    response.data.data?.map(({id, description, name}) => ({
-                        key: id,
-                        value: id,
-                        text: description,
-                        name,
-                    })),
-                );
-            }
-        });
-    }, []);
-
-    const publishCalendar = () => {
-        setPublishLoading(true);
-        axios.post(`/calendar/${calendarId}/publish`).then((res) => {
-            setPublishLoading(false);
-            loadCalendar(calendarId);
-            if (res.status === 200) {
-                toast('Calendário publicado com sucesso!', successConfig);
-            } else {
-                toast('Ocorreu um erro ao tentar publicar o calendário!', errorConfig);
-            }
-        });
-    };
-
-    const onEditInterruptionClick = (interruption) => {
-        setLoadInterruptionTypes(
-            true,
-        );
-        setModalInfo({
-            ...interruption,
-        });
-        setOpenModal(
-            true,
-        );
-    };
-
-    const createCopy = () => {
-        SweetAlertComponent.fire({
-            title: 'Atenção!',
-
-            html: 'Ao criar uma cópia deste calendário, irá eliminar todas as cópias criadas anteriormente deste mesmo calendário!<br/><br/><strong>Tem a certeza que deseja criar uma cópia do calendário?</strong>',
-            denyButtonText: 'Não',
-            confirmButtonText: 'Sim',
-            showConfirmButton: true,
-            showDenyButton: true,
-            confirmButtonColor: '#21ba45',
-            denyButtonColor: '#db2828',
-        })
-            .then((result) => {
-                if (result.isConfirmed) {
-                    setCreatingCopy(true);
-                    axios.post(`/calendar/${calendarId}/publish`, {
-                        createCopy: true,
-                    }).then((res) => {
-                        setCreatingCopy(false);
-                        if (res.status === 200) {
-                            toast('Cópia do calendário criada com sucesso!', successConfig);
-                        } else {
-                            toast('Ocorreu um erro ao tentar criar uma cópia do calendário!', errorConfig);
-                        }
-                    });
-                }
-            });
-    };
-
-    function range(start, end) {
-        return Array(end - start + 1)
-            .fill()
-            .map((_, idx) => start + idx);
-    }
-
-    const courseYears = generalInfo?.course?.duration
-        ? range(1, generalInfo?.course?.duration)
-        : [];
-    const weekDays = [1, 2, 3, 4, 5, 6];
-    let alreadyAddedColSpan = false;
-    let alreadyAddedRowSpan = false;
-    let interruptionDays = 0;
 
     return (
         <FinalForm onSubmit={onSubmitExam}
@@ -587,7 +179,7 @@ const PopupScheduleEvaluation = () => {
                 observations: examInfoModal?.id ? examInfoModal?.observations : null,
             }}
             render={({handleSubmit}) => (
-                <Modal closeOnEscape closeOnDimmerClick open={openExamModal} onClose={() => {setOpenExamModal(false);}}>
+                <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
                     <Modal.Header>
                         {examInfoModal?.id ? 'Editar' : 'Marcar'}
                         {' '}
@@ -596,117 +188,138 @@ const PopupScheduleEvaluation = () => {
                     <Modal.Content>
                         <Form>
                             <Header as="h4">Detalhes da avaliação</Header>
-                            <p>
-                                <b>Ano Curricular: </b>
-                                {examInfoModal?.year}
-                                º Ano
-                            </p>
-                            <p>
-                                <b>Data: </b>
-                                {changeData ? (
-                                    <DateInput value={moment(examInfoModal?.date).format('DD MMMM, YYYY')}
-                                        onChange={(evt, {value}) => {
-                                            setExamInfoModal((current) => ({...current, date: moment(value, 'DD-MM-YYYY')}));
-                                            setChangeData(false);
-                                        }}
-                                    />
-                                ) : moment(examInfoModal?.date).format('DD MMMM, YYYY')}
-                            </p>
-                            <p>
-                                <Button color="yellow" icon labelPosition="left" onClick={() => setChangeData(true)}>
-                                    <Icon name="calendar alternate"/>
-                                    Alterar data
-                                </Button>
-                            </p>
+                            
+                            <Grid columns={3}>
+                                <GridColumn>
+                                    <p>
+                                        <b>Calendário de: </b>
+                                        Licenciatura em Engenharia Informática
+                                    </p>
+                                </GridColumn>
+                                <GridColumn>
+                                    <p>
+                                        <b>Ano Curricular: </b>
+                                        {examInfoModal?.year}
+                                        º Ano
+                                    </p>
+                                </GridColumn>
+                                <GridColumn>
+                                    <p>
+                                        <b>Data: </b>
+                                        {changeData ? (
+                                            <DateInput value={moment(examInfoModal?.date).format('DD MMMM, YYYY')}
+                                                onChange={(evt, {value}) => {
+                                                    setExamInfoModal((current) => ({...current, date: moment(value, 'DD-MM-YYYY')}));
+                                                    setChangeData(false);
+                                                }}
+                                            />
+                                        ) : moment(examInfoModal?.date).format('DD MMMM, YYYY')}
+                                    </p>
+                                    <p>
+                                        <Button color="yellow" icon labelPosition="left" onClick={() => setChangeData(true)}>
+                                            <Icon name="calendar alternate"/>
+                                            Alterar data
+                                        </Button>
+                                    </p>
+                                </GridColumn>
+                            </Grid>
                             <Divider/>
+                            <Grid columns={2}>
+                                <GridColumn>
                             {!examInfoModal?.id
-                                && (
+                                    && (
+                                        <>
+                                            <Field name="epoch">
+                                                {({input: epochInput}) => (
+                                                    <Form.Dropdown
+                                                        options={epochsList.filter((epoch) => moment(examInfoModal?.date).isBetween(moment(epoch.start_date), moment(epoch.end_date), undefined, '[]',))
+                                                            ?.map((epoch) => ({
+                                                                key: epoch.id,
+                                                                value: epoch.id,
+                                                                text: epoch.name,
+                                                            }))}
+                                                        selection search label="Época"
+                                                        onChange={(e, {value}) => {
+                                                            setCourseUnits([]);
+                                                            setSelectedEpoch(value);
+                                                            setLoadRemainingCourseUnits(true);
+                                                            epochInput.onChange(value);
+                                                        }}
+                                                    />
+                                                )}
+                                            </Field>
+                                            {noMethods
+                                                && (
+                                                    <Message negative>
+                                                        <Message.Header>Não foram encontradas unidades curriculares</Message.Header>
+                                                        <p>Não foram encontradas unidades curriculares com métodos de avaliação atríbuidos para esta época de avaliação.</p>
+                                                    </Message>
+                                                )}
+                                            <Field name="courseUnit">
+                                                {({input: courseUnitInput}) => (
+                                                    <Form.Dropdown options={courseUnits} selection search disabled={!courseUnits?.length}
+                                                        loading={courseUnits !== undefined ? !courseUnits.length : false}
+                                                        label="Unidade Curricular"
+                                                        onChange={(e, {value, options}) => {
+                                                            setMethodList(
+                                                                options.find((courseUnit) => courseUnit.value === value).methods.map(({id, name, minimum, weight}) => ({
+                                                                        key: id,
+                                                                        value: id,
+                                                                        text: `${name} / Min. ${minimum} / Peso: ${parseInt(weight, 10)}%`,
+                                                                    }),
+                                                                ),
+                                                            );
+                                                            courseUnitInput.onChange(value);
+                                                        }}
+                                                    />
+                                                )}
+                                            </Field>
+                                            <Field name="method">
+                                                {({input: methodInput}) => (
+                                                    <Form.Dropdown options={methodList} selection search disabled={!methodList?.length}
+                                                        loading={methodList !== undefined ? !methodList.length : false}
+                                                        label="Método de Avaliação"
+                                                        onChange={(e, {value}) => methodInput.onChange(value)}
+                                                    />
+                                                )}
+                                            </Field>
+                                        </>
+                                    )}
+                                </GridColumn>
+                                <GridColumn>
                                     <>
-                                        <Field name="epoch">
-                                            {({input: epochInput}) => (
-                                                <Form.Dropdown
-                                                    options={epochsList.filter((epoch) => moment(examInfoModal?.date).isBetween(moment(epoch.start_date), moment(epoch.end_date), undefined, '[]',))
-                                                        ?.map((epoch) => ({
-                                                            key: epoch.id,
-                                                            value: epoch.id,
-                                                            text: epoch.name,
-                                                        }))}
-                                                    selection search label="Época"
-                                                    onChange={(e, {value}) => {
-                                                        setCourseUnits([]);
-                                                        setSelectedEpoch(value);
-                                                        setLoadRemainingCourseUnits(true);
-                                                        epochInput.onChange(value);
-                                                    }}
-                                                />
+                                        <Field name="room" defaultValue={examInfoModal?.id ? examInfoModal?.room : null}>
+                                            {({input: roomInput}) => (
+                                                <Form.Input label="Sala" placeholder="Sala da avaliação (opcional)"{...roomInput} initialValue={examInfoModal?.room}/>
                                             )}
                                         </Field>
-                                        {noMethods
-                                            && (
-                                                <Message negative>
-                                                    <Message.Header>Não foram encontradas unidades curriculares</Message.Header>
-                                                    <p>Não foram encontradas unidades curriculares com métodos de avaliação atríbuidos para esta época de avaliação.</p>
-                                                </Message>
-                                            )}
-                                        <Field name="courseUnit">
-                                            {({input: courseUnitInput}) => (
-                                                <Form.Dropdown options={courseUnits} selection search disabled={!courseUnits?.length}
-                                                    loading={courseUnits !== undefined ? !courseUnits.length : false}
-                                                    label="Unidade Curricular"
-                                                    onChange={(e, {value, options}) => {
-                                                        setMethodList(
-                                                            options.find((courseUnit) => courseUnit.value === value).methods.map(({id, name, minimum, weight}) => ({
-                                                                    key: id,
-                                                                    value: id,
-                                                                    text: `${name} / Min. ${minimum} / Peso: ${parseInt(weight, 10)}%`,
-                                                                }),
-                                                            ),
-                                                        );
-                                                        courseUnitInput.onChange(value);
-                                                    }}
-                                                />
+                                        <Field name="durationMinutes">
+                                            {({input: durationMinutesInput}) => (
+                                                <Form.Input label="Duração" placeholder="Duração em minutos (opcional)" type="number" step="1"{...durationMinutesInput}/>
                                             )}
                                         </Field>
-                                        <Field name="method">
-                                            {({input: methodInput}) => (
-                                                <Form.Dropdown options={methodList} selection search disabled={!methodList?.length}
-                                                    loading={methodList !== undefined ? !methodList.length : false}
-                                                    label="Método de Avaliação"
-                                                    onChange={(e, {value}) => methodInput.onChange(value)}
-                                                />
+                                        <Field name="hour">
+                                            {({input: hourInput}) => (
+                                                <Form.Field>
+                                                    <TimeInput name="hour" iconPosition="left" label="Hora de ínicio" placeholder="Hora de ínicio" timeFormat="24" value={hourInput.value}
+                                                                onChange={(evt, {value}) => {
+                                                                    hourInput.onChange(value);
+                                                                }}/>
+                                                </Form.Field>
+                                            )}
+                                        </Field>
+                                        <Field name="observations">
+                                            {({input: observationsInput}) => (
+                                                <Form.Input control={TextArea} label="Observações"{...observationsInput}/>
                                             )}
                                         </Field>
                                     </>
-                                )}
-                            <Field name="room" defaultValue={examInfoModal?.id ? examInfoModal?.room : null}>
-                                {({input: roomInput}) => (
-                                    <Form.Input label="Sala" placeholder="Sala da avaliação (opcional)"{...roomInput} initialValue={examInfoModal?.room}/>
-                                )}
-                            </Field>
-                            <Field name="durationMinutes">
-                                {({input: durationMinutesInput}) => (
-                                    <Form.Input label="Duração" placeholder="Duração em minutos (opcional)" type="number" step="1"{...durationMinutesInput}/>
-                                )}
-                            </Field>
-                            <Field name="hour">
-                                {({input: hourInput}) => (
-                                    <Form.Field>
-                                        <TimeInput name="hour" iconPosition="left" label="Hora de ínicio" placeholder="Hora de ínicio" timeFormat="24" value={hourInput.value}
-                                                    onChange={(evt, {value}) => {
-                                                        hourInput.onChange(value);
-                                                    }}/>
-                                    </Form.Field>
-                                )}
-                            </Field>
-                            <Field name="observations">
-                                {({input: observationsInput}) => (
-                                    <Form.Input control={TextArea} label="Observações"{...observationsInput}/>
-                                )}
-                            </Field>
+                                </GridColumn>
+                            </Grid>                            
                         </Form>
                     </Modal.Content>
                     <Modal.Actions>
-                        <Button onClick={() => setOpenExamModal(false)} negative>
+                        <Button onClick={onClose} negative>
                             Cancelar
                         </Button>
                         <Button onClick={handleSubmit} positive loading={savingExam}>
