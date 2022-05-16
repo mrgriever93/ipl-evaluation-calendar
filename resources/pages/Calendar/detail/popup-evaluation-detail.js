@@ -367,7 +367,7 @@ const PopupEvaluationDetail = () => {
 
                         week.epoch = {
                             name: curr.name,
-                            color: curr.name === "Época Periódica" ? '#ecfff0' : curr.name === "Época Normal" ? '#f5e6da' : '#f9dddd',
+                            color: curr.code === "periodic_season" ? '#ecfff0' : curr.code === "normal_season" ? '#f5e6da' : '#f9dddd',
                         };
                     }
 

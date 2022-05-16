@@ -3,7 +3,7 @@ import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import { useParams, useNavigate} from "react-router-dom";
 import { useTranslation} from "react-i18next";
-import { Card, Button, Sticky, Grid, Header, List, GridColumn} from 'semantic-ui-react';
+import {Card, Button, Sticky, Grid, Header, List, GridColumn, Icon, Popup} from 'semantic-ui-react';
 import { toast} from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -249,21 +249,19 @@ const InfosAndActions = () => {
                                     <List divided relaxed>
                                         {epochsList.map((epoch, index) => (
                                             <div className='legend-list-item' key={index}>
-                                                <div className='legend-list-item-square' style={ { backgroundColor: epoch.name === "Época Periódica" ? '#ecfff0' : epoch.name === "Época Normal" ? '#f5e6da' : '#f9dddd' } }></div>
-                                                <div className='legend-list-item-content'>
-                                                    {epoch.name}
-                                                    {/* <List.Content>
-                                                        <List.Header>{epoch.name}</List.Header>
-                                                        <List.Description>
-                                                            <b>Ínicio:</b>
-                                                            {' '}{moment(epoch.start_date).format('DD MMMM, YYYY')}
-                                                        </List.Description>
-                                                        <List.Description>
-                                                            <b>Fim:</b>
-                                                            {' '}{moment(epoch.end_date).format('DD MMMM, YYYY')}
-                                                        </List.Description>
-                                                    </List.Content> */}
-                                                </div>
+                                                <div className='legend-list-item-square' style={ { backgroundColor: epoch.code === "periodic_season" ? '#ecfff0' : epoch.code === "normal_season" ? '#f5e6da' : '#f9dddd' } }></div>
+                                                <Popup trigger={
+                                                    <div className='legend-list-item-content'>
+                                                        <Icon name="calendar alternate outline" />
+                                                        <span className={"padding-left-xs"}>{epoch.name}</span>
+                                                    </div>
+                                                } position='bottom center'>
+                                                    <Popup.Content>
+                                                        <b>{t("Ínicio")}:</b>{' '}{moment(epoch.start_date).format('DD MMMM, YYYY')}
+                                                        <br/>
+                                                        <b>{t("Fim")}:</b>{' '}{moment(epoch.end_date).format('DD MMMM, YYYY')}
+                                                    </Popup.Content>
+                                                </Popup>
                                             </div>
                                         ))}
                                     </List>

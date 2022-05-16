@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\ReactController;
 use Felix\RickRoll\Facades\RickRoll;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 

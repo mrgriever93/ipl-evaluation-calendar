@@ -314,6 +314,9 @@
         "Nota mínima": "Minimum grade",
         "Peso da avaliação": "Evaluation weight",
         "Total pesos avaliacao:": "Total evaluation weights:",
-        "Adicionar novo método": "Add new method"
+        "Adicionar novo método": "Add new method",
+
+        "Ínicio": "Start",
+        "Fim": "End"
     }
 }

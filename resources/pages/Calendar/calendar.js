@@ -423,7 +423,7 @@ const Calendar = () => {
 
                         week.epoch = {
                             name: curr.name,
-                            color: curr.name === "Época Periódica" ? '#ecfff0' : curr.name === "Época Normal" ? '#f5e6da' : '#f9dddd',
+                            color: curr.code === "periodic_season" ? '#ecfff0' : curr.code === "normal_season" ? '#f5e6da' : '#f9dddd',
                         };
                     }
 
@@ -439,10 +439,7 @@ const Calendar = () => {
 
     useEffect(() => {
         if (loadRemainingCourseUnits) {
-            axios
-                .get(
-                    `/available-methods/${calendarId}/?epoch_id=${selectedEpoch}&year=${examInfoModal.year}`,
-                )
+            axios.get(`/available-methods/${calendarId}/?epoch_id=${selectedEpoch}&year=${examInfoModal.year}`,)
                 .then((response) => {
                     if (response.status === 200) {
                         const branches = examInfoModal
@@ -451,11 +448,8 @@ const Calendar = () => {
                         const beforeSetCourseUnits = response.data.data?.filter(
                             (x) => !(branches.length ? branches?.includes(x?.branch?.id) : false),
                         );
-
                         const mapped = beforeSetCourseUnits?.map(
-                            ({
-                                 id, name, methods, branch,
-                             }) => ({
+                            ({id, name, methods, branch}) => ({
                                 key: id,
                                 value: id,
                                 text: name,
@@ -463,7 +457,6 @@ const Calendar = () => {
                                 branch,
                             }),
                         );
-
                         setCourseUnits(mapped);
                         setNoMethods(response.data.data?.length === 0 || beforeSetCourseUnits?.length === 0);
                     }
@@ -657,7 +650,7 @@ const Calendar = () => {
                                                         return (<Table.HeaderCell key={index} />);
                                                     }
                                                 } else if (day?.date) {
-                                                    return ( 
+                                                    return (
                                                         <Table.HeaderCell key={index} textAlign="center">
                                                             {moment(day.date).format('DD-MM-YYYY')}
                                                         </Table.HeaderCell>
@@ -690,15 +683,15 @@ const Calendar = () => {
                                                                 if ((year === 1 && !day?.date) || isInterruption) {
                                                                     if (!isInterruption && (weekDay === 1 || (lastDayAvailable.day() < 6 && !alreadyAddedColSpan))) {
                                                                         alreadyAddedColSpan = true;
-                                                                        return (<Table.Cell 
-                                                                            key={weekDayIndex} 
-                                                                            colSpan={isInterruption && lastDayAvailable.day() < 6 ? 6 - lastDayAvailable.day() : firstDayAvailable.day() - 1} 
+                                                                        return (<Table.Cell
+                                                                            key={weekDayIndex}
+                                                                            colSpan={isInterruption && lastDayAvailable.day() < 6 ? 6 - lastDayAvailable.day() : firstDayAvailable.day() - 1}
                                                                             rowSpan={courseYears.length}/>);
                                                                     }
                                                                     if (!alreadyAddedColSpan || (isInterruption && courseIndex === 0)) {
                                                                         alreadyAddedRowSpan = true;
                                                                         return (
-                                                                            <Table.Cell key={weekDayIndex} 
+                                                                            <Table.Cell key={weekDayIndex}
                                                                                 textAlign="center"
                                                                                 style={isInterruption ? {backgroundColor: '#c9c9c9', fontWeight: 'bold'} : null  }
                                                                                 rowSpan={courseYears.length}
@@ -757,10 +750,10 @@ const Calendar = () => {
                                                                         );
                                                                     }
                                                                     return (
-                                                                        <Table.Cell 
+                                                                        <Table.Cell
                                                                             key={weekDayIndex}
                                                                             style={ {backgroundColor: epoch.color} }
-                                                                            textAlign="center" 
+                                                                            textAlign="center"
                                                                             onContextMenu={(e,) => {
                                                                                 e.preventDefault();
                                                                                 if (!isPublished && existingExamsAtThisDate?.length === 0 && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) {

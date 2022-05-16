@@ -12,7 +12,7 @@ class CourseUnitGroupListResource extends JsonResource
         return [
             'id'  => $this->id,
             'description' => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
-            'course_units' => [],//CourseUnitResource::collection($this->whenLoaded('courseUnits')),
+            'course_units' => CourseUnitResource::collection($this->whenLoaded('courseUnits')),
             'num_course_units' => count($this->courseUnits),
         ];
     }
