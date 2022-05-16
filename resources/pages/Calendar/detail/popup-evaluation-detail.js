@@ -173,7 +173,7 @@ const PopupEvaluationDetail = () => {
             .then((res) => {
                 if (res.status === 200 || res.status === 201) {
                     toast(`Interrupção ${values?.id ? 'guardada' : 'marcada'} com sucesso!`, successConfig);
-                    loadCalendar(calendarId);
+                    // loadCalendar(calendarId);
                 } else {
                     toast(`Ocorreu um erro ao ${values?.id ? 'guardar' : 'marcar'} a interrupção!`, errorConfig);
                 }
@@ -208,7 +208,7 @@ const PopupEvaluationDetail = () => {
                 if (res.status === 200 || res.status === 201) {
                     setOpenExamModal(false);
                     toast(`Avaliação ${values?.id ? 'guardada' : 'marcada'} com sucesso!`, successConfig);
-                    loadCalendar(calendarId);
+                    // loadCalendar(calendarId);
                 } else {
                     toast(`Ocorreu um erro ao ${values?.id ? 'guardar' : 'marcar'} a avaliação!`, errorConfig);
                 }
@@ -232,7 +232,7 @@ const PopupEvaluationDetail = () => {
                     setRemovingExam(interruptionId);
                     axios.delete(`/interruptions/${interruptionId}`).then((res) => {
                         setRemovingExam(null);
-                        loadCalendar(calendarId);
+                        // loadCalendar(calendarId);
                         if (res.status === 200) {
                             toast(t('calendar.Interrupção eliminada com sucesso deste calendário!'), successConfig);
                         } else {
@@ -270,7 +270,7 @@ const PopupEvaluationDetail = () => {
                     setRemovingExam(examId);
                     axios.delete(`/exams/${examId}`).then((res) => {
                         setRemovingExam(null);
-                        loadCalendar(calendarId);
+                        // loadCalendar(calendarId);
                         if (res.status === 200) {
                             toast('Exame eliminado com sucesso deste calendário!', successConfig);
                         } else {
@@ -436,9 +436,9 @@ const PopupEvaluationDetail = () => {
         }
     }, [loadInterruptionTypes, interruptionTypes]);
 
-    useEffect(() => {
-        loadCalendar(calendarId);
-    }, [calendarId]);
+    // useEffect(() => {
+    //     loadCalendar(calendarId);
+    // }, [calendarId]);
 
     useEffect(() => {
         axios.get('/calendar-phases').then((response) => {

@@ -92,7 +92,7 @@ const PopupScheduleInterruption = () => {
             .then((res) => {
                 if (res.status === 200 || res.status === 201) {
                     toast(`Interrupção ${values?.id ? 'guardada' : 'marcada'} com sucesso!`, successConfig);
-                    loadCalendar(calendarId);
+                    // loadCalendar(calendarId);
                 } else {
                     toast(`Ocorreu um erro ao ${values?.id ? 'guardar' : 'marcar'} a interrupção!`, errorConfig);
                 }
@@ -118,7 +118,7 @@ const PopupScheduleInterruption = () => {
                     setRemovingExam(interruptionId);
                     axios.delete(`/interruptions/${interruptionId}`).then((res) => {
                         setRemovingExam(null);
-                        loadCalendar(calendarId);
+                        // loadCalendar(calendarId);
                         if (res.status === 200) {
                             toast(t('calendar.Interrupção eliminada com sucesso deste calendário!'), successConfig);
                         } else {
@@ -155,9 +155,9 @@ const PopupScheduleInterruption = () => {
         }
     }, [loadInterruptionTypes, interruptionTypes]);
 
-    useEffect(() => {
-        // loadCalendar(calendarId);
-    }, [calendarId]);
+    // useEffect(() => {
+    //     loadCalendar(calendarId);
+    // }, [calendarId]);
 
     // const onEditInterruptionClick = (interruption) => {
     //     setLoadInterruptionTypes(

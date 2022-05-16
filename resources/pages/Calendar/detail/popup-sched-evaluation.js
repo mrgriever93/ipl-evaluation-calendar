@@ -17,7 +17,7 @@ import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const PopupScheduleEvaluation = ( {isOpen, onClose} ) => {
+const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
     const history = useNavigate();
     const { t } = useTranslation();
     // get URL params
@@ -47,6 +47,34 @@ const PopupScheduleEvaluation = ( {isOpen, onClose} ) => {
     const [changeData, setChangeData] = useState(false);
     const [savingExam, setSavingExam] = useState(false);
     const [noMethods, setNoMethods] = useState(false);
+
+    useEffect(() => {
+        if (loadRemainingCourseUnits) {
+            axios.get(`/available-methods/${calendarId}/?epoch_id=${selectedEpoch}&year=${scheduleInformation.scholarYear}`,)
+                .then((response) => {
+                    if (response.status === 200) {
+                        const branches = scheduleInformation.hasExamsOnDate?.filter((x) => x.academic_year === scheduleInformation.scholarYear)
+                            ?.map((y) => y?.course_unit?.branch?.id);
+                        const beforeSetCourseUnits = response.data.data?.filter(
+                            (x) => !(branches.length ? branches?.includes(x?.branch?.id) : false),
+                        );
+                        const mapped = beforeSetCourseUnits?.map(
+                            ({id, name, methods, branch}) => ({
+                                key: id,
+                                value: id,
+                                text: name,
+                                methods,
+                                branch,
+                            }),
+                        );
+                        setCourseUnits(mapped);
+                        setNoMethods(response.data.data?.length === 0 || beforeSetCourseUnits?.length === 0);
+                    }
+                });
+            setLoadRemainingCourseUnits(false);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [loadRemainingCourseUnits, scheduleInformation]);
 
     useEffect(() => {
         // check if URL params are just numbers or else redirects to previous page
@@ -119,7 +147,7 @@ const PopupScheduleEvaluation = ( {isOpen, onClose} ) => {
                     // setOpenExamModal(false);
                     onClose();
                     toast(`Avaliação ${values?.id ? 'guardada' : 'marcada'} com sucesso!`, successConfig);
-                    loadCalendar(calendarId);
+                    // loadCalendar(calendarId);
                 } else {
                     toast(`Ocorreu um erro ao ${values?.id ? 'guardar' : 'marcar'} a avaliação!`, errorConfig);
                 }
@@ -128,7 +156,7 @@ const PopupScheduleEvaluation = ( {isOpen, onClose} ) => {
 
     useEffect(() => {
         if (!isOpen) {
-            setExamInfoModal(undefined);
+            // setExamInfoModal(undefined);
             setNoMethods(false);
             setSelectedEpoch(undefined);
             setCourseUnits([]);
@@ -153,7 +181,7 @@ const PopupScheduleEvaluation = ( {isOpen, onClose} ) => {
                     setRemovingExam(examId);
                     axios.delete(`/exams/${examId}`).then((res) => {
                         setRemovingExam(null);
-                        loadCalendar(calendarId);
+                        // loadCalendar(calendarId);
                         if (res.status === 200) {
                             toast('Exame eliminado com sucesso deste calendário!', successConfig);
                         } else {
@@ -164,24 +192,24 @@ const PopupScheduleEvaluation = ( {isOpen, onClose} ) => {
             });
     };
 
-    useEffect(() => {
-        loadCalendar(calendarId);
-    }, [calendarId]);
+    // useEffect(() => {
+    //     loadCalendar(calendarId);
+    // }, [calendarId]);
 
     return (
         <FinalForm onSubmit={onSubmitExam}
             initialValues={{
-                id: examInfoModal?.id || undefined,
-                date: moment(examInfoModal?.date).format('DD MMMM, YYYY'),
-                room: examInfoModal?.id ? examInfoModal?.room : null,
-                durationMinutes: examInfoModal?.id ? examInfoModal?.duration_minutes : null,
-                hour: examInfoModal?.id ? examInfoModal?.hour : null,
-                observations: examInfoModal?.id ? examInfoModal?.observations : null,
+                id: scheduleInformation?.id || undefined,
+                date: moment(scheduleInformation?.date).format('DD MMMM YYYY'),
+                room: scheduleInformation?.id ? scheduleInformation?.room : null,
+                durationMinutes: scheduleInformation?.id ? scheduleInformation?.duration_minutes : null,
+                hour: scheduleInformation?.id ? scheduleInformation?.hour : null,
+                observations: scheduleInformation?.id ? scheduleInformation?.observations : null,
             }}
             render={({handleSubmit}) => (
                 <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
                     <Modal.Header>
-                        {examInfoModal?.id ? 'Editar' : 'Marcar'}
+                        {scheduleInformation?.id ? 'Editar' : 'Marcar'}
                         {' '}
                         avaliação
                     </Modal.Header>
@@ -193,13 +221,13 @@ const PopupScheduleEvaluation = ( {isOpen, onClose} ) => {
                                 <GridColumn>
                                     <p>
                                         <b>Calendário de: </b>
-                                        Licenciatura em Engenharia Informática
+                                        {scheduleInformation?.courseName}
                                     </p>
                                 </GridColumn>
                                 <GridColumn>
                                     <p>
                                         <b>Ano Curricular: </b>
-                                        {examInfoModal?.year}
+                                        {scheduleInformation?.scholarYear}
                                         º Ano
                                     </p>
                                 </GridColumn>
@@ -207,13 +235,14 @@ const PopupScheduleEvaluation = ( {isOpen, onClose} ) => {
                                     <p>
                                         <b>Data: </b>
                                         {changeData ? (
-                                            <DateInput value={moment(examInfoModal?.date).format('DD MMMM, YYYY')}
+                                            <DateInput value={moment(scheduleInformation?.date).format('DD MMMM YYYY')}
                                                 onChange={(evt, {value}) => {
-                                                    setExamInfoModal((current) => ({...current, date: moment(value, 'DD-MM-YYYY')}));
+                                                    scheduleInformation.date = moment(value, 'DD-MM-YYYY');
+                                                    console.log(scheduleInformation);
                                                     setChangeData(false);
                                                 }}
                                             />
-                                        ) : moment(examInfoModal?.date).format('DD MMMM, YYYY')}
+                                        ) : moment(scheduleInformation?.date).format('DD MMMM YYYY')}
                                     </p>
                                     <p>
                                         <Button color="yellow" icon labelPosition="left" onClick={() => setChangeData(true)}>
@@ -226,13 +255,13 @@ const PopupScheduleEvaluation = ( {isOpen, onClose} ) => {
                             <Divider/>
                             <Grid columns={2}>
                                 <GridColumn>
-                            {!examInfoModal?.id
+                            {!scheduleInformation?.id
                                     && (
                                         <>
                                             <Field name="epoch">
                                                 {({input: epochInput}) => (
                                                     <Form.Dropdown
-                                                        options={epochsList.filter((epoch) => moment(examInfoModal?.date).isBetween(moment(epoch.start_date), moment(epoch.end_date), undefined, '[]',))
+                                                        options={epochsList.filter((epoch) => moment(scheduleInformation?.date).isBetween(moment(epoch.start_date), moment(epoch.end_date), undefined, '[]',))
                                                             ?.map((epoch) => ({
                                                                 key: epoch.id,
                                                                 value: epoch.id,
@@ -288,9 +317,9 @@ const PopupScheduleEvaluation = ( {isOpen, onClose} ) => {
                                 </GridColumn>
                                 <GridColumn>
                                     <>
-                                        <Field name="room" defaultValue={examInfoModal?.id ? examInfoModal?.room : null}>
+                                        <Field name="room" defaultValue={scheduleInformation?.id ? scheduleInformation?.room : null}>
                                             {({input: roomInput}) => (
-                                                <Form.Input label="Sala" placeholder="Sala da avaliação (opcional)"{...roomInput} initialValue={examInfoModal?.room}/>
+                                                <Form.Input label="Sala" placeholder="Sala da avaliação (opcional)"{...roomInput} initialValue={scheduleInformation?.room}/>
                                             )}
                                         </Field>
                                         <Field name="durationMinutes">
@@ -323,7 +352,7 @@ const PopupScheduleEvaluation = ( {isOpen, onClose} ) => {
                             Cancelar
                         </Button>
                         <Button onClick={handleSubmit} positive loading={savingExam}>
-                            {!examInfoModal?.id ? 'Marcar Avaliação' : 'Gravar alterações'}
+                            {!scheduleInformation?.id ? 'Marcar Avaliação' : 'Gravar alterações'}
                         </Button>
                     </Modal.Actions>
                 </Modal>
