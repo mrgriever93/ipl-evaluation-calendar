@@ -111,24 +111,36 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 ---
 
 ### TODO
-- [X] Rever HTML e detalhe dos Agrupamentos de UC
-  - [ ] Traduções
+
+- [ ] Criar calendario
+  - [ ] Criação de calendário com bug quando adicionamos uma interrupção ao calendário, e depois apagamos, ela não é efetivamente removida do array e vai no post de criação, gerando erro porque vai com uma data inválida.
+- [ ] Adicionar exames / mais interrupções
+  - [ ] Na criação de uma avaliação dá erro quando vai buscar as unidades curriculares depois de selecionar a época, não dando para prosseguir
+- [ ] Adicionar mais interrupções 
+- [ ] Publicar calendário
+  
 - [ ] Rework Novo calendario
   - [x] Traduções
   - [ ] Otimizar load de permissões
-  - [ ] validar interrupções obrigatórios (ex: Natal e Páscoa);
-  - [ ] Na criação de um novo calendário, os feriados não são guardados
-- [ ] Rever sync/refresh ano letivo
+
+- [ ] Adicionar comentários
+- [ ] Submeter para próximas fases e fazer a gestão de quais as fases seguintes/anteriores
+
+- [X] Rever HTML e detalhe dos Agrupamentos de UC
+  - [ ] Traduções
+
 - [ ] Rever falta de warning das configs da escola, quando as opções não estão todas preenchidas
 - [ ] Nos cursos, UC's que não estão em tronco comum não aparecem (falta confirmar se foram carregadas na BD)
+  
 - [ ] Melhorar logs dos cursos, na alteração de métodos
 - [ ] Criar botão para duplicar métodos para todas as épocas 
   - [ ] apenas na época periódica. 
   - [ ] substitui tudo o que houver definido para ficar igual ao que estiver na periódica
   - [ ] mostra aviso que irá substituir dados de todas as épocas 
   - [ ] (serve como acelerador para preencher as épocas de exames que normalmente são sempre iguais, e dps pode ser otimizado na periódica)
-- [ ] Criação de calendário com bug quando adicionamos uma interrupção ao calendário, e depois apagamos, ela não é efetivamente removida do array e vai no post de criação, gerando erro porque vai com uma data inválida.
-- [ ] Na criação de uma avaliação dá erro quando vai buscar as unidades curriculares depois de selecionar a época, não dando para prosseguir
+
+- [ ] Rever sync/refresh ano letivo
+
 
 
 ---
