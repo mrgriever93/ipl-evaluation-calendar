@@ -124,6 +124,7 @@ const Calendar = () => {
             scholarYear: scholarYear,
             date: date,
             hasExamsOnDate: existingExamsAtThisDate,
+            epochs: epochsList,
         });
         setOpenExamModal(true);
     }

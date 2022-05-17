@@ -25,19 +25,14 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
     let paramsId = id;
     const calendarId = paramsId;
 
+    const [epochsList, setEpochsList] = useState([]);
     const [calendarPermissions, setCalendarPermissions] = useState(JSON.parse(localStorage.getItem('calendarPermissions')) || []);
     const [interruptionsList, setInterruptions] = useState([]);
-    const [epochsList, setEpochs] = useState([]);
     const [generalInfo, setGeneralInfo] = useState();
     const [differences, setDifferences] = useState();
     const [openModal, setOpenModal] = useState(false);
     const [interruptionTypes, setInterruptionTypesList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [modalInfo, setModalInfo] = useState({});
-    const [activeIndex, setActiveIndex] = useState(undefined);
-    const [loadInterruptionTypes, setLoadInterruptionTypes] = useState(false);
-    const [examInfoModal, setExamInfoModal] = useState({});
-    // const [openExamModal, setOpenExamModal] = useState(false);
     const [loadRemainingCourseUnits, setLoadRemainingCourseUnits] = useState(false);
     const [selectedEpoch, setSelectedEpoch] = useState();
     const [courseUnits, setCourseUnits] = useState(undefined);
@@ -88,43 +83,6 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
             }
         });
     }, []);
-
-    const loadCalendar = (calId) => {
-        setIsLoading(true);
-        // axios.get(`/calendar/${calId}`)
-        //     .then((response) => {
-        //         if (response?.status >= 200 && response?.status < 300) {
-        //             const {
-        //                 data: {
-        //                     data: {
-        //                         phase,
-        //                         published,
-        //                         interruptions,
-        //                         epochs,
-        //                         general_info,
-        //                         differences,
-        //                         previous_from_definitive,
-        //                     },
-        //                 },
-        //             } = response;
-        //             setIsTemporary(!!general_info?.temporary);
-        //             setCalendarPhase(general_info?.phase?.id);
-        //             setIsPublished(!!published);
-        //             setInterruptions(interruptions);
-        //             setEpochs(epochs);
-        //             epochs.forEach((epoch) => {
-        //                 setExamList((current) => [...current, ...epoch.exams]);
-        //             });
-        //             setGeneralInfo(general_info);
-        //             setDifferences(differences);
-        //             setIsLoading(false);
-        //             setPreviousFromDefinitive(previous_from_definitive);
-        //         } else {
-        //             history('/calendario');
-        //         }
-        //     })
-        //     .catch((r) => alert(r));
-    };
     
     const onSubmitExam = (values) => {
         setSavingExam(true);
@@ -147,7 +105,6 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                     // setOpenExamModal(false);
                     onClose();
                     toast(`Avaliação ${values?.id ? 'guardada' : 'marcada'} com sucesso!`, successConfig);
-                    // loadCalendar(calendarId);
                 } else {
                     toast(`Ocorreu um erro ao ${values?.id ? 'guardar' : 'marcar'} a avaliação!`, errorConfig);
                 }
@@ -156,13 +113,25 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
 
     useEffect(() => {
         if (!isOpen) {
-            // setExamInfoModal(undefined);
             setNoMethods(false);
             setSelectedEpoch(undefined);
             setCourseUnits([]);
             setMethodList([]);
         }
     }, [isOpen]);
+
+    useEffect( () => {
+        if(!!scheduleInformation.epochs) {
+            let availableEpochs = scheduleInformation.epochs.filter((epoch) => {
+                return moment(scheduleInformation.date).isBetween(moment(epoch.start_date), moment(epoch.end_date), undefined, '[]' );
+            });
+            
+            setEpochsList(availableEpochs);
+            if(availableEpochs.length == 1) {
+                setSelectedEpoch(availableEpochs[0].id);
+            }
+        }
+    }, [scheduleInformation])
 
     const removeExam = (examId) => {
         SweetAlertComponent.fire({
@@ -181,7 +150,6 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                     setRemovingExam(examId);
                     axios.delete(`/exams/${examId}`).then((res) => {
                         setRemovingExam(null);
-                        // loadCalendar(calendarId);
                         if (res.status === 200) {
                             toast('Exame eliminado com sucesso deste calendário!', successConfig);
                         } else {
@@ -191,10 +159,6 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                 }
             });
     };
-
-    // useEffect(() => {
-    //     loadCalendar(calendarId);
-    // }, [calendarId]);
 
     return (
         <FinalForm onSubmit={onSubmitExam}
@@ -217,14 +181,12 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                         <Form>
                             <Header as="h4">Detalhes da avaliação</Header>
                             
-                            <Grid columns={3}>
+                            <Grid columns={2}>
                                 <GridColumn>
                                     <p>
-                                        <b>Calendário de: </b>
+                                        <b>Curso: </b>
                                         {scheduleInformation?.courseName}
                                     </p>
-                                </GridColumn>
-                                <GridColumn>
                                     <p>
                                         <b>Ano Curricular: </b>
                                         {scheduleInformation?.scholarYear}
@@ -261,12 +223,8 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                                             <Field name="epoch">
                                                 {({input: epochInput}) => (
                                                     <Form.Dropdown
-                                                        options={epochsList.filter((epoch) => moment(scheduleInformation?.date).isBetween(moment(epoch.start_date), moment(epoch.end_date), undefined, '[]',))
-                                                            ?.map((epoch) => ({
-                                                                key: epoch.id,
-                                                                value: epoch.id,
-                                                                text: epoch.name,
-                                                            }))}
+                                                        options={epochsList.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name }))}
+                                                        value={selectedEpoch || -1}
                                                         selection search label="Época"
                                                         onChange={(e, {value}) => {
                                                             setCourseUnits([]);
@@ -319,7 +277,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                                     <>
                                         <Field name="room" defaultValue={scheduleInformation?.id ? scheduleInformation?.room : null}>
                                             {({input: roomInput}) => (
-                                                <Form.Input label="Sala" placeholder="Sala da avaliação (opcional)"{...roomInput} initialValue={scheduleInformation?.room}/>
+                                                <Form.Input label="Sala" placeholder="Sala da avaliação (opcional)"{...roomInput} />
                                             )}
                                         </Field>
                                         <Field name="durationMinutes">
