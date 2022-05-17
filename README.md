@@ -115,32 +115,31 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 - [ ] Criar calendario
   - [x] Criação de calendário com bug quando adicionamos uma interrupção ao calendário, e depois apagamos, ela não é efetivamente removida do array e vai no post de criação, gerando erro porque vai com uma data inválida.
   - [ ] Loading feriados
+  - [ ] Otimizar load de permissões
 
 
-- [ ] Adicionar exames / mais interrupções
+- [X] Rever HTML e detalhe dos Agrupamentos de UC
+    - [ ] Traduções
+    - [ ] Métodos
+
+
+- [ ] Detalhe Calendario
+  - [ ] Otimizar load de permissões e outros pedidos
+
+- [ ] Adicionar exames
   - [ ] Na criação de uma avaliação dá erro quando vai buscar as unidades curriculares depois de selecionar a época, não dando para prosseguir
   - [ ] validar permissoes (popup intervencoes)
   - [ ] ter em conta o ano letivo selecionado
 
 - [ ] Adicionar mais interrupções 
 - [ ] Publicar calendário
-  
 
-- [ ] Rework Novo calendario
-  - [x] Traduções
-  - [ ] Otimizar load de permissões
+- [ ] Ver exame
+  - [ ] Adicionar comentários
 
-- [ ] Adicionar comentários
+
 - [ ] Submeter para próximas fases e fazer a gestão de quais as fases seguintes/anteriores
 
-
-- [X] Rever HTML e detalhe dos Agrupamentos de UC
-  - [ ] Traduções
-  - [ ] Métodos
-
-
-- [ ] Rever falta de warning das configs da escola, quando as opções não estão todas preenchidas
-  
 
 - [ ] Melhorar logs dos cursos, na alteração de métodos
 - [ ] Criar botão para duplicar métodos para todas as épocas 
@@ -151,6 +150,7 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 
 
 - [ ] Rever sync/refresh ano letivo
+- [ ] Rever falta de warning das configs da escola, quando as opções não estão todas preenchidas
 
 
 - [ ] Adicionar titulo as paginas
