@@ -20,6 +20,7 @@ use App\Models\Epoch;
 use App\Models\EpochType;
 use App\Models\Group;
 use App\Models\Method;
+use App\Models\Semester;
 use App\Models\UnitLog;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -80,7 +81,7 @@ class CourseUnitController extends Controller
                 }
             }
             if( request('semester') ){
-                $courseUnits->where('semester_id', request('semester'));
+                $courseUnits->where('semester_id', Semester::where('number', request('semester'))->first()->id);
             }
             $courseUnits = $courseUnits->orderBy('name_' . $lang)->paginate($perPage);
         }
