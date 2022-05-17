@@ -293,7 +293,7 @@
         "Ocorreu um problema ao eliminar este ramo!": "Ocorreu um problema ao eliminar este ramo!",
         "Nome do ramo": "Nome do ramo",
         "Iniciais do ramo": "Iniciais do ramo",
-        "Adicionar ramo":  "Adicionar ramo",
+        "Adicionar ramo":  "Add branch",
 
         "Adicionar professor": "Add teacher",
         "Responsável": "Responsible",
@@ -317,6 +317,9 @@
         "Adicionar novo método": "Add new method",
 
         "Ínicio": "Start",
-        "Fim": "End"
+        "Fim": "End",
+
+        "Os seguintes detalhes da Unidade curricular precisam da sua atenção": "The following curricular unit details need your attention",
+        "Falta preencher a que ramo pertence.": "It remains to fill in which branch it belongs to."
     }
 }

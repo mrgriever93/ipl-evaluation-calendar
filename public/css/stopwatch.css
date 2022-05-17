@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap");
-*,
-*:after,
-*:before {
+.container-stopwatch *,
+.container-stopwatch *:after,
+.container-stopwatch *:before {
     box-sizing: border-box;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -110,7 +110,7 @@
 .container-stopwatch form {
     margin: 0;
 }
-button {
+.container-stopwatch button {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -118,9 +118,9 @@ button {
     outline: transparent;
     background: none;
 }
-label span,
-button span,
-[type="checkbox"] {
+.container-stopwatch label span,
+.container-stopwatch button span,
+.container-stopwatch [type="checkbox"] {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -131,8 +131,8 @@ button span,
     white-space: nowrap;
     border-width: 0;
 }
-label,
-button {
+.container-stopwatch label,
+.container-stopwatch button {
     cursor: pointer;
 }
 .container-stopwatch .reset-button {

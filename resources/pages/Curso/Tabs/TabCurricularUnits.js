@@ -121,13 +121,16 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
                                 </Table.Header>
                                 <Table.Body>
                                     {courseUnitsGrouped[year].map((unit, index) => (
-                                        <Table.Row key={index} warning={!unit.has_methods}>
+                                        <Table.Row key={index} warning={ !unit.has_methods }>
                                             <Table.Cell>
                                                 { !unit.has_methods && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher os métodos de avaliação.')} position='top center'/> }
-                                                ({unit.code}) - {unit.name}
+                                                ({ unit.code }) - { unit.name }
                                             </Table.Cell>
-                                            <Table.Cell>{unit.branch_label}</Table.Cell>
-                                            <Table.Cell>{unit.semester}</Table.Cell>
+                                            <Table.Cell>
+                                                { !unit.has_branch && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher a que ramo pertence.')} position='top center'/> }
+                                                {unit.branch_label }
+                                            </Table.Cell>
+                                            <Table.Cell>{ unit.semester }</Table.Cell>
 
                                             <Table.Cell textAlign="center">
                                                 <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COURSE_UNITS || SCOPES.EDIT_COURSE_UNITS]}>

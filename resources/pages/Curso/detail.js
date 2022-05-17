@@ -46,6 +46,7 @@ const Detail = () => {
                 });
             }
             setCourseDetail(res.data.data);
+            document.title = "Detalhe de Curso - " + "Calendários de Avaliação - IPLeiria";
         });
     };
 
