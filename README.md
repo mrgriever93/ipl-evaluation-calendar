@@ -113,9 +113,15 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 ### TODO
 
 - [ ] Criar calendario
-  - [ ] Criação de calendário com bug quando adicionamos uma interrupção ao calendário, e depois apagamos, ela não é efetivamente removida do array e vai no post de criação, gerando erro porque vai com uma data inválida.
+  - [x] Criação de calendário com bug quando adicionamos uma interrupção ao calendário, e depois apagamos, ela não é efetivamente removida do array e vai no post de criação, gerando erro porque vai com uma data inválida.
+  - [ ] Loading feriados
+
+
 - [ ] Adicionar exames / mais interrupções
   - [ ] Na criação de uma avaliação dá erro quando vai buscar as unidades curriculares depois de selecionar a época, não dando para prosseguir
+  - [ ] validar permissoes (popup intervencoes)
+  - [ ] ter em conta o ano letivo selecionado
+
 - [ ] Adicionar mais interrupções 
 - [ ] Publicar calendário
   
@@ -180,3 +186,8 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 
 ### TODO Miguel
 - [ ] Limpeza "Requests Folder"
+
+
+### Perguntas - 17-05-2022
+- [ ] Ao criar novo exame, mostra todos as unidades curriculares, ou so as que lhe pertencem? (ex. sou prof de fisica, vejo algebra?)
+- [ ] Qualquer user pode marcar interrupcoes?

@@ -106,7 +106,7 @@ class ExternalImports
                 // From URL to get webpage contents
                 $apiEndpoint = $school->base_link . '?' . $school->query_param_academic_year . '=' . $academicYearCode . '&' . $school->query_param_semester . '=S' . $semester;
 
-                $response = Http::connectTimeout(3*60)->timeout(3*60)->get($apiEndpoint);
+                $response = Http::connectTimeout(5*60)->timeout(5*60)->get($apiEndpoint);
                 if($response->failed()){
                     Log::channel('courses_sync')->info('FAILED - "importCoursesFromWebService" sync for Year code (' . $academicYearCode . ') and semester (' . $semester . ')');
                     continue;
