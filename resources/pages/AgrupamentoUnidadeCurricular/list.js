@@ -31,10 +31,10 @@ const List = () => {
     const [isCourseUnitsLoading, setIsCourseUnitsLoading] = useState(true);
     const [removingCourseUnitGroup, setRemovingCourseUnitGroup] = useState();
     const [isLoading, setIsLoading] = useState(true);
-    
+
     const loadCourseUnitGroups = () => {
         setIsLoading(true);
-        
+
         axios.get('/course-unit-groups').then((response) => {
             setIsLoading(false);
             if (response.status >= 200 && response.status < 300) {
@@ -43,7 +43,7 @@ const List = () => {
             }
         });
     };
-    
+
     const loadCourseUnits = () => {
         setIsCourseUnitsLoading(true);
 
@@ -89,11 +89,11 @@ const List = () => {
         SweetAlertComponent.fire(sweetAlertOptions).then((result) => {
             if (result.isConfirmed) {
                 setRemovingCourseUnitGroup(courseUnitGroupId);
-            
+
                 axios.delete(`/course-unit-groups/${courseUnitGroupId}`).then((res) => {
                     setRemovingCourseUnitGroup(null);
                     loadCourseUnitGroups();
-                
+
                     if (res.status === 200) {
                         toast('Agrupamento eliminado com sucesso!', successConfig);
                     }
@@ -104,7 +104,7 @@ const List = () => {
             }
         });
     };
-  
+
     return (
         <Container>
             <Card fluid>
@@ -127,7 +127,7 @@ const List = () => {
                             <Form.Input label={t("Pesquisar")} placeholder={t("Pesquisar tipo de avaliação...")} onChange={_.debounce(handleSearch, 400)} />
                             <Form.Dropdown selection multiple search
                                 options={courseUnitList.map(({ id, name }) => ({ key: id, value: id, text: name }))}
-                                loading={isCourseUnitsLoading} 
+                                loading={isCourseUnitsLoading}
                                 label={t("Unidade Curricular")} />
                         </Form.Group>
                     </Form>
@@ -171,7 +171,7 @@ const List = () => {
                                             </Button>
                                         </ShowComponentIfAuthorized>
                                         <ShowComponentIfAuthorized permission={[SCOPES.MANAGE_EVALUATION_METHODS]}>
-                                            <Link to={`agrupamento-unidade-curricular/${course_units[0]?.id}/metodos`}>
+                                            <Link to={`/agrupamento-unidade-curricular/${course_units[0]?.id}/metodos`}>
                                                 <Button color="olive" icon labelPosition="left">
                                                     <Icon name="file alternate"/> Métodos
                                                 </Button>

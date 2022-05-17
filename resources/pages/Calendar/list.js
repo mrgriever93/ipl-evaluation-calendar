@@ -42,7 +42,7 @@ const MessageFading = styled(Message)`
     animation: flickerAnimation 1s infinite;
 `;
 
-const CalendarList = ({match}) => {
+const CalendarList = () => {
     const [calendars, setCalendars] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [modalInfo, setModalInfo] = useState();
@@ -127,22 +127,13 @@ const CalendarList = ({match}) => {
                 <Card.Content>
                     <Wrapper>
                         <Header as="span">Calendários</Header>
-                        <ShowComponentIfAuthorized
-                            permission={[SCOPES.CREATE_CALENDAR]}
+                        <ShowComponentIfAuthorized permission={[SCOPES.CREATE_CALENDAR]}
                             renderIfNotAllowed={() => (
-                                <Button
-                                    floated="right"
-                                    toggle
-                                    active={myCourseOnly}
-                                    onClick={() => setMyCourseOnly((curr) => !curr)}
-                                    icon
-                                    labelPosition="left"
-                                >
+                                <Button floated="right" toggle active={myCourseOnly} onClick={() => setMyCourseOnly((curr) => !curr)} icon labelPosition="left">
                                     <Icon name="eye"/>
                                     {myCourseOnly ? 'Meus calendários' : 'Todos'}
                                 </Button>
-                            )}
-                        >
+                            )}>
                             <Link to="/calendario/novo">
                                 <Button floated="right" color="green">
                                     Novo
@@ -162,12 +153,7 @@ const CalendarList = ({match}) => {
                         <Table.Header>
                             <Table.Row key={'table_header'}>
                                 {columns.map(
-                                    ({
-                                         name,
-                                         textAlign,
-                                         restrictedToCreators,
-                                         permission,
-                                     }, index) => (restrictedToCreators ? (
+                                    ({name, textAlign, restrictedToCreators, permission}, index) => (restrictedToCreators ? (
                                         <ShowComponentIfAuthorized permission={[permission]} key={'auth_table_header_cell_' + index}>
                                             <Table.HeaderCell textAlign={textAlign} key={'table_header_cell_' + index}>
                                                 {name}
@@ -192,8 +178,7 @@ const CalendarList = ({match}) => {
                                                 <Table.Cell>
                                                     {published ? temporary ? 'Provisório' : 'Definitivo' : phase.description}
                                                 </Table.Cell>
-                                            )}
-                                        >
+                                            )}>
                                             <Table.Cell>
                                                 {temporary ? 'Provisório' : 'Definitivo'}
                                             </Table.Cell>
@@ -215,16 +200,7 @@ const CalendarList = ({match}) => {
                                                 </Button>
                                             </Link>
                                             <ShowComponentIfAuthorized permission={[SCOPES.DELETE_CALENDAR]}>
-                                                <Button
-                                                    onClick={() => remove({
-                                                        id,
-                                                        course: course.display_name,
-                                                    })}
-                                                    color="red"
-                                                    icon
-                                                    disabled={published}
-                                                    loading={!!removingCalendar?.find((x) => x === id)}
-                                                >
+                                                <Button onClick={() => remove({id, course: course.display_name})} color="red" icon disabled={!!published} loading={!!removingCalendar?.find((x) => x === id)}>
                                                     <Icon name="trash"/>
                                                 </Button>
                                             </ShowComponentIfAuthorized>

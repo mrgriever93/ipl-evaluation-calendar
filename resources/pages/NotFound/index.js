@@ -5,6 +5,7 @@ import {createGlobalStyle} from 'styled-components';
 import gsap from 'gsap';
 import Astronaut from './Astronaut';
 import logoUrl from '../../IPL_black_big.png';
+import HeaderMenu from "../../components/Menu";
 
 const GlobalStyle = createGlobalStyle`
     :root {
@@ -123,6 +124,7 @@ const NotFoundPage = () => {
 
     return (
         <>
+            <HeaderMenu/>
             <GlobalStyle/>
             <Grid>
                 <Grid.Row centered columns="2">

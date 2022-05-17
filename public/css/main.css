@@ -1,3 +1,4 @@
+@import url("stopwatch.css");
 /* ================================================================ */
 /*                   Calendários de Avaliação                       */
 /*      Base Theme                                                  */
@@ -112,6 +113,29 @@ body {
     flex: 3 1;
     flex-flow: row nowrap;
     justify-content: flex-end;
+}
+
+/* Cursos readonly */
+.ui.form .field.input-readonly.disabled,
+.ui.form .field.input-readonly.disabled > label,
+.ui.form .field.input-readonly.disabled .ui.disabled.input {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.ui.form .field.input-readonly.disabled .ui.input input,
+.ui.form .field.input-readonly .dropdown.disabled {
+    background: #f9f9f9;
+    border: 1px solid rgba(34,36,38, .05);
+    cursor: not-allowed;
+    opacity: 1;
+    pointer-events: all;
+}
+
+.ui.form .field.input-readonly .dropdown.disabled .dropdown.icon.clear {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
 }
 
 /*
@@ -229,6 +253,24 @@ body {
 .padding-bottom-xl   { padding-bottom: var(--space-xl);   }
 .padding-bottom-xxl  { padding-bottom: var(--space-xxl);  }
 
+.padding-right-none { padding-right: var(--space-none); }
+.padding-right-xs   { padding-right: var(--space-xs);   }
+.padding-right-s    { padding-right: var(--space-s);    }
+.padding-right-base { padding-right: var(--space-base); }
+.padding-right-m    { padding-right: var(--space-m);    }
+.padding-right-l    { padding-right: var(--space-l);    }
+.padding-right-xl   { padding-right: var(--space-xl);   }
+.padding-right-xxl  { padding-right: var(--space-xxl);  }
+
+.padding-left-none { padding-left: var(--space-none); }
+.padding-left-xs   { padding-left: var(--space-xs);   }
+.padding-left-s    { padding-left: var(--space-s);    }
+.padding-left-base { padding-left: var(--space-base); }
+.padding-left-m    { padding-left: var(--space-m);    }
+.padding-left-l    { padding-left: var(--space-l);    }
+.padding-left-xl   { padding-left: var(--space-xl);   }
+.padding-left-xxl  { padding-left: var(--space-xxl);  }
+
 /* Custom Component > Section */
 .section {
     margin-top: var(--space-m);
@@ -319,6 +361,33 @@ body {
     height: 40px;
 }
 
+/* Calendar > Legend List Item */
+.legend-list-item {
+    align-items: center;
+    display: flex;
+    position: relative;
+    width: 100%;
+}
+
+.legend-list-item:not(:first-child) {
+    margin-top: var(--space-s);
+    /* border-top: 1px solid #eee;
+    padding-top: var(--space-s); */
+}
+
+.legend-list-item-square {
+    border: 1px solid #ccc;
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+    margin: var(--space-none) var(--space-s) var(--space-none) var(--space-none);
+}
+
+.legend-list-item-content {
+    position: relative;
+    font-size: 12px;
+}
+
 /* Other stuff */
 
 .card-header-alignment {
@@ -396,3 +465,31 @@ div.inline{
  .ui.menu .item>i.icon:last-child {
      margin-left: var(--space-s);
  }
+
+
+ /*
+  * Space Invaders
+  */
+.center{text-align:center}
+#space-invaders {
+    width: 100%;
+    margin: 0 auto;
+    display: block;
+    background: white
+}
+.calendar-footer{
+    align-items: center;
+    align-content: center;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    flex-grow: 1;
+    border: none;
+    border-top: 1px solid rgba(34,36,38,.1);
+    background: 0 0;
+    margin: 0;
+    padding: 1em 1em;
+    box-shadow: none;
+    font-size: 1em;
+    border-radius: 0;
+}

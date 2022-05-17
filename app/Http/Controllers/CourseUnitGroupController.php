@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Filters\CourseUnitGroupFilters;
 use App\Http\Requests\CourseUnitGroupRequest;
-use App\Http\Resources\CourseUnitGroupResource;
+use App\Http\Resources\Admin\CourseUnitGroupListResource;
+use App\Http\Resources\Admin\Edit\CourseUnitGroupResource;
 use App\Models\Calendar;
 use App\Models\CourseUnit;
 use App\Models\CourseUnitGroup;
@@ -20,7 +21,7 @@ class CourseUnitGroupController extends Controller
      */
     public function index(CourseUnitGroupFilters $filters)
     {
-        return CourseUnitGroupResource::collection(CourseUnitGroup::with('courseUnits')->filter($filters)->resolve());
+        return CourseUnitGroupListResource::collection(CourseUnitGroup::with('courseUnits')->filter($filters)->resolve());
     }
 
     /**
@@ -44,7 +45,8 @@ class CourseUnitGroupController extends Controller
 
         if ($existingMethodsForCourseUnits <= 1) {
             $newCourseUnitGroup = new CourseUnitGroup();
-            $newCourseUnitGroup->description = $request->get('description');
+            $newCourseUnitGroup->description_pt = $request->get('description_pt');
+            $newCourseUnitGroup->description_en = $request->get('description_en');
             $newCourseUnitGroup->save();
 
             foreach ($request->get('course_units') as $courseUnit) {
@@ -66,13 +68,7 @@ class CourseUnitGroupController extends Controller
 
             }
 
-
-
-
-            CourseUnit::
-                where('course_unit_group_id', null)
-                ->whereIn('id', $request->get('course_units'))
-                ->update(['course_unit_group_id' => $newCourseUnitGroup->id]);
+            CourseUnit::where('course_unit_group_id', null)->whereIn('id', $request->get('course_units'))->update(['course_unit_group_id' => $newCourseUnitGroup->id]);
 
             return response()->json("Created!", Response::HTTP_CREATED);
         }

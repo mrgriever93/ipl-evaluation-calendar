@@ -77,12 +77,13 @@ sdfghy
 
 13) Links
 
-   https://laravel-mix.com/
-   
-    https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE
+https://laravel-mix.com/
 
-   https://bobbyhadz.com/blog/javascript-remove-object-from-array-by-value
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE
 
+https://bobbyhadz.com/blog/javascript-remove-object-from-array-by-value
+    
+https://github.com/rap2hpoutre/laravel-log-viewer
     
 14) Best practices
 
@@ -92,6 +93,8 @@ sdfghy
 15) Server commands
 
         $> composer install --optimize-autoloader --no-dev
+        $> php artisan config:cache
+        $> php artisan route:cache
 
     compile JS
     
@@ -108,15 +111,43 @@ sdfghy
 ---
 
 ### TODO
-- [ ] Rever HTML e detalhe dos Agrupamentos de UC
-  - [ ] Traduções
+
+- [ ] Criar calendario
+  - [ ] Criação de calendário com bug quando adicionamos uma interrupção ao calendário, e depois apagamos, ela não é efetivamente removida do array e vai no post de criação, gerando erro porque vai com uma data inválida.
+- [ ] Adicionar exames / mais interrupções
+  - [ ] Na criação de uma avaliação dá erro quando vai buscar as unidades curriculares depois de selecionar a época, não dando para prosseguir
+- [ ] Adicionar mais interrupções 
+- [ ] Publicar calendário
+  
+
 - [ ] Rework Novo calendario
   - [x] Traduções
   - [ ] Otimizar load de permissões
-  - [ ] validar interrupções obrigatórios (ex: Natal e Páscoa);
-  - [ ] Na criação de um novo calendário, os feriados não são guardados
+
+- [ ] Adicionar comentários
+- [ ] Submeter para próximas fases e fazer a gestão de quais as fases seguintes/anteriores
+
+
+- [X] Rever HTML e detalhe dos Agrupamentos de UC
+  - [ ] Traduções
+  - [ ] Métodos
+
+
+- [ ] Rever falta de warning das configs da escola, quando as opções não estão todas preenchidas
+  
+
+- [ ] Melhorar logs dos cursos, na alteração de métodos
+- [ ] Criar botão para duplicar métodos para todas as épocas 
+  - [ ] apenas na época periódica. 
+  - [ ] substitui tudo o que houver definido para ficar igual ao que estiver na periódica
+  - [ ] mostra aviso que irá substituir dados de todas as épocas 
+  - [ ] (serve como acelerador para preencher as épocas de exames que normalmente são sempre iguais, e dps pode ser otimizado na periódica)
+
+
 - [ ] Rever sync/refresh ano letivo
 
+
+- [ ] Adicionar titulo as paginas
 
 ---
 - [x] No curso, qdo pede para rever cenas tipo Coordenador:
@@ -135,17 +166,17 @@ sdfghy
 - [x] Para adicionar mantém-se a modal?
 - [x] Atualizadas as permissões do lado da BD e do React
 - [x] Falta testar. O seeder das permissões agora está mal porque os id's mudaram... Devia ser refeito para quando formos testar isto melhor por user na VM
+--- 
+ - 2022-05-16
+ - [x] Nos cursos, UC's que não estão em tronco comum não aparecem (falta confirmar se foram carregadas na BD)
 
 ### TRABALHO FUTURO:
 - [ ] Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos);
 - [ ] Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;
 - [ ] Users com mais do que um role (validar o que deve ser feito)
 - [ ] Log dos métodos: registar o que foi alterado e quem alterou;
-
+- [ ] Rever "voltar a lista" para navegar entre paginas de detalhe e listas (ex: curso e detalhe de unidades curriculares)
+ 
 
 ### TODO Miguel
 - [ ] Limpeza "Requests Folder"
-
-
-### Perguntas
-- [ ] Tipos de interrupcoes ligadas a alguma coisa? Semestre? Data? Feriado?

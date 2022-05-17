@@ -3,7 +3,7 @@ import {Form} from 'semantic-ui-react';
 import axios from 'axios';
 import {useTranslation} from "react-i18next";
 
-const FilterOptionSemester = ({withSpecial, widthSize, eventHandler, value, isSearch = true}) => {
+const FilterOptionSemester = ({withSpecial, widthSize, eventHandler, value, disabled, className, isSearch = true}) => {
     const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [semestersOptions, setSemestersOptions] = useState([]);
@@ -33,7 +33,7 @@ const FilterOptionSemester = ({withSpecial, widthSize, eventHandler, value, isSe
     };
 
     return (
-        <Form.Dropdown selectOnBlur={false} width={widthSize} selection search={isSearch} value={semester} options={semestersOptions} label={t("Semestre")} placeholder={ t((isSearch ? "Todas os Semestres" : "Semestre")) } loading={loading} onChange={filterBySemester}/>
+        <Form.Dropdown className={className} disabled={disabled} selectOnBlur={false} width={widthSize} selection search={isSearch} value={semester} options={semestersOptions} label={t("Semestre")} placeholder={ t((isSearch ? "Todas os Semestres" : "Semestre")) } loading={loading} onChange={filterBySemester}/>
     );
 };
 
