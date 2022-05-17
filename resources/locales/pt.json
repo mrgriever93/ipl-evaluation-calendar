@@ -293,7 +293,7 @@
         "Ocorreu um problema ao eliminar este ramo!": "There was a problem deleting this branch!",
         "Nome do ramo": "Branch name",
         "Iniciais do ramo": "Branch initials",
-        "Adicionar ramo":  "Add branch",
+        "Adicionar ramo":  "Adicionar ramo",
 
         "Adicionar professor": "Adicionar professor",
         "Responsável": "Responsável",
@@ -314,6 +314,12 @@
         "Nota mínima": "Nota mínima",
         "Peso da avaliação": "Peso da avaliação",
         "Total pesos avaliacao:": "Total pesos avaliacao:",
-        "Adicionar novo método": "Adicionar novo método"
+        "Adicionar novo método": "Adicionar novo método",
+
+        "Ínicio": "Ínicio",
+        "Fim": "Fim",
+
+        "Os seguintes detalhes da Unidade curricular precisam da sua atenção": "Os seguintes detalhes da Unidade curricular precisam da sua atenção",
+        "Falta preencher a que ramo pertence.": "Falta preencher a que ramo pertence."
     }
 }

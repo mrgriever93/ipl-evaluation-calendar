@@ -1,10 +1,26 @@
 import React, {useEffect, useState} from 'react';
+import {Link} from 'react-router-dom';
 import axios from 'axios';
 import _ from 'lodash';
-import {Table, Modal, Form, Button, Icon, Segment, Grid, Divider, Header, Dimmer, Loader} from 'semantic-ui-react';
+import {
+    Table,
+    Modal,
+    Form,
+    Button,
+    Icon,
+    Segment,
+    Grid,
+    Divider,
+    Header,
+    Dimmer,
+    Loader,
+    Popup
+} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import {useTranslation} from "react-i18next";
 import {successConfig, errorConfig} from '../../../utils/toastConfig';
+import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
+import SCOPES from '../../../utils/scopesConstants';
 
 const CourseTabsUnits = ({ courseId, isLoading }) => {
     const { t } = useTranslation();
@@ -64,6 +80,13 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
         });
     };
 
+    const columns = [
+        {name: t('Nome'),       style: {width: '60%'} },
+        {name: t('Ramo'),       style: {width: '20%'} },
+        {name: t('Semestre'),   style: {width: '10%'}, align: 'center' },
+        {name: t('Ações'),      style: {width: '10%'}, align: 'center' },
+    ];
+
     return (
         <div>
             { loading && (
@@ -83,29 +106,46 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
                     </Segment>
                     */}
                     { Object.keys(courseUnitsGrouped).map((year, index) => (
-                        <Table striped color="green" key={index}>
-                            <Table.Header>
-                                <Table.Row>
-                                    <Table.HeaderCell rowSpan="1" colSpan="4">{ t("Ano") } {year}</Table.HeaderCell>
-                                </Table.Row>
-                                <Table.Row>
-                                    <Table.HeaderCell style={{width: '10%'}}>{ t("Código") }</Table.HeaderCell>
-                                    <Table.HeaderCell style={{width: '55%'}}>{ t("Nome") }</Table.HeaderCell>
-                                    <Table.HeaderCell style={{width: '15%'}}>{ t("Sigla") }</Table.HeaderCell>
-                                    <Table.HeaderCell style={{width: '20%'}}>{ t("Ramo") }</Table.HeaderCell>
-                                </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                {courseUnitsGrouped[year].map((unit, index) => (
-                                    <Table.Row key={index}>
-                                        <Table.Cell>{unit.code}</Table.Cell>
-                                        <Table.Cell>{unit.name}</Table.Cell>
-                                        <Table.Cell>{unit.initials}</Table.Cell>
-                                        <Table.Cell>{unit.branch_label}</Table.Cell>
+
+                        <div className='margin-bottom-l'>
+                            <Header as='h4'>
+                                { t("Ano") } {year}
+                            </Header>
+                            <Table striped color="green" key={index}>
+                                <Table.Header>
+                                    <Table.Row>
+                                        {columns.map((col, index) => (
+                                            <Table.HeaderCell key={index} textAlign={col.align} style={col.style}>{col.name}</Table.HeaderCell>
+                                        ))}
                                     </Table.Row>
-                                ))}
-                            </Table.Body>
-                        </Table>
+                                </Table.Header>
+                                <Table.Body>
+                                    {courseUnitsGrouped[year].map((unit, index) => (
+                                        <Table.Row key={index} warning={ !unit.has_methods }>
+                                            <Table.Cell>
+                                                { !unit.has_methods && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher os métodos de avaliação.')} position='top center'/> }
+                                                ({ unit.code }) - { unit.name }
+                                            </Table.Cell>
+                                            <Table.Cell>
+                                                { !unit.has_branch && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher a que ramo pertence.')} position='top center'/> }
+                                                {unit.branch_label }
+                                            </Table.Cell>
+                                            <Table.Cell>{ unit.semester }</Table.Cell>
+
+                                            <Table.Cell textAlign="center">
+                                                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COURSE_UNITS || SCOPES.EDIT_COURSE_UNITS]}>
+                                                    <Link to={`/unidade-curricular/edit/${unit.id}`}>
+                                                        <Button color="green" icon>
+                                                            <Icon name="eye"/>
+                                                        </Button>
+                                                    </Link>
+                                                </ShowComponentIfAuthorized>
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    ))}
+                                </Table.Body>
+                            </Table>
+                        </div>
                     ))}
                 </>
             )}

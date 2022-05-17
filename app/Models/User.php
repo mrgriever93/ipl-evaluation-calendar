@@ -112,6 +112,11 @@ class User extends Authenticatable implements LdapAuthenticatable
         return $this->hasManyDeepFromRelations($this->courses(), (new Course)->calendars());
     }
 
+    public function games()
+    {
+        return $this->belongsToMany(Games::class);
+    }
+
     public function scopeWithPermissionAndAction($query, $permissionType, $actionType)
     {
         return $this->permissions()

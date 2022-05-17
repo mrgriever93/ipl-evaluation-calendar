@@ -25,32 +25,6 @@ class PermissionsAndGroupsSeeder extends Seeder
     public function run()
     {
 
-        $schools = [
-            ["code" => "ESAD.CR",   "name_pt" => "Escola Superior de Artes e Design - Caldas da Rainha",   "name_en" => "School of Arts and Design - Caldas da Rainha"  ],
-            ["code" => "ESECS",     "name_pt" => "Escola Superior de Educação e Ciências Sociais",         "name_en" => "School of Education and Social Sciences"       ],
-            ["code" => "ESSLEI",    "name_pt" => "Escola Superior de Saúde",                               "name_en" => "School of Health Sciences"                     ],
-            [
-                "code"                              => "ESTG",
-                "name_pt"                           => "Escola Superior de Tecnologia e Gestão",
-                "name_en"                           => "School of Technology and Management",
-                "base_link"                         => "http://www.dei.estg.ipleiria.pt/intranet/horarios/ws/inscricoes/cursos_ucs.php",
-                "index_course_code"                 => "3",//"0",
-                "index_course_name"                 => "4",//"1",
-                "index_course_unit_code"            => "5",//"2",
-                "index_course_unit_name"            => "6",//"3",
-                "index_course_unit_teachers"        => "7",//"4",
-                "index_course_unit_curricular_year" => "2",//"5",
-                "query_param_academic_year"         => "anoletivo",
-                "query_param_semester"              => "periodo"
-            ],
-            ["code" => "ESTM",  "name_pt" => "Escola Superior de Turismo e Tecnologia do Mar - Peniche",    "name_en" => "School of Tourism and Maritime Technology - Peniche" ],
-        ];
-
-        foreach ($schools as $school) {
-            $newSchool = new School($school);
-            $newSchool->save();
-        }
-
         $userGroups = [
             ["code" => "super_admin",             "is_removable" => false,  "name_pt" => "Super Admin",                     "name_en" => "Super Admin"                       ],
             ["code" => "admin",                   "is_removable" => false,  "name_pt" => "Administrador de Sistema",        "name_en" => "System Admin"                      ],
@@ -100,6 +74,35 @@ class PermissionsAndGroupsSeeder extends Seeder
             $newUser->save();
             $newUser->groups()->attach(Group::where('code', $user['group_code'])->get());
             $newUser->save();
+        }
+
+        $schools = [
+            ["code" => "ESAD.CR",   "name_pt" => "Escola Superior de Artes e Design - Caldas da Rainha",   "name_en" => "School of Arts and Design - Caldas da Rainha"  ],
+            ["code" => "ESECS",     "name_pt" => "Escola Superior de Educação e Ciências Sociais",         "name_en" => "School of Education and Social Sciences"       ],
+            ["code" => "ESSLEI",    "name_pt" => "Escola Superior de Saúde",                               "name_en" => "School of Health Sciences"                     ],
+            [
+                "code"                              => "ESTG",
+                "name_pt"                           => "Escola Superior de Tecnologia e Gestão",
+                "name_en"                           => "School of Technology and Management",
+                "base_link"                         => "http://www.dei.estg.ipleiria.pt/intranet/horarios/ws/inscricoes/cursos_ucs.php",
+                "index_course_code"                 => "3",//"0",
+                "index_course_name"                 => "4",//"1",
+                "index_course_unit_code"            => "5",//"2",
+                "index_course_unit_name"            => "6",//"3",
+                "index_course_unit_teachers"        => "7",//"4",
+                "index_course_unit_curricular_year" => "2",//"5",
+                "query_param_academic_year"         => "anoletivo",
+                "query_param_semester"              => "periodo",
+                "gop_group_id"                      => "12",
+                "board_group_id"                    => "13",
+                "pedagogic_group_id"                => "14",
+            ],
+            ["code" => "ESTM",  "name_pt" => "Escola Superior de Turismo e Tecnologia do Mar - Peniche",    "name_en" => "School of Tourism and Maritime Technology - Peniche" ],
+        ];
+
+        foreach ($schools as $school) {
+            $newSchool = new School($school);
+            $newSchool->save();
         }
 
         $interruptionTypes = [

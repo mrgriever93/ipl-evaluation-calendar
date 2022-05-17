@@ -72,6 +72,7 @@ const CoursesList = () => {
             }
             setLoading(false);
             setContentLoading(false);
+            document.title = "Listagem dos Cursos - " + "Calendários de Avaliação - IPLeiria";
         });
     };
 

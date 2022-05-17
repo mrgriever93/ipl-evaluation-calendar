@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Admin;
 
 use App\Http\Resources\Generic\CourseUnitResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CourseUnitGroupResource extends JsonResource
+class CourseUnitGroupListResource extends JsonResource
 {
     public function toArray($request)
     {
         return [
             'id'  => $this->id,
-            'description' => $this->description,
+            'description' => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
             'course_units' => CourseUnitResource::collection($this->whenLoaded('courseUnits')),
             'num_course_units' => count($this->courseUnits),
         ];

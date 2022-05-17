@@ -18,8 +18,9 @@ class CourseUnitListResource extends JsonResource
             'curricularYear'        => $this->curricular_year,
             'semester'              => $this->semester->number,
             //'branch_label'        => ($lang_header == "en" ? $this->branch()->first()->name_en : $this->branch()->first()->name_pt),
-            'branch_label'          => ($lang_header == "en" ? $this->branch->name_en : $this->branch->name_pt),
-            'has_methods'           => $this->methods()->exists()
+            'branch_label'          => ($this->branch ? ($lang_header == "en" ? $this->branch->name_en : $this->branch->name_pt) : "-"),
+            'has_methods'           => $this->methods()->exists(),
+            'has_branch'            => $this->branch()->exists()
         ];
     }
 }

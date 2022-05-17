@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('branch_id')->nullable();
             $table->unsignedBigInteger('responsible_user_id')->nullable();
             $table->unsignedBigInteger('course_unit_group_id')->nullable();
-            $table->string('code')->unique();
+            $table->string('code');
             $table->string('name_pt');
             $table->string('name_en');
             $table->string('initials')->nullable();
