@@ -415,7 +415,12 @@ const Calendar = () => {
                                                     return (
                                                         <Table.HeaderCell key={index} textAlign="center">
                                                             {moment(day.date).format('DD-MM-YYYY')}
-                                                            <Button icon="calendar times outline" title="Adicionar Interrupção"/>
+                                                            { !day.interruption && (
+                                                                <Button icon="calendar times outline" title="Adicionar Interrupção" 
+                                                                onClick={() => { alert("Will call interruption popup!")}}
+                                                                style={{ marginLeft: ' 10px', padding: '0', fontSize: '16px', width: '24px', height: '24px' }} />
+                                                            )}
+                                                            
                                                         </Table.HeaderCell>
                                                     );
                                                 }
