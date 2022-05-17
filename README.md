@@ -119,6 +119,7 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 - [ ] Adicionar mais interrupções 
 - [ ] Publicar calendário
   
+
 - [ ] Rework Novo calendario
   - [x] Traduções
   - [ ] Otimizar load de permissões
@@ -126,12 +127,15 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 - [ ] Adicionar comentários
 - [ ] Submeter para próximas fases e fazer a gestão de quais as fases seguintes/anteriores
 
+
 - [X] Rever HTML e detalhe dos Agrupamentos de UC
   - [ ] Traduções
+  - [ ] Métodos
+
 
 - [ ] Rever falta de warning das configs da escola, quando as opções não estão todas preenchidas
-- [ ] Nos cursos, UC's que não estão em tronco comum não aparecem (falta confirmar se foram carregadas na BD)
   
+
 - [ ] Melhorar logs dos cursos, na alteração de métodos
 - [ ] Criar botão para duplicar métodos para todas as épocas 
   - [ ] apenas na época periódica. 
@@ -139,9 +143,11 @@ https://github.com/rap2hpoutre/laravel-log-viewer
   - [ ] mostra aviso que irá substituir dados de todas as épocas 
   - [ ] (serve como acelerador para preencher as épocas de exames que normalmente são sempre iguais, e dps pode ser otimizado na periódica)
 
+
 - [ ] Rever sync/refresh ano letivo
 
 
+- [ ] Adicionar titulo as paginas
 
 ---
 - [x] No curso, qdo pede para rever cenas tipo Coordenador:
@@ -160,17 +166,17 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 - [x] Para adicionar mantém-se a modal?
 - [x] Atualizadas as permissões do lado da BD e do React
 - [x] Falta testar. O seeder das permissões agora está mal porque os id's mudaram... Devia ser refeito para quando formos testar isto melhor por user na VM
+--- 
+ - 2022-05-16
+ - [x] Nos cursos, UC's que não estão em tronco comum não aparecem (falta confirmar se foram carregadas na BD)
 
 ### TRABALHO FUTURO:
 - [ ] Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos);
 - [ ] Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;
 - [ ] Users com mais do que um role (validar o que deve ser feito)
 - [ ] Log dos métodos: registar o que foi alterado e quem alterou;
-
+- [ ] Rever "voltar a lista" para navegar entre paginas de detalhe e listas (ex: curso e detalhe de unidades curriculares)
+ 
 
 ### TODO Miguel
 - [ ] Limpeza "Requests Folder"
-
-
-### Perguntas
-- [ ] Tipos de interrupcoes ligadas a alguma coisa? Semestre? Data? Feriado?

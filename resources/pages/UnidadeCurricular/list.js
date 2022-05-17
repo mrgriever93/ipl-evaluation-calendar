@@ -135,13 +135,16 @@ const CourseUnitsList = () => {
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
-                                    {courseUnits.map(({id, name, code, has_methods, branch_label, group_name, course_description, semester}) => (
+                                    {courseUnits.map(({id, name, code, has_methods, branch_label, has_branch, group_name, course_description, semester}) => (
                                         <Table.Row key={id} warning={!has_methods}>
                                             <Table.Cell>
                                                 { !has_methods && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher os métodos de avaliação.')} position='top center'/> }
                                                 ({code}) - {name}
                                             </Table.Cell>
-                                            <Table.Cell>{branch_label}</Table.Cell>
+                                            <Table.Cell>
+                                                { !has_branch && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher a que ramo pertence.')} position='top center'/> }
+                                                {branch_label}
+                                            </Table.Cell>
                                             <Table.Cell>{group_name || '-'}</Table.Cell>
                                             <Table.Cell>{semester}</Table.Cell>
                                             <Table.Cell>

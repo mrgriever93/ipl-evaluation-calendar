@@ -41,6 +41,7 @@ const New = () => {
                 loadCourseUnits(res?.data?.data?.course_units?.map((x) => x.id).join(','));
                 setLoading(false);
                 setCourseUnitGroupDetail(res?.data?.data);
+                document.title = "Detalhe de Agrupamento de Unidades Curriculares - " + "Calendários de Avaliação - IPLeiria";
             });
         } else {
             loadCourseUnits();

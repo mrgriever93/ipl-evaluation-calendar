@@ -55,7 +55,6 @@ const NewCalendar = () => {
     const history = useNavigate();
     const { t } = useTranslation();
     const [activeSemester, setActiveSemester] = useState(0);
-    const [additionalInterruptions, setAdditionalInterruptions] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const [allCourses, setAllCourses] = useState(true);
@@ -70,6 +69,7 @@ const NewCalendar = () => {
     const [initialDate, setInitialDate] = useState(0);
     const [finalDate, setFinalDate] = useState(0);
     const [holidaysList, setHolidaysList] = useState([]);
+    const [additionalInterruptions, setAdditionalInterruptions] = useState([]);
 
     const addCourse = (course) => {
         setCourses([...courses, {...course}]);
@@ -134,30 +134,46 @@ const NewCalendar = () => {
     }
 
     const validateStep2 = (values) => {
+        console.log(values);
         let isValid = false;
         // validate if the no interruptions was clicked, and go to next phase
         if(values.hasOwnProperty("noInterruptions") && values.noInterruptions){
             setErrorMessages([]);
             return true;
         }
-        const hasInterruptions = values.hasOwnProperty("additional_interruptions") && values.additional_interruptions && values.additional_interruptions.length > 0;
+        const hasInterruptions = additionalInterruptions.length > 0 && values.hasOwnProperty("additional_interruptions") && values.additional_interruptions && values.additional_interruptions.length > 0;
         let hasAllDates = true;
         let hasAllInterruptionsTypes = true;
         let hasAllMandatoryInterruptions = true;
         if(hasInterruptions) {
             const keys = Object.keys(values.additional_interruptions);
             keys.forEach((key, index) => {
-                if(!values.additional_interruptions[key].hasOwnProperty("start_date") || !values.additional_interruptions[key].hasOwnProperty("end_date")){
+                if(!additionalInterruptions.includes(parseInt(key))){
+                    delete values.additional_interruptions[key];
+                } else {
+                    if (!values.additional_interruptions[key].hasOwnProperty("start_date") || !values.additional_interruptions[key].hasOwnProperty("end_date")) {
+                        hasAllDates = false;
+                    }
+                    if (!values.additional_interruptions[key].hasOwnProperty("interruption_type_id")) {
+                        hasAllInterruptionsTypes = false;
+                    }
+                    // TODO finalize all mandatory interruptions
+                    //if(values.additional_interruptions[key].hasOwnProperty("interruption_type_id") || values.additional_interruptions[key].interruption_type_id.includes(mandatoryInterruptions)){
+                    //    hasAllMandatoryInterruptions = false;
+                    //}
+                }
+            });
+        }
+        if(values.hasOwnProperty("additional_interruptions")) {
+            if (values.additional_interruptions.length !== additionalInterruptions.length) {
+                if (additionalInterruptions.length === 0) {
+                    values.additional_interruptions = {};
+                    delete values.additional_interruptions;
+                    hasAllMandatoryInterruptions = false;
+                } else {
                     hasAllDates = false;
                 }
-                if(!values.additional_interruptions[key].hasOwnProperty("interruption_type_id")){
-                    hasAllInterruptionsTypes = false;
-                }
-                // TODO finalize all mandatory interruptions
-                //if(values.additional_interruptions[key].hasOwnProperty("interruption_type_id") || values.additional_interruptions[key].interruption_type_id.includes(mandatoryInterruptions)){
-                //    hasAllMandatoryInterruptions = false;
-                //}
-            });
+            }
         }
 
         let errorTexts = [];
@@ -238,7 +254,7 @@ const NewCalendar = () => {
                 ],
                 holidays: holidaysList,
                 interruptions: [
-                    ...(values.step2.additional_interruptions?.map(({interruption_type_id, start_date, end_date}) => ({
+                    ...(values.step2?.additional_interruptions?.map(({interruption_type_id, start_date, end_date}) => ({
                             interruption_type_id,
                             start_date: moment(start_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
                             end_date: moment(end_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),

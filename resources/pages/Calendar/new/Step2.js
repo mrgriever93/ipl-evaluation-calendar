@@ -28,6 +28,15 @@ const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAd
         });
     }
 
+    const removeInterruption = (index) => {
+        setAdditionalInterruptions((current) => {
+            console.log(current);
+            const copy = [...current];
+            copy.splice(index, 1);
+            return copy;
+        });
+    }
+
     // First it will get the years -> 1
     useEffect(() => {
         if(initialDate !== 0 && finalDate !== 0) {
@@ -144,11 +153,7 @@ const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAd
                                                             </Form.Field>
                                                         </Table.Cell>
                                                         <Table.Cell width={5}>
-                                                            <Button onClick={() => setAdditionalInterruptions((current) => {
-                                                                        const copy = [...current];
-                                                                        copy.splice(index, 1);
-                                                                        return copy;
-                                                                    })} icon color="red">
+                                                            <Button onClick={() => removeInterruption(index)} icon color="red">
                                                                 <Icon name="trash"/>
                                                             </Button>
                                                         </Table.Cell>
