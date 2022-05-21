@@ -43,6 +43,20 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
     const [savingExam, setSavingExam] = useState(false);
     const [noMethods, setNoMethods] = useState(false);
 
+    useEffect( () => {
+        if(!!scheduleInformation.epochs) {
+            let availableEpochs = scheduleInformation.epochs.filter((epoch) => {
+                return moment(scheduleInformation.date).isBetween(moment(epoch.start_date), moment(epoch.end_date), undefined, '[]' );
+            });
+            
+            setEpochsList(availableEpochs);
+            if(availableEpochs.length == 1) {
+                setSelectedEpoch(availableEpochs[0].id);
+                setLoadRemainingCourseUnits(true);
+            }
+        }
+    }, [scheduleInformation])
+
     useEffect(() => {
         if (loadRemainingCourseUnits) {
             axios.get(`/available-methods/${calendarId}/?epoch_id=${selectedEpoch}&year=${scheduleInformation.scholarYear}`,)
@@ -83,6 +97,13 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
             }
         });
     }, []);
+
+    const epochDropdownOnChange = (event, value) => {
+        setCourseUnits([]);
+        setSelectedEpoch(value);
+        setLoadRemainingCourseUnits(true);
+        // epochInput.onChange(value);
+    };
     
     const onSubmitExam = (values) => {
         setSavingExam(true);
@@ -119,19 +140,6 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
             setMethodList([]);
         }
     }, [isOpen]);
-
-    useEffect( () => {
-        if(!!scheduleInformation.epochs) {
-            let availableEpochs = scheduleInformation.epochs.filter((epoch) => {
-                return moment(scheduleInformation.date).isBetween(moment(epoch.start_date), moment(epoch.end_date), undefined, '[]' );
-            });
-            
-            setEpochsList(availableEpochs);
-            if(availableEpochs.length == 1) {
-                setSelectedEpoch(availableEpochs[0].id);
-            }
-        }
-    }, [scheduleInformation])
 
     const removeExam = (examId) => {
         SweetAlertComponent.fire({
@@ -226,12 +234,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                                                         options={epochsList.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name }))}
                                                         value={selectedEpoch || -1}
                                                         selection search label="Época"
-                                                        onChange={(e, {value}) => {
-                                                            setCourseUnits([]);
-                                                            setSelectedEpoch(value);
-                                                            setLoadRemainingCourseUnits(true);
-                                                            epochInput.onChange(value);
-                                                        }}
+                                                        onChange={(e, {value}) => epochDropdownOnChange(e, value)}
                                                     />
                                                 )}
                                             </Field>
