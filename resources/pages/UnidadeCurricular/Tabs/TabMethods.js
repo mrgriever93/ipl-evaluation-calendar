@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, Header, Icon, Label, Message, Segment, Table} from 'semantic-ui-react';
+import {Button, Form, Header, Icon, Label, Message, Modal, Segment, Table} from 'semantic-ui-react';
 import axios from "axios";
 import {toast} from "react-toastify";
 import {errorConfig, successConfig} from "../../../utils/toastConfig";
@@ -22,6 +22,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
     const [epochs, setEpochs] = useState([]);
     const [evaluationTypes, setEvaluationTypes] = useState([]);
     const [removedMethods, setRemovedMethods] = useState([]);
+    const [openClone, setOpenClone] = React.useState(false)
 
     const isFormValid = (methodList) => {
         let isValid = true;
@@ -166,6 +167,9 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
             return copy;
         })
     }
+    const cloneMethods = () => {
+
+    }
 
     return (
         <div>
@@ -196,6 +200,10 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                         <Button onClick={onSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} disabled={!formValid}>
                             <Icon name="save"/>
                             { t("Guardar") }
+                        </Button>
+                        <Button onClick={() => setOpenClone(true)} icon labelPosition="left" floated="right">
+                            <Icon name={"clone outline"}/>
+                            { t("Duplicar metodos") }
                         </Button>
                     </Segment>
                     {epochs?.map((item, index) => (
@@ -258,6 +266,29 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                 </div>
             )
             }
+            <Modal onClose={() => setOpenClone(false)} onOpen={() => setOpenClone(true)} open={openClone}>
+                <Modal.Header>Select a Photo</Modal.Header>
+                <Modal.Content>
+                    <Modal.Description>
+                        <Header>Default Profile Image</Header>
+                        <p>
+                            We've found the following gravatar image associated with your e-mail
+                            address.
+                        </p>
+                        <div>
+                            {epochs?.map((item, index) => (
+                                <div className={"margin-top-base"} key={index}>
+                                    <Header as="span">{item.name}</Header>
+                                </div>
+                            ))}
+                        </div>
+                    </Modal.Description>
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button color='black' onClick={() => setOpenClone(false)}>Nope</Button>
+                    <Button content="Yep, that's me" labelPosition='right' icon='checkmark' onClick={() => setOpenClone(false)} positive/>
+                </Modal.Actions>
+            </Modal>
         </div>
     )
 };

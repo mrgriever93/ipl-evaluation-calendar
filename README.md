@@ -190,4 +190,11 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 
 ### Perguntas - 17-05-2022
 - [ ] Ao criar novo exame, mostra todos as unidades curriculares, ou so as que lhe pertencem? (ex. sou prof de fisica, vejo algebra?)
+  - o professor so tem acesso as dele
+  - Gop e Coordenador de curso tem acesso as cadeiras do curso
 - [ ] Qualquer user pode marcar interrupcoes?
+  - ja existem as permissoes por fase na parte do calendario
+- [ ] ao criar o calendario, adicionar campo para a 10 semana
+  - so o gop
+- [ ] detalhe calendario
+  - quando for para seguir para a proxima fase, mostrar popup com fases
