@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, Header, Icon, Label, Message, Modal, Segment, Table} from 'semantic-ui-react';
+import {Field, Form as FinalForm} from 'react-final-form';
+import {Button, Form, Header, Icon, Label, Message, Grid, GridColumn, Modal, Segment, Table} from 'semantic-ui-react';
 import axios from "axios";
 import {toast} from "react-toastify";
 import {errorConfig, successConfig} from "../../../utils/toastConfig";
@@ -23,6 +24,8 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
     const [evaluationTypes, setEvaluationTypes] = useState([]);
     const [removedMethods, setRemovedMethods] = useState([]);
     const [openClone, setOpenClone] = React.useState(false)
+    const [selectedEpochFrom, setSelectedEpochFrom] = useState(-1);
+    const [selectedEpochTo, setSelectedEpochTo] = useState(-1);
 
     const isFormValid = (methodList) => {
         let isValid = true;
@@ -168,8 +171,27 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
         })
     }
     const cloneMethods = () => {
+        if( selectedEpochFrom == -1 || selectedEpochTo == -1 ) {
+            toast(t('Tens de selecionar as duas épocas que pretendes copiar! De onde para onde.'), errorConfig);
+            return false;
+        }
 
+        if( selectedEpochFrom == selectedEpochTo ) {
+            toast(t('As épocas selecionadas têm de ser diferentes!'), errorConfig);
+            return false;
+        }
+
+        toast(t('Success!'), successConfig);
+        setOpenClone(false);
     }
+
+    const epochFromDropdownOnChange = (event, value) => {
+        setSelectedEpochFrom(value);
+    };
+
+    const epochToDropdownOnChange = (event, value) => {
+        setSelectedEpochTo(value);
+    };
 
     return (
         <div>
@@ -264,31 +286,58 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                         </div>
                     ))}
                 </div>
-            )
-            }
-            <Modal onClose={() => setOpenClone(false)} onOpen={() => setOpenClone(true)} open={openClone}>
-                <Modal.Header>Select a Photo</Modal.Header>
-                <Modal.Content>
-                    <Modal.Description>
-                        <Header>Default Profile Image</Header>
-                        <p>
-                            We've found the following gravatar image associated with your e-mail
-                            address.
-                        </p>
-                        <div>
-                            {epochs?.map((item, index) => (
-                                <div className={"margin-top-base"} key={index}>
-                                    <Header as="span">{item.name}</Header>
-                                </div>
-                            ))}
-                        </div>
-                    </Modal.Description>
-                </Modal.Content>
-                <Modal.Actions>
-                    <Button color='black' onClick={() => setOpenClone(false)}>Nope</Button>
-                    <Button content="Yep, that's me" labelPosition='right' icon='checkmark' onClick={() => setOpenClone(false)} positive/>
-                </Modal.Actions>
-            </Modal>
+            )}
+            
+            <FinalForm onSubmit={cloneMethods}
+                initialValues={{
+                    epochFromInput: -1,
+                    epochToInput: -1,
+                }}
+                render={({handleSubmit}) => (
+                    <Modal onClose={() => setOpenClone(false)} onOpen={() => setOpenClone(true)} open={openClone}>
+                        <Modal.Header>{t("Duplicar Métodos")}</Modal.Header>
+                        <Modal.Content>
+                            <Form>
+                                <Header as="h4">{t("Seleciona que épocas pretendes duplicar")}</Header>                                
+                                <Grid columns={2}>
+                                    <GridColumn>
+                                        <Field name="epoch">
+                                            {({input: epochFromInput}) => (
+                                                <Form.Dropdown
+                                                    options={epochs.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name }))}
+                                                    value={selectedEpochFrom || -1}
+                                                    selection search label={ t("De") }
+                                                    onChange={(e, {value}) => epochFromDropdownOnChange(e, value)}
+                                                />
+                                            )}
+                                        </Field>
+                                    </GridColumn>
+                                    <GridColumn>
+                                        <Field name="epoch">
+                                            {({input: epochToInput}) => (
+                                                <Form.Dropdown
+                                                    options={epochs.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name }))}
+                                                    value={selectedEpochTo || -1}
+                                                    selection search label={ t("Para") }
+                                                    onChange={(e, {value}) => epochToDropdownOnChange(e, value)}
+                                                />
+                                            )}
+                                        </Field>
+                                    </GridColumn>
+                                </Grid>
+                            </Form>
+                        </Modal.Content>
+                        <Modal.Actions>
+                            <Button onClick={() => setOpenClone(false)}>
+                                {  t("Cancel") }
+                            </Button>
+                            <Button onClick={handleSubmit} positive>
+                                {  t("Duplicar") }
+                            </Button>
+                        </Modal.Actions>
+                    </Modal>
+                )} 
+            />
         </div>
     )
 };
