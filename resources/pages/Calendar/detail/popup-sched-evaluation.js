@@ -107,28 +107,31 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
     
     const onSubmitExam = (values) => {
         setSavingExam(true);
-        const axiosFn = values?.id ? axios.patch : axios.post;
-        axiosFn(`/exams/${values?.id ? values?.id : ''}`, {
+        const examScheduleObj = {
             calendar_id: parseInt(calendarId, 10),
-            course_id: generalInfo?.course?.id,
-            room: values.room || undefined,
-            date: moment(values.date).format('YYYY-MM-DD'),
-            hour: values.hour,
-            duration_minutes: values.durationMinutes || undefined,
-            observations: values.observations,
-            epoch_id: values.epoch,
-            method_id: values.method,
+            course_id: parseInt(scheduleInformation?.courseId),
             course_unit_id: values.courseUnit,
-        })
+            date: moment(values.date).format('YYYY-MM-DD'),
+            duration_minutes: values.durationMinutes || undefined,
+            epoch_id: selectedEpoch,
+            hour: values.hour || undefined,
+            method_id: values.method,
+            observations: values.observations || undefined,
+            room: values.room || undefined,
+        };
+
+        const axiosFn = values?.id ? axios.patch : axios.post;
+        axiosFn(`/exams/${values?.id ? values?.id : ''}`, examScheduleObj)
             .then((res) => {
                 setSavingExam(false);
-                if (res.status === 200 || res.status === 201) {
-                    // setOpenExamModal(false);
-                    onClose();
-                    toast(`Avaliação ${values?.id ? 'guardada' : 'marcada'} com sucesso!`, successConfig);
+                if (res.status === 200) {
+                    toast(t('Avaliação atualizado com sucesso'), successConfig);
+                } else if (res.status === 201) {
+                    toast(t('Avaliação marcada com sucesso'), successConfig);
                 } else {
-                    toast(`Ocorreu um erro ao ${values?.id ? 'guardar' : 'marcar'} a avaliação!`, errorConfig);
+                    toast(`Ocorreu um erro ao gravar a avaliação!`, errorConfig);
                 }
+                onClose();  // close modal
             });
     };
 
@@ -181,24 +184,21 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
             render={({handleSubmit}) => (
                 <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
                     <Modal.Header>
-                        {scheduleInformation?.id ? 'Editar' : 'Marcar'}
-                        {' '}
-                        avaliação
+                        {!scheduleInformation?.id ? t("Editar Avaliação")  :  t("Marcar Avaliação") }
                     </Modal.Header>
                     <Modal.Content>
                         <Form>
-                            <Header as="h4">Detalhes da avaliação</Header>
+                            <Header as="h4">{ t("Detalhes da avaliação") } </Header>
                             
                             <Grid columns={2}>
                                 <GridColumn>
                                     <p>
-                                        <b>Curso: </b>
+                                        <b>{ t("Curso") }: </b>
                                         {scheduleInformation?.courseName}
                                     </p>
                                     <p>
-                                        <b>Ano Curricular: </b>
-                                        {scheduleInformation?.scholarYear}
-                                        º Ano
+                                        <b>{ t("Ano Curricular") }: </b>                                        
+                                        { t("Ano") + " " + scheduleInformation?.scholarYear}
                                     </p>
                                 </GridColumn>
                                 <GridColumn>
@@ -217,7 +217,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                                     <p>
                                         <Button color="yellow" icon labelPosition="left" onClick={() => setChangeData(true)}>
                                             <Icon name="calendar alternate"/>
-                                            Alterar data
+                                            { t("Alterar data") }
                                         </Button>
                                     </p>
                                 </GridColumn>
@@ -225,15 +225,15 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                             <Divider/>
                             <Grid columns={2}>
                                 <GridColumn>
-                            {!scheduleInformation?.id
-                                    && (
+                                    {!scheduleInformation?.id && (
                                         <>
                                             <Field name="epoch">
                                                 {({input: epochInput}) => (
                                                     <Form.Dropdown
                                                         options={epochsList.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name }))}
                                                         value={selectedEpoch || -1}
-                                                        selection search label="Época"
+                                                        selection search 
+                                                        label={ t("Época")}
                                                         onChange={(e, {value}) => epochDropdownOnChange(e, value)}
                                                     />
                                                 )}
@@ -249,7 +249,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                                                 {({input: courseUnitInput}) => (
                                                     <Form.Dropdown options={courseUnits} selection search disabled={!courseUnits?.length}
                                                         loading={courseUnits !== undefined ? !courseUnits.length : false}
-                                                        label="Unidade Curricular"
+                                                        label={ t("Unidade Curricular")}
                                                         onChange={(e, {value, options}) => {
                                                             setMethodList(
                                                                 options.find((courseUnit) => courseUnit.value === value).methods.map(({id, name, minimum, weight}) => ({
@@ -268,7 +268,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                                                 {({input: methodInput}) => (
                                                     <Form.Dropdown options={methodList} selection search disabled={!methodList?.length}
                                                         loading={methodList !== undefined ? !methodList.length : false}
-                                                        label="Método de Avaliação"
+                                                        label={ t("Método de Avaliação")}
                                                         onChange={(e, {value}) => methodInput.onChange(value)}
                                                     />
                                                 )}
@@ -278,29 +278,27 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                                 </GridColumn>
                                 <GridColumn>
                                     <>
+                                        <Field name="hour">
+                                            {({input: hourInput}) => (
+                                                <Form.Field>
+                                                    <TimeInput label={ t("Hora de ínicio")} name="hour" iconPosition="left" placeholder={ t("Hora de ínicio (opcional)")} timeFormat="24" value={hourInput.value}
+                                                                onChange={(evt, {value}) => { hourInput.onChange(value); }}/>
+                                                </Form.Field>
+                                            )}
+                                        </Field>
                                         <Field name="room" defaultValue={scheduleInformation?.id ? scheduleInformation?.room : null}>
                                             {({input: roomInput}) => (
-                                                <Form.Input label="Sala" placeholder="Sala da avaliação (opcional)"{...roomInput} />
+                                                <Form.Input label={ t("Sala")} placeholder={ t("Sala da avaliação (opcional)")} {...roomInput} />
                                             )}
                                         </Field>
                                         <Field name="durationMinutes">
                                             {({input: durationMinutesInput}) => (
-                                                <Form.Input label="Duração" placeholder="Duração em minutos (opcional)" type="number" step="1"{...durationMinutesInput}/>
-                                            )}
-                                        </Field>
-                                        <Field name="hour">
-                                            {({input: hourInput}) => (
-                                                <Form.Field>
-                                                    <TimeInput name="hour" iconPosition="left" label="Hora de ínicio" placeholder="Hora de ínicio" timeFormat="24" value={hourInput.value}
-                                                                onChange={(evt, {value}) => {
-                                                                    hourInput.onChange(value);
-                                                                }}/>
-                                                </Form.Field>
+                                                <Form.Input label={ t("Duração")} placeholder={ t("Duração em minutos (opcional)")}  type="number" step="1"{...durationMinutesInput}/>
                                             )}
                                         </Field>
                                         <Field name="observations">
                                             {({input: observationsInput}) => (
-                                                <Form.Input control={TextArea} label="Observações"{...observationsInput}/>
+                                                <Form.Input label={ t("Observações")} control={TextArea} {...observationsInput}/>
                                             )}
                                         </Field>
                                     </>
@@ -309,11 +307,9 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                         </Form>
                     </Modal.Content>
                     <Modal.Actions>
-                        <Button onClick={onClose} negative>
-                            Cancelar
-                        </Button>
+                        <Button onClick={onClose} negative>{ t("Cancelar") }</Button>
                         <Button onClick={handleSubmit} positive loading={savingExam}>
-                            {!scheduleInformation?.id ? 'Marcar Avaliação' : 'Gravar alterações'}
+                            {!scheduleInformation?.id ? t("Marcar Avaliação")  :  t("Gravar alterações") }
                         </Button>
                     </Modal.Actions>
                 </Modal>

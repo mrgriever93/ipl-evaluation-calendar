@@ -433,7 +433,7 @@ const Calendar = () => {
                                                 alreadyAddedColSpan = false;
                                                 return (
                                                     <Table.Row key={courseIndex}>
-                                                        <Table.Cell textAlign="center">{year} º Ano</Table.Cell>
+                                                        <Table.Cell textAlign="center">{ t("Ano") + " " + year }</Table.Cell>
                                                         {weekDays.map(
                                                             (weekDay, weekDayIndex) => {
                                                                 const day = days.find((day) => day.weekDay === weekDay);
