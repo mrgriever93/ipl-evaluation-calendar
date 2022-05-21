@@ -181,7 +181,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
             return false;
         }
 
-        let methodsToClone = epochs.find((epoch) => epoch.id === selectedEpochFrom).methods;
+        let methodsToClone = JSON.parse(JSON.stringify(epochs.find((epoch) => epoch.id === selectedEpochFrom).methods));
         epochs.find((epoch) => epoch.id === selectedEpochTo).methods = methodsToClone;
 
         toast(t('Success!'), successConfig);
@@ -292,10 +292,10 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
             )}
             
             <FinalForm onSubmit={cloneMethods}
-                initialValues={{
-                    epochFromInput: -1,
-                    epochToInput: -1,
-                }}
+                // initialValues={{
+                //     epochFromInput: -1,
+                //     epochToInput: -1,
+                // }}
                 render={({handleSubmit}) => (
                     <Modal onClose={() => setOpenClone(false)} onOpen={() => setOpenClone(true)} open={openClone}>
                         <Modal.Header>{t("Duplicar Métodos")}</Modal.Header>
@@ -331,12 +331,8 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                             </Form>
                         </Modal.Content>
                         <Modal.Actions>
-                            <Button onClick={() => setOpenClone(false)}>
-                                {  t("Cancel") }
-                            </Button>
-                            <Button onClick={handleSubmit} positive>
-                                {  t("Duplicar") }
-                            </Button>
+                            <Button negative onClick={() => setOpenClone(false)}>{ t("Cancel") }</Button>
+                            <Button positive onClick={handleSubmit}>{ t("Duplicar") }</Button>
                         </Modal.Actions>
                     </Modal>
                 )} 
