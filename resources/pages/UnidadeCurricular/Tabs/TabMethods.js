@@ -181,6 +181,9 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
             return false;
         }
 
+        let methodsToClone = epochs.find((epoch) => epoch.id === selectedEpochFrom).methods;
+        epochs.find((epoch) => epoch.id === selectedEpochTo).methods = methodsToClone;
+
         toast(t('Success!'), successConfig);
         setOpenClone(false);
     }
