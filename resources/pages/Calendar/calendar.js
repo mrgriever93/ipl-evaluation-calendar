@@ -424,25 +424,20 @@ const Calendar = () => {
                                                                         examsComponents = existingExamsAtThisDate.map((exam) => {
                                                                                 if (exam.academic_year === year) {
                                                                                     return (
-                                                                                        <Button
-                                                                                            key={exam.id}
-                                                                                            // color="black"
-                                                                                            // backgroundColor="#ddd9c1"
-                                                                                            onClick={() => viewExamInfoHandler(year, exam)}
-                                                                                            isModified={differences?.includes(exam.id)}
-                                                                                        >
+                                                                                        // <Button key={exam.id} onClick={() => viewExamInfoHandler(year, exam)} isModified={differences?.includes(exam.id)} >
+                                                                                        <Button className="btn-exam-details" color="blue" key={exam.id} onClick={() => viewExamInfoHandler(year, exam)} >
                                                                                             {removingExam === exam.id ? <Icon loading name="spinner"/> : !isPublished
                                                                                                 && calendarPermissions.filter((x) => x.name === SCOPES.REMOVE_EXAMS || x.name === SCOPES.EDIT_EXAMS).length > 0
-                                                                                                && (<div style={{position: 'relative', height: '20px'}}>
+                                                                                                && (<div className="btn-action-wrapper">
                                                                                                         {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
-                                                                                                            <EditExamButton onClick={() => editExamHandler(year, exam)}>
+                                                                                                            <div className='btn-action-edit' onClick={() => editExamHandler(year, exam)}>
                                                                                                                 <Icon name="edit"/>
-                                                                                                            </EditExamButton>
+                                                                                                            </div>
                                                                                                         )}
-                                                                                                        {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
-                                                                                                            <RemoveExamButton onClick={() => removeExam(exam.id)}>
+                                                                                                        {calendarPermissions.filter((x) => x.name === SCOPES.REMOVE_EXAMS).length > 0 && (
+                                                                                                            <div className='btn-action-remove' onClick={() => alert('A remover o exame '+ exam.id) /*removeExam(exam.id)*/}>
                                                                                                                 <Icon name="trash"/>
-                                                                                                            </RemoveExamButton>
+                                                                                                            </div>
                                                                                                         )}
                                                                                                     </div>
                                                                                                 )}
@@ -469,7 +464,7 @@ const Calendar = () => {
                                                                             }}>
                                                                             {examsComponents}
                                                                             {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.ADD_EXAMS).length > 0 && (
-                                                                                    <Button onClick={() => scheduleExamHandler(year, day.date, existingExamsAtThisDate)}>
+                                                                                    <Button className="btn-schedule-exam" onClick={() => scheduleExamHandler(year, day.date, existingExamsAtThisDate)}>
                                                                                         Marcar
                                                                                     </Button>
                                                                                 )}

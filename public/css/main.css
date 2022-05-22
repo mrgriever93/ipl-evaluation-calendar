@@ -394,7 +394,7 @@ body {
     position: relative;
 }
 
-.calendar-tables .table td .button {
+.calendar-tables .table td .button.btn-schedule-exam {
     margin: var(--space-none);
     opacity: 0;
 }
@@ -421,9 +421,67 @@ body {
     margin: 0 var(--space-s) 0 0 !important;
 }
 
-.calendar-tables .table td:hover .button,
+.calendar-tables .table td:hover .button.btn-schedule-exam,
 .calendar-tables .table th:hover .button.btn-add-interruption {
     opacity: 1;
+}
+
+.calendar-tables .table td .button.btn-exam-details {
+    align-items: center;
+    background: #2185d0;
+    display: inline-flex;
+    font-size: 9px;
+    height: 40px;
+    line-height: 1.3;
+    margin: var(--space-none) auto;
+    padding: var(--space-s) var(--space-m) var(--space-s) var(--space-s);
+    position: relative;
+    text-align: left;
+    width: 90px;
+}
+
+.calendar-tables .table td .button.btn-exam-details .btn-action-wrapper {
+    align-items: center;
+    border-radius: 0 4px 4px 0;
+    bottom: 0;
+    display: flex;
+    flex-flow: column nowrap;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: var(--space-m);
+}
+
+.calendar-tables .table td .button.btn-exam-details .btn-action-edit,
+.calendar-tables .table td .button.btn-exam-details .btn-action-remove {
+    align-items: center;
+    background: #1a6aa8;
+    border-radius: 0 4px 0 0;
+    color: #fff;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    width: 100%;
+}
+
+.calendar-tables .table td .button.btn-exam-details .btn-action-remove {
+    border-radius: 0 0 4px 0;
+    border-top: 1px solid #175c92;
+}
+
+.calendar-tables .table td .button.btn-exam-details .btn-action-edit:hover {
+    background: #fbbd08;
+}
+
+.calendar-tables .table td .button.btn-exam-details .btn-action-remove:hover {
+    background: #db2828;
+}
+
+.calendar-tables .table td .button.btn-exam-details .icon {
+    font-size: 10px;
+    line-height: 1;
+    margin: var(--space-none);
 }
 
 /* Other stuff */
