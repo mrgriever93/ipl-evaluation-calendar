@@ -43,7 +43,7 @@ const formInitialValues = {
         noInterruptions: false,
     },
     step3: {
-        allCourses: true,
+        allCourses: false,
         paginationInfo: {
             current_page: 1,
             last_page: 1,
@@ -57,7 +57,7 @@ const NewCalendar = () => {
     const [activeSemester, setActiveSemester] = useState(0);
     const [loading, setLoading] = useState(true);
 
-    const [allCourses, setAllCourses] = useState(true);
+    const [allCourses, setAllCourses] = useState(false);
     const [courses, setCourses] = useState([]);
 
     const [isSaving, setIsSaving] = useState(false);
@@ -134,7 +134,6 @@ const NewCalendar = () => {
     }
 
     const validateStep2 = (values) => {
-        console.log(values);
         let isValid = false;
         // validate if the no interruptions was clicked, and go to next phase
         if(values.hasOwnProperty("noInterruptions") && values.noInterruptions){
@@ -178,7 +177,7 @@ const NewCalendar = () => {
 
         let errorTexts = [];
         if(!hasInterruptions || !hasAllMandatoryInterruptions){
-            errorTexts.push("Tem de selecionar as interrupções obrigatórias pelo menos!");
+            errorTexts.push("Tem de adicionar e selecionar pelo menos uma das interrupções obrigatórias, assinaladas com o icon a vermelho");
         }
         if(!hasAllDates){
             errorTexts.push("Tem de preencher todas as datas de início e fim das interrupções");
@@ -200,7 +199,7 @@ const NewCalendar = () => {
     const validateStep3 = (values) => {
         let isValid = false;
         // Check for the semester
-        const hasAllCourses = values.allCourses;
+        const hasAllCourses = false;//values.allCourses;
         // Check if there is any course
         const hasAnyCourse = values.courses && values.courses.length > 0;
 
@@ -243,8 +242,9 @@ const NewCalendar = () => {
             setIsSaving(true);
             const body = {
                 semester: values.step1.semester,
-                is_all_courses: values.step3.allCourses,
-                ...(values.step3.allCourses ? null : {courses: [...values.step3.courses.map((x) => x.id)]}),
+                is_all_courses: false, //values.step3.allCourses,
+                //...(values.step3.allCourses ? null : {courses: [...values.step3.courses.map((x) => x.id)]}),
+                courses: [...values.step3.courses.map((x) => x.id)],
                 epochs: [
                     ...Object.keys(values.step1.seasons).map((key) => ({
                         code: key.split('__')[0],
