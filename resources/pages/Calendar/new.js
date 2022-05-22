@@ -117,10 +117,10 @@ const NewCalendar = () => {
             errorTexts.push("Tem de selecionar pelo menos um semestre!");
         }
         if(!hasEpochs){
-            errorTexts.push("Tem de adicionar as datas para o calendario");
+            errorTexts.push("Tem de adicionar as datas para o calendário");
         }
         if(!hasAllDates){
-            errorTexts.push("Tem de preencher todas as datas de inicio e fim dos periodos");
+            errorTexts.push("Tem de preencher todas as datas de início e fim dos períodos");
         }
         isValid = hasSemester && hasEpochs && hasAllDates;
         setErrorMessages(errorTexts);
@@ -178,13 +178,13 @@ const NewCalendar = () => {
 
         let errorTexts = [];
         if(!hasInterruptions || !hasAllMandatoryInterruptions){
-            errorTexts.push("Tem de selecionar as interrupcoes mandatorias pelo menos!");
+            errorTexts.push("Tem de selecionar as interrupções obrigatórias pelo menos!");
         }
         if(!hasAllDates){
-            errorTexts.push("Tem de preencher todas as datas de inicio e fim das interrupcoes");
+            errorTexts.push("Tem de preencher todas as datas de início e fim das interrupções");
         }
         if(!hasAllInterruptionsTypes){
-            errorTexts.push("Tem de selecionar os tipos das interrupcoes!");
+            errorTexts.push("Tem de selecionar os tipos das interrupções!");
         }
         isValid = hasInterruptions && hasAllDates && hasAllInterruptionsTypes && hasAllMandatoryInterruptions;
         setErrorMessages(errorTexts);

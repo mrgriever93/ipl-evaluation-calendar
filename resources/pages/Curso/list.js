@@ -32,6 +32,7 @@ const CoursesList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [school, setSchool] = useState();
     const [degree, setDegree] = useState();
+    const [withoutDegree, setWithoutDegree] = useState(false);
 
     // Table columns
     const columns = [
@@ -46,7 +47,7 @@ const CoursesList = () => {
 
     useEffect(() => {
         fetchCourses();
-    }, [searchTerm, school, degree, perPage, currentPage]);
+    }, [searchTerm, school, degree, perPage, currentPage, withoutDegree]);
 
     const changedPage = (activePage) => {
         setCurrentPage(activePage);
@@ -63,6 +64,7 @@ const CoursesList = () => {
         searchLink += `${searchTerm ? `&search=${searchTerm}` : ''}`;
         searchLink += `${school ? `&school=${school}` : ''}`;
         searchLink += `${degree ? `&degree=${degree}` : ''}`;
+        searchLink += `${withoutDegree ? `&without-degrees=${withoutDegree}` : ''}`;
         searchLink += '&per_page=' + perPage;
 
         axios.get(searchLink).then((response) => {
@@ -110,6 +112,9 @@ const CoursesList = () => {
                 <Card.Content>
                     <div className='card-header-alignment'>
                         <Header as="span">{ t("Cursos") }</Header>
+                        <ShowComponentIfAuthorized permission={[SCOPES.CREATE_COURSES]} >
+                            <Button onClick={() => setWithoutDegree(current => !current)} color="blue" loading={contentLoading}>Mostrar os sem Grau de Ensino</Button>
+                        </ShowComponentIfAuthorized>
                     </div>
                 </Card.Content>
                 <Card.Content>

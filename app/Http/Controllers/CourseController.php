@@ -35,9 +35,11 @@ class CourseController extends Controller
         if( request('school') ){
             $courseList->where('school_id', request('school'));
         }
-        if( request('degree') ){
+        if( request('degree') && !$request->has('without-degrees')){
             $courseList->where('degree', request('degree'));
         }
+        // remove courses that have no degree associated, unless requested
+        $courseList->where('degree', (request('without-degrees', '') == '' ? '<>' : '='), '');
         $courseList->filter($filters);
 
         return CourseListResource::collection($courseList->paginate($perPage));

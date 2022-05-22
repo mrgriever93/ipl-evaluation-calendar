@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('method_id');
             $table->string('room')->nullable();
             $table->timestamp('date')->useCurrent();
-            $table->string('hour');
+            $table->string('hour')->nullable();
             $table->string('duration_minutes')->nullable();
             $table->string('observations_pt')->nullable();
             $table->string('observations_en')->nullable();

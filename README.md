@@ -198,3 +198,19 @@ https://github.com/rap2hpoutre/laravel-log-viewer
   - so o gop
 - [ ] detalhe calendario
   - quando for para seguir para a proxima fase, mostrar popup com fases
+
+----
+### Feedback prof. Pedro Gago
+- [ ] Na criação de Novo Calendário, se se escolher apenas a opção de avançar, 
+  - [x] pede "Tem de selecionar as interrupcoes mandatorias pelo menos!" - mudar para obrigatórias e/ou 
+    - dizer quais
+- [ ] É provavelmente melhor retirar a opção de criação de calendário para todos os cursos (são cursos a mais)
+- [x] Tirar Inglês Geral, Matemáticas Gerais, etc
+- [x] Quando tento marcar uma avaliação (1º semestre - 9119) fica "a pensar" à procura de UC
+
+- [ ] Na definição de métodos de avaliação falta uma opção que permita copiar entre épocas (é habitual a avaliação em exame ter os mesmos elementos tanto em recurso como em especial/mensal)
+  - [x] FE
+  - [ ] BE
+  - [ ] Na definição de métodos de avaliação devia ir gravando o que se vai fazendo (está a obrigar a preencher tudo de uma vez)
+  - 
+- [ ] No separador de "Calendários" (GOP) deve haver filtros

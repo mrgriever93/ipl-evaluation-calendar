@@ -25,9 +25,10 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
     const [removedMethods, setRemovedMethods] = useState([]);
     const [openClone, setOpenClone] = React.useState(false)
     const [selectedEpochFrom, setSelectedEpochFrom] = useState(-1);
-    const [selectedEpochTo, setSelectedEpochTo] = useState(-1);
+    const [selectedEpochTo, setSelectedEpochTo] = useState([]);
 
     const isFormValid = (methodList) => {
+        // TODO >=100 or 0
         let isValid = true;
         let hasOverValue = false;
         let HasUncompleteData = false;
@@ -171,21 +172,25 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
         })
     }
     const cloneMethods = () => {
-        if( selectedEpochFrom == -1 || selectedEpochTo == -1 ) {
+        if( selectedEpochFrom === -1 || selectedEpochTo.length === 0 ) {
             toast(t('Tens de selecionar as duas épocas que pretendes copiar! De onde para onde.'), errorConfig);
             return false;
         }
 
-        if( selectedEpochFrom == selectedEpochTo ) {
+        if( selectedEpochTo.includes(selectedEpochFrom) ) {
             toast(t('As épocas selecionadas têm de ser diferentes!'), errorConfig);
             return false;
         }
 
         let methodsToClone = JSON.parse(JSON.stringify(epochs.find((epoch) => epoch.id === selectedEpochFrom).methods));
-        epochs.find((epoch) => epoch.id === selectedEpochTo).methods = methodsToClone;
+        selectedEpochTo.forEach((item) => {
+            // TODO get removed ids
+            epochs.find((epoch) => epoch.id === item).methods = methodsToClone;
+        });
 
         toast(t('Success!'), successConfig);
-        setOpenClone(false);
+        isFormValid(epochs);
+        closeModal();
     }
 
     const epochFromDropdownOnChange = (event, value) => {
@@ -195,6 +200,12 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
     const epochToDropdownOnChange = (event, value) => {
         setSelectedEpochTo(value);
     };
+
+    const closeModal = () => {
+        setSelectedEpochFrom(-1);
+        setSelectedEpochTo([]);
+        setOpenClone(false);
+    }
 
     return (
         <div>
@@ -290,26 +301,25 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                     ))}
                 </div>
             )}
-            
+
             <FinalForm onSubmit={cloneMethods}
                 // initialValues={{
                 //     epochFromInput: -1,
                 //     epochToInput: -1,
                 // }}
                 render={({handleSubmit}) => (
-                    <Modal onClose={() => setOpenClone(false)} onOpen={() => setOpenClone(true)} open={openClone}>
+                    <Modal onClose={closeModal} onOpen={() => setOpenClone(true)} open={openClone}>
                         <Modal.Header>{t("Duplicar Métodos")}</Modal.Header>
                         <Modal.Content>
                             <Form>
-                                <Header as="h4">{t("Seleciona que épocas pretendes duplicar")}</Header>                                
+                                <Header as="h4">{t("Seleciona que épocas pretendes duplicar")}</Header>
                                 <Grid columns={2}>
                                     <GridColumn>
                                         <Field name="epoch">
                                             {({input: epochFromInput}) => (
                                                 <Form.Dropdown
-                                                    options={epochs.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name }))}
-                                                    value={selectedEpochFrom || -1}
-                                                    selection search label={ t("De") }
+                                                    options={epochs.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name, disabled: selectedEpochTo.includes(epoch.id) || epoch.methods.length === 0 }))}
+                                                    value={selectedEpochFrom || -1} placeholder={t("Época a copiar")} selectOnBlur={false} selection search label={ t("De") }
                                                     onChange={(e, {value}) => epochFromDropdownOnChange(e, value)}
                                                 />
                                             )}
@@ -319,9 +329,8 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                         <Field name="epoch">
                                             {({input: epochToInput}) => (
                                                 <Form.Dropdown
-                                                    options={epochs.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name }))}
-                                                    value={selectedEpochTo || -1}
-                                                    selection search label={ t("Para") }
+                                                    options={epochs.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name, disabled: epoch.id === selectedEpochFrom}))}
+                                                    value={selectedEpochTo || []} selectOnBlur={false} placeholder={t("Épocas a receber")} multiple selection search label={ t("Para") }
                                                     onChange={(e, {value}) => epochToDropdownOnChange(e, value)}
                                                 />
                                             )}
@@ -331,11 +340,11 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                             </Form>
                         </Modal.Content>
                         <Modal.Actions>
-                            <Button negative onClick={() => setOpenClone(false)}>{ t("Cancel") }</Button>
+                            <Button negative onClick={closeModal}>{ t("Cancel") }</Button>
                             <Button positive onClick={handleSubmit}>{ t("Duplicar") }</Button>
                         </Modal.Actions>
                     </Modal>
-                )} 
+                )}
             />
         </div>
     )
