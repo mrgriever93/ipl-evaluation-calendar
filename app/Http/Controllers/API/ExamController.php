@@ -26,37 +26,35 @@ class ExamController extends Controller
 
     public function store(NewExamRequest $request)
     {
-        $epoch = $request->epoch_id;
-
-        if (Epoch::find($epoch)->calendar->published) {
+        $calendarId = $request->calendar_id;
+        $epochId = $request->epoch_id;
+        $epochRecord = Epoch::find($epochId);
+        if ( $epochRecord->calendar->published ) {
             return response()->json("Not allowed to book exams on Published Calendars!", Response::HTTP_FORBIDDEN);
         }
 
-        if (
-            Exam::where('epoch_id', '=', $epoch)
-            ->where('method_id', '=', $request->method_id)
-            ->count() > 0
-        ) {
+        if ( Exam::where('epoch_id', '=', $epochId)->where('method_id', '=', $request->method_id)->exists() ) {
             return response()->json("Not allowed to insert the same exam on this calendar!", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if (Epoch::find($epoch)->calendar->id !== $request->calendar_id) {
+        if ( $epochRecord->calendar->id !== $calendarId ) {
             return response()->json("The epoch id is not correct for the given calendar.", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if (Calendar::find($request->calendar_id)->course->id !== $request->course_id) {
+        if ( Calendar::find($calendarId)->course->id !== $request->course_id ) {
             return response()->json("The course id is not correct for the given calendar.", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $courseUnitMethods = CourseUnit::find($request->course_unit_id);
         // TODO rever erro aqui nos epochs
-        if ($courseUnitMethods->methods()->whereHas('epochs', function ($query) use ($epoch) {
-            return $query->where('epoch_id', '=', $epoch);
+        $epochTypeId = $epochRecord->epoch_type_id;
+        if ($courseUnitMethods->methods()->whereHas('epochType', function ($query) use ($epochTypeId) {
+            return $query->where('epoch_type_id', $epochTypeId);
         })->sum('weight') < 100) {
             return response()->json("Not allowed to create this exam until you have all the methods completed!", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        dd($courseUnitMethods);
+        //dd($courseUnitMethods);
 
         // TODO
         /**
@@ -71,22 +69,17 @@ class ExamController extends Controller
         $courseUnitGroup = $courseUnitGroup ? $courseUnitGroup->id : null;
         if ($courseUnitGroup) {
             foreach (CourseUnitGroup::find($courseUnitGroup)->courseUnits as $courseUnit) {
-                foreach (Method::find($request->method_id)->epochs as $epoch) {
-                    if (
-                        Epoch::
-                            find($epoch->id)
-                            ->calendar()
-                            ->where('calendars.published', false)
-                            ->count() > 0
-                            &&
-                            Exam::where('method_id', $request->method_id)->where('epoch_id', $epoch->id)->count() === 0
-                        ) {
+                foreach (Method::find($request->method_id)->epochType as $epochType) {
+                    $epoch = Epoch::where('epoch_type_id', $epochType->id)->where('calendar_id', $calendarId)->first();
+                    $hasEpoch = $epoch->calendar()->where('calendars.published', false)->exists();
+                    $hasExams = Exam::where('method_id', $request->method_id)->where('epoch_id', $epoch->id)->count();
+                    if ($hasEpoch && $hasExams === 0) {
                         $newExam = new Exam($request->all());
-                        $newExam->fill([
+                        /*$newExam->fill([
                             "course_id" => $courseUnit->course_id,
                             "epoch_id" => $epoch->id,
                             "course_unit_id" => $courseUnit->id
-                        ]);
+                        ]);*/
                         $newExam->save();
                     }
                 }
@@ -95,8 +88,6 @@ class ExamController extends Controller
             $newExam = new Exam($request->all());
             $newExam->save();
         }
-
-
 
         return response()->json("Created", Response::HTTP_CREATED);
     }
