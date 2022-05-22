@@ -388,6 +388,44 @@ body {
     font-size: 12px;
 }
 
+/* Calendar > Cell Buttons */
+.calendar-tables .table th,
+.calendar-tables .table td {
+    position: relative;
+}
+
+.calendar-tables .table td .button {
+    margin: var(--space-none);
+    opacity: 0;
+}
+
+.calendar-tables .table th .button.btn-add-interruption {
+    align-items: center;
+    display: inline-flex;
+    font-size: 9px;
+    left: 50%;
+    margin: var(--space-none) auto;
+    opacity: 0;
+    padding: var(--space-s) var(--space-s);
+    position: absolute;
+    text-align: left;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 90px;
+}
+
+.calendar-tables .table th .button.btn-add-interruption .icon {
+    font-size: 17px;
+    height: auto;
+    line-height: 1;
+    margin: 0 var(--space-s) 0 0 !important;
+}
+
+.calendar-tables .table td:hover .button,
+.calendar-tables .table th:hover .button.btn-add-interruption {
+    opacity: 1;
+}
+
 /* Other stuff */
 
 .card-header-alignment {

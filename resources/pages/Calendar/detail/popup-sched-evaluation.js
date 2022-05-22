@@ -130,6 +130,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                     toast(t('Avaliação marcada com sucesso'), successConfig);
                 } else {
                     toast(`Ocorreu um erro ao gravar a avaliação!`, errorConfig);
+                    toast(res.response.data.message, errorConfig);
                 }
                 onClose();  // close modal
             });

@@ -10,8 +10,6 @@ import {Accordion, Button, Card, Container, Divider, Form, Grid, Header, Icon, L
 import styled, {css} from 'styled-components';
 import {AnimatePresence} from 'framer-motion';
 import {toast} from 'react-toastify';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
 
 import PageLoader from '../../components/PageLoader';
 import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
@@ -23,54 +21,6 @@ import PopupScheduleInterruption from './detail/popup-sched-interruption';
 import PopupScheduleEvaluation from './detail/popup-sched-evaluation';
 // import PopupEvaluationDetail from './detail/popup-evaluation-detail';
 
-const SweetAlertComponent = withReactContent(Swal);
-
-const CellButton = styled.div`
-    width: 100%;
-    height: ${({height}) => (height || '40px')};
-    vertical-align: middle;
-    text-align: center;
-    cursor: pointer;
-    color: ${({color}) => color || 'transparent'};
-    ${({backgroundColor}) => (backgroundColor ? css`background-color: ${backgroundColor};` : null)}
-    ${({fontSize}) => (fontSize ? css`font-size: ${fontSize};` : css`line-height: 40px;`)}
-    ${({margin}) => (margin ? css`margin: ${margin};` : null)}
-    ${({isModified}) => (isModified ? css`background-color: rgb(237, 170, 0);` : null)}
-    &:hover {
-        background-color: #dee2e6;
-        color: black;
-    }`;
-
-const LegendBox = styled.div`
-    user-select: none;
-    border-radius: 0.28571429rem;
-    border: 1px solid rgba(34, 36, 38, 0.1);
-    width: 140px;
-    height: 50px;
-    background-color: ${({backgroundColor}) => backgroundColor};
-    margin: 0 20px 20px 0;
-    color: black;
-    display: flex;
-    align-content: center;
-    align-items: center;
-    justify-content: center;
-`;
-
-const EditExamButton = styled.div`
-    position: absolute;
-    left: 5px;
-    &:hover {
-        color: #edaa00;
-    }
-`;
-
-const RemoveExamButton = styled.div`
-    position: absolute;
-    right: 0;
-    &:hover {
-      color: #db2828;
-    }
-`;
 
 const Calendar = () => {
     const history = useNavigate();
@@ -86,17 +36,11 @@ const Calendar = () => {
     const [generalInfo, setGeneralInfo] = useState();
     const [differences, setDifferences] = useState();
     const [openModal, setOpenModal] = useState(false);
-    const [interruptionTypes, setInterruptionTypesList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [modalInfo, setModalInfo] = useState({});
-    const [activeIndex, setActiveIndex] = useState(undefined);
     const [loadInterruptionTypes, setLoadInterruptionTypes] = useState(false);
     const [examInfoModal, setExamInfoModal] = useState({});
     const [openExamModal, setOpenExamModal] = useState(false);
-    const [loadRemainingCourseUnits, setLoadRemainingCourseUnits] = useState(false);
-    const [selectedEpoch, setSelectedEpoch] = useState();
-    const [courseUnits, setCourseUnits] = useState(undefined);
-    const [methodList, setMethodList] = useState(undefined);
     const [calendarPhases, setCalendarPhases] = useState([]);
     const [examList, setExamList] = useState([]);
     const [publishLoading, setPublishLoading] = useState(false);
@@ -377,7 +321,7 @@ const Calendar = () => {
                 )}
             </AnimatePresence>
             <div className='margin-top-l'>
-            <Grid stackable>
+            <Grid stackable className='calendar-tables'>
                 <Grid.Row>
                     <Grid.Column width="16">
                         {weekData.map(({week, year, days, epoch}, tableIndex) => {
@@ -416,9 +360,11 @@ const Calendar = () => {
                                                         <Table.HeaderCell key={index} textAlign="center">
                                                             {moment(day.date).format('DD-MM-YYYY')}
                                                             { !day.interruption && (
-                                                                <Button icon="calendar times outline" title="Adicionar Interrupção" 
-                                                                onClick={() => { alert("Will call interruption popup!")}}
-                                                                style={{ marginLeft: ' 10px', padding: '0', fontSize: '16px', width: '24px', height: '24px' }} />
+                                                                <Button className='btn-add-interruption' title="Adicionar Interrupção" 
+                                                                    onClick={() => { alert("Will call interruption popup!")}}>
+                                                                        <Icon name="calendar times outline" />
+                                                                        Adicionar Interrupção
+                                                                </Button>
                                                             )}
                                                             
                                                         </Table.HeaderCell>
@@ -478,13 +424,10 @@ const Calendar = () => {
                                                                         examsComponents = existingExamsAtThisDate.map((exam) => {
                                                                                 if (exam.academic_year === year) {
                                                                                     return (
-                                                                                        <CellButton
+                                                                                        <Button
                                                                                             key={exam.id}
-                                                                                            color="black"
-                                                                                            backgroundColor="#ddd9c1"
-                                                                                            height="auto"
-                                                                                            fontSize="11px"
-                                                                                            margin="0 0 10px 0"
+                                                                                            // color="black"
+                                                                                            // backgroundColor="#ddd9c1"
                                                                                             onClick={() => viewExamInfoHandler(year, exam)}
                                                                                             isModified={differences?.includes(exam.id)}
                                                                                         >
@@ -504,7 +447,7 @@ const Calendar = () => {
                                                                                                     </div>
                                                                                                 )}
                                                                                             {exam.hour + ' ' +exam.course_unit.initials + ' ' +exam.method.name}
-                                                                                        </CellButton>
+                                                                                        </Button>
                                                                                     );
                                                                                 }
                                                                                 return null;
@@ -526,9 +469,9 @@ const Calendar = () => {
                                                                             }}>
                                                                             {examsComponents}
                                                                             {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.ADD_EXAMS).length > 0 && (
-                                                                                    <CellButton onClick={() => scheduleExamHandler(year, day.date, existingExamsAtThisDate)}>
+                                                                                    <Button onClick={() => scheduleExamHandler(year, day.date, existingExamsAtThisDate)}>
                                                                                         Marcar
-                                                                                    </CellButton>
+                                                                                    </Button>
                                                                                 )}
                                                                         </Table.Cell>
                                                                     );
