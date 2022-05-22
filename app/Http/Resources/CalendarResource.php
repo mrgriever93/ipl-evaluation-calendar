@@ -28,4 +28,5 @@ class CalendarResource extends JsonResource
             'previous_from_definitive' => $this->previousCalendar ? !$this->previousCalendar->temporary : false,
         ];
     }
+
 }

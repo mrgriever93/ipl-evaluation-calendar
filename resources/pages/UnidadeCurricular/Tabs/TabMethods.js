@@ -19,6 +19,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
     const [isUncomplete, setIsUncomplete] = useState(false);
     const [missingTypes, setMissingTypes] = useState(false);
     const [emptyWeight, setEmptyWeight] = useState(false);
+    const [underWeight, setUnderWeight] = useState(false);
 
     const [epochs, setEpochs] = useState([]);
     const [evaluationTypes, setEvaluationTypes] = useState([]);
@@ -28,21 +29,31 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
     const [selectedEpochTo, setSelectedEpochTo] = useState([]);
 
     const isFormValid = (methodList) => {
-        // TODO >=100 or 0
         let isValid = true;
         let hasOverValue = false;
         let HasUncompleteData = false;
         let hasMissingTypes = false;
         let hasEmptyWeight = false;
+        let hasUnderWeight = false;
         if(methodList?.length > 0 ) {
             methodList.forEach((item) => {
+                /*
+                //check if it has methods
                 if (!item.methods?.length) {
                     isValid = false;
                     HasUncompleteData = true;
                 }
-                if (item.methods.reduce((acc, curr) => curr.weight + acc, 0) > 100) {
+                 */
+                // check if it has more than 100%
+                let methodWeight = item.methods.reduce((acc, curr) => curr.weight + acc, 0);
+                if (methodWeight > 100) {
                     hasOverValue = true;
                 }
+                if (item.methods.length > 0 && methodWeight < 100) {
+                    hasUnderWeight = true;
+                    isValid = false;
+                }
+                //check if the existing methods have all fields filled
                 item.methods?.forEach((method) => {
                     if (!method.evaluation_type_id) {
                         hasMissingTypes = true;
@@ -56,11 +67,12 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                 });
             });
         }
-        setHasWarnings(HasUncompleteData || hasMissingTypes || hasOverValue || hasEmptyWeight);
+        setHasWarnings(HasUncompleteData || hasMissingTypes || hasOverValue || hasEmptyWeight || hasUnderWeight);
         setEmptyWeight(hasEmptyWeight);
         setIsUncomplete(HasUncompleteData);
         setMissingTypes(hasMissingTypes);
         setHasOverWeight(hasOverValue);
+        setUnderWeight(hasUnderWeight);
         setFormValid(isValid);
     };
 
@@ -112,11 +124,13 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                     })
                 });
             });
+            setIsLoading(true);
             axios.post('/methods', {methods: [...methods], removed: [...removedMethods]}).then((res) => {
                 setIsSaving(false);
-                //loadMethods();
+                loadMethods();
                 if (res.status === 200) {
                     toast(t('Métodos de avaliação criados com sucesso!'), successConfig);
+                    setRemovedMethods([]);
                 } else {
                     toast(t('Não foi possível criar os métodos de avaliação!'), errorConfig);
                 }
@@ -184,8 +198,13 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
 
         let methodsToClone = JSON.parse(JSON.stringify(epochs.find((epoch) => epoch.id === selectedEpochFrom).methods));
         selectedEpochTo.forEach((item) => {
-            // TODO get removed ids
-            epochs.find((epoch) => epoch.id === item).methods = methodsToClone;
+            let currEpochIndex = epochs.findIndex((epoch) => epoch.id === item);
+            if(epochs[currEpochIndex].methods.length > 0){
+                let removedId = epochs[currEpochIndex].id;
+                setRemovedMethods((current) => [...current, removedId]);
+            }
+            epochs[currEpochIndex].methods = methodsToClone;
+            epochs[currEpochIndex].methods.forEach((item) => delete item.id);
         });
 
         toast(t('Success!'), successConfig);
@@ -228,6 +247,9 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                 )}
                                 { emptyWeight && (
                                     <Message.Item>{ t('É necessário ter o peso de avaliação em todos os métodos') }</Message.Item>
+                                )}
+                                { underWeight && (
+                                    <Message.Item>{ t('É necessário ter no minimo 100% nos métodos') }</Message.Item>
                                 )}
                             </Message.List>
                         </Message>

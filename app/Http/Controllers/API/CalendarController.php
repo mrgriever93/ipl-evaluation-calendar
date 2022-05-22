@@ -11,6 +11,7 @@ use App\Http\Requests\NewCalendarRequest;
 use App\Http\Requests\PublishCalendarRequest;
 use App\Http\Requests\UpdateCalendarRequest;
 use App\Http\Resources\AvailableCourseUnitsResource;
+use App\Http\Resources\Generic\CalendarListResource;
 use App\Http\Resources\CalendarResource;
 use App\Http\Resources\Generic\Calendar_SemesterResource;
 use App\Http\Resources\Generic\EpochTypesResource;
@@ -39,8 +40,11 @@ class CalendarController extends Controller
 {
     public function index(Request $request, CalendarFilters $filters)
     {
-        $calendars = Calendar::with(['course', 'phase'])->filter($filters);
-        return CalendarResource::collection($calendars->ofAcademicYear($request->cookie('academic_year'))->orderBy('previous_calendar_id')->get());
+        $lang = (in_array($request->header("lang"), ["en", "pt"]) ? $request->header("lang") : "pt");
+        $perPage = request('per_page', 20);
+
+        $calendars = Calendar::filter($filters)->ofAcademicYear($request->cookie('academic_year'));
+        return CalendarListResource::collection($calendars->orderBy('previous_calendar_id')->paginate($perPage));
     }
 
     public function store(NewCalendarRequest $request)

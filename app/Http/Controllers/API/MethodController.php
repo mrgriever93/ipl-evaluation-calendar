@@ -66,7 +66,7 @@ class MethodController extends Controller
         }
 
         foreach ($request->removed as $removedMethod) {
-            Method::find($removedMethod)->delete();
+            $this->destroy(Method::find($removedMethod));
         }
 
         UnitLog::create([
@@ -77,6 +77,7 @@ class MethodController extends Controller
 
         return response()->json("Created/Updated!", Response::HTTP_OK);
     }
+
 
     public function show(Method $method)
     {
