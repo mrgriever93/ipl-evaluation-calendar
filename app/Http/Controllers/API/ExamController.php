@@ -49,11 +49,14 @@ class ExamController extends Controller
         }
 
         $courseUnitMethods = CourseUnit::find($request->course_unit_id);
+        // TODO rever erro aqui nos epochs
         if ($courseUnitMethods->methods()->whereHas('epochs', function ($query) use ($epoch) {
             return $query->where('epoch_id', '=', $epoch);
         })->sum('weight') < 100) {
             return response()->json("Not allowed to create this exam until you have all the methods completed!", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+
+        dd($courseUnitMethods);
 
         // TODO
         /**

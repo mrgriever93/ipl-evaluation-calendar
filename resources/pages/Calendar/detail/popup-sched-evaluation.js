@@ -107,6 +107,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
     
     const onSubmitExam = (values) => {
         setSavingExam(true);
+        console.log(epochsList);
         const examScheduleObj = {
             calendar_id: parseInt(calendarId, 10),
             course_id: parseInt(scheduleInformation?.courseId),
