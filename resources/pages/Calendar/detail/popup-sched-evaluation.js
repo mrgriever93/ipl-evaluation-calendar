@@ -50,7 +50,11 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
             });
             
             setEpochsList(availableEpochs);
-            if(availableEpochs.length == 1) {
+            if(scheduleInformation.epoch_id > 0 ) {
+                setSelectedEpoch(scheduleInformation.epoch_id);
+                setLoadRemainingCourseUnits(true);
+            } 
+            else if(availableEpochs.length == 1) {
                 setSelectedEpoch(availableEpochs[0].id);
                 setLoadRemainingCourseUnits(true);
             }
@@ -62,11 +66,17 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
             axios.get(`/available-methods/${calendarId}/?epoch_id=${selectedEpoch}&year=${scheduleInformation.scholarYear}`,)
                 .then((response) => {
                     if (response.status === 200) {
-                        const branches = scheduleInformation.hasExamsOnDate?.filter((x) => x.academic_year === scheduleInformation.scholarYear)
-                            ?.map((y) => y?.course_unit?.branch?.id);
-                        const beforeSetCourseUnits = response.data.data?.filter(
-                            (x) => !(branches.length ? branches?.includes(x?.branch?.id) : false),
-                        );
+                        let beforeSetCourseUnits = [];
+
+                        if(scheduleInformation.hasExamsOnDate) {
+                            const branches = scheduleInformation.hasExamsOnDate?.filter((x) => x.academic_year === scheduleInformation.scholarYear)?.map((y) => y?.course_unit?.branch?.id);                        
+                            beforeSetCourseUnits = response.data.data?.filter(
+                                (x) => !(branches.length ? branches?.includes(x?.branch?.id) : false),
+                            );
+                        } else {
+                            beforeSetCourseUnits = response.data.data;
+                        }
+                        
                         const mapped = beforeSetCourseUnits?.map(
                             ({id, name, methods, branch}) => ({
                                 key: id,
