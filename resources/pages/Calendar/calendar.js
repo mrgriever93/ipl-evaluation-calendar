@@ -4,10 +4,7 @@ import moment from 'moment';
 import React, {useEffect, useMemo, useState} from 'react';
 import {useParams, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-import {Field, Form as FinalForm} from 'react-final-form';
-import {DateInput, TimeInput} from 'semantic-ui-calendar-react-yz';
-import {Accordion, Button, Card, Container, Divider, Form, Grid, Header, Icon, List, Modal, Segment, Table, TextArea, Popup, Dropdown, Comment, Message} from 'semantic-ui-react';
-import styled, {css} from 'styled-components';
+import {Button, Container, Grid, Icon, Table } from 'semantic-ui-react';
 import {AnimatePresence} from 'framer-motion';
 import {toast} from 'react-toastify';
 
@@ -40,7 +37,7 @@ const Calendar = () => {
     const [modalInfo, setModalInfo] = useState({});
     const [loadInterruptionTypes, setLoadInterruptionTypes] = useState(false);
     const [examInfoModal, setExamInfoModal] = useState({});
-    const [openExamModal, setOpenExamModal] = useState(false);
+    const [openScheduleExamModal, setOpenScheduleExamModal] = useState(false);
     const [calendarPhases, setCalendarPhases] = useState([]);
     const [examList, setExamList] = useState([]);
     const [publishLoading, setPublishLoading] = useState(false);
@@ -70,18 +67,38 @@ const Calendar = () => {
             hasExamsOnDate: existingExamsAtThisDate,
             epochs: epochsList,
         });
-        setOpenExamModal(true);
+        setOpenScheduleExamModal(true);
     }
 
     const editExamHandler = (scholarYear, exam) => {
-        // missing info here
-        setOpenExamModal(true);
+        setScheduleExamInfo({
+            calendarId: parseInt(calendarId, 10),
+            courseId: generalInfo?.course?.id,
+            courseName: generalInfo?.course?.display_name,
+            scholarYear: scholarYear,
+            epochs: epochsList,
+            course_unit_id: exam.course_unit.id,
+            date: exam.date,
+            duration_minutes: exam.duration_minutes,
+            exam_id: exam.id,
+            epoch_id: exam.epoch_id,
+            hour: exam.hour,
+            method_id: exam.method_id,
+            observations: exam.observations,
+            room: exam.room,
+        });
+        setOpenScheduleExamModal(true);
     }
 
     const viewExamInfoHandler = (scholarYear, exam) => {
         // missing info here
         setViewExamInformation(true);
     }
+
+    const closeScheduleExamModal = () => {
+        setOpenScheduleExamModal(false);
+        setScheduleExamInfo({});
+    };
 
     useEffect(() => {
         // check if URL params are just numbers or else redirects to previous page
@@ -422,32 +439,29 @@ const Calendar = () => {
                                                                     let examsComponents = null;
                                                                     if (existingExamsAtThisDate?.length) {
                                                                         examsComponents = existingExamsAtThisDate.map((exam) => {
-                                                                                if (exam.academic_year === year) {
-                                                                                    return (
-                                                                                        // <Button key={exam.id} onClick={() => viewExamInfoHandler(year, exam)} isModified={differences?.includes(exam.id)} >
-                                                                                        <Button className="btn-exam-details" color="blue" key={exam.id} onClick={() => viewExamInfoHandler(year, exam)} >
-                                                                                            {removingExam === exam.id ? <Icon loading name="spinner"/> : !isPublished
-                                                                                                && calendarPermissions.filter((x) => x.name === SCOPES.REMOVE_EXAMS || x.name === SCOPES.EDIT_EXAMS).length > 0
-                                                                                                && (<div className="btn-action-wrapper">
-                                                                                                        {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
-                                                                                                            <div className='btn-action-edit' onClick={() => editExamHandler(year, exam)}>
-                                                                                                                <Icon name="edit"/>
-                                                                                                            </div>
-                                                                                                        )}
-                                                                                                        {calendarPermissions.filter((x) => x.name === SCOPES.REMOVE_EXAMS).length > 0 && (
-                                                                                                            <div className='btn-action-remove' onClick={() => alert('A remover o exame '+ exam.id) /*removeExam(exam.id)*/}>
-                                                                                                                <Icon name="trash"/>
-                                                                                                            </div>
-                                                                                                        )}
+                                                                            if (exam.academic_year === year) {
+                                                                                return (
+                                                                                    // <Button key={exam.id} onClick={() => viewExamInfoHandler(year, exam)} isModified={differences?.includes(exam.id)} >
+                                                                                    <Button className="btn-exam-details" color="blue" key={exam.id} onClick={() => viewExamInfoHandler(year, exam)} >
+                                                                                        { (removingExam === exam.id ? <Icon loading name="spinner"/> : !isPublished ) && 
+                                                                                                        (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
+                                                                                            <div className="btn-action-wrapper">
+                                                                                                {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
+                                                                                                    <div className='btn-action-edit' onClick={() => editExamHandler(year, exam)}>
+                                                                                                        <Icon name="edit"/>
                                                                                                     </div>
                                                                                                 )}
-                                                                                            {exam.hour + ' ' +exam.course_unit.initials + ' ' +exam.method.name}
-                                                                                        </Button>
-                                                                                    );
-                                                                                }
-                                                                                return null;
-                                                                            },
-                                                                        );
+                                                                                            </div>
+                                                                                        )}
+                                                                                        <div className="btn-exam-content">                                                                                            
+                                                                                            <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : '') + exam.course_unit.initials }</div>
+                                                                                            <div className="btn-exam-type">{ exam.method.name }</div>
+                                                                                        </div>
+                                                                                    </Button>
+                                                                                );
+                                                                            }
+                                                                            return null;
+                                                                        });
                                                                     }
                                                                     return (
                                                                         <Table.Cell
@@ -490,7 +504,7 @@ const Calendar = () => {
             <PopupScheduleInterruption />
             {/* TODO: to clean up yet */}
             {/* <PopupEvaluationDetail /> */}
-            <PopupScheduleEvaluation scheduleInformation={scheduleExamInfo} isOpen={openExamModal} onClose={() => {setOpenExamModal(false);}}/>
+            <PopupScheduleEvaluation scheduleInformation={scheduleExamInfo} isOpen={openScheduleExamModal} onClose={closeScheduleExamModal}/>
         </Container>
     );
 };
