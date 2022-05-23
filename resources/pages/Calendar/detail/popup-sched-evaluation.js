@@ -161,7 +161,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                     addedExam(res.data);
                 } else {
                     toast(`Ocorreu um erro ao gravar a avaliação!`, errorConfig);
-                    toast(res.response.data.message, errorConfig);
+                    toast(res.response.data, errorConfig);
                 }
                 onClose();  // close modal
             });
@@ -195,7 +195,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                         toast('Exame eliminado com sucesso deste calendário!', successConfig);
                         deletedExam(examId);
                     } else {
-                        toast('Ocorreu um problema ao eliminar o exame deste calendário!', errorConfig);
+                        toast('Ocorreu um problema ao eliminar o exame deste calendário! ' +  res.response.data, errorConfig);
                     }
                     onClose();
                 });
@@ -341,10 +341,12 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                         </Form>
                     </Modal.Content>
                     <Modal.Actions>
-                        <Button floated='left' negative icon labelPosition='left' onClick={() => removeExam(scheduleInformation?.exam_id)}>
-                            <Icon name="trash alternate outline" />
-                            { t("Remover exame") }
-                        </Button>
+                        { scheduleInformation.exam_id && (
+                            <Button floated='left' negative icon labelPosition='left' onClick={() => removeExam(scheduleInformation?.exam_id)}>
+                                <Icon name="trash alternate outline" />
+                                { t("Remover exame") }
+                            </Button>
+                        )}
                         <Button onClick={onClose} >{ t("Cancelar") }</Button>
                         <Button onClick={handleSubmit} positive loading={savingExam}>
                             { scheduleInformation?.exam_id ? t("Gravar alterações") : t("Marcar Avaliação") }

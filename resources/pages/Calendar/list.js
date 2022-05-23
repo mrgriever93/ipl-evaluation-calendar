@@ -1,18 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-    Card,
-    Container,
-    Table,
-    Icon,
-    Modal,
-    Button,
-    Header,
-    Message,
-    Dimmer,
-    Loader,
-    Label,
-    Form
-} from 'semantic-ui-react';
+import {Card, Container, Table, Icon, Modal, Button, Header, Message, Dimmer, Loader, Label, Form} from 'semantic-ui-react';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
@@ -23,7 +10,6 @@ import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorize
 import {errorConfig, successConfig} from '../../utils/toastConfig';
 import {useTranslation} from "react-i18next";
 import Courses from "../../components/Filters/Courses";
-import Semesters from "../../components/Filters/Semesters";
 import FilterOptionPerPage from "../../components/Filters/PerPage";
 import EmptyTable from "../../components/EmptyTable";
 import PaginationDetail from "../../components/Pagination";
@@ -59,8 +45,8 @@ const CalendarList = () => {
     const [myCourseOnly, setMyCourseOnly] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
 
-    const [semesterList, setSemesterList] = useState([]);
     const [contentLoading, setContentLoading] = useState(true);
+    const [semesterList, setSemesterList] = useState([]);
     const [courseFilter, setCourseFilter] = useState();
     const [semesterFilter, setSemesterFilter] = useState();
     const [phaseFilter, setPhaseFilter] = useState();

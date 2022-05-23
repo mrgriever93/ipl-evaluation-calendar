@@ -169,15 +169,14 @@ const PopupEvaluationDetail = () => {
             description: values.description,
             start_date: moment(values.startDate).format('YYYY-MM-DD'),
             end_date: moment(values.endDate).format('YYYY-MM-DD'),
-        })
-            .then((res) => {
-                if (res.status === 200 || res.status === 201) {
-                    toast(`Interrupção ${values?.id ? 'guardada' : 'marcada'} com sucesso!`, successConfig);
-                    // loadCalendar(calendarId);
-                } else {
-                    toast(`Ocorreu um erro ao ${values?.id ? 'guardar' : 'marcar'} a interrupção!`, errorConfig);
-                }
-            });
+        }).then((res) => {
+            if (res.status === 200 || res.status === 201) {
+                toast(`Interrupção ${values?.id ? 'guardada' : 'marcada'} com sucesso!`, successConfig);
+                // loadCalendar(calendarId);
+            } else {
+                toast(`Ocorreu um erro ao ${values?.id ? 'guardar' : 'marcar'} a interrupção! ${res.response.data}`, errorConfig);
+            }
+        });
         setOpenModal(false);
         setIsLoading(true);
     };

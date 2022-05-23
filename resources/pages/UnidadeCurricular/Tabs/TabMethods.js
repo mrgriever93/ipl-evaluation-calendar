@@ -15,6 +15,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
     const [formValid, setFormValid] = useState(false);
     // Warnings
     const [hasWarnings, setHasWarnings] = useState(false);
+    const [hasNoMethods, setHasNoMethods] = useState(false);
     const [hasOverWeight, setHasOverWeight] = useState(false);
     const [isUncomplete, setIsUncomplete] = useState(false);
     const [missingTypes, setMissingTypes] = useState(false);
@@ -32,9 +33,11 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
         let isValid = true;
         let hasOverValue = false;
         let HasUncompleteData = false;
+        let noMethods = true;
         let hasMissingTypes = false;
         let hasEmptyWeight = false;
         let hasUnderWeight = false;
+
         if(methodList?.length > 0 ) {
             methodList.forEach((item) => {
                 /*
@@ -65,14 +68,22 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                         isValid = false;
                     }
                 });
+                if(item.methods.length > 0){
+                    noMethods = false;
+                }
             });
         }
-        setHasWarnings(HasUncompleteData || hasMissingTypes || hasOverValue || hasEmptyWeight || hasUnderWeight);
+        if(noMethods){
+            isValid = false;
+        }
+
+        setHasWarnings(HasUncompleteData || hasMissingTypes || hasOverValue || hasEmptyWeight || hasUnderWeight || noMethods);
         setEmptyWeight(hasEmptyWeight);
         setIsUncomplete(HasUncompleteData);
         setMissingTypes(hasMissingTypes);
         setHasOverWeight(hasOverValue);
         setUnderWeight(hasUnderWeight);
+        setHasNoMethods(noMethods);
         setFormValid(isValid);
     };
 
@@ -241,6 +252,9 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                 )}
                                 { isUncomplete && (
                                     <Message.Item>{ t('É necessário configurar os métodos para todas as épocas') }</Message.Item>
+                                )}
+                                { hasNoMethods && (
+                                    <Message.Item>{ t('É necessário no minimo configurar algum dos métodos.') }</Message.Item>
                                 )}
                                 { missingTypes && (
                                     <Message.Item>{ t('É necessário configurar o todos os tipos de avaliação nos métodos') }</Message.Item>
