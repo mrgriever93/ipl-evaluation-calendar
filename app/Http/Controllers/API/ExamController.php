@@ -113,7 +113,7 @@ class ExamController extends Controller
             }
         */
 
-        $validation = $this->checkIfCanEditExam($request->calendar_id, $request->epoch_id, $request->course_id, $request->method_id, $request->course_unit_id);
+        $validation = $this->checkIfCanEditExam($request->calendar_id, $request->epoch_id, $request->course_id, $request->method_id, $request->course_unit_id, $exam->id);
         if($validation){
             return $validation;
         }
@@ -138,13 +138,16 @@ class ExamController extends Controller
         return response()->json(new ExamCalendarResource($exam), Response::HTTP_OK);
     }
 
-    public function checkIfCanEditExam($calendarId, $epochId, $course_id, $method_id, $course_unit_id){
+    public function checkIfCanEditExam($calendarId, $epochId, $course_id, $method_id, $course_unit_id, $examId = null){
         $epochRecord = Epoch::find($epochId);
         if ( $epochRecord->calendar->published ) {
             return response()->json("Not allowed to book exams on Published Calendars!", Response::HTTP_FORBIDDEN);
         }
-
-        if ( Exam::where('epoch_id', '=', $epochId)->where('method_id', '=', $method_id)->exists() ) {
+        $checkExam = Exam::where('epoch_id', '=', $epochId)->where('epoch_id', '=', $epochId)->where('method_id', '=', $method_id);
+        if($examId){
+            $checkExam->where('id', '<>', $examId);
+        }
+        if ( $checkExam->exists() ) {
             return response()->json("Not allowed to insert the same exam on this calendar!", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
