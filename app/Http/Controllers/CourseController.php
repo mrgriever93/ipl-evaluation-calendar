@@ -51,7 +51,7 @@ class CourseController extends Controller
     public function search(Request $request, CourseFilters $filters)
     {
         $utils = new Utils();
-        $courseList = Course::ofAcademicYear($utils->getCurrentAcademicYear($request));
+        $courseList = Course::ofAcademicYear($utils->getCurrentAcademicYear($request))->where('degree', '<>', '');
         $hasSearch = false;
         if($request->has('search') && !empty($request->has('search'))) {
             $hasSearch = true;

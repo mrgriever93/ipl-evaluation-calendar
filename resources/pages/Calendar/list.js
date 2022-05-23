@@ -63,7 +63,7 @@ const CalendarList = () => {
     const [contentLoading, setContentLoading] = useState(true);
     const [courseFilter, setCourseFilter] = useState();
     const [semesterFilter, setSemesterFilter] = useState();
-    const [searchFilter, setSearchFilter] = useState();
+    const [phaseFilter, setPhaseFilter] = useState();
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [paginationInfo, setPaginationInfo] = useState({});
@@ -72,10 +72,10 @@ const CalendarList = () => {
     const loadCalendars = () => {
         setContentLoading(true);
         let link = '/calendar?page=' + currentPage;
-        link += (myCourseOnly ? '&myCourseOnly=' + myCourseOnly : '');
-        link += (semesterFilter ? '&semester=' + semesterFilter : '');
-        link += (courseFilter   ? '&course='   + courseFilter   : '');
-        link += (searchFilter   ? '&search='   + searchFilter   : '');
+        link += (myCourseOnly   ? '&myCourseOnly='  + myCourseOnly      : '');
+        link += (semesterFilter ? '&semester='      + semesterFilter    : '');
+        link += (courseFilter   ? '&course='        + courseFilter      : '');
+        link += (phaseFilter    ? '&phase='         + phaseFilter       : '');
         link += '&per_page=' + perPage;
 
         axios.get(link).then((response) => {
@@ -92,6 +92,9 @@ const CalendarList = () => {
         axios.get('/new-calendar/semesters').then((response) => {
             if (response.status >= 200 && response.status < 300) {
                 setSemesterList(response.data.data);
+                if(response.data.data.length > 0) {
+                    setSemesterFilter(response.data.data[0].code);
+                }
             }
         });
     }, []);
@@ -128,7 +131,7 @@ const CalendarList = () => {
 
     useEffect(() => {
         loadCalendars();
-    }, [semesterFilter, courseFilter, searchFilter, currentPage, myCourseOnly]);
+    }, [semesterFilter, courseFilter, phaseFilter, currentPage, myCourseOnly]);
 
 
     const filterByCourse = (course) => {
@@ -140,7 +143,7 @@ const CalendarList = () => {
     }
 
     const handleSearchCourseUnits = (evt, {value}) => {
-        setSearchFilter(value);
+        setPhaseFilter(value);
     };
 
     const filterBySemester = (value) => {
@@ -200,16 +203,17 @@ const CalendarList = () => {
                         <Form.Group>
                             <Button.Group>
                                 {semesterList.length > 0 && semesterList.map((semester, index) => (
-                                    <Button key={'semester_button_' + index} toggle active={semesterFilter === semester.id} onClick={() => setSemesterFilter(semester.id)}>
+                                    <Button key={'semester_button_' + index} toggle active={semesterFilter === semester.code} onClick={() => setSemesterFilter(semester.code)}>
                                         {semester.name}
                                     </Button>
                                 ))}
                             </Button.Group>
                         </Form.Group>
                         <Form.Group>
-                            <Form.Input icon='search' iconPosition='left' width={5} onChange={_.debounce(handleSearchCourseUnits, 400)} placeholder={t("Pesquisar por nome")} label={t("Pesquisar por nome")} />
                             <Courses widthSize={5} eventHandler={filterByCourse} />
-                            <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
+                            { paginationInfo.last_page > 1 && (
+                                <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
+                            )}
                         </Form.Group>
                     </Form>
                 </Card.Content>
