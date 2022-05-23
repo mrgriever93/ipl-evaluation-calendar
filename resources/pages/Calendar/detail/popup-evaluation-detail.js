@@ -17,7 +17,7 @@ import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const PopupEvaluationDetail = () => {
+const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
     const history = useNavigate();
     const { t } = useTranslation();
     // get URL params
@@ -54,7 +54,6 @@ const PopupEvaluationDetail = () => {
     const [removingExam, setRemovingExam] = useState(undefined);
     const [changeData, setChangeData] = useState(false);
     const [savingExam, setSavingExam] = useState(false);
-    const [viewExamInformation, setViewExamInformation] = useState(false);
     const [showIgnoredComments, setShowIgnoredComments] = useState(false);
     const [commentText, setCommentText] = useState(undefined);
     const [previousFromDefinitive, setPreviousFromDefinitive] = useState(false);
@@ -523,7 +522,7 @@ const PopupEvaluationDetail = () => {
     let interruptionDays = 0;
 
     return (
-        <Modal closeOnEscape closeOnDimmerClick open={viewExamInformation} onClose={() => setViewExamInformation(false)}>
+        <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
             <Modal.Header>Detalhes da avaliação</Modal.Header>
             <Modal.Content>
                 <Grid divided="vertically">
@@ -613,7 +612,7 @@ const PopupEvaluationDetail = () => {
                 </Grid>
             </Modal.Content>
             <Modal.Actions>
-                <Button onClick={() => setViewExamInformation(false)} negative>
+                <Button onClick={onClose} negative>
                     Fechar
                 </Button>
             </Modal.Actions>

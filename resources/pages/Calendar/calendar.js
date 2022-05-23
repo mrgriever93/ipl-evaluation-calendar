@@ -16,7 +16,7 @@ import {errorConfig, successConfig} from '../../utils/toastConfig';
 import InfosAndActions from './detail/infos-and-actions';
 import PopupScheduleInterruption from './detail/popup-sched-interruption';
 import PopupScheduleEvaluation from './detail/popup-sched-evaluation';
-// import PopupEvaluationDetail from './detail/popup-evaluation-detail';
+import PopupEvaluationDetail from './detail/popup-evaluation-detail';
 
 
 const Calendar = () => {
@@ -38,6 +38,8 @@ const Calendar = () => {
     const [loadInterruptionTypes, setLoadInterruptionTypes] = useState(false);
     const [openScheduleExamModal, setOpenScheduleExamModal] = useState(false);
     const [openInterruptionModal, setOpenInterruptionModal] = useState(false);
+    const [openExamDetailModal, setOpenExamDetailModal] = useState(false);
+    const [viewExamId, setViewExamId] = useState(-1);
     const [examList, setExamList] = useState([]);
 
     const [isTemporary, setIsTemporary] = useState(true);
@@ -51,7 +53,7 @@ const Calendar = () => {
     const [weekTen, setWeekTen] = useState(0);
 
     /*
-     * Exams
+     * Create / Edit Exams
      */
     const scheduleExamHandler = (scholarYear, date, existingExamsAtThisDate) => {
         setScheduleExamInfo({
@@ -86,11 +88,6 @@ const Calendar = () => {
         setOpenScheduleExamModal(true);
     }
 
-    const viewExamInfoHandler = (scholarYear, exam) => {
-        // missing info here
-        setViewExamInformation(true);
-    }
-
     const closeScheduleExamModal = () => {
         setOpenScheduleExamModal(false);
         setScheduleExamInfo({});
@@ -121,6 +118,18 @@ const Calendar = () => {
     }
     const removeInterruptionFromList = (examId) => {
         setExamList((current) => current.filter((item) => item.id !== examId));
+    }
+    
+    /*
+     * View Exam Details
+     */
+    const openExamDetailHandler = (scholarYear, exam) => {
+        setViewExamId(exam.id);
+        setOpenExamDetailModal(true);
+    }
+
+    const closeExamDetailHandler = () => {
+        setOpenExamDetailModal(false);
     }
 
     useEffect(() => {
@@ -451,8 +460,8 @@ const Calendar = () => {
                                                                             examsComponents = existingExamsAtThisDate.map((exam) => {
                                                                                 if (exam.academic_year === year) {
                                                                                     return (
-                                                                                        // <Button key={exam.id} onClick={() => viewExamInfoHandler(year, exam)} isModified={differences?.includes(exam.id)} >
-                                                                                        <Button className="btn-exam-details" color="blue" key={exam.id} onClick={() => viewExamInfoHandler(year, exam)} >
+                                                                                        // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
+                                                                                        <Button className="btn-exam-details" color="blue" key={exam.id} onClick={() => openExamDetailHandler(year, exam)} >
                                                                                             { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
                                                                                                 <div className="btn-action-wrapper">
                                                                                                     {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
@@ -510,15 +519,20 @@ const Calendar = () => {
                 </Grid.Row>
             </Grid>
             </div>
-            {/* TODO: there's no button to call the interruption popup yet. maybe was lost in the old stuff */}
+            
             <PopupScheduleInterruption isOpen={openInterruptionModal} onClose={closeScheduleExamModal} />
-            {/* TODO: to clean up yet */}
-            {/* <PopupEvaluationDetail /> */}
-            <PopupScheduleEvaluation isOpen={openScheduleExamModal}
-                                     onClose={closeScheduleExamModal}
-                                     scheduleInformation={scheduleExamInfo}
-                                     addedExam={addExamToList}
-                                     deletedExam={removeExamFromList} />
+
+            <PopupEvaluationDetail 
+                isOpen={openExamDetailModal} 
+                onClose={closeExamDetailHandler} 
+                examId={viewExamId} />
+
+            <PopupScheduleEvaluation 
+                isOpen={openScheduleExamModal}
+                onClose={closeScheduleExamModal}
+                scheduleInformation={scheduleExamInfo}
+                addedExam={addExamToList}
+                deletedExam={removeExamFromList} />
         </Container>
     );
 };
