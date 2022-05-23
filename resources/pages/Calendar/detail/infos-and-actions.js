@@ -3,7 +3,7 @@ import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import { useParams, useNavigate} from "react-router-dom";
 import { useTranslation} from "react-i18next";
-import {Card, Button, Sticky, Grid, Header, List, GridColumn, Icon, Popup} from 'semantic-ui-react';
+import {Card, Button, Sticky, Grid, Header, List, GridColumn, Icon, Popup, Label} from 'semantic-ui-react';
 import { toast} from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -299,6 +299,7 @@ const InfosAndActions = () => {
                                     <div>
                                         <span>
                                             <Header as="h5">Estado:</Header>
+                                            {/*
                                             <Button.Group>
                                                 <Button compact onClick={() => updateCalendarStatus(true)} positive={isTemporary} disabled={isPublished || previousFromDefinitive}>
                                                     Temporário
@@ -307,6 +308,18 @@ const InfosAndActions = () => {
                                                     Definitivo
                                                 </Button>
                                             </Button.Group>
+                                            */}
+                                            { !isPublished ? (
+                                                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
+                                                    <Label color={"blue"}>Nao Publicado</Label>
+                                                </ShowComponentIfAuthorized>
+                                            ) : (
+                                                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]} renderIfNotAllowed={() => (
+                                                    <>{isPublished ? <Label color={isTemporary ? undefined : 'blue' }>{isTemporary ? 'Provisório' : 'Definitivo'}</Label> : undefined}</>
+                                                )}>
+                                                    <Label color={isTemporary ? undefined : 'blue' }>{isTemporary ? 'Provisório' : 'Definitivo'}</Label>
+                                                </ShowComponentIfAuthorized>
+                                            )}
                                         </span>
                                     </div>
                                 </GridColumn>

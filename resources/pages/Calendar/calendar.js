@@ -4,7 +4,7 @@ import moment from 'moment';
 import React, {useEffect, useMemo, useState} from 'react';
 import {useParams, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-import {Button, Container, Grid, Icon, Table } from 'semantic-ui-react';
+import {Button, Container, Divider, Grid, Header, Icon, Table} from 'semantic-ui-react';
 import {AnimatePresence} from 'framer-motion';
 import {toast} from 'react-toastify';
 
@@ -37,6 +37,7 @@ const Calendar = () => {
     const [modalInfo, setModalInfo] = useState({});
     const [loadInterruptionTypes, setLoadInterruptionTypes] = useState(false);
     const [openScheduleExamModal, setOpenScheduleExamModal] = useState(false);
+    const [openInterruptionModal, setOpenInterruptionModal] = useState(false);
     const [examList, setExamList] = useState([]);
 
     const [isTemporary, setIsTemporary] = useState(true);
@@ -49,7 +50,9 @@ const Calendar = () => {
 
     const [weekTen, setWeekTen] = useState(0);
 
-
+    /*
+     * Exams
+     */
     const scheduleExamHandler = (scholarYear, date, existingExamsAtThisDate) => {
         setScheduleExamInfo({
             calendarId: parseInt(calendarId, 10),
@@ -92,6 +95,33 @@ const Calendar = () => {
         setOpenScheduleExamModal(false);
         setScheduleExamInfo({});
     };
+
+    const addExamToList = (exam) => {
+        setExamList((current) => [...current, exam]);
+    }
+    const removeExamFromList = (examId) => {
+        setExamList((current) => current.filter((item) => item.id !== examId));
+    }
+
+    /*
+     * Interruptions
+     */
+    const closeInterruptionModal = (newInterruption) => {
+        setOpenInterruptionModal(false);
+    };
+
+    const onEditInterruptionClick = (interruption) => {
+        setEditInterruption(true);
+        setModalInfo({...interruption});
+        setOpenInterruptionModal(true);
+    };
+
+    const addInterruptionToList = (exam) => {
+        setExamList((current) => [...current, exam]);
+    }
+    const removeInterruptionFromList = (examId) => {
+        setExamList((current) => current.filter((item) => item.id !== examId));
+    }
 
     useEffect(() => {
         // check if URL params are just numbers or else redirects to previous page
@@ -275,22 +305,8 @@ const Calendar = () => {
         loadCalendar(calendarId);
     }, [calendarId]);
 
-    const onEditInterruptionClick = (interruption) => {
-        setLoadInterruptionTypes(true);
-        setModalInfo({...interruption});
-        setOpenModal(true);
-    };
-
     function range(start, end) {
         return Array(end - start + 1).fill().map((_, idx) => start + idx);
-    }
-
-
-    const addExamToList = (exam) => {
-        setExamList((current) => [...current, exam]);
-    }
-    const removeExamFromList = (examId) => {
-        setExamList((current) => current.filter((item) => item.id !== examId));
     }
 
     const courseYears = generalInfo?.course?.duration ? range(1, generalInfo?.course?.duration) : [];
@@ -331,6 +347,14 @@ const Calendar = () => {
                             alreadyAddedColSpan = false;
                             return (
                                 <div key={tableIndex} className={"table-week"}>
+                                    {weekTen === week && (
+                                        <Divider horizontal style={{marginTop: "var(--space-l)"}}>
+                                            <Header as='h4' style={{textTransform: "uppercase"}}>
+                                                <Icon name='calendar alternate outline' />
+                                                { t("10ª semana") }
+                                            </Header>
+                                        </Divider>
+                                    )}
                                     <Table celled style={{userSelect: 'none'}}>
                                         <Table.Header>
                                             <Table.Row textAlign="center">
@@ -463,10 +487,10 @@ const Calendar = () => {
                                                                                 }}>
                                                                                 {examsComponents}
                                                                                 {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.ADD_EXAMS).length > 0 && (
-                                                                                        <Button className="btn-schedule-exam" onClick={() => scheduleExamHandler(year, day.date, existingExamsAtThisDate)}>
-                                                                                            Marcar
-                                                                                        </Button>
-                                                                                    )}
+                                                                                    <Button className="btn-schedule-exam" onClick={() => scheduleExamHandler(year, day.date, existingExamsAtThisDate)}>
+                                                                                        Marcar
+                                                                                    </Button>
+                                                                                )}
                                                                             </Table.Cell>
                                                                         );
                                                                     }
@@ -479,7 +503,6 @@ const Calendar = () => {
                                             )}
                                         </Table.Body>
                                     </Table>
-                                    {weekTen === week && (<div className={"week-ten"}>Week Ten</div>)}
                                 </div>
                             );
                         })}
@@ -488,7 +511,7 @@ const Calendar = () => {
             </Grid>
             </div>
             {/* TODO: there's no button to call the interruption popup yet. maybe was lost in the old stuff */}
-            <PopupScheduleInterruption />
+            <PopupScheduleInterruption isOpen={openInterruptionModal} onClose={closeScheduleExamModal} />
             {/* TODO: to clean up yet */}
             {/* <PopupEvaluationDetail /> */}
             <PopupScheduleEvaluation isOpen={openScheduleExamModal}

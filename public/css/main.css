@@ -610,3 +610,6 @@ div.inline{
     font-weight: bold;
     box-sizing: content-box;
 }
+.text-uppercase{
+    text-transform: uppercase;
+}
