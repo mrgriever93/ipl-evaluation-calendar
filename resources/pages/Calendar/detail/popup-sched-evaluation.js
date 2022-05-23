@@ -17,7 +17,7 @@ import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
+const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedExam, deletedExam} ) => {
     const history = useNavigate();
     const { t } = useTranslation();
     // get URL params
@@ -47,12 +47,12 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
             let availableEpochs = scheduleInformation.epochs.filter((epoch) => {
                 return moment(scheduleInformation.date).isBetween(moment(epoch.start_date), moment(epoch.end_date), undefined, '[]' );
             });
-            
+
             setEpochsList(availableEpochs);
             if(scheduleInformation.epoch_id > 0 ) {
                 setSelectedEpoch(scheduleInformation.epoch_id);
                 setLoadRemainingCourseUnits(true);
-            } 
+            }
             else if(availableEpochs.length == 1) {
                 setSelectedEpoch(availableEpochs[0].id);
                 setLoadRemainingCourseUnits(true);
@@ -68,14 +68,14 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                         let beforeSetCourseUnits = [];
 
                         if(scheduleInformation.hasExamsOnDate) {
-                            const branches = scheduleInformation.hasExamsOnDate?.filter((x) => x.academic_year === scheduleInformation.scholarYear)?.map((y) => y?.course_unit?.branch?.id);                        
+                            const branches = scheduleInformation.hasExamsOnDate?.filter((x) => x.academic_year === scheduleInformation.scholarYear)?.map((y) => y?.course_unit?.branch?.id);
                             beforeSetCourseUnits = response.data.data?.filter(
                                 (x) => !(branches.length ? branches?.includes(x?.branch?.id) : false)
                             );
                         } else {
                             beforeSetCourseUnits = response.data.data;
                         }
-                        
+
                         const mapped = beforeSetCourseUnits?.map(
                             ({id, name, methods, branch}) => ({
                                 key: id,
@@ -134,7 +134,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
             }
         }
     }, [courseUnits]);
-    
+
     const onSubmitExam = (values) => {
         setSavingExam(true);
         const examScheduleObj = {
@@ -158,6 +158,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                     toast(t('Avaliação atualizado com sucesso'), successConfig);
                 } else if (res.status === 201) {
                     toast(t('Avaliação marcada com sucesso'), successConfig);
+                    addedExam(res.data);
                 } else {
                     toast(`Ocorreu um erro ao gravar a avaliação!`, errorConfig);
                     toast(res.response.data.message, errorConfig);
@@ -192,9 +193,11 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                 axios.delete(`/exams/${examId}`).then((res) => {
                     if (res.status === 200) {
                         toast('Exame eliminado com sucesso deste calendário!', successConfig);
+                        deletedExam(examId);
                     } else {
                         toast('Ocorreu um problema ao eliminar o exame deste calendário!', errorConfig);
                     }
+                    onClose();
                 });
             }
         });
@@ -220,7 +223,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                     <Modal.Content>
                         <Form>
                             <Header as="h4">{ t("Detalhes da avaliação") } </Header>
-                            
+
                             <Grid columns={2}>
                                 <GridColumn>
                                     <p>
@@ -228,7 +231,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                                         {scheduleInformation?.courseName}
                                     </p>
                                     <p>
-                                        <b>{ t("Ano Curricular") }: </b>                                        
+                                        <b>{ t("Ano Curricular") }: </b>
                                         { t("Ano") + " " + scheduleInformation?.scholarYear}
                                     </p>
                                 </GridColumn>
@@ -262,7 +265,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                                                     <Form.Dropdown
                                                         options={epochsList.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name }))}
                                                         value={selectedEpoch || -1}
-                                                        selection search 
+                                                        selection search
                                                         label={ t("Época")}
                                                         onChange={(e, {value}) => epochDropdownOnChange(e, value)}
                                                     />
@@ -277,11 +280,11 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                                                 )}
                                             <Field name="courseUnit">
                                                 {({input: courseUnitInput}) => (
-                                                    <Form.Dropdown 
-                                                        options={courseUnits} 
+                                                    <Form.Dropdown
+                                                        options={courseUnits}
                                                         label={ t("Unidade Curricular")}
                                                         {...courseUnitInput}
-                                                        selection search 
+                                                        selection search
                                                         disabled={!courseUnits?.length}
                                                         loading={courseUnits !== undefined ? !courseUnits.length : false}
                                                         onChange={(e, {value, options}) => {
@@ -293,11 +296,11 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                                             </Field>
                                             <Field name="method">
                                                 {({input: methodInput}) => (
-                                                    <Form.Dropdown 
+                                                    <Form.Dropdown
                                                         label={ t("Método de Avaliação")}
                                                         options={ methodList }
                                                         {...methodInput}
-                                                        selection search 
+                                                        selection search
                                                         disabled={ !methodList?.length}
                                                         loading={ methodList !== undefined ? !methodList.length : false }
                                                         onChange={(e, {value}) => methodInput.onChange(value)}
@@ -334,14 +337,11 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose} ) => {
                                         </Field>
                                     </>
                                 </GridColumn>
-                            </Grid>                            
+                            </Grid>
                         </Form>
                     </Modal.Content>
                     <Modal.Actions>
-                        <Button floated='left' negative icon labelPosition='left' onClick={() => {
-                            removeExam(scheduleInformation?.exam_id);
-                            onClose();
-                        }}>
+                        <Button floated='left' negative icon labelPosition='left' onClick={() => removeExam(scheduleInformation?.exam_id)}>
                             <Icon name="trash alternate outline" />
                             { t("Remover exame") }
                         </Button>

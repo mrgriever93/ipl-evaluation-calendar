@@ -201,7 +201,7 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 
 ----
 ### Feedback prof. Pedro Gago
-- [ ] No separador de "Calendários" (GOP) deve haver filtros
+- [x] No separador de "Calendários" (GOP) deve haver filtros
 
 
 - [x] Na definição de métodos de avaliação falta uma opção que permita copiar entre épocas (é habitual a avaliação em exame ter os mesmos elementos tanto em recurso como em especial/mensal)

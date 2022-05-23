@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Resources\Generic\ExamCalendarResource;
 use App\Models\Calendar;
 use App\Models\Course;
 use App\Models\CourseUnit;
@@ -88,8 +89,7 @@ class ExamController extends Controller
             $newExam = new Exam($request->all());
             $newExam->save();
         }
-
-        return response()->json("Created", Response::HTTP_CREATED);
+        return response()->json(new ExamCalendarResource($newExam), Response::HTTP_CREATED);
     }
 
     public function show(Exam $exam)
@@ -135,8 +135,7 @@ class ExamController extends Controller
     public function destroy(Exam $exam)
     {
         foreach ($exam->method->courseUnits as $courseUnit) {
-            $epochId = Epoch::
-                where('epoch_type_id', $exam->epoch->epoch_type_id)
+            $epochId = Epoch::where('epoch_type_id', $exam->epoch->epoch_type_id)
                 ->where('calendar_id', Calendar::where('course_id', $courseUnit->course_id)->where('published', false)->latest('id')->first()->id)
                 ->first()->id;
             $examToDelete = $courseUnit->exams->where('epoch_id', $epochId)->last();

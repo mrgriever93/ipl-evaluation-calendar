@@ -11,6 +11,7 @@ use App\Http\Requests\NewCalendarRequest;
 use App\Http\Requests\PublishCalendarRequest;
 use App\Http\Requests\UpdateCalendarRequest;
 use App\Http\Resources\AvailableCourseUnitsResource;
+use App\Http\Resources\Generic\CalendarDetailResource;
 use App\Http\Resources\Generic\CalendarListResource;
 use App\Http\Resources\CalendarResource;
 use App\Http\Resources\Generic\Calendar_SemesterResource;
@@ -201,7 +202,7 @@ class CalendarController extends Controller
 
     public function show(Calendar $calendar)
     {
-        return new CalendarResource($calendar->load(['epochs', 'interruptions']));
+        return new CalendarDetailResource($calendar->load(['epochs', 'interruptions']));
     }
 
     public function update(UpdateCalendarRequest $request, Calendar $calendar)

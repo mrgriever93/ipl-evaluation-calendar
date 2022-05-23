@@ -36,25 +36,16 @@ const Calendar = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [modalInfo, setModalInfo] = useState({});
     const [loadInterruptionTypes, setLoadInterruptionTypes] = useState(false);
-    const [examInfoModal, setExamInfoModal] = useState({});
     const [openScheduleExamModal, setOpenScheduleExamModal] = useState(false);
-    const [calendarPhases, setCalendarPhases] = useState([]);
     const [examList, setExamList] = useState([]);
-    const [publishLoading, setPublishLoading] = useState(false);
-    const [creatingCopy, setCreatingCopy] = useState(false);
 
     const [isTemporary, setIsTemporary] = useState(true);
     const [isPublished, setIsPublished] = useState(false);
     const [calendarPhase, setCalendarPhase] = useState(true);
     const [updatingCalendarPhase, setUpdatingCalendarPhase] = useState(false);
     const [removingExam, setRemovingExam] = useState(undefined);
-    const [changeData, setChangeData] = useState(false);
-    const [savingExam, setSavingExam] = useState(false);
     const [viewExamInformation, setViewExamInformation] = useState(false);
-    const [showIgnoredComments, setShowIgnoredComments] = useState(false);
-    const [commentText, setCommentText] = useState(undefined);
     const [previousFromDefinitive, setPreviousFromDefinitive] = useState(false);
-    const [noMethods, setNoMethods] = useState(false);
 
 
     const scheduleExamHandler = (scholarYear, date, existingExamsAtThisDate) => {
@@ -77,7 +68,7 @@ const Calendar = () => {
             courseName: generalInfo?.course?.display_name,
             scholarYear: scholarYear,
             epochs: epochsList,
-            course_unit_id: exam.course_unit.id,
+            course_unit_id: exam.course_unit_id,
             date: exam.date,
             duration_minutes: exam.duration_minutes,
             exam_id: exam.id,
@@ -194,8 +185,7 @@ const Calendar = () => {
             .catch((r) => alert(r));
     };
 
-    const weekData = useMemo(
-        () => _.orderBy(
+    const weekData = useMemo(() => _.orderBy(
             epochsList.reduce((acc, curr) => {
                 const start_date = moment(curr.start_date);
                 const end_date = moment(curr.end_date);
@@ -243,14 +233,8 @@ const Calendar = () => {
                             },
                         );
 
-                        const week = acc.find(
-                            ({week}) => week === start_date.isoWeek(),
-                        );
-                        if (
-                            !week.days.find(
-                                (day) => day.weekDay === start_date.day(),
-                            )
-                        ) {
+                        const week = acc.find(({week}) => week === start_date.isoWeek());
+                        if (!week.days.find((day) => day.weekDay === start_date.day())) {
                             week.days.push({
                                 weekDay: start_date.day(),
                                 date: start_date.format(),
@@ -259,10 +243,7 @@ const Calendar = () => {
                             });
                         }
 
-                        const foundMultipleDaysWithSameInterruption = acc
-                            .find(
-                                ({week}) => week === start_date.isoWeek(),
-                            )
+                        const foundMultipleDaysWithSameInterruption = acc.find(({week}) => week === start_date.isoWeek())
                             .days.filter(
                                 (x) => x.interruption?.id
                                     === currentInterruption?.id,
@@ -284,28 +265,28 @@ const Calendar = () => {
                 return acc;
             }, []),
             ['year', 'week'],
-        ),
-        [epochsList, interruptionsList],
-    );
+        ), [epochsList, interruptionsList]);
 
     useEffect(() => {
         loadCalendar(calendarId);
     }, [calendarId]);
 
     const onEditInterruptionClick = (interruption) => {
-        setLoadInterruptionTypes(
-            true,
-        );
-        setModalInfo({
-            ...interruption,
-        });
-        setOpenModal(
-            true,
-        );
+        setLoadInterruptionTypes(true);
+        setModalInfo({...interruption});
+        setOpenModal(true);
     };
 
     function range(start, end) {
         return Array(end - start + 1).fill().map((_, idx) => start + idx);
+    }
+
+
+    const addExamToList = (exam) => {
+        setExamList((current) => [...current, exam]);
+    }
+    const removeExamFromList = (examId) => {
+        setExamList((current) => current.filter((item) => item.id !== examId));
     }
 
     const courseYears = generalInfo?.course?.duration ? range(1, generalInfo?.course?.duration) : [];
@@ -377,13 +358,13 @@ const Calendar = () => {
                                                         <Table.HeaderCell key={index} textAlign="center">
                                                             {moment(day.date).format('DD-MM-YYYY')}
                                                             { !day.interruption && (
-                                                                <Button className='btn-add-interruption' title="Adicionar Interrupção" 
+                                                                <Button className='btn-add-interruption' title="Adicionar Interrupção"
                                                                     onClick={() => { alert("Will call interruption popup!")}}>
                                                                         <Icon name="calendar times outline" />
                                                                         Adicionar Interrupção
                                                                 </Button>
                                                             )}
-                                                            
+
                                                         </Table.HeaderCell>
                                                     );
                                                 }
@@ -443,8 +424,7 @@ const Calendar = () => {
                                                                                 return (
                                                                                     // <Button key={exam.id} onClick={() => viewExamInfoHandler(year, exam)} isModified={differences?.includes(exam.id)} >
                                                                                     <Button className="btn-exam-details" color="blue" key={exam.id} onClick={() => viewExamInfoHandler(year, exam)} >
-                                                                                        { (removingExam === exam.id ? <Icon loading name="spinner"/> : !isPublished ) && 
-                                                                                                        (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
+                                                                                        { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
                                                                                             <div className="btn-action-wrapper">
                                                                                                 {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
                                                                                                     <div className='btn-action-edit' onClick={() => editExamHandler(year, exam)}>
@@ -453,9 +433,9 @@ const Calendar = () => {
                                                                                                 )}
                                                                                             </div>
                                                                                         )}
-                                                                                        <div className="btn-exam-content">                                                                                            
-                                                                                            <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : '') + exam.course_unit.initials }</div>
-                                                                                            <div className="btn-exam-type">{ exam.method.name }</div>
+                                                                                        <div className="btn-exam-content">
+                                                                                            <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : '') + exam.course_unit_initials }</div>
+                                                                                            <div className="btn-exam-type">{ exam.method_name }</div>
                                                                                         </div>
                                                                                     </Button>
                                                                                 );
@@ -504,7 +484,11 @@ const Calendar = () => {
             <PopupScheduleInterruption />
             {/* TODO: to clean up yet */}
             {/* <PopupEvaluationDetail /> */}
-            <PopupScheduleEvaluation scheduleInformation={scheduleExamInfo} isOpen={openScheduleExamModal} onClose={closeScheduleExamModal}/>
+            <PopupScheduleEvaluation isOpen={openScheduleExamModal}
+                                     onClose={closeScheduleExamModal}
+                                     scheduleInformation={scheduleExamInfo}
+                                     addedExam={addExamToList}
+                                     deletedExam={removeExamFromList} />
         </Container>
     );
 };
