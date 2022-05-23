@@ -47,6 +47,8 @@ const Calendar = () => {
     const [viewExamInformation, setViewExamInformation] = useState(false);
     const [previousFromDefinitive, setPreviousFromDefinitive] = useState(false);
 
+    const [weekTen, setWeekTen] = useState(0);
+
 
     const scheduleExamHandler = (scholarYear, date, existingExamsAtThisDate) => {
         setScheduleExamInfo({
@@ -163,6 +165,7 @@ const Calendar = () => {
                                 general_info,
                                 differences,
                                 previous_from_definitive,
+                                week_ten,
                             },
                         },
                     } = response;
@@ -178,6 +181,7 @@ const Calendar = () => {
                     setDifferences(differences);
                     setIsLoading(false);
                     setPreviousFromDefinitive(previous_from_definitive);
+                    setWeekTen(moment(week_ten).week());
                 } else {
                     history('/calendario');
                 }
@@ -326,154 +330,157 @@ const Calendar = () => {
                             interruptionDays = 0;
                             alreadyAddedColSpan = false;
                             return (
-                                <Table key={tableIndex} celled style={{userSelect: 'none'}}>
-                                    <Table.Header>
-                                        <Table.Row textAlign="center">
-                                            <Table.HeaderCell width="2">Week #{week}</Table.HeaderCell>
-                                            <Table.HeaderCell width="2">{t('calendar.2ª Feira')}</Table.HeaderCell>
-                                            <Table.HeaderCell width="2">{t('calendar.3ª Feira')}</Table.HeaderCell>
-                                            <Table.HeaderCell width="2">{t('calendar.4ª Feira')}</Table.HeaderCell>
-                                            <Table.HeaderCell width="2">{t('calendar.5ª Feira')}</Table.HeaderCell>
-                                            <Table.HeaderCell width="2">{t('calendar.6ª Feira')}</Table.HeaderCell>
-                                            <Table.HeaderCell width="2">{t('calendar.Sábado')}</Table.HeaderCell>
-                                        </Table.Row>
-                                        <Table.Row>
-                                            <Table.HeaderCell textAlign="center">
-                                                {year}
-                                            </Table.HeaderCell>
-                                            {weekDays.map((weekDay, index) => {
-                                                const day = days.find((day) => day.weekDay === weekDay);
-                                                const firstDayAvailable = moment(days[0].date);
-                                                const lastDayAvailable = moment(days[days.length - 1].date);
-                                                if (!day?.date) {
-                                                    if (weekDay === 1 || (lastDayAvailable.day() < 6 && !alreadyAddedColSpan)) {
-                                                        alreadyAddedColSpan = true;
-                                                        return (<Table.HeaderCell key={index} colSpan={lastDayAvailable.day() < 6 ? 6 - lastDayAvailable.day() : firstDayAvailable.day() - 1}/>);
-                                                    }
-                                                    if (!alreadyAddedColSpan) {
-                                                        return (<Table.HeaderCell key={index} />);
-                                                    }
-                                                } else if (day?.date) {
-                                                    return (
-                                                        <Table.HeaderCell key={index} textAlign="center">
-                                                            {moment(day.date).format('DD-MM-YYYY')}
-                                                            { !day.interruption && (
-                                                                <Button className='btn-add-interruption' title="Adicionar Interrupção"
-                                                                    onClick={() => { alert("Will call interruption popup!")}}>
-                                                                        <Icon name="calendar times outline" />
-                                                                        Adicionar Interrupção
-                                                                </Button>
-                                                            )}
+                                <div key={tableIndex} className={"table-week"}>
+                                    <Table celled style={{userSelect: 'none'}}>
+                                        <Table.Header>
+                                            <Table.Row textAlign="center">
+                                                <Table.HeaderCell width="2">Week #{week}</Table.HeaderCell>
+                                                <Table.HeaderCell width="2">{t('calendar.2ª Feira')}</Table.HeaderCell>
+                                                <Table.HeaderCell width="2">{t('calendar.3ª Feira')}</Table.HeaderCell>
+                                                <Table.HeaderCell width="2">{t('calendar.4ª Feira')}</Table.HeaderCell>
+                                                <Table.HeaderCell width="2">{t('calendar.5ª Feira')}</Table.HeaderCell>
+                                                <Table.HeaderCell width="2">{t('calendar.6ª Feira')}</Table.HeaderCell>
+                                                <Table.HeaderCell width="2">{t('calendar.Sábado')}</Table.HeaderCell>
+                                            </Table.Row>
+                                            <Table.Row>
+                                                <Table.HeaderCell textAlign="center">
+                                                    {year}
+                                                </Table.HeaderCell>
+                                                {weekDays.map((weekDay, index) => {
+                                                    const day = days.find((day) => day.weekDay === weekDay);
+                                                    const firstDayAvailable = moment(days[0].date);
+                                                    const lastDayAvailable = moment(days[days.length - 1].date);
+                                                    if (!day?.date) {
+                                                        if (weekDay === 1 || (lastDayAvailable.day() < 6 && !alreadyAddedColSpan)) {
+                                                            alreadyAddedColSpan = true;
+                                                            return (<Table.HeaderCell key={index} colSpan={lastDayAvailable.day() < 6 ? 6 - lastDayAvailable.day() : firstDayAvailable.day() - 1}/>);
+                                                        }
+                                                        if (!alreadyAddedColSpan) {
+                                                            return (<Table.HeaderCell key={index} />);
+                                                        }
+                                                    } else if (day?.date) {
+                                                        return (
+                                                            <Table.HeaderCell key={index} textAlign="center">
+                                                                {moment(day.date).format('DD-MM-YYYY')}
+                                                                { !day.interruption && (
+                                                                    <Button className='btn-add-interruption' title="Adicionar Interrupção"
+                                                                        onClick={() => { alert("Will call interruption popup!")}}>
+                                                                            <Icon name="calendar times outline" />
+                                                                            Adicionar Interrupção
+                                                                    </Button>
+                                                                )}
 
-                                                        </Table.HeaderCell>
-                                                    );
-                                                }
-                                                return null;
-                                            })}
-                                        </Table.Row>
-                                    </Table.Header>
-                                    <Table.Body>
-                                        {courseYears.map((year, courseIndex) => {
-                                                alreadyAddedColSpan = false;
-                                                return (
-                                                    <Table.Row key={courseIndex}>
-                                                        <Table.Cell textAlign="center">{ t("Ano") + " " + year }</Table.Cell>
-                                                        {weekDays.map(
-                                                            (weekDay, weekDayIndex) => {
-                                                                const day = days.find((day) => day.weekDay === weekDay);
-                                                                const firstDayAvailable = moment(days[0].date);
-                                                                const lastDayAvailable = moment(days[days.length - 1].date);
-                                                                const {interruption,} = day || {};
-                                                                const isInterruption = !!interruption;
-                                                                if (isInterruption && courseIndex === 0 && interruption.id !== days.find((day) => day.weekDay === weekDay - 1)?.interruption?.id) {
-                                                                    interruptionDays = 0;
-                                                                    alreadyAddedRowSpan = false;
-                                                                }
-                                                                if ((isInterruption && alreadyAddedRowSpan && courseIndex > 0) || (isInterruption && interruptionDays++ >= day?.interruptionDays)) {
-                                                                    return null;
-                                                                }
-                                                                if ((year === 1 && !day?.date) || isInterruption) {
-                                                                    if (!isInterruption && (weekDay === 1 || (lastDayAvailable.day() < 6 && !alreadyAddedColSpan))) {
-                                                                        alreadyAddedColSpan = true;
-                                                                        return (<Table.Cell
-                                                                            key={weekDayIndex}
-                                                                            colSpan={isInterruption && lastDayAvailable.day() < 6 ? 6 - lastDayAvailable.day() : firstDayAvailable.day() - 1}
-                                                                            rowSpan={courseYears.length}/>);
+                                                            </Table.HeaderCell>
+                                                        );
+                                                    }
+                                                    return null;
+                                                })}
+                                            </Table.Row>
+                                        </Table.Header>
+                                        <Table.Body>
+                                            {courseYears.map((year, courseIndex) => {
+                                                    alreadyAddedColSpan = false;
+                                                    return (
+                                                        <Table.Row key={courseIndex}>
+                                                            <Table.Cell textAlign="center">{ t("Ano") + " " + year }</Table.Cell>
+                                                            {weekDays.map(
+                                                                (weekDay, weekDayIndex) => {
+                                                                    const day = days.find((day) => day.weekDay === weekDay);
+                                                                    const firstDayAvailable = moment(days[0].date);
+                                                                    const lastDayAvailable = moment(days[days.length - 1].date);
+                                                                    const {interruption,} = day || {};
+                                                                    const isInterruption = !!interruption;
+                                                                    if (isInterruption && courseIndex === 0 && interruption.id !== days.find((day) => day.weekDay === weekDay - 1)?.interruption?.id) {
+                                                                        interruptionDays = 0;
+                                                                        alreadyAddedRowSpan = false;
                                                                     }
-                                                                    if (!alreadyAddedColSpan || (isInterruption && courseIndex === 0)) {
-                                                                        alreadyAddedRowSpan = true;
+                                                                    if ((isInterruption && alreadyAddedRowSpan && courseIndex > 0) || (isInterruption && interruptionDays++ >= day?.interruptionDays)) {
+                                                                        return null;
+                                                                    }
+                                                                    if ((year === 1 && !day?.date) || isInterruption) {
+                                                                        if (!isInterruption && (weekDay === 1 || (lastDayAvailable.day() < 6 && !alreadyAddedColSpan))) {
+                                                                            alreadyAddedColSpan = true;
+                                                                            return (<Table.Cell
+                                                                                key={weekDayIndex}
+                                                                                colSpan={isInterruption && lastDayAvailable.day() < 6 ? 6 - lastDayAvailable.day() : firstDayAvailable.day() - 1}
+                                                                                rowSpan={courseYears.length}/>);
+                                                                        }
+                                                                        if (!alreadyAddedColSpan || (isInterruption && courseIndex === 0)) {
+                                                                            alreadyAddedRowSpan = true;
+                                                                            return (
+                                                                                <Table.Cell key={weekDayIndex}
+                                                                                    textAlign="center"
+                                                                                    style={isInterruption ? {backgroundColor: '#c9c9c9', fontWeight: 'bold'} : null  }
+                                                                                    rowSpan={courseYears.length}
+                                                                                    colSpan={isInterruption ? day?.interruptionDays : null}
+                                                                                >
+                                                                                    <div>
+                                                                                        {isInterruption ? interruption.description : null}
+                                                                                    </div>
+                                                                                </Table.Cell>
+                                                                            );
+                                                                        }
+                                                                    } else if (day?.date) {
+                                                                        const existingExamsAtThisDate = examList.filter((exam) => moment(exam.date).isSame(moment(day.date), 'day'));
+                                                                        let examsComponents = null;
+                                                                        if (existingExamsAtThisDate?.length) {
+                                                                            examsComponents = existingExamsAtThisDate.map((exam) => {
+                                                                                if (exam.academic_year === year) {
+                                                                                    return (
+                                                                                        // <Button key={exam.id} onClick={() => viewExamInfoHandler(year, exam)} isModified={differences?.includes(exam.id)} >
+                                                                                        <Button className="btn-exam-details" color="blue" key={exam.id} onClick={() => viewExamInfoHandler(year, exam)} >
+                                                                                            { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
+                                                                                                <div className="btn-action-wrapper">
+                                                                                                    {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
+                                                                                                        <div className='btn-action-edit' onClick={() => editExamHandler(year, exam)}>
+                                                                                                            <Icon name="edit"/>
+                                                                                                        </div>
+                                                                                                    )}
+                                                                                                </div>
+                                                                                            )}
+                                                                                            <div className="btn-exam-content">
+                                                                                                <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : '') + exam.course_unit_initials }</div>
+                                                                                                <div className="btn-exam-type">{ exam.method_name }</div>
+                                                                                            </div>
+                                                                                        </Button>
+                                                                                    );
+                                                                                }
+                                                                                return null;
+                                                                            });
+                                                                        }
                                                                         return (
-                                                                            <Table.Cell key={weekDayIndex}
+                                                                            <Table.Cell
+                                                                                key={weekDayIndex}
+                                                                                style={ {backgroundColor: epoch.color} }
                                                                                 textAlign="center"
-                                                                                style={isInterruption ? {backgroundColor: '#c9c9c9', fontWeight: 'bold'} : null  }
-                                                                                rowSpan={courseYears.length}
-                                                                                colSpan={isInterruption ? day?.interruptionDays : null}
-                                                                            >
-                                                                                <div>
-                                                                                    {isInterruption ? interruption.description : null}
-                                                                                </div>
+                                                                                onContextMenu={(e,) => {
+                                                                                    e.preventDefault();
+                                                                                    if (!isPublished && existingExamsAtThisDate?.length === 0 && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) {
+                                                                                        setModalInfo({start_date: day.date});
+                                                                                        setOpenModal(true);
+                                                                                        setLoadInterruptionTypes(true);
+                                                                                    }
+                                                                                }}>
+                                                                                {examsComponents}
+                                                                                {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.ADD_EXAMS).length > 0 && (
+                                                                                        <Button className="btn-schedule-exam" onClick={() => scheduleExamHandler(year, day.date, existingExamsAtThisDate)}>
+                                                                                            Marcar
+                                                                                        </Button>
+                                                                                    )}
                                                                             </Table.Cell>
                                                                         );
                                                                     }
-                                                                } else if (day?.date) {
-                                                                    const existingExamsAtThisDate = examList.filter((exam) => moment(exam.date).isSame(moment(day.date), 'day'));
-                                                                    let examsComponents = null;
-                                                                    if (existingExamsAtThisDate?.length) {
-                                                                        examsComponents = existingExamsAtThisDate.map((exam) => {
-                                                                            if (exam.academic_year === year) {
-                                                                                return (
-                                                                                    // <Button key={exam.id} onClick={() => viewExamInfoHandler(year, exam)} isModified={differences?.includes(exam.id)} >
-                                                                                    <Button className="btn-exam-details" color="blue" key={exam.id} onClick={() => viewExamInfoHandler(year, exam)} >
-                                                                                        { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
-                                                                                            <div className="btn-action-wrapper">
-                                                                                                {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
-                                                                                                    <div className='btn-action-edit' onClick={() => editExamHandler(year, exam)}>
-                                                                                                        <Icon name="edit"/>
-                                                                                                    </div>
-                                                                                                )}
-                                                                                            </div>
-                                                                                        )}
-                                                                                        <div className="btn-exam-content">
-                                                                                            <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : '') + exam.course_unit_initials }</div>
-                                                                                            <div className="btn-exam-type">{ exam.method_name }</div>
-                                                                                        </div>
-                                                                                    </Button>
-                                                                                );
-                                                                            }
-                                                                            return null;
-                                                                        });
-                                                                    }
-                                                                    return (
-                                                                        <Table.Cell
-                                                                            key={weekDayIndex}
-                                                                            style={ {backgroundColor: epoch.color} }
-                                                                            textAlign="center"
-                                                                            onContextMenu={(e,) => {
-                                                                                e.preventDefault();
-                                                                                if (!isPublished && existingExamsAtThisDate?.length === 0 && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) {
-                                                                                    setModalInfo({start_date: day.date});
-                                                                                    setOpenModal(true);
-                                                                                    setLoadInterruptionTypes(true);
-                                                                                }
-                                                                            }}>
-                                                                            {examsComponents}
-                                                                            {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.ADD_EXAMS).length > 0 && (
-                                                                                    <Button className="btn-schedule-exam" onClick={() => scheduleExamHandler(year, day.date, existingExamsAtThisDate)}>
-                                                                                        Marcar
-                                                                                    </Button>
-                                                                                )}
-                                                                        </Table.Cell>
-                                                                    );
-                                                                }
-                                                                return null;
-                                                            },
-                                                        )}
-                                                    </Table.Row>
-                                                );
-                                            },
-                                        )}
-                                    </Table.Body>
-                                </Table>
+                                                                    return null;
+                                                                },
+                                                            )}
+                                                        </Table.Row>
+                                                    );
+                                                },
+                                            )}
+                                        </Table.Body>
+                                    </Table>
+                                    {weekTen === week && (<div className={"week-ten"}>Week Ten</div>)}
+                                </div>
                             );
                         })}
                     </Grid.Column>
