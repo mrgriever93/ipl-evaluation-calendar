@@ -104,7 +104,6 @@ const Calendar = () => {
      */
     const interruptionHandler = (interruption, date) => {
         setInterruptionModalInfo((interruption ? interruption : {
-            id: undefined,
             calendarId: parseInt(calendarId, 10),
             start_date: date,
             end_date: date
@@ -116,12 +115,22 @@ const Calendar = () => {
     };
 
     const onEditInterruptionClick = (interruption) => {
-        setInterruptionModalInfo({...interruption});
+        setInterruptionModalInfo({
+            id: interruption.id
+        });
         setOpenInterruptionModal(true);
     };
 
-    const addInterruptionToList = (interruption) => {
-        setInterruptions((current) => [...current, interruption]);
+    const addInterruptionToList = (interruption, isNew) => {
+        if(isNew){
+            setInterruptions((current) => [...current, interruption]);
+        } else {
+            setInterruptions((existingItems) => {
+                return existingItems.map(item => {
+                    return item.id === interruption.id ? interruption : item
+                });
+            });
+        }
     }
     const removeInterruptionFromList = (interruptionId) => {
         setInterruptions((current) => current.filter((item) => item.id !== interruptionId));
@@ -320,21 +329,25 @@ const Calendar = () => {
                 return (<Table.HeaderCell key={index} />);
             }
         } else if (day?.date) {
+            const existingExamsAtThisDate = examList.filter((exam) => moment(exam.date).isSame(moment(day.date), 'day'));
             return (
                 <Table.HeaderCell key={index} textAlign="center">
                     {moment(day.date).format('DD-MM-YYYY')}
-                    { !day.interruption ? (
-                        <Button className='btn-add-interruption' title="Adicionar Interrupção"
-                                onClick={() => interruptionHandler(undefined, day.date)}>
-                            <Icon name="calendar times outline" />
-                            Adicionar Interrupção
-                        </Button>
-                    ) : (
-                        <Button color="yellow" className='btn-add-interruption' title="Editar Interrupção"
-                                onClick={() => interruptionHandler(day.interruption, day.date)}>
-                            <Icon name="calendar times outline" />
-                            Editar Interrupção
-                        </Button>
+                    { ( existingExamsAtThisDate.length > 0 ? null : (
+                            !day.interruption ? (
+                                <Button className='btn-add-interruption' title="Adicionar Interrupção"
+                                        onClick={() => interruptionHandler(undefined, day.date)}>
+                                    <Icon name="calendar times outline" />
+                                    Adicionar Interrupção
+                                </Button>
+                            ) : (
+                                <Button color="yellow" className='btn-add-interruption' title="Editar Interrupção"
+                                        onClick={() => interruptionHandler(day.interruption, day.date)}>
+                                    <Icon name="calendar times outline" />
+                                    Editar Interrupção
+                                </Button>
+                            )
+                        )
                     )}
 
                 </Table.HeaderCell>
@@ -343,6 +356,9 @@ const Calendar = () => {
         return null;
     }
 
+    /*
+     * Content of week table
+     */
     const weekDayContentCell = (epoch, days, courseIndex, year, weekDay, weekDayIndex) => {
         const day = days.find((day) => day.weekDay === weekDay);
         const firstDayAvailable = moment(days[0].date);
@@ -471,7 +487,7 @@ const Calendar = () => {
                                             </Header>
                                         </Divider>
                                     )}
-                                    <Table celled style={{userSelect: 'none'}}>
+                                    <Table celled>
                                         <Table.Header>
                                             <Table.Row textAlign="center">
                                                 <Table.HeaderCell width="2">Week #{week}</Table.HeaderCell>
@@ -509,7 +525,7 @@ const Calendar = () => {
                 </Grid.Row>
             </Grid>
             </div>
-
+            // TODO pass min and max dates
             <PopupScheduleInterruption
                 isOpen={openInterruptionModal}
                 onClose={closeInterruptionModal}

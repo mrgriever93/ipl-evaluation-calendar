@@ -5,7 +5,7 @@ import {useParams, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {Field, Form as FinalForm} from 'react-final-form';
 import {DateInput, TimeInput} from 'semantic-ui-calendar-react-yz';
-import {Button, Form, Icon, Modal, Message} from 'semantic-ui-react';
+import {Button, Form, Icon, Modal, Message, Dimmer, Loader} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -13,7 +13,7 @@ import withReactContent from 'sweetalert2-react-content';
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
 const SweetAlertComponent = withReactContent(Swal);
 
-const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, deletedInterruption} ) => {
+const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, deletedInterruption, minDate, maxDate} ) => {
     const history = useNavigate();
     const { t } = useTranslation();
     // get URL params
@@ -23,12 +23,14 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
     const [interruptionTypes, setInterruptionTypesList] = useState([]);
     const [errorMessages, setErrorMessages] = useState([]);
     const [modalInfo, setModalInfo] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         setModalInfo(info);
     }, [info]);
 
     const onSubmitInterruption = (values) => {
+        setIsLoading(true);
         const axiosFn = values?.id ? axios.patch : axios.post;
         axiosFn(`/interruptions/${values?.id ? values.id : ''}`, {
             calendar_id: parseInt(calendarId, 10),
@@ -38,9 +40,10 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
             start_date: moment(values.startDate).format('YYYY-MM-DD'),
             end_date: moment(values.endDate).format('YYYY-MM-DD'),
         }).then((res) => {
+            setIsLoading(false);
             if (res.status === 200 || res.status === 201) {
                 toast(`Interrupção ${values?.id ? 'guardada' : 'marcada'} com sucesso!`, successConfig);
-                addedInterruption(res.data);
+                addedInterruption((values?.id ? res.data.data : res.data), !values?.id);
                 onClose();
             } else {
                 let errorsArray = [];
@@ -68,6 +71,7 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
             confirmButtonColor: '#21ba45',
             denyButtonColor: '#db2828',
         }).then((result) => {
+            setIsLoading(true);
             if (result.isConfirmed) {
                 axios.delete(`/interruptions/${interruptionId}`).then((res) => {
                     // loadCalendar(calendarId);
@@ -78,24 +82,36 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
                         toast(t('calendar.Ocorreu um problema ao eliminar a interrupção deste calendário!'), errorConfig);
                     }
                     onClose();
+                    setIsLoading(false);
                 });
             }
         });
     };
 
     useEffect(() => {
-        if (isOpen && !interruptionTypes?.length) {
-            axios.get('/interruption-types').then((response) => {
-                if (response.status === 200) {
-                    setInterruptionTypesList(
-                        response.data.data?.map(({id, label}) => ({
-                            key: id,
-                            value: id,
-                            text: label,
-                        })),
-                    );
-                }
-            });
+        if (isOpen){
+            if(!interruptionTypes?.length) {
+                axios.get('/interruption-types').then((response) => {
+                    if (response.status === 200) {
+                        setInterruptionTypesList(
+                            response.data.data?.map(({id, label}) => ({
+                                key: id,
+                                value: id,
+                                text: label,
+                            })),
+                        );
+                    }
+                });
+            }
+            if(info.id) {
+                setIsLoading(true);
+                axios.get('/interruptions/' + info.id).then((response) => {
+                    if (response.status === 200) {
+                        setModalInfo(response.data.data);
+                        setIsLoading(false);
+                    }
+                });
+            }
         }
         if(!isOpen){
             setModalInfo({});
@@ -114,6 +130,11 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
                     }}
                     render={({handleSubmit}) => (
                         <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
+                            { isLoading && (
+                                <Dimmer active>
+                                    <Loader />
+                                </Dimmer>
+                            )}
                             <Modal.Header>
                                 {modalInfo?.id ? 'Editar' : 'Adicionar'}{' '}interrupção
                             </Modal.Header>
@@ -139,6 +160,7 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
                                                 <Form.Field>
                                                     <DateInput name="date" iconPosition="left" label="Data de Ínicio" placeholder="Data de Ínicio"
                                                                dateFormat="DD MMMM, YYYY" value={startDateInput.value}
+                                                               minDate={minDate} maxDate={maxDate}
                                                                onChange={(evt, {value}) => {startDateInput.onChange(value);}}
                                                     />
                                                 </Form.Field>
@@ -149,6 +171,7 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
                                                 <Form.Field>
                                                     <DateInput name="date" iconPosition="left" label="Data de Fim" placeholder="Data de Fim"
                                                                dateFormat="DD MMMM, YYYY" value={endDateInput.value}
+                                                               minDate={minDate} maxDate={maxDate}
                                                                onChange={(evt, {value}) => {endDateInput.onChange(value);}}
                                                     />
                                                 </Form.Field>
@@ -180,6 +203,12 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
                                 </Form>
                             </Modal.Content>
                             <Modal.Actions>
+                                { modalInfo?.id && (
+                                    <Button floated='left' negative icon labelPosition='left' onClick={() => removeInterruption(modalInfo.id)}>
+                                        <Icon name="trash alternate outline" />
+                                        { t("Remover Interrupção") }
+                                    </Button>
+                                )}
                                 <Button onClick={onClose}>Cancelar</Button>
                                 <Button onClick={handleSubmit} positive icon={!!modalInfo?.id}{...(modalInfo?.id && ({labelPosition: 'left'}))}>
                                     {modalInfo?.id && <Icon name="save"/>}

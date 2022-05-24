@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Resources\Generic\InterruptionDetailResource;
 use App\Http\Resources\InterruptionResource;
-use App\Models\Calendar;
 use App\Models\Epoch;
-use App\Models\Exam;
 use App\Models\Interruption;
 use App\Models\InterruptionType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NewInterruptionRequest;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class InterruptionController extends Controller
 {
+    public function show(Interruption $interruption){
+        return new InterruptionDetailResource($interruption);
+    }
+
     public function store(NewInterruptionRequest $request)
     {
         $newInterruption = new Interruption($request->all());
@@ -50,6 +51,7 @@ class InterruptionController extends Controller
     public function update(NewInterruptionRequest $request, Interruption $interruption) {
         $interruption->fill($request->all());
         $interruption->save();
+        return new InterruptionResource($interruption);
     }
     public function destroy(Interruption $interruption)
     {

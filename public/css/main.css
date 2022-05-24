@@ -638,7 +638,15 @@ div.inline{
     overflow-y: auto;
     padding: 1.5rem;
 }
-
+.table-week > table {
+    user-select: none;
+}
+.calendar-tables .table tbody td .button.btn-schedule-exam{
+    margin-top: 10px;
+}
+.calendar-tables .table tbody td .button.btn-schedule-exam:only-child{
+    margin-top: 0;
+}
 .calendar-day-periodic_season{
     background-color: #ecfff0;
 }
