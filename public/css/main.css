@@ -615,7 +615,9 @@ div.inline{
 .ui.modal > .content > .exam-detail-modal {
     display: flex;
     flex-flow: row nowrap;
-    height: 400px;
+    min-height: 400px;
+    height: 550px;
+    max-height: 650px;
     margin: -1.5rem;
 }
 
@@ -623,7 +625,10 @@ div.inline{
     background: #f3f2f1;
     border-right: 1px solid rgba(34,36,38,.08);
     flex: 1;
+    height: 100%;
     padding: 1.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .exam-detail-content {

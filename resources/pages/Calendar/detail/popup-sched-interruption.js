@@ -40,7 +40,7 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
         }).then((res) => {
             if (res.status === 200 || res.status === 201) {
                 toast(`Interrupção ${values?.id ? 'guardada' : 'marcada'} com sucesso!`, successConfig);
-                addedInterruption(res.data.data);
+                addedInterruption(res.data);
                 onClose();
             } else {
                 let errorsArray = [];
@@ -180,9 +180,7 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
                                 </Form>
                             </Modal.Content>
                             <Modal.Actions>
-                                <Button onClick={onClose} negative>
-                                    Cancelar
-                                </Button>
+                                <Button onClick={onClose}>Cancelar</Button>
                                 <Button onClick={handleSubmit} positive icon={!!modalInfo?.id}{...(modalInfo?.id && ({labelPosition: 'left'}))}>
                                     {modalInfo?.id && <Icon name="save"/>}
                                     {modalInfo?.id ? 'Gravar alterações' : 'Adicionar'}

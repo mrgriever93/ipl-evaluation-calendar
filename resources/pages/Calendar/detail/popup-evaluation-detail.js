@@ -20,21 +20,23 @@ const SweetAlertComponent = withReactContent(Swal);
 const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
     const history = useNavigate();
     const { t } = useTranslation();
-    
+
     const [examDetailObject, setExamDetailObject] = useState({});
     const [isLoading, setIsLoading] = useState(true);
-    
+
     const [isPublished, setIsPublished] = useState(false);
     const [showIgnoredComments, setShowIgnoredComments] = useState(false);
     const [commentText, setCommentText] = useState(undefined);
     const [calendarPermissions, setCalendarPermissions] = useState(JSON.parse(localStorage.getItem('calendarPermissions')) || []);
-    
+
     useEffect(() => {
-        loadExamDetails(examId);
+        if(examId) {
+            loadExamDetails(examId);
+        }
     }, [examId]);
 
     const loadExamDetails = (examId) => {
-        setIsLoading(true);        
+        setIsLoading(true);
         axios.get(`/exams/${examId}`).then((response) => {
                 if (response?.status >= 200) {
                     setExamDetailObject(response.data.data);
@@ -93,7 +95,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
         //     }
         // });
     };
-    
+
     const ignoreComment = (commentId) => {
         toast('Feature não foi implementada', errorConfig);
         // axios.post(`/comment/${commentId}/ignore`).then((res) => {
@@ -150,10 +152,10 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                             <b>Salas de avaliação: </b>
                             {examDetailObject?.room}
                         </p>
-                        <p>
+                        <div>
                             <b>Observações: </b>
-                            <div>{examDetailObject?.observations || '-'}</div>
-                        </p>
+                            <p>{examDetailObject?.observations || '-'}</p>
+                        </div>
                     </div>
                     <div className='exam-detail-content'>
                         <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS, SCOPES.ADD_COMMENTS]}>

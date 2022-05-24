@@ -35,17 +35,15 @@ const Calendar = () => {
     const [openModal, setOpenModal] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [modalInfo, setModalInfo] = useState({});
-    const [loadInterruptionTypes, setLoadInterruptionTypes] = useState(false);
     const [openScheduleExamModal, setOpenScheduleExamModal] = useState(false);
     const [openExamDetailModal, setOpenExamDetailModal] = useState(false);
-    const [viewExamId, setViewExamId] = useState(-1);
+    const [viewExamId, setViewExamId] = useState(undefined);
     const [examList, setExamList] = useState([]);
 
     const [isTemporary, setIsTemporary] = useState(true);
     const [isPublished, setIsPublished] = useState(false);
     const [calendarPhase, setCalendarPhase] = useState(true);
     const [updatingCalendarPhase, setUpdatingCalendarPhase] = useState(false);
-    const [viewExamInformation, setViewExamInformation] = useState(false);
     const [previousFromDefinitive, setPreviousFromDefinitive] = useState(false);
 
     const [weekTen, setWeekTen] = useState(0);
@@ -104,13 +102,13 @@ const Calendar = () => {
     /*
      * Interruptions
      */
-    const interruptionHandler = (interruptionId, date) => {
-        setInterruptionModalInfo({
-            id: interruptionId,
+    const interruptionHandler = (interruption, date) => {
+        setInterruptionModalInfo((interruption ? interruption : {
+            id: undefined,
             calendarId: parseInt(calendarId, 10),
             start_date: date,
             end_date: date
-        });
+        }));
         setOpenInterruptionModal(true);
     }
     const closeInterruptionModal = (newInterruption) => {
@@ -122,11 +120,11 @@ const Calendar = () => {
         setOpenInterruptionModal(true);
     };
 
-    const addInterruptionToList = (exam) => {
-        setExamList((current) => [...current, exam]);
+    const addInterruptionToList = (interruption) => {
+        setInterruptions((current) => [...current, interruption]);
     }
-    const removeInterruptionFromList = (examId) => {
-        setExamList((current) => current.filter((item) => item.id !== examId));
+    const removeInterruptionFromList = (interruptionId) => {
+        setInterruptions((current) => current.filter((item) => item.id !== interruptionId));
     }
 
     /*
@@ -243,11 +241,7 @@ const Calendar = () => {
                 const end_date = moment(curr.end_date);
                 while (start_date <= end_date) {
                     if (start_date.day() !== 0) {
-                        if (
-                            !acc.filter(
-                                ({week}) => week === start_date.isoWeek(),
-                            ).length
-                        ) {
+                        if (!acc.filter(({week}) => week === start_date.isoWeek()).length) {
                             acc.push({
                                 week: start_date.isoWeek(),
                                 year: start_date.year(),
@@ -257,30 +251,12 @@ const Calendar = () => {
 
                         const currentInterruption = interruptionsList.find(
                             (interruption) => {
-                                const interruptionStartDate = moment(
-                                    interruption.start_date,
-                                    'YYYY-MM-DD',
-                                );
-                                const interruptionEndDate = moment(
-                                    interruption.end_date,
-                                    'YYYY-MM-DD',
-                                );
-
+                                const interruptionStartDate = moment(interruption.start_date, 'YYYY-MM-DD');
+                                const interruptionEndDate = moment(interruption.end_date, 'YYYY-MM-DD');
                                 return (
-                                    (start_date.isAfter(
-                                            interruptionStartDate,
-                                        )
-                                        && start_date.isBefore(
-                                            interruptionEndDate,
-                                        ))
-                                    || start_date.isSame(
-                                        interruptionStartDate,
-                                        'day',
-                                    )
-                                    || start_date.isSame(
-                                        interruptionEndDate,
-                                        'day',
-                                    )
+                                    (start_date.isAfter(interruptionStartDate) && start_date.isBefore(interruptionEndDate))
+                                    || start_date.isSame(interruptionStartDate, 'day')
+                                    || start_date.isSame(interruptionEndDate, 'day')
                                 );
                             },
                         );
@@ -296,10 +272,7 @@ const Calendar = () => {
                         }
 
                         const foundMultipleDaysWithSameInterruption = acc.find(({week}) => week === start_date.isoWeek())
-                            .days.filter(
-                                (x) => x.interruption?.id
-                                    === currentInterruption?.id,
-                            );
+                            .days.filter((x) => x.interruption?.id === currentInterruption?.id);
 
                         if (foundMultipleDaysWithSameInterruption?.length) {
                             foundMultipleDaysWithSameInterruption[0].interruptionDays = foundMultipleDaysWithSameInterruption.length;
@@ -310,10 +283,8 @@ const Calendar = () => {
                             color: curr.code === "periodic_season" ? '#ecfff0' : curr.code === "normal_season" ? '#f5e6da' : '#f9dddd',
                         };
                     }
-
                     start_date.add(1, 'days');
                 }
-
                 return acc;
             }, []),
             ['year', 'week'],
@@ -404,11 +375,17 @@ const Calendar = () => {
                                                         return (
                                                             <Table.HeaderCell key={index} textAlign="center">
                                                                 {moment(day.date).format('DD-MM-YYYY')}
-                                                                { !day.interruption && (
+                                                                { !day.interruption ? (
                                                                     <Button className='btn-add-interruption' title="Adicionar Interrupção"
                                                                         onClick={() => interruptionHandler(undefined, day.date)}>
                                                                             <Icon name="calendar times outline" />
                                                                             Adicionar Interrupção
+                                                                    </Button>
+                                                                ) : (
+                                                                    <Button color="yellow" className='btn-add-interruption' title="Editar Interrupção"
+                                                                            onClick={() => interruptionHandler(day.interruption, day.date)}>
+                                                                        <Icon name="calendar times outline" />
+                                                                        Editar Interrupção
                                                                     </Button>
                                                                 )}
 
@@ -430,7 +407,7 @@ const Calendar = () => {
                                                                     const day = days.find((day) => day.weekDay === weekDay);
                                                                     const firstDayAvailable = moment(days[0].date);
                                                                     const lastDayAvailable = moment(days[days.length - 1].date);
-                                                                    const {interruption,} = day || {};
+                                                                    const {interruption} = day || {};
                                                                     const isInterruption = !!interruption;
                                                                     if (isInterruption && courseIndex === 0 && interruption.id !== days.find((day) => day.weekDay === weekDay - 1)?.interruption?.id) {
                                                                         interruptionDays = 0;
@@ -500,7 +477,6 @@ const Calendar = () => {
                                                                                     if (!isPublished && existingExamsAtThisDate?.length === 0 && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) {
                                                                                         setModalInfo({start_date: day.date});
                                                                                         setOpenModal(true);
-                                                                                        setLoadInterruptionTypes(true);
                                                                                     }
                                                                                 }}>
                                                                                 {examsComponents}
@@ -532,6 +508,8 @@ const Calendar = () => {
             <PopupScheduleInterruption
                 isOpen={openInterruptionModal}
                 onClose={closeInterruptionModal}
+                addedInterruption={addInterruptionToList}
+                deletedInterruption={removeInterruptionFromList}
                 info={interruptionModalInfo} />
 
             <PopupEvaluationDetail

@@ -13,7 +13,7 @@ class CourseUnitExamResource extends JsonResource
         return [
             'id'                    => $this->id,
             'code'                  => $this->code,
-            'curricularYear'        => $this->curricular_year,
+            'curricular_year'       => $this->curricular_year,
             'name'                  => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
             'initials'              => $this->initials,
             'semester'              => $this->semester->number,
