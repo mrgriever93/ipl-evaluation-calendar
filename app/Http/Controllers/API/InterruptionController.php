@@ -2,25 +2,29 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Calendar;
+use App\Http\Resources\Generic\InterruptionDetailResource;
+use App\Http\Resources\InterruptionResource;
 use App\Models\Epoch;
-use App\Models\Exam;
 use App\Models\Interruption;
 use App\Models\InterruptionType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NewInterruptionRequest;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class InterruptionController extends Controller
 {
+    public function show(Interruption $interruption){
+        return new InterruptionDetailResource($interruption);
+    }
+
     public function store(NewInterruptionRequest $request)
     {
         $newInterruption = new Interruption($request->all());
-        if (empty($request->description)) {
-            $newInterruption->description = InterruptionType::find($request->interruption_type_id)->description;
+        if (empty($request->description_pt)) {
+            $intType = InterruptionType::find($request->interruption_type_id);
+            $newInterruption->description_pt = $intType->name_pt;
+            $newInterruption->description_en = $intType->name_en;
         }
         $newInterruption->save();
 
@@ -41,12 +45,13 @@ class InterruptionController extends Controller
             }
         }
 
-        return response()->json("Created!", Response::HTTP_CREATED);
+        return response()->json(new InterruptionResource($newInterruption), Response::HTTP_CREATED);
     }
 
     public function update(NewInterruptionRequest $request, Interruption $interruption) {
         $interruption->fill($request->all());
         $interruption->save();
+        return new InterruptionResource($interruption);
     }
     public function destroy(Interruption $interruption)
     {

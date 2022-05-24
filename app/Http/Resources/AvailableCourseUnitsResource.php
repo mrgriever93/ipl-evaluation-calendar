@@ -11,10 +11,10 @@ class AvailableCourseUnitsResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'name' => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
             'initials' => $this->initials,
-            'branch' => CourseUnit::find($this->id)->branch,
-            'methods' => AvailableMethodsResource::collection($this->methods)
+            'methods' => AvailableMethodsResource::collection($this->methods),
+            //'branch' => $this->branch,
         ];
     }
 }

@@ -29,6 +29,7 @@ class NewCalendarRequest extends FormRequest
             'semester'                              => 'required|string|exists:semesters,code',
             'observations'                          => 'nullable|string|max:255',
             'epochs'                                => 'required',
+            'week_ten'                              => 'date_format:Y-m-d',
             'epochs.*.code'                         => 'required|string|exists:epoch_types,code',
             'epochs.*.start_date'                   => 'required|date_format:Y-m-d|before:epochs.*.end_date',
             'epochs.*.end_date'                     => 'required|date_format:Y-m-d|after:epochs.*.start_date',

@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Epoch;
 use App\Models\InitialGroups;
 use App\Models\CalendarPhase;
+use App\Models\Semester;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use tiagomichaelsousa\LaravelFilters\QueryFilters;
@@ -54,6 +55,16 @@ class CalendarFilters extends QueryFilters
 
             return $this->builder->whereIn('course_id', Auth::user()->courseUnits->pluck('course_id'))->orPublished();
         }
+    }
 
+
+    public function semester($semester) {
+        return $this->builder->where('semester_id',  Semester::where('code', $semester)->first()->id);
+    }
+
+    public function course($course)
+    {
+        Course::findOrFail($course);
+        return $this->builder->where('course_id', $course);
     }
 }

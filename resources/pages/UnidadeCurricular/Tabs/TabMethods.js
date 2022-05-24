@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, Header, Icon, Label, Message, Segment, Table} from 'semantic-ui-react';
+import {Field, Form as FinalForm} from 'react-final-form';
+import {Button, Form, Header, Icon, Label, Message, Grid, GridColumn, Modal, Segment, Table} from 'semantic-ui-react';
 import axios from "axios";
 import {toast} from "react-toastify";
 import {errorConfig, successConfig} from "../../../utils/toastConfig";
@@ -14,30 +15,48 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
     const [formValid, setFormValid] = useState(false);
     // Warnings
     const [hasWarnings, setHasWarnings] = useState(false);
+    const [hasNoMethods, setHasNoMethods] = useState(false);
     const [hasOverWeight, setHasOverWeight] = useState(false);
     const [isUncomplete, setIsUncomplete] = useState(false);
     const [missingTypes, setMissingTypes] = useState(false);
     const [emptyWeight, setEmptyWeight] = useState(false);
+    const [underWeight, setUnderWeight] = useState(false);
 
     const [epochs, setEpochs] = useState([]);
     const [evaluationTypes, setEvaluationTypes] = useState([]);
     const [removedMethods, setRemovedMethods] = useState([]);
+    const [openClone, setOpenClone] = React.useState(false)
+    const [selectedEpochFrom, setSelectedEpochFrom] = useState(-1);
+    const [selectedEpochTo, setSelectedEpochTo] = useState([]);
 
     const isFormValid = (methodList) => {
         let isValid = true;
         let hasOverValue = false;
         let HasUncompleteData = false;
+        let noMethods = true;
         let hasMissingTypes = false;
         let hasEmptyWeight = false;
+        let hasUnderWeight = false;
+
         if(methodList?.length > 0 ) {
             methodList.forEach((item) => {
+                /*
+                //check if it has methods
                 if (!item.methods?.length) {
                     isValid = false;
                     HasUncompleteData = true;
                 }
-                if (item.methods.reduce((acc, curr) => curr.weight + acc, 0) > 100) {
+                 */
+                // check if it has more than 100%
+                let methodWeight = item.methods.reduce((acc, curr) => curr.weight + acc, 0);
+                if (methodWeight > 100) {
                     hasOverValue = true;
                 }
+                if (item.methods.length > 0 && methodWeight < 100) {
+                    hasUnderWeight = true;
+                    isValid = false;
+                }
+                //check if the existing methods have all fields filled
                 item.methods?.forEach((method) => {
                     if (!method.evaluation_type_id) {
                         hasMissingTypes = true;
@@ -49,13 +68,22 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                         isValid = false;
                     }
                 });
+                if(item.methods.length > 0){
+                    noMethods = false;
+                }
             });
         }
-        setHasWarnings(HasUncompleteData || hasMissingTypes || hasOverValue || hasEmptyWeight);
+        if(noMethods){
+            isValid = false;
+        }
+
+        setHasWarnings(HasUncompleteData || hasMissingTypes || hasOverValue || hasEmptyWeight || hasUnderWeight || noMethods);
         setEmptyWeight(hasEmptyWeight);
         setIsUncomplete(HasUncompleteData);
         setMissingTypes(hasMissingTypes);
         setHasOverWeight(hasOverValue);
+        setUnderWeight(hasUnderWeight);
+        setHasNoMethods(noMethods);
         setFormValid(isValid);
     };
 
@@ -107,11 +135,13 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                     })
                 });
             });
+            setIsLoading(true);
             axios.post('/methods', {methods: [...methods], removed: [...removedMethods]}).then((res) => {
                 setIsSaving(false);
-                //loadMethods();
+                loadMethods();
                 if (res.status === 200) {
                     toast(t('Métodos de avaliação criados com sucesso!'), successConfig);
+                    setRemovedMethods([]);
                 } else {
                     toast(t('Não foi possível criar os métodos de avaliação!'), errorConfig);
                 }
@@ -166,6 +196,46 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
             return copy;
         })
     }
+    const cloneMethods = () => {
+        if( selectedEpochFrom === -1 || selectedEpochTo.length === 0 ) {
+            toast(t('Tens de selecionar as duas épocas que pretendes copiar! De onde para onde.'), errorConfig);
+            return false;
+        }
+
+        if( selectedEpochTo.includes(selectedEpochFrom) ) {
+            toast(t('As épocas selecionadas têm de ser diferentes!'), errorConfig);
+            return false;
+        }
+
+        let methodsToClone = JSON.parse(JSON.stringify(epochs.find((epoch) => epoch.id === selectedEpochFrom).methods));
+        selectedEpochTo.forEach((item) => {
+            let currEpochIndex = epochs.findIndex((epoch) => epoch.id === item);
+            if(epochs[currEpochIndex].methods.length > 0){
+                let removedId = epochs[currEpochIndex].id;
+                setRemovedMethods((current) => [...current, removedId]);
+            }
+            epochs[currEpochIndex].methods = methodsToClone;
+            epochs[currEpochIndex].methods.forEach((item) => delete item.id);
+        });
+
+        toast(t('Success!'), successConfig);
+        isFormValid(epochs);
+        closeModal();
+    }
+
+    const epochFromDropdownOnChange = (event, value) => {
+        setSelectedEpochFrom(value);
+    };
+
+    const epochToDropdownOnChange = (event, value) => {
+        setSelectedEpochTo(value);
+    };
+
+    const closeModal = () => {
+        setSelectedEpochFrom(-1);
+        setSelectedEpochTo([]);
+        setOpenClone(false);
+    }
 
     return (
         <div>
@@ -183,11 +253,17 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                 { isUncomplete && (
                                     <Message.Item>{ t('É necessário configurar os métodos para todas as épocas') }</Message.Item>
                                 )}
+                                { hasNoMethods && (
+                                    <Message.Item>{ t('É necessário no minimo configurar algum dos métodos.') }</Message.Item>
+                                )}
                                 { missingTypes && (
                                     <Message.Item>{ t('É necessário configurar o todos os tipos de avaliação nos métodos') }</Message.Item>
                                 )}
                                 { emptyWeight && (
                                     <Message.Item>{ t('É necessário ter o peso de avaliação em todos os métodos') }</Message.Item>
+                                )}
+                                { underWeight && (
+                                    <Message.Item>{ t('É necessário ter no minimo 100% nos métodos') }</Message.Item>
                                 )}
                             </Message.List>
                         </Message>
@@ -196,6 +272,10 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                         <Button onClick={onSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} disabled={!formValid}>
                             <Icon name="save"/>
                             { t("Guardar") }
+                        </Button>
+                        <Button onClick={() => setOpenClone(true)} icon labelPosition="left" floated="right">
+                            <Icon name={"clone outline"}/>
+                            { t("Duplicar metodos") }
                         </Button>
                     </Segment>
                     {epochs?.map((item, index) => (
@@ -256,8 +336,52 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                         </div>
                     ))}
                 </div>
-            )
-            }
+            )}
+
+            <FinalForm onSubmit={cloneMethods}
+                // initialValues={{
+                //     epochFromInput: -1,
+                //     epochToInput: -1,
+                // }}
+                render={({handleSubmit}) => (
+                    <Modal onClose={closeModal} onOpen={() => setOpenClone(true)} open={openClone}>
+                        <Modal.Header>{t("Duplicar Métodos")}</Modal.Header>
+                        <Modal.Content>
+                            <Form>
+                                <Header as="h4">{t("Seleciona que épocas pretendes duplicar")}</Header>
+                                <Grid columns={2}>
+                                    <GridColumn>
+                                        <Field name="epoch">
+                                            {({input: epochFromInput}) => (
+                                                <Form.Dropdown
+                                                    options={epochs.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name, disabled: selectedEpochTo.includes(epoch.id) || epoch.methods.length === 0 }))}
+                                                    value={selectedEpochFrom || -1} placeholder={t("Época a copiar")} selectOnBlur={false} selection search label={ t("De") }
+                                                    onChange={(e, {value}) => epochFromDropdownOnChange(e, value)}
+                                                />
+                                            )}
+                                        </Field>
+                                    </GridColumn>
+                                    <GridColumn>
+                                        <Field name="epoch">
+                                            {({input: epochToInput}) => (
+                                                <Form.Dropdown
+                                                    options={epochs.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name, disabled: epoch.id === selectedEpochFrom}))}
+                                                    value={selectedEpochTo || []} selectOnBlur={false} placeholder={t("Épocas a receber")} multiple selection search label={ t("Para") }
+                                                    onChange={(e, {value}) => epochToDropdownOnChange(e, value)}
+                                                />
+                                            )}
+                                        </Field>
+                                    </GridColumn>
+                                </Grid>
+                            </Form>
+                        </Modal.Content>
+                        <Modal.Actions>
+                            <Button negative onClick={closeModal}>{ t("Cancel") }</Button>
+                            <Button positive onClick={handleSubmit}>{ t("Duplicar") }</Button>
+                        </Modal.Actions>
+                    </Modal>
+                )}
+            />
         </div>
     )
 };

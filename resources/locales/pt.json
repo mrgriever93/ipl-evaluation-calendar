@@ -280,8 +280,8 @@
         "Pesquise o coordenador de curso...": "Pesquise o coordenador de curso...",
         "Guardar coordenador": "Guardar coordenador",
 
-        "Mandatório": "Mandatório",
-        "Caso seja mandatório, quando criar um novo calendário, terá de preencher a interrupção": "Caso seja mandatório, quando criar um novo calendário, terá de preencher a interrupção",
+        "Obrigatório": "Obrigatório",
+        "Caso seja obrigatório, quando criar um novo calendário, terá de preencher a interrupção": "Caso seja obrigatório, quando criar um novo calendário, terá de preencher a interrupção",
 
         "Ramos": "Ramos",
         "Alunos": "Alunos",
@@ -320,6 +320,7 @@
         "Fim": "Fim",
 
         "Os seguintes detalhes da Unidade curricular precisam da sua atenção": "Os seguintes detalhes da Unidade curricular precisam da sua atenção",
-        "Falta preencher a que ramo pertence.": "Falta preencher a que ramo pertence."
+        "Falta preencher a que ramo pertence.": "Falta preencher a que ramo pertence.",
+        "10ª semana": "10ª semana"
     }
 }

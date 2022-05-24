@@ -54,31 +54,33 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
     return (
         <Container>
             <Grid padded>
-                <Grid.Row>
-                    <Container>
-                        <Field name="step3.allCourses">
-                            {({input: allCoursesInput}) => (
-                                <Button.Group>
-                                    <Button positive={allCourses}
-                                        onClick={() => {
-                                            setAllCourses(true);
-                                            allCoursesInput.onChange(true);
-                                        }}>
-                                        Todos os Cursos
-                                    </Button>
-                                    <Button.Or/>
-                                    <Button positive={!allCourses}
-                                        onClick={() => {
-                                            setAllCourses(false);
-                                            allCoursesInput.onChange(false);
-                                        }}>
-                                        Selecionar Cursos
-                                    </Button>
-                                </Button.Group>
-                            )}
-                        </Field>
-                    </Container>
-                </Grid.Row>
+                {/*
+                    <Grid.Row>
+                        <Container>
+                            <Field name="step3.allCourses">
+                                {({input: allCoursesInput}) => (
+                                    <Button.Group>
+                                        <Button positive={allCourses}
+                                            onClick={() => {
+                                                setAllCourses(true);
+                                                allCoursesInput.onChange(true);
+                                            }}>
+                                            Todos os Cursos
+                                        </Button>
+                                        <Button.Or/>
+                                        <Button positive={!allCourses}
+                                            onClick={() => {
+                                                setAllCourses(false);
+                                                allCoursesInput.onChange(false);
+                                            }}>
+                                            Selecionar Cursos
+                                        </Button>
+                                    </Button.Group>
+                                )}
+                            </Field>
+                        </Container>
+                    </Grid.Row>
+                */}
                 {!allCourses && (
                     <>
                         {courses.length ? (

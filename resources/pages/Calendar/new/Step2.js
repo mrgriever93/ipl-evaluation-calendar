@@ -66,10 +66,13 @@ const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAd
         axios.get('/interruption-types').then((response) => {
             if (response.status === 200) {
                 response.data.data.unshift({id: '', label: "Tipo de interrupção"});
-                setInterruptionTypes(response.data.data?.map(({id, label}) => ({
+                setInterruptionTypes(response.data.data?.map(({id, label, mandatory}) => ({
                     key: id,
                     value: id,
                     text: label,
+                    icon: (mandatory ? {color: 'red', name:'attention'} : undefined),
+                    //description: '1st semester'
+                    //label: (mandatory ? { color: 'red', empty: true, circular: true } : { empty: true, circular: true }),
                 })));
             }
         });
@@ -140,7 +143,9 @@ const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAd
                                                     <Table.Row key={index}>
                                                         <Table.Cell width={5}>
                                                             {_.name}
-                                                            <Form.Dropdown value={_.interruption_type_id} selectOnBlur={false} clearable={true} placeholder={t("Tipo de Interrupção")} selection search options={interruptionTypes} onChange={(e, {value}) => interruptionTypeInput.onChange(value)}/>
+                                                            <Form.Dropdown value={_.interruption_type_id} selectOnBlur={false} clearable={true} placeholder={t("Tipo de Interrupção")} selection search
+                                                                           options={interruptionTypes}
+                                                                           onChange={(e, {value}) => interruptionTypeInput.onChange(value)}/>
                                                         </Table.Cell>
                                                         <Table.Cell width={5}>
                                                             <Form.Field>

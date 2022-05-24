@@ -1,17 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-    Card,
-    Container,
-    Table,
-    Form,
-    Icon,
-    Modal,
-    Button,
-    Header,
-    Message,
-    Dimmer,
-    Loader,
-} from 'semantic-ui-react';
+import {Card, Container, Table, Icon, Modal, Button, Header, Message, Dimmer, Loader, Label, Form} from 'semantic-ui-react';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
@@ -20,6 +8,11 @@ import _ from 'lodash';
 import SCOPES from '../../utils/scopesConstants';
 import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
 import {errorConfig, successConfig} from '../../utils/toastConfig';
+import {useTranslation} from "react-i18next";
+import Courses from "../../components/Filters/Courses";
+import FilterOptionPerPage from "../../components/Filters/PerPage";
+import EmptyTable from "../../components/EmptyTable";
+import PaginationDetail from "../../components/Pagination";
 
 const Wrapper = styled.div`
     .header {
@@ -43,6 +36,7 @@ const MessageFading = styled(Message)`
 `;
 
 const CalendarList = () => {
+    const { t } = useTranslation();
     const [calendars, setCalendars] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [modalInfo, setModalInfo] = useState();
@@ -51,17 +45,45 @@ const CalendarList = () => {
     const [myCourseOnly, setMyCourseOnly] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
 
-    const loadCalendars = () => axios.get(`/calendar?myCourseOnly=${myCourseOnly}`).then((response) => {
-        setIsLoading(false);
-        if (response.status >= 200 && response.status < 300) {
-            setCalendars(_.orderBy(response.data.data, 'display_id'));
-        }
-    });
+    const [contentLoading, setContentLoading] = useState(true);
+    const [semesterList, setSemesterList] = useState([]);
+    const [courseFilter, setCourseFilter] = useState();
+    const [semesterFilter, setSemesterFilter] = useState();
+    const [phaseFilter, setPhaseFilter] = useState();
+    const [perPage, setPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [paginationInfo, setPaginationInfo] = useState({});
+
+
+    const loadCalendars = () => {
+        setContentLoading(true);
+        let link = '/calendar?page=' + currentPage;
+        link += (myCourseOnly   ? '&myCourseOnly='  + myCourseOnly      : '');
+        link += (semesterFilter ? '&semester='      + semesterFilter    : '');
+        link += (courseFilter   ? '&course='        + courseFilter      : '');
+        link += (phaseFilter    ? '&phase='         + phaseFilter       : '');
+        link += '&per_page=' + perPage;
+
+        axios.get(link).then((response) => {
+            setIsLoading(false);
+            setContentLoading(false);
+            if (response.status >= 200 && response.status < 300) {
+                setPaginationInfo(response.data.meta);
+                setCalendars(_.orderBy(response.data.data, 'display_id'));
+            }
+        });
+    };
 
     useEffect(() => {
-        setIsLoading(true);
-        loadCalendars();
-    }, [myCourseOnly]);
+        axios.get('/new-calendar/semesters').then((response) => {
+            if (response.status >= 200 && response.status < 300) {
+                setSemesterList(response.data.data);
+                if(response.data.data.length > 0) {
+                    setSemesterFilter(response.data.data[0].code);
+                }
+            }
+        });
+    }, []);
 
     useEffect(() => {
         if (calendars.filter((x) => JSON.parse(x.differences)?.length)?.length > 0) {
@@ -93,24 +115,44 @@ const CalendarList = () => {
         });
     };
 
+    useEffect(() => {
+        loadCalendars();
+    }, [semesterFilter, courseFilter, phaseFilter, currentPage, myCourseOnly]);
+
+
+    const filterByCourse = (course) => {
+        setCourseFilter(course);
+    };
+
+    const changedPage = (activePage) => {
+        setCurrentPage(activePage);
+    }
+
+    const handleSearchCourseUnits = (evt, {value}) => {
+        setPhaseFilter(value);
+    };
+
+    const filterBySemester = (value) => {
+        setSemesterFilter(value);
+    };
+
     const columns = [
-        {name: 'ID'},
-        {name: 'Curso'},
-        {name: 'Grau'},
-        {name: 'Semestre'},
-        {name: 'Estado'},
-        {
-            name: 'Publicado?',
-            textAlign: 'center',
-            restrictedToCreators: true,
-            permission: SCOPES.VIEW_CALENDAR_INFO,
-        },
+        {name: 'ID',            align: 'center', style: {width: '5%' } },
+        {name: 'Curso',         align: 'center', style: {width: '40%' } },
         {
             name: 'Fase',
             restrictedToCreators: true,
-            permission: SCOPES.VIEW_ACTUAL_PHASE
+            permission: SCOPES.VIEW_ACTUAL_PHASE,
+            style: {width: '10%' }
         },
-        {name: 'Ações'},
+        {
+            name: 'Estado',
+            textAlign: 'center',
+            restrictedToCreators: true,
+            permission: SCOPES.VIEW_CALENDAR_INFO,
+            style: {width: '10%' }
+        },
+        {name: t('Ações'),      align: 'center', style: {width: '10%'} },
     ];
 
     return (
@@ -140,76 +182,104 @@ const CalendarList = () => {
                                 </Button>
                             </Link>
                         </ShowComponentIfAuthorized>
-
                     </Wrapper>
                 </Card.Content>
                 <Card.Content>
-                    {isLoading && (
-                        <Dimmer active inverted>
-                            <Loader indeterminate>A carregar os calendários</Loader>
-                        </Dimmer>
-                    )}
-                    <Table celled fixed>
-                        <Table.Header>
-                            <Table.Row key={'table_header'}>
-                                {columns.map(
-                                    ({name, textAlign, restrictedToCreators, permission}, index) => (restrictedToCreators ? (
-                                        <ShowComponentIfAuthorized permission={[permission]} key={'auth_table_header_cell_' + index}>
-                                            <Table.HeaderCell textAlign={textAlign} key={'table_header_cell_' + index}>
-                                                {name}
-                                            </Table.HeaderCell>
-                                        </ShowComponentIfAuthorized>
-                                    ) : (
-                                        <Table.HeaderCell textAlign={textAlign} key={'table_header_cell_' + index}>
-                                            {name}
-                                        </Table.HeaderCell>
-                                    )),
-                                )}
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body>
-                            {calendars.map(({id, display_id, course, temporary, phase, semester, published}) => (
-                                    <Table.Row key={id}>
-                                        <Table.Cell>{display_id}</Table.Cell>
-                                        <Table.Cell>{course.display_name}</Table.Cell>
-                                        <Table.Cell>{course.level}</Table.Cell>
-                                        <Table.Cell>{semester}</Table.Cell>
-                                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]} renderIfNotAllowed={() => (
-                                                <Table.Cell>
-                                                    {published ? temporary ? 'Provisório' : 'Definitivo' : phase.description}
-                                                </Table.Cell>
-                                            )}>
-                                            <Table.Cell>
-                                                {temporary ? 'Provisório' : 'Definitivo'}
-                                            </Table.Cell>
-                                        </ShowComponentIfAuthorized>
-                                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
-                                            <Table.Cell textAlign="center">
-                                                <Icon name={published ? 'checkmark' : 'close'}/>
-                                            </Table.Cell>
-                                        </ShowComponentIfAuthorized>
-                                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
-                                            <Table.Cell>
-                                                {phase.description}
-                                            </Table.Cell>
-                                        </ShowComponentIfAuthorized>
-                                        <Table.Cell>
-                                            <Link to={`/calendario/${id}`}>
-                                                <Button color="green" icon>
-                                                    <Icon name="eye"/>
-                                                </Button>
-                                            </Link>
-                                            <ShowComponentIfAuthorized permission={[SCOPES.DELETE_CALENDAR]}>
-                                                <Button onClick={() => remove({id, course: course.display_name})} color="red" icon disabled={!!published} loading={!!removingCalendar?.find((x) => x === id)}>
-                                                    <Icon name="trash"/>
-                                                </Button>
-                                            </ShowComponentIfAuthorized>
-                                        </Table.Cell>
-                                    </Table.Row>
-                                ),
+                    <Form>
+                        <Form.Group>
+                            <Button.Group>
+                                {semesterList.length > 0 && semesterList.map((semester, index) => (
+                                    <Button key={'semester_button_' + index} toggle active={semesterFilter === semester.code} onClick={() => setSemesterFilter(semester.code)}>
+                                        {semester.name}
+                                    </Button>
+                                ))}
+                            </Button.Group>
+                        </Form.Group>
+                        <Form.Group>
+                            <Courses widthSize={5} eventHandler={filterByCourse} />
+                            { paginationInfo.last_page > 1 && (
+                                <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                             )}
-                        </Table.Body>
-                    </Table>
+                        </Form.Group>
+                    </Form>
+                </Card.Content>
+                <Card.Content>
+                    { calendars.length < 1 || isLoading ? (
+                        <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar Calendarios!")}/>
+                    ) : (
+                        <>
+                            <Table celled fixed>
+                                <Table.Header>
+                                    <Table.Row key={'table_header'}>
+                                        {columns.map(({name, textAlign, restrictedToCreators, permission, style}, index) => (
+                                            restrictedToCreators ?
+                                                (
+                                                    <ShowComponentIfAuthorized permission={[permission]} key={'auth_table_header_cell_' + index}>
+                                                        <Table.HeaderCell textAlign={textAlign} key={'table_header_cell_' + index} style={style}>
+                                                            {name}
+                                                        </Table.HeaderCell>
+                                                    </ShowComponentIfAuthorized>
+                                                ) :
+                                                (
+                                                    <Table.HeaderCell textAlign={textAlign} key={'table_header_cell_' + index} style={style}>
+                                                        {name}
+                                                    </Table.HeaderCell>
+                                                )
+                                            ),
+                                        )}
+                                    </Table.Row>
+                                </Table.Header>
+                                <Table.Body>
+                                    {calendars.map(({id, display_id, course, temporary, phase, published}) => (
+                                            <Table.Row key={id}>
+                                                <Table.Cell>{display_id}</Table.Cell>
+                                                <Table.Cell>{course}</Table.Cell>
+                                                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
+                                                    <Table.Cell>
+                                                        {phase.description}
+                                                    </Table.Cell>
+                                                </ShowComponentIfAuthorized>
+                                                <Table.Cell textAlign="center">
+                                                    { !published ? (
+                                                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
+                                                            <Label color={"blue"}>Nao Publicado</Label>
+                                                        </ShowComponentIfAuthorized>
+                                                    ) : (
+                                                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]} renderIfNotAllowed={() => (
+                                                                    <>{published ? <Label color={temporary ? undefined : 'blue' }>{temporary ? 'Provisório' : 'Definitivo'}</Label> : phase.description}</>
+                                                            )}>
+                                                            <Label color={temporary ? undefined : 'blue' }>{temporary ? 'Provisório' : 'Definitivo'}</Label>
+                                                        </ShowComponentIfAuthorized>
+                                                    )}
+                                                </Table.Cell>
+                                                <Table.Cell>
+                                                    <Link to={`/calendario/${id}`}>
+                                                        <Button color="green" icon>
+                                                            <Icon name="eye"/>
+                                                        </Button>
+                                                    </Link>
+                                                    <ShowComponentIfAuthorized permission={[SCOPES.DELETE_CALENDAR]}>
+                                                        <Button onClick={() => remove({id, course: course})} color="red" icon disabled={!!published} loading={!!removingCalendar?.find((x) => x === id)}>
+                                                            <Icon name="trash"/>
+                                                        </Button>
+                                                    </ShowComponentIfAuthorized>
+                                                </Table.Cell>
+                                            </Table.Row>
+                                        ),
+                                    )}
+                                </Table.Body>
+                            </Table>
+
+                            <PaginationDetail currentPage={currentPage} info={paginationInfo} eventHandler={changedPage} />
+                            {contentLoading && (
+                                <Dimmer active inverted>
+                                    <Loader indeterminate>
+                                        { t("A carregar os calendarios") }
+                                    </Loader>
+                                </Dimmer>
+                            )}
+                        </>
+                    )}
                 </Card.Content>
             </Card>
             <Modal dimmer="blurring" open={modalOpen} onClose={handleModalClose}>

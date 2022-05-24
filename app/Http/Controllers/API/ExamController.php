@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Resources\Generic\ExamCalendarResource;
 use App\Models\Calendar;
 use App\Models\Course;
 use App\Models\CourseUnit;
@@ -24,36 +25,22 @@ class ExamController extends Controller
         //
     }
 
+    public function show(Exam $exam)
+    {
+        return new ExamResource($exam::with('courseUnit')->find($exam->id));
+    }
+
     public function store(NewExamRequest $request)
     {
-        $epoch = $request->epoch_id;
+        $calendarId = $request->calendar_id;
+        $epochId = $request->epoch_id;
 
-        if (Epoch::find($epoch)->calendar->published) {
-            return response()->json("Not allowed to book exams on Published Calendars!", Response::HTTP_FORBIDDEN);
+        $validation = $this->checkIfCanEditExam($calendarId, $epochId, $request->course_id, $request->method_id, $request->course_unit_id);
+        if($validation){
+            return $validation;
         }
 
-        if (
-            Exam::where('epoch_id', '=', $epoch)
-            ->where('method_id', '=', $request->method_id)
-            ->count() > 0
-        ) {
-            return response()->json("Not allowed to insert the same exam on this calendar!", Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        if (Epoch::find($epoch)->calendar->id !== $request->calendar_id) {
-            return response()->json("The epoch id is not correct for the given calendar.", Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        if (Calendar::find($request->calendar_id)->course->id !== $request->course_id) {
-            return response()->json("The course id is not correct for the given calendar.", Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        $courseUnitMethods = CourseUnit::find($request->course_unit_id);
-        if ($courseUnitMethods->methods()->whereHas('epochs', function ($query) use ($epoch) {
-            return $query->where('epoch_id', '=', $epoch);
-        })->sum('weight') < 100) {
-            return response()->json("Not allowed to create this exam until you have all the methods completed!", Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        //dd($courseUnitMethods);
 
         // TODO
         /**
@@ -68,22 +55,17 @@ class ExamController extends Controller
         $courseUnitGroup = $courseUnitGroup ? $courseUnitGroup->id : null;
         if ($courseUnitGroup) {
             foreach (CourseUnitGroup::find($courseUnitGroup)->courseUnits as $courseUnit) {
-                foreach (Method::find($request->method_id)->epochs as $epoch) {
-                    if (
-                        Epoch::
-                            find($epoch->id)
-                            ->calendar()
-                            ->where('calendars.published', false)
-                            ->count() > 0
-                            &&
-                            Exam::where('method_id', $request->method_id)->where('epoch_id', $epoch->id)->count() === 0
-                        ) {
+                foreach (Method::find($request->method_id)->epochType as $epochType) {
+                    $epoch = Epoch::where('epoch_type_id', $epochType->id)->where('calendar_id', $calendarId)->first();
+                    $hasEpoch = $epoch->calendar()->where('calendars.published', false)->exists();
+                    $hasExams = Exam::where('method_id', $request->method_id)->where('epoch_id', $epoch->id)->count();
+                    if ($hasEpoch && $hasExams === 0) {
                         $newExam = new Exam($request->all());
-                        $newExam->fill([
+                        /*$newExam->fill([
                             "course_id" => $courseUnit->course_id,
                             "epoch_id" => $epoch->id,
                             "course_unit_id" => $courseUnit->id
-                        ]);
+                        ]);*/
                         $newExam->save();
                     }
                 }
@@ -92,66 +74,123 @@ class ExamController extends Controller
             $newExam = new Exam($request->all());
             $newExam->save();
         }
-
-
-
-        return response()->json("Created", Response::HTTP_CREATED);
-    }
-
-    public function show(Exam $exam)
-    {
-        return new ExamResource($exam::with('courseUnit')->find($exam->id));
+        return response()->json(new ExamCalendarResource($newExam), Response::HTTP_CREATED);
     }
 
     public function update(NewExamRequest $request, Exam $exam)
     {
-        $allHaveSameGroup = null;
-        $aux = null;
-        $courseUnits = $exam->method->courseUnits;
-        foreach ($courseUnits as $courseUnit) {
-            if (is_null($aux)) {
-                $aux = $courseUnit->group;
-            }
-            $allHaveSameGroup = !is_null($courseUnit->group) ? $courseUnit->group->id == $aux->id : false;
+        /*
+            $allHaveSameGroup = null;
+            $aux = null;
+            $courseUnits = $exam->method->courseUnits;
+            foreach ($courseUnits as $courseUnit) {
+                if (is_null($aux)) {
+                    $aux = $courseUnit->group;
+                }
+                $allHaveSameGroup = !is_null($courseUnit->group) ? $courseUnit->group->id == $aux->id : false;
 
-            if (!$allHaveSameGroup) {
-                break;
+                if (!$allHaveSameGroup) {
+                    break;
+                }
             }
+            $courseUnits = $exam->method->courseUnits;
+            foreach ($courseUnits as $courseUnit) {
+                $epochId = Epoch::where('epoch_type_id', $exam->epoch->epoch_type_id)
+                   ->where('calendar_id', Calendar::where('course_id', $courseUnit->course_id)->where('published', false)->latest('id')->first()->id)
+                   ->first()->id;
+               $examToUpdate = $courseUnit->exams->where('epoch_id', $epochId)->last();
+
+               if (($allHaveSameGroup && $courseUnit->group !== null) || $examToUpdate->id === $exam->id) {
+                   $examToUpdate->room = $request->room;
+                   $examToUpdate->date = $request->date;
+                   $examToUpdate->hour = $request->hour;
+                   $examToUpdate->duration_minutes = $request->duration_minutes;
+                   $examToUpdate->observations_pt = $request->observations_pt;
+                   $examToUpdate->observations_en = $request->observations_en;
+
+                   $examToUpdate->save();
+               }
+            }
+        */
+
+        $validation = $this->checkIfCanEditExam($request->calendar_id, $request->epoch_id, $request->course_id, $request->method_id, $request->course_unit_id, $exam->id);
+        if($validation){
+            return $validation;
+        }
+        // check if CUs of exam belongs to any group
+        $belongsToGroup = $exam->courseUnit->group;
+        if($belongsToGroup) {
+
+        } else {
+            //$exam->calendar_id     = $request->calendar_id;
+            //$exam->course_id       = $request->course_id;
+            $exam->epoch_id        = $request->epoch_id;
+            $exam->method_id       = $request->method_id;
+
+            $exam->room = $request->room;
+            $exam->date = $request->date;
+            $exam->hour = $request->hour;
+            $exam->duration_minutes = $request->duration_minutes;
+            $exam->observations_pt = $request->observations_pt;
+            $exam->observations_en = $request->observations_en;
+            $exam->save();
+        }
+        return response()->json(new ExamCalendarResource($exam), Response::HTTP_OK);
+    }
+
+    public function checkIfCanEditExam($calendarId, $epochId, $course_id, $method_id, $course_unit_id, $examId = null){
+        $epochRecord = Epoch::find($epochId);
+        if ( $epochRecord->calendar->published ) {
+            return response()->json("Not allowed to book exams on Published Calendars!", Response::HTTP_FORBIDDEN);
+        }
+        $checkExam = Exam::where('epoch_id', '=', $epochId)->where('epoch_id', '=', $epochId)->where('method_id', '=', $method_id);
+        if($examId){
+            $checkExam->where('id', '<>', $examId);
+        }
+        if ( $checkExam->exists() ) {
+            return response()->json("Not allowed to insert the same exam on this calendar!", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        foreach ($courseUnits as $courseUnit) {
-            $epochId = Epoch::
-                where('epoch_type_id', $exam->epoch->epoch_type_id)
-                ->where('calendar_id', Calendar::where('course_id', $courseUnit->course_id)->where('published', false)->latest('id')->first()->id)
-                ->first()->id;
-            $examToUpdate = $courseUnit->exams->where('epoch_id', $epochId)->last();
-
-            if (($allHaveSameGroup && $courseUnit->group !== null) || $examToUpdate->id === $exam->id) {
-                $examToUpdate->room = $request->room;
-                $examToUpdate->date = $request->date;
-                $examToUpdate->hour = $request->hour;
-                $examToUpdate->duration_minutes = $request->duration_minutes;
-                $examToUpdate->observations = $request->observations;
-
-                $examToUpdate->save();
-            }
+        if ( $epochRecord->calendar->id !== $calendarId ) {
+            return response()->json("The epoch id is not correct for the given calendar.", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+
+        if ( Calendar::find($calendarId)->course->id !== $course_id ) {
+            return response()->json("The course id is not correct for the given calendar.", Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        $courseUnitMethods = CourseUnit::find($course_unit_id);
+        // TODO rever erro aqui nos epochs
+        $epochTypeId = $epochRecord->epoch_type_id;
+        if ($courseUnitMethods->methods()->whereHas('epochType', function ($query) use ($epochTypeId) {
+                return $query->where('epoch_type_id', $epochTypeId);
+            })->sum('weight') < 100) {
+            return response()->json("Not allowed to create this exam until you have all the methods completed!", Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        return false;
     }
 
     public function destroy(Exam $exam)
     {
-        foreach ($exam->method->courseUnits as $courseUnit) {
-            $epochId = Epoch::
-                where('epoch_type_id', $exam->epoch->epoch_type_id)
-                ->where('calendar_id', Calendar::where('course_id', $courseUnit->course_id)->where('published', false)->latest('id')->first()->id)
-                ->first()->id;
-            $examToDelete = $courseUnit->exams->where('epoch_id', $epochId)->last();
-
-            if ($courseUnit->group !== null || $examToDelete->id === $exam->id) {
-                $examToDelete->delete();
-                $examToDelete->epoch->calendar()->touch();
-            }
+        if($exam->epoch->calendar->published){
+            return response()->json("Not allowed to delete exams on Published Calendars!", Response::HTTP_FORBIDDEN);
         }
+        $belongsToGroup = $exam->courseUnit->group;
+        if($belongsToGroup) {
+            foreach ($exam->method->courseUnits as $courseUnit) {
+                $epochId = Epoch::where('epoch_type_id', $exam->epoch->epoch_type_id)
+                    ->where('calendar_id', Calendar::where('course_id', $courseUnit->course_id)->where('published', false)->latest('id')->first()->id)
+                    ->first()->id;
+                $examToDelete = $courseUnit->exams->where('epoch_id', $epochId)->last();
+
+                if ($courseUnit->group !== null || $examToDelete->id === $exam->id) {
+                    $examToDelete->delete();
+                    $examToDelete->epoch->calendar()->touch();
+                }
+            }
+        } else {
+            $exam->delete();
+        }
+
 
         return response()->json("Removed!");
     }
