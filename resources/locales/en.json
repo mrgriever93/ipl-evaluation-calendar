@@ -280,8 +280,8 @@
         "Pesquise o coordenador de curso...": "Search for the course coordinator...",
         "Guardar coordenador": "Save coordinator",
 
-        "Mandatório": "Mandatory",
-        "Caso seja mandatório, quando criar um novo calendário, terá de preencher a interrupção": "If mandatory, when creating a new calendar, you will have to fill in the interruption",
+        "Obrigatório": "Mandatory",
+        "Caso seja obrigatório, quando criar um novo calendário, terá de preencher a interrupção": "If mandatory, when creating a new calendar, you will have to fill in the interruption",
 
         "Ramos": "Branches",
         "Alunos": "Students",
@@ -320,6 +320,7 @@
         "Fim": "End",
 
         "Os seguintes detalhes da Unidade curricular precisam da sua atenção": "The following curricular unit details need your attention",
-        "Falta preencher a que ramo pertence.": "It remains to fill in which branch it belongs to."
+        "Falta preencher a que ramo pertence.": "It remains to fill in which branch it belongs to.",
+        "10ª semana": "10th week"
     }
 }

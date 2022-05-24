@@ -161,6 +161,7 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::controller(InterruptionController::class)->group(function () {
+        Route::get('/interruptions/{interruption}',   'show'   );
         Route::post('/interruptions',                 'store'  );
         Route::patch('/interruptions/{interruption}', 'update' );
         Route::delete('/interruptions/{interruption}','destroy');

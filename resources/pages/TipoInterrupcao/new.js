@@ -110,7 +110,7 @@ const New = () => {
                                 <Form.Field>
                                     <Field name="mandatory" type="checkbox">
                                         {({ input: isMandatory }) => (
-                                            <Checkbox label={t('Mandatório')} toggle checked={isMandatory.checked} onClick={() => isMandatory.onChange( !isMandatory.checked) } />
+                                            <Checkbox label={t('Obrigatório')} toggle checked={isMandatory.checked} onClick={() => isMandatory.onChange( !isMandatory.checked) } />
                                         )}
                                     </Field>
                                 </Form.Field>

@@ -14,7 +14,7 @@ const List = () => {
 
     const columns = [
         {name: t('Nome')},
-        {name: t('Mandatório'), align: 'center', style: {width: '15%'}, popup: <Popup trigger={<Icon name="info circle" />} content={t('Caso seja mandatório, quando criar um novo calendário, terá de preencher a interrupção')} position='top center'/>},
+        {name: t('Obrigatório'), align: 'center', style: {width: '15%'}, popup: <Popup trigger={<Icon name="info circle" />} content={t('Caso seja obrigatório, quando criar um novo calendário, terá de preencher a interrupção')} position='top center'/>},
         {name: t('Ativo?'),     align: 'center', style: {width: '15%'} },
         {name: t('Ações'),      align: 'center', style: {width: '15%'} },
     ];

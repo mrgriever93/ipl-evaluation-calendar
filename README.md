@@ -113,28 +113,33 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 ### TODO
 
 - [ ] Criar calendario
-  - [ ] Criação de calendário com bug quando adicionamos uma interrupção ao calendário, e depois apagamos, ela não é efetivamente removida do array e vai no post de criação, gerando erro porque vai com uma data inválida.
-- [ ] Adicionar exames / mais interrupções
-  - [ ] Na criação de uma avaliação dá erro quando vai buscar as unidades curriculares depois de selecionar a época, não dando para prosseguir
-- [ ] Adicionar mais interrupções 
-- [ ] Publicar calendário
-  
-
-- [ ] Rework Novo calendario
-  - [x] Traduções
+  - [x] Criação de calendário com bug quando adicionamos uma interrupção ao calendário, e depois apagamos, ela não é efetivamente removida do array e vai no post de criação, gerando erro porque vai com uma data inválida.
+  - [ ] Loading feriados
   - [ ] Otimizar load de permissões
-
-- [ ] Adicionar comentários
-- [ ] Submeter para próximas fases e fazer a gestão de quais as fases seguintes/anteriores
 
 
 - [X] Rever HTML e detalhe dos Agrupamentos de UC
-  - [ ] Traduções
-  - [ ] Métodos
+    - [ ] Traduções
+    - [ ] Métodos
 
 
-- [ ] Rever falta de warning das configs da escola, quando as opções não estão todas preenchidas
-  
+- [ ] Detalhe Calendario
+  - [ ] Otimizar load de permissões e outros pedidos
+
+- [ ] Adicionar exames
+  - [ ] Na criação de uma avaliação dá erro quando vai buscar as unidades curriculares depois de selecionar a época, não dando para prosseguir
+  - [ ] validar permissoes (popup intervencoes)
+  - [ ] ter em conta o ano letivo selecionado
+
+- [ ] Adicionar mais interrupções 
+- [ ] Publicar calendário
+
+- [ ] Ver exame
+  - [ ] Adicionar comentários
+
+
+- [ ] Submeter para próximas fases e fazer a gestão de quais as fases seguintes/anteriores
+
 
 - [ ] Melhorar logs dos cursos, na alteração de métodos
 - [ ] Criar botão para duplicar métodos para todas as épocas 
@@ -145,6 +150,7 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 
 
 - [ ] Rever sync/refresh ano letivo
+- [ ] Rever falta de warning das configs da escola, quando as opções não estão todas preenchidas
 
 
 - [ ] Adicionar titulo as paginas
@@ -180,3 +186,31 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 
 ### TODO Miguel
 - [ ] Limpeza "Requests Folder"
+
+
+### Perguntas - 17-05-2022
+- [ ] Ao criar novo exame, mostra todos as unidades curriculares, ou so as que lhe pertencem? (ex. sou prof de fisica, vejo algebra?)
+  - o professor so tem acesso as dele
+  - Gop e Coordenador de curso tem acesso as cadeiras do curso
+- [ ] Qualquer user pode marcar interrupcoes?
+  - ja existem as permissoes por fase na parte do calendario
+- [ ] ao criar o calendario, adicionar campo para a 10 semana
+  - so o gop
+- [ ] detalhe calendario
+  - quando for para seguir para a proxima fase, mostrar popup com fases
+
+----
+### Feedback prof. Pedro Gago
+- [x] No separador de "Calendários" (GOP) deve haver filtros
+
+
+- [x] Na definição de métodos de avaliação falta uma opção que permita copiar entre épocas (é habitual a avaliação em exame ter os mesmos elementos tanto em recurso como em especial/mensal)
+    - [x] FE
+    - [x] BE
+    - [x] Na definição de métodos de avaliação devia ir gravando o que se vai fazendo (está a obrigar a preencher tudo de uma vez)
+- [x] É provavelmente melhor retirar a opção de criação de calendário para todos os cursos (são cursos a mais)
+- [X] Na criação de Novo Calendário, se se escolher apenas a opção de avançar, 
+  - [x] pede "Tem de selecionar as interrupcoes mandatorias pelo menos!" - mudar para obrigatórias e/ou 
+  - [x] dizer quais
+- [x] Tirar Inglês Geral, Matemáticas Gerais, etc
+- [x] Quando tento marcar uma avaliação (1º semestre - 9119) fica "a pensar" à procura de UC

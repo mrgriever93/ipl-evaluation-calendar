@@ -1,110 +1,68 @@
 import axios from 'axios';
-import _ from 'lodash';
 import moment from 'moment';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useParams, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {Field, Form as FinalForm} from 'react-final-form';
 import {DateInput, TimeInput} from 'semantic-ui-calendar-react-yz';
-import {Accordion, Button, Card, Container, Divider, Form, Grid, Header, Icon, List, Modal, Segment, Table, TextArea, Popup, Dropdown, Comment, Message} from 'semantic-ui-react';
-import styled, {css} from 'styled-components';
+import {Button, Form, Icon, Modal, Message, Dimmer, Loader} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
-import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
-import SCOPES from '../../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
-
 const SweetAlertComponent = withReactContent(Swal);
 
-const PopupScheduleInterruption = () => {
+const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, deletedInterruption, minDate, maxDate} ) => {
     const history = useNavigate();
     const { t } = useTranslation();
     // get URL params
     let { id } = useParams();
-    let paramsId = id;
-    const calendarId = paramsId;
+    const calendarId = id;
 
-    const [calendarPermissions, setCalendarPermissions] = useState(JSON.parse(localStorage.getItem('calendarPermissions')) || []);
-    const [interruptionsList, setInterruptions] = useState([]);
-    const [epochsList, setEpochs] = useState([]);
-    const [generalInfo, setGeneralInfo] = useState();
-    const [differences, setDifferences] = useState();
-    const [openModal, setOpenModal] = useState(false);
     const [interruptionTypes, setInterruptionTypesList] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [errorMessages, setErrorMessages] = useState([]);
     const [modalInfo, setModalInfo] = useState({});
-    const [activeIndex, setActiveIndex] = useState(undefined);
-    const [loadInterruptionTypes, setLoadInterruptionTypes] = useState(false);
-    const [examInfoModal, setExamInfoModal] = useState({});
-    const [openExamModal, setOpenExamModal] = useState(false);
-    const [loadRemainingCourseUnits, setLoadRemainingCourseUnits] = useState(false);
-    const [selectedEpoch, setSelectedEpoch] = useState();
+    const [isLoading, setIsLoading] = useState(true);
 
-    // const loadCalendar = (calId) => {
-    //     setIsLoading(true);
-    //     setExamList([]);
-    //     axios.get(`/calendar/${calId}`)
-    //         .then((response) => {
-    //             if (response?.status >= 200 && response?.status < 300) {
-    //                 const {
-    //                     data: {
-    //                         data: {
-    //                             phase,
-    //                             published,
-    //                             interruptions,
-    //                             epochs,
-    //                             general_info,
-    //                             differences,
-    //                             previous_from_definitive,
-    //                         },
-    //                     },
-    //                 } = response;
-    //                 setIsTemporary(!!general_info?.temporary);
-    //                 setCalendarPhase(general_info?.phase?.id);
-    //                 setIsPublished(!!published);
-    //                 setInterruptions(interruptions);
-    //                 setEpochs(epochs);
-    //                 epochs.forEach((epoch) => {
-    //                     setExamList((current) => [...current, ...epoch.exams]);
-    //                 });
-    //                 setGeneralInfo(general_info);
-    //                 setDifferences(differences);
-    //                 setIsLoading(false);
-    //                 setPreviousFromDefinitive(previous_from_definitive);
-    //             } else {
-    //                 history('/calendario');
-    //             }
-    //         })
-    //         .catch((r) => alert(r));
-    // };
+    useEffect(() => {
+        setModalInfo(info);
+    }, [info]);
 
     const onSubmitInterruption = (values) => {
+        setIsLoading(true);
         const axiosFn = values?.id ? axios.patch : axios.post;
         axiosFn(`/interruptions/${values?.id ? values.id : ''}`, {
             calendar_id: parseInt(calendarId, 10),
             interruption_type_id: values.interruptionType,
-            description: values.description,
+            description_pt: values.description_pt,
+            description_en: values.description_en,
             start_date: moment(values.startDate).format('YYYY-MM-DD'),
             end_date: moment(values.endDate).format('YYYY-MM-DD'),
-        })
-            .then((res) => {
-                if (res.status === 200 || res.status === 201) {
-                    toast(`Interrupção ${values?.id ? 'guardada' : 'marcada'} com sucesso!`, successConfig);
-                    // loadCalendar(calendarId);
+        }).then((res) => {
+            setIsLoading(false);
+            if (res.status === 200 || res.status === 201) {
+                toast(`Interrupção ${values?.id ? 'guardada' : 'marcada'} com sucesso!`, successConfig);
+                addedInterruption((values?.id ? res.data.data : res.data), !values?.id);
+                onClose();
+            } else {
+                let errorsArray = [];
+                if(typeof res.response.data.errors === 'object' && res.response.data.errors !== null){
+                    errorsArray = Object.values(res.response.data.errors);
                 } else {
-                    toast(`Ocorreu um erro ao ${values?.id ? 'guardar' : 'marcar'} a interrupção!`, errorConfig);
+                    if(Array.isArray(res.response.data.errors)){
+                        errorsArray = res.response.data.errors;
+                    }
                 }
-            });
-        setOpenModal(false);
-        setIsLoading(true);
+                setErrorMessages(errorsArray);
+                toast(`Ocorreu um erro ao ${values?.id ? 'guardar' : 'marcar'} a interrupção!`, errorConfig);
+            }
+        });
     };
 
     const removeInterruption = (interruptionId) => {
         SweetAlertComponent.fire({
             title: t('Atenção!'),
-
             html: 'Ao eliminar a interrupção, todo o período compreendido entre o ínicio e o fim desta interrupção, ficará aberto para avaliações!<br/><strong>Tem a certeza que deseja eliminar esta interrupção, em vez de editar?</strong>',
             denyButtonText: t('Não'),
             confirmButtonText: t('Sim'),
@@ -112,128 +70,153 @@ const PopupScheduleInterruption = () => {
             showDenyButton: true,
             confirmButtonColor: '#21ba45',
             denyButtonColor: '#db2828',
-        })
-            .then((result) => {
-                if (result.isConfirmed) {
-                    setRemovingExam(interruptionId);
-                    axios.delete(`/interruptions/${interruptionId}`).then((res) => {
-                        setRemovingExam(null);
-                        // loadCalendar(calendarId);
-                        if (res.status === 200) {
-                            toast(t('calendar.Interrupção eliminada com sucesso deste calendário!'), successConfig);
-                        } else {
-                            toast(t('calendar.Ocorreu um problema ao eliminar a interrupção deste calendário!'), errorConfig);
-                        }
-                    });
-                }
-            });
+        }).then((result) => {
+            setIsLoading(true);
+            if (result.isConfirmed) {
+                axios.delete(`/interruptions/${interruptionId}`).then((res) => {
+                    // loadCalendar(calendarId);
+                    if (res.status === 200) {
+                        toast(t('calendar.Interrupção eliminada com sucesso deste calendário!'), successConfig);
+                        deletedInterruption(interruptionId);
+                    } else {
+                        toast(t('calendar.Ocorreu um problema ao eliminar a interrupção deste calendário!'), errorConfig);
+                    }
+                    onClose();
+                    setIsLoading(false);
+                });
+            }
+        });
     };
 
     useEffect(() => {
-        if (!openExamModal) {
-            setExamInfoModal(undefined);
-            setSelectedEpoch(undefined);
-        }
-    }, [openExamModal]);
-
-    useEffect(() => {
-        if (loadInterruptionTypes) {
-            if (!interruptionTypes?.length) {
+        if (isOpen){
+            if(!interruptionTypes?.length) {
                 axios.get('/interruption-types').then((response) => {
                     if (response.status === 200) {
                         setInterruptionTypesList(
-                            response.data.data?.map(({id, description}) => ({
+                            response.data.data?.map(({id, label}) => ({
                                 key: id,
                                 value: id,
-                                text: description,
+                                text: label,
                             })),
                         );
                     }
                 });
             }
-            setLoadInterruptionTypes(false);
+            if(info.id) {
+                setIsLoading(true);
+                axios.get('/interruptions/' + info.id).then((response) => {
+                    if (response.status === 200) {
+                        setModalInfo(response.data.data);
+                        setIsLoading(false);
+                    }
+                });
+            }
         }
-    }, [loadInterruptionTypes, interruptionTypes]);
-
-    // useEffect(() => {
-    //     loadCalendar(calendarId);
-    // }, [calendarId]);
-
-    // const onEditInterruptionClick = (interruption) => {
-    //     setLoadInterruptionTypes(
-    //         true,
-    //     );
-    //     setModalInfo({
-    //         ...interruption,
-    //     });
-    //     setOpenModal(
-    //         true,
-    //     );
-    // };
+        if(!isOpen){
+            setModalInfo({});
+        }
+    }, [isOpen]);
 
     return (
-        <FinalForm onSubmit={onSubmitInterruption} initialValues={{
-                id: modalInfo?.id || null,
-                startDate: moment(modalInfo?.start_date).format('DD MMMM, YYYY'),
-                endDate: modalInfo?.id ? moment(modalInfo?.end_date).format('DD MMMM, YYYY') : null,
-                description: modalInfo?.id ? modalInfo?.description : null,
-                interruptionType: modalInfo?.id ? modalInfo?.interruption_type_id : null,
-            }}
-            render={({handleSubmit}) => (
-                <Modal closeOnEscape closeOnDimmerClick open={openModal} onClose={() => setOpenModal(false)}>
-                    <Modal.Header>
-                        {modalInfo?.id ? 'Editar' : 'Adicionar'}{' '}interrupção
-                    </Modal.Header>
-                    <Modal.Content>
-                        <Form>
-                            <p>Detalhes da interrupção</p>
-                            <Field name="description">
-                                {({input: descriptionInput}) => (
-                                    <Form.Input label="Descrição" placeholder="Descrição (opcional)"{...descriptionInput}/>
+        <FinalForm onSubmit={onSubmitInterruption}
+                    initialValues={{
+                        id: modalInfo?.id || null,
+                        startDate: moment(modalInfo?.start_date).format('DD MMMM, YYYY'),
+                        endDate: modalInfo?.id ? moment(modalInfo?.end_date).format('DD MMMM, YYYY') : moment(modalInfo?.start_date).format('DD MMMM, YYYY'),
+                        description_pt: modalInfo?.id ? modalInfo?.description_pt : null,
+                        description_en: modalInfo?.id ? modalInfo?.description_en : null,
+                        interruptionType: modalInfo?.id ? modalInfo?.interruption_type_id : undefined,
+                    }}
+                    render={({handleSubmit}) => (
+                        <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
+                            { isLoading && (
+                                <Dimmer active>
+                                    <Loader />
+                                </Dimmer>
+                            )}
+                            <Modal.Header>
+                                {modalInfo?.id ? 'Editar' : 'Adicionar'}{' '}interrupção
+                            </Modal.Header>
+                            { errorMessages.length > 0 && (
+                                <Modal.Content>
+                                    <Message warning>
+                                        <Message.Header>{ t('Os seguintes detalhes do Curso precisam da sua atenção:') }</Message.Header>
+                                        <Message.List>
+                                            { errorMessages.map((message, index) => (
+                                                <Message.Item key={index}>
+                                                    { message }
+                                                </Message.Item>
+                                            ))}
+                                        </Message.List>
+                                    </Message>
+                                </Modal.Content>
+                            )}
+                            <Modal.Content>
+                                <Form>
+                                    <Form.Group widths={"equal"}>
+                                        <Field name="startDate">
+                                            {({input: startDateInput}) => (
+                                                <Form.Field>
+                                                    <DateInput name="date" iconPosition="left" label="Data de Ínicio" placeholder="Data de Ínicio"
+                                                               dateFormat="DD MMMM, YYYY" value={startDateInput.value}
+                                                               minDate={minDate} maxDate={maxDate}
+                                                               onChange={(evt, {value}) => {startDateInput.onChange(value);}}
+                                                    />
+                                                </Form.Field>
+                                            )}
+                                        </Field>
+                                        <Field name="endDate">
+                                            {({input: endDateInput}) => (
+                                                <Form.Field>
+                                                    <DateInput name="date" iconPosition="left" label="Data de Fim" placeholder="Data de Fim"
+                                                               dateFormat="DD MMMM, YYYY" value={endDateInput.value}
+                                                               minDate={minDate} maxDate={maxDate}
+                                                               onChange={(evt, {value}) => {endDateInput.onChange(value);}}
+                                                    />
+                                                </Form.Field>
+                                            )}
+                                        </Field>
+                                    </Form.Group>
+                                    <Form.Group widths={"equal"}>
+                                        <Field name="description_pt">
+                                            {({input: descriptionPtInput}) => (
+                                                <Form.Input label="Descrição" placeholder="Descrição PT (opcional)"{...descriptionPtInput}/>
+                                            )}
+                                        </Field>
+                                        <Field name="description_en">
+                                            {({input: descriptionEnInput}) => (
+                                                <Form.Input label="Descrição" placeholder="Descrição EN (opcional)"{...descriptionEnInput}/>
+                                            )}
+                                        </Field>
+                                    </Form.Group>
+                                    <Form.Group widths={"2"}>
+                                        <Field name="interruptionType">
+                                            {({input: interruptionTypeInput}) => (
+                                                <Form.Dropdown options={interruptionTypes} selection search loading={!interruptionTypes.length}
+                                                    label="Tipo de interrupção" placeholder="Tipo de interrupção" value={interruptionTypeInput.value} selectOnBlur={false}
+                                                    onChange={(e, {value}) => interruptionTypeInput.onChange(value,)}
+                                                />
+                                            )}
+                                        </Field>
+                                    </Form.Group>
+                                </Form>
+                            </Modal.Content>
+                            <Modal.Actions>
+                                { modalInfo?.id && (
+                                    <Button floated='left' negative icon labelPosition='left' onClick={() => removeInterruption(modalInfo.id)}>
+                                        <Icon name="trash alternate outline" />
+                                        { t("Remover Interrupção") }
+                                    </Button>
                                 )}
-                            </Field>
-                            <Field name="interruptionType">
-                                {({input: interruptionTypeInput}) => (
-                                    <Form.Dropdown options={interruptionTypes} selection search loading={!interruptionTypes.length}
-                                        label="Tipo de interrupção" value={interruptionTypeInput.value}
-                                        onChange={(e, {value}) => interruptionTypeInput.onChange(value,)}
-                                    />
-                                )}
-                            </Field>
-                            <Field name="startDate">
-                                {({input: startDateInput}) => (
-                                    <Form.Field>
-                                        <DateInput name="date" iconPosition="left" label="Data de Ínicio" placeholder="Data de Ínicio"
-                                            dateFormat="DD MMMM, YYYY" value={startDateInput.value}
-                                            onChange={(evt, {value}) => {startDateInput.onChange(value);}}
-                                        />
-                                    </Form.Field>
-                                )}
-                            </Field>
-                            <Field name="endDate">
-                                {({input: endDateInput}) => (
-                                    <Form.Field>
-                                        <DateInput name="date" iconPosition="left" label="Data de Fim" placeholder="Data de Fim"
-                                            dateFormat="DD MMMM, YYYY" value={endDateInput.value}
-                                            onChange={(evt, {value}) => {endDateInput.onChange(value);}}
-                                        />
-                                    </Form.Field>
-                                )}
-                            </Field>
-                        </Form>
-                    </Modal.Content>
-                    <Modal.Actions>
-                        <Button onClick={() => setOpenModal(false)} negative>
-                            Cancelar
-                        </Button>
-                        <Button onClick={handleSubmit} positive icon={!!modalInfo?.id}{...(modalInfo?.id && ({labelPosition: 'left'}))}>
-                            {modalInfo?.id && <Icon name="save"/>}
-                            {modalInfo?.id ? 'Gravar alterações' : 'Adicionar'}
-                        </Button>
-                    </Modal.Actions>
-                </Modal>
-            )}
-        />
+                                <Button onClick={onClose}>Cancelar</Button>
+                                <Button onClick={handleSubmit} positive icon={!!modalInfo?.id}{...(modalInfo?.id && ({labelPosition: 'left'}))}>
+                                    {modalInfo?.id && <Icon name="save"/>}
+                                    {modalInfo?.id ? 'Gravar alterações' : 'Adicionar'}
+                                </Button>
+                            </Modal.Actions>
+                        </Modal>
+                    )} />
     );
 };
 export default PopupScheduleInterruption;

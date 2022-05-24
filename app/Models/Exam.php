@@ -10,7 +10,16 @@ class Exam extends Model
     use HasFactory;
     use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
-    protected $fillable = ["epoch_id", "method_id", "room", "date", "hour", "duration_minutes", "observations_pt", "observations_en"];
+    protected $fillable = [
+        "epoch_id",
+        "method_id",
+        "room",
+        "date",
+        "hour",
+        "duration_minutes",
+        "observations_pt",
+        "observations_en"
+    ];
 
     public function epoch()
     {

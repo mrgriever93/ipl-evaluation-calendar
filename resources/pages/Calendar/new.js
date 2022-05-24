@@ -37,13 +37,14 @@ const stepsData = [
 const formInitialValues = {
     step1: {
         semester: "first_semester",
+        week_ten: null,
     },
     step2: {
         interruptions: {},
         noInterruptions: false,
     },
     step3: {
-        allCourses: true,
+        allCourses: false,
         paginationInfo: {
             current_page: 1,
             last_page: 1,
@@ -57,7 +58,7 @@ const NewCalendar = () => {
     const [activeSemester, setActiveSemester] = useState(0);
     const [loading, setLoading] = useState(true);
 
-    const [allCourses, setAllCourses] = useState(true);
+    const [allCourses, setAllCourses] = useState(false);
     const [courses, setCourses] = useState([]);
 
     const [isSaving, setIsSaving] = useState(false);
@@ -117,10 +118,10 @@ const NewCalendar = () => {
             errorTexts.push("Tem de selecionar pelo menos um semestre!");
         }
         if(!hasEpochs){
-            errorTexts.push("Tem de adicionar as datas para o calendario");
+            errorTexts.push("Tem de adicionar as datas para o calendário");
         }
         if(!hasAllDates){
-            errorTexts.push("Tem de preencher todas as datas de inicio e fim dos periodos");
+            errorTexts.push("Tem de preencher todas as datas de início e fim dos períodos");
         }
         isValid = hasSemester && hasEpochs && hasAllDates;
         setErrorMessages(errorTexts);
@@ -134,7 +135,6 @@ const NewCalendar = () => {
     }
 
     const validateStep2 = (values) => {
-        console.log(values);
         let isValid = false;
         // validate if the no interruptions was clicked, and go to next phase
         if(values.hasOwnProperty("noInterruptions") && values.noInterruptions){
@@ -178,13 +178,13 @@ const NewCalendar = () => {
 
         let errorTexts = [];
         if(!hasInterruptions || !hasAllMandatoryInterruptions){
-            errorTexts.push("Tem de selecionar as interrupcoes mandatorias pelo menos!");
+            errorTexts.push("Tem de adicionar e selecionar pelo menos uma das interrupções obrigatórias, assinaladas com o icon a vermelho");
         }
         if(!hasAllDates){
-            errorTexts.push("Tem de preencher todas as datas de inicio e fim das interrupcoes");
+            errorTexts.push("Tem de preencher todas as datas de início e fim das interrupções");
         }
         if(!hasAllInterruptionsTypes){
-            errorTexts.push("Tem de selecionar os tipos das interrupcoes!");
+            errorTexts.push("Tem de selecionar os tipos das interrupções!");
         }
         isValid = hasInterruptions && hasAllDates && hasAllInterruptionsTypes && hasAllMandatoryInterruptions;
         setErrorMessages(errorTexts);
@@ -200,7 +200,7 @@ const NewCalendar = () => {
     const validateStep3 = (values) => {
         let isValid = false;
         // Check for the semester
-        const hasAllCourses = values.allCourses;
+        const hasAllCourses = false;//values.allCourses;
         // Check if there is any course
         const hasAnyCourse = values.courses && values.courses.length > 0;
 
@@ -243,8 +243,9 @@ const NewCalendar = () => {
             setIsSaving(true);
             const body = {
                 semester: values.step1.semester,
-                is_all_courses: values.step3.allCourses,
-                ...(values.step3.allCourses ? null : {courses: [...values.step3.courses.map((x) => x.id)]}),
+                is_all_courses: false, //values.step3.allCourses,
+                //...(values.step3.allCourses ? null : {courses: [...values.step3.courses.map((x) => x.id)]}),
+                courses: [...values.step3.courses.map((x) => x.id)],
                 epochs: [
                     ...Object.keys(values.step1.seasons).map((key) => ({
                         code: key.split('__')[0],
@@ -252,6 +253,7 @@ const NewCalendar = () => {
                         end_date: moment(values.step1.seasons[key].end_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
                     })),
                 ],
+                week_ten:  moment(values.step1.week_ten, 'DD-MM-YYYY').format('YYYY-MM-DD'),
                 holidays: holidaysList,
                 interruptions: [
                     ...(values.step2?.additional_interruptions?.map(({interruption_type_id, start_date, end_date}) => ({
