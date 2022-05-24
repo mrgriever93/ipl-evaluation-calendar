@@ -249,7 +249,7 @@ const InfosAndActions = () => {
                                     <List divided relaxed>
                                         {epochsList.map((epoch, index) => (
                                             <div className='legend-list-item' key={index}>
-                                                <div className='legend-list-item-square' style={ { backgroundColor: epoch.code === "periodic_season" ? '#ecfff0' : epoch.code === "normal_season" ? '#f5e6da' : '#f9dddd' } }></div>
+                                                <div className={'legend-list-item-square calendar-day-' + epoch.code}></div>
                                                 <Popup trigger={
                                                     <div className='legend-list-item-content'>
                                                         <Icon name="calendar alternate outline" />

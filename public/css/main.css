@@ -638,3 +638,23 @@ div.inline{
     overflow-y: auto;
     padding: 1.5rem;
 }
+
+.calendar-day-periodic_season{
+    background-color: #ecfff0;
+}
+.calendar-day-normal_season{
+    background-color: #f5e6da;
+}
+.calendar-day-resource_season{
+    background-color: #f9dddd;
+}
+.calendar-day-special_season{
+    background-color: #dae5f5;
+}
+.calendar-day-very_special_season{
+    background-color: #fcefd8;
+}
+.calendar-day-interruption{
+    background-color: #c9c9c9;
+    font-weight: bold;
+}
