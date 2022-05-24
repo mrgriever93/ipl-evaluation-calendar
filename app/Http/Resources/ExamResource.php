@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\Generic\CourseUnitResource;
+use App\Http\Resources\Generic\CourseUnitExamResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ExamResource extends JsonResource
@@ -13,7 +13,7 @@ class ExamResource extends JsonResource
             'id'                => $this->id,
             'academic_year'     => $this->whenLoaded('courseUnit', $this->courseUnit->curricular_year),
             'method'            => new MethodResource($this->method),
-            'course_unit'       => new CourseUnitResource($this->courseUnit),
+            'course_unit'       => new CourseUnitExamResource($this->courseUnit),
             'epoch_id'          => $this->epoch_id,
             'method_id'         => $this->method_id,
             'room'              => $this->room,

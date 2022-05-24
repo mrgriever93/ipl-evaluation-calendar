@@ -37,7 +37,6 @@ const Calendar = () => {
     const [modalInfo, setModalInfo] = useState({});
     const [loadInterruptionTypes, setLoadInterruptionTypes] = useState(false);
     const [openScheduleExamModal, setOpenScheduleExamModal] = useState(false);
-    const [openInterruptionModal, setOpenInterruptionModal] = useState(false);
     const [openExamDetailModal, setOpenExamDetailModal] = useState(false);
     const [viewExamId, setViewExamId] = useState(-1);
     const [examList, setExamList] = useState([]);
@@ -46,11 +45,13 @@ const Calendar = () => {
     const [isPublished, setIsPublished] = useState(false);
     const [calendarPhase, setCalendarPhase] = useState(true);
     const [updatingCalendarPhase, setUpdatingCalendarPhase] = useState(false);
-    const [removingExam, setRemovingExam] = useState(undefined);
     const [viewExamInformation, setViewExamInformation] = useState(false);
     const [previousFromDefinitive, setPreviousFromDefinitive] = useState(false);
 
     const [weekTen, setWeekTen] = useState(0);
+
+    const [openInterruptionModal, setOpenInterruptionModal] = useState(false);
+    const [interruptionModalInfo, setInterruptionModalInfo] = useState({});
 
     /*
      * Create / Edit Exams
@@ -103,13 +104,21 @@ const Calendar = () => {
     /*
      * Interruptions
      */
+    const interruptionHandler = (interruptionId, date) => {
+        setInterruptionModalInfo({
+            id: interruptionId,
+            calendarId: parseInt(calendarId, 10),
+            start_date: date,
+            end_date: date
+        });
+        setOpenInterruptionModal(true);
+    }
     const closeInterruptionModal = (newInterruption) => {
         setOpenInterruptionModal(false);
     };
 
     const onEditInterruptionClick = (interruption) => {
-        setEditInterruption(true);
-        setModalInfo({...interruption});
+        setInterruptionModalInfo({...interruption});
         setOpenInterruptionModal(true);
     };
 
@@ -119,7 +128,7 @@ const Calendar = () => {
     const removeInterruptionFromList = (examId) => {
         setExamList((current) => current.filter((item) => item.id !== examId));
     }
-    
+
     /*
      * View Exam Details
      */
@@ -397,7 +406,7 @@ const Calendar = () => {
                                                                 {moment(day.date).format('DD-MM-YYYY')}
                                                                 { !day.interruption && (
                                                                     <Button className='btn-add-interruption' title="Adicionar Interrupção"
-                                                                        onClick={() => { alert("Will call interruption popup!")}}>
+                                                                        onClick={() => interruptionHandler(undefined, day.date)}>
                                                                             <Icon name="calendar times outline" />
                                                                             Adicionar Interrupção
                                                                     </Button>
@@ -519,15 +528,18 @@ const Calendar = () => {
                 </Grid.Row>
             </Grid>
             </div>
-            
-            <PopupScheduleInterruption isOpen={openInterruptionModal} onClose={closeScheduleExamModal} />
 
-            <PopupEvaluationDetail 
-                isOpen={openExamDetailModal} 
-                onClose={closeExamDetailHandler} 
+            <PopupScheduleInterruption
+                isOpen={openInterruptionModal}
+                onClose={closeInterruptionModal}
+                info={interruptionModalInfo} />
+
+            <PopupEvaluationDetail
+                isOpen={openExamDetailModal}
+                onClose={closeExamDetailHandler}
                 examId={viewExamId} />
 
-            <PopupScheduleEvaluation 
+            <PopupScheduleEvaluation
                 isOpen={openScheduleExamModal}
                 onClose={closeScheduleExamModal}
                 scheduleInformation={scheduleExamInfo}

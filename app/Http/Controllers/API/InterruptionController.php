@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Resources\InterruptionResource;
 use App\Models\Calendar;
 use App\Models\Epoch;
 use App\Models\Exam;
@@ -19,8 +20,10 @@ class InterruptionController extends Controller
     public function store(NewInterruptionRequest $request)
     {
         $newInterruption = new Interruption($request->all());
-        if (empty($request->description)) {
-            $newInterruption->description = InterruptionType::find($request->interruption_type_id)->description;
+        if (empty($request->description_pt)) {
+            $intType = InterruptionType::find($request->interruption_type_id);
+            $newInterruption->description_pt = $intType->name_pt;
+            $newInterruption->description_en = $intType->name_en;
         }
         $newInterruption->save();
 
@@ -41,7 +44,7 @@ class InterruptionController extends Controller
             }
         }
 
-        return response()->json("Created!", Response::HTTP_CREATED);
+        return response()->json(new InterruptionResource($newInterruption), Response::HTTP_CREATED);
     }
 
     public function update(NewInterruptionRequest $request, Interruption $interruption) {
