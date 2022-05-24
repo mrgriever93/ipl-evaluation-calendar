@@ -109,94 +109,107 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
         <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
             <Modal.Header>Detalhes da avaliação</Modal.Header>
             <Modal.Content>
-                <Grid divided="vertically">
-                    <Grid.Row columns="2">
-                        <Grid.Column>
+                <div className='exam-detail-modal'>
+                    <div className='exam-detail-info'>
+                        <p>
+                            <b>Curso: </b>
+                            {examDetailObject?.course_unit?.course?.name}
+                        </p>
+                        <p>
+                            <b>Ramo: </b>
+                            {examDetailObject?.course_unit?.branch?.name}
+                        </p>
+                        <p>
+                            <b>Ano Curricular: </b>
+                            { examDetailObject?.course_unit?.curricular_year ? (examDetailObject?.course_unit?.curricular_year + 'º Ano') : '-' }
+                        </p>
+                        <p>
+                            <b>Unidade Curricular: </b>
+                            {examDetailObject?.course_unit?.name}
+                        </p>
+                        <p>
+                            <b>Responsável da UC: </b>
+                            {examDetailObject?.course_unit?.responsible?.name}
+                        </p>
+                        <p>
+                            <b>Data: </b>
+                            {moment(examDetailObject?.date).format('DD MMMM, YYYY')}
+                        </p>
+                        <p>
+                            <b>Hora de ínicio: </b>
+                            {examDetailObject?.hour}
+                        </p>
+                        {examDetailObject?.duration_minutes && (
                             <p>
-                                <b>Ano Curricular: </b>
-                                {examDetailObject?.year}
-                                º Ano
+                                <b>Duração: </b>
+                                {examDetailObject?.duration_minutes}
+                                {' '} minutos
                             </p>
-                            <p>
-                                <b>Data: </b>
-                                {moment(examDetailObject?.date).format('DD MMMM, YYYY')}
-                            </p>
-                            <p>
-                                <b>Sala da avaliação: </b>
-                                {examDetailObject?.room}
-                            </p>
-                            {examDetailObject?.duration_minutes && (
-                                <p>
-                                    <b>Duração: </b>
-                                    {examDetailObject?.duration_minutes}
-                                    {' '} minutos
-                                </p>
-                            )}
-                            <p>
-                                <b>Hora de ínicio: </b>
-                                {examDetailObject?.hour}
-                            </p>
-                            <p>
-                                <b>Observações: </b>
-                                {examDetailObject?.observations}
-                            </p>
-                        </Grid.Column>
-                        <Grid.Column>
-                            <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS, SCOPES.ADD_COMMENTS]}>
+                        )}
+                        <p>
+                            <b>Salas de avaliação: </b>
+                            {examDetailObject?.room}
+                        </p>
+                        <p>
+                            <b>Observações: </b>
+                            <div>{examDetailObject?.observations || '-'}</div>
+                        </p>
+                    </div>
+                    <div className='exam-detail-content'>
+                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS, SCOPES.ADD_COMMENTS]}>
+                            <Comment.Group>
                                 <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS]}>
-                                    <Button icon color={!showIgnoredComments ? 'green' : 'red'} labelPosition="left" onClick={() => setShowIgnoredComments((cur) => !cur)}>
-                                        <Icon name={'eye' + (showIgnoredComments ? ' slash' : '') }/>
-                                        {!showIgnoredComments ? 'Mostrar' : 'Esconder'}
-                                        {' '}
-                                        ignorados
-                                    </Button>
+                                    <Header as="h3" dividing>Comentários</Header>
+                                    {examDetailObject?.comments?.filter((x) => (showIgnoredComments ? true : !x.ignored))?.map((comment, commentIndex) => (
+                                        <Comment key={commentIndex}>
+                                            <Comment.Avatar src={`https://avatars.dicebear.com/api/human/${comment.user.id}.svg?w=50&h=50&mood[]=sad&mood[]=happy`}/>
+                                            <Comment.Content style={comment.ignored ? {backgroundColor: 'lightgrey'} : {}}>
+                                                <Comment.Author as="a">{comment.user.name}</Comment.Author>
+                                                <Comment.Metadata>
+                                                    <div>{comment.date}</div>
+                                                </Comment.Metadata>
+                                                <Comment.Text>
+                                                    {comment.comment}
+                                                    {comment.ignored ? (
+                                                        <div style={{position: 'absolute', top: '5px', right: '5px', userSelect: 'none'}}>
+                                                            Comentário ignorado
+                                                        </div>
+                                                    ) : ''}
+                                                </Comment.Text>
+                                                <Comment.Actions>
+                                                    {!comment.ignored && (
+                                                        <Comment.Action onClick={() => ignoreComment(comment.id)}>
+                                                            Ignorar
+                                                        </Comment.Action>
+                                                    )}
+                                                </Comment.Actions>
+                                            </Comment.Content>
+                                        </Comment>
+                                    ))}
                                 </ShowComponentIfAuthorized>
-                                <Comment.Group>
-                                    <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS]}>
-                                        <Header as="h3" dividing>Comentários</Header>
-                                        {examDetailObject?.comments?.filter((x) => (showIgnoredComments ? true : !x.ignored))?.map((comment, commentIndex) => (
-                                            <Comment key={commentIndex}>
-                                                <Comment.Avatar src={`https://avatars.dicebear.com/api/human/${comment.user.id}.svg?w=50&h=50&mood[]=sad&mood[]=happy`}/>
-                                                <Comment.Content style={comment.ignored ? {backgroundColor: 'lightgrey'} : {}}>
-                                                    <Comment.Author as="a">{comment.user.name}</Comment.Author>
-                                                    <Comment.Metadata>
-                                                        <div>{comment.date}</div>
-                                                    </Comment.Metadata>
-                                                    <Comment.Text>
-                                                        {comment.comment}
-                                                        {comment.ignored ? (
-                                                            <div style={{position: 'absolute', top: '5px', right: '5px', userSelect: 'none'}}>
-                                                                Comentário ignorado
-                                                            </div>
-                                                        ) : ''}
-                                                    </Comment.Text>
-                                                    <Comment.Actions>
-                                                        {!comment.ignored && (
-                                                            <Comment.Action onClick={() => ignoreComment(comment.id)}>
-                                                                Ignorar
-                                                            </Comment.Action>
-                                                        )}
-                                                    </Comment.Actions>
-                                                </Comment.Content>
-                                            </Comment>
-                                        ))}
+                                {!isPublished && (
+                                    <ShowComponentIfAuthorized permission={[SCOPES.ADD_COMMENTS]}>
+                                        <Form reply>
+                                            <Form.TextArea onChange={(ev, {value}) => setCommentText(value)}/>
+                                            <Button onClick={() => addComment(examDetailObject?.id)} content="Adicionar comentário" labelPosition="left" icon="edit" primary/>
+                                        </Form>
                                     </ShowComponentIfAuthorized>
-                                    {!isPublished && (
-                                        <ShowComponentIfAuthorized permission={[SCOPES.ADD_COMMENTS]}>
-                                            <Form reply>
-                                                <Form.TextArea onChange={(ev, {value}) => setCommentText(value)}/>
-                                                <Button onClick={() => addComment(examDetailObject?.id)} content="Adicionar comentário" labelPosition="left" icon="edit" primary/>
-                                            </Form>
-                                        </ShowComponentIfAuthorized>
-                                    )}
-                                </Comment.Group>
-                            </ShowComponentIfAuthorized>
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
+                                )}
+                            </Comment.Group>
+                        </ShowComponentIfAuthorized>
+                    </div>
+                </div>
             </Modal.Content>
             <Modal.Actions>
-                <Button onClick={onClose} negative>
+                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS]}>
+                    <Button icon floated='left' color={!showIgnoredComments ? 'green' : 'red'} labelPosition="left" onClick={() => setShowIgnoredComments((cur) => !cur)}>
+                        <Icon name={'eye' + (showIgnoredComments ? ' slash' : '') }/>
+                        {!showIgnoredComments ? 'Mostrar' : 'Esconder'}
+                        {' '}
+                        ignorados
+                    </Button>
+                </ShowComponentIfAuthorized>
+                <Button onClick={onClose}>
                     Fechar
                 </Button>
             </Modal.Actions>
