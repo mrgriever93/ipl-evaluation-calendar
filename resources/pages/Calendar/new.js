@@ -37,11 +37,11 @@ const stepsData = [
 const formInitialValues = {
     step1: {
         semester: "first_semester",
-        week_ten: null,
     },
     step2: {
         interruptions: {},
         noInterruptions: false,
+        week_ten: null,
     },
     step3: {
         allCourses: false,
@@ -253,7 +253,7 @@ const NewCalendar = () => {
                         end_date: moment(values.step1.seasons[key].end_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
                     })),
                 ],
-                week_ten:  moment(values.step1.week_ten, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+                week_ten:  moment(values.step2.week_ten, 'DD-MM-YYYY').format('YYYY-MM-DD'),
                 holidays: holidaysList,
                 interruptions: [
                     ...(values.step2?.additional_interruptions?.map(({interruption_type_id, start_date, end_date}) => ({

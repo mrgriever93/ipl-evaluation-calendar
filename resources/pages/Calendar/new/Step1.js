@@ -70,15 +70,6 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
                     ))}
                 </Card.Group>
             </Card.Content>
-            <Card.Content className={"margin-top-base"}>
-                <Field name={`step1.week_ten`}>
-                    {({input: weekTenInput}) => (
-                        <Form.Field width={5}>
-                            <DateInput name="date" iconPosition="left" label="Data 10 semana" placeholder="Data 10 semana" value={weekTenInput.value} {...weekTenInput} closable onChange={(evt, {value}) => {weekTenInput.onChange(value);}}/>
-                        </Form.Field>
-                    )}
-                </Field>
-            </Card.Content>
         </React.Fragment>
     );
 };

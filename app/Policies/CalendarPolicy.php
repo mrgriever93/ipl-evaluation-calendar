@@ -21,8 +21,7 @@ class CalendarPolicy
      */
     public function view(User $user)
     {
-        return $user
-            ->withPermissionAndAction(
+        return $user->withPermissionAndAction(
                 PermissionTypes::CALENDAR
             )->get()->count() > 0;
     }

@@ -13,6 +13,7 @@ import Courses from "../../components/Filters/Courses";
 import FilterOptionPerPage from "../../components/Filters/PerPage";
 import EmptyTable from "../../components/EmptyTable";
 import PaginationDetail from "../../components/Pagination";
+import Semesters from "../../components/Filters/Semesters";
 
 const Wrapper = styled.div`
     .header {
@@ -46,7 +47,6 @@ const CalendarList = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     const [contentLoading, setContentLoading] = useState(true);
-    const [semesterList, setSemesterList] = useState([]);
     const [courseFilter, setCourseFilter] = useState();
     const [semesterFilter, setSemesterFilter] = useState();
     const [phaseFilter, setPhaseFilter] = useState();
@@ -73,17 +73,6 @@ const CalendarList = () => {
             }
         });
     };
-
-    useEffect(() => {
-        axios.get('/new-calendar/semesters').then((response) => {
-            if (response.status >= 200 && response.status < 300) {
-                setSemesterList(response.data.data);
-                if(response.data.data.length > 0) {
-                    setSemesterFilter(response.data.data[0].code);
-                }
-            }
-        });
-    }, []);
 
     useEffect(() => {
         if (calendars.filter((x) => JSON.parse(x.differences)?.length)?.length > 0) {
@@ -169,12 +158,15 @@ const CalendarList = () => {
                 <Card.Content>
                     <Wrapper>
                         <Header as="span">Calendários</Header>
-                        <ShowComponentIfAuthorized permission={[SCOPES.CREATE_CALENDAR]}
-                            renderIfNotAllowed={() => (
-                                <Button floated="right" toggle active={myCourseOnly} onClick={() => setMyCourseOnly((curr) => !curr)} icon labelPosition="left">
-                                    <Icon name="eye"/>
-                                    {myCourseOnly ? 'Meus calendários' : 'Todos'}
+                        <ShowComponentIfAuthorized permission={[SCOPES.CREATE_CALENDAR]} renderIfNotAllowed={() => (
+                            <Button.Group floated={"right"}>
+                                <Button floated="right" toggle active={myCourseOnly} onClick={() => setMyCourseOnly(true)}>
+                                    { t('Meus calendários') }
                                 </Button>
+                                <Button floated="right" toggle active={!myCourseOnly} onClick={() => setMyCourseOnly(false)}>
+                                    { t('Todos') }
+                                </Button>
+                            </Button.Group>
                             )}>
                             <Link to="/calendario/novo">
                                 <Button floated="right" color="green">
@@ -187,16 +179,10 @@ const CalendarList = () => {
                 <Card.Content>
                     <Form>
                         <Form.Group>
-                            <Button.Group>
-                                {semesterList.length > 0 && semesterList.map((semester, index) => (
-                                    <Button key={'semester_button_' + index} toggle active={semesterFilter === semester.code} onClick={() => setSemesterFilter(semester.code)}>
-                                        {semester.name}
-                                    </Button>
-                                ))}
-                            </Button.Group>
-                        </Form.Group>
-                        <Form.Group>
-                            <Courses widthSize={5} eventHandler={filterByCourse} />
+                            <Semesters widthSize={4} eventHandler={filterBySemester} withSpecial={true} isSearch={true} />
+                            <ShowComponentIfAuthorized permission={[SCOPES.CREATE_CALENDAR]}>
+                                <Courses widthSize={5} eventHandler={filterByCourse} />
+                            </ShowComponentIfAuthorized>
                             { paginationInfo.last_page > 1 && (
                                 <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                             )}
