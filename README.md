@@ -214,3 +214,13 @@ https://github.com/rap2hpoutre/laravel-log-viewer
   - [x] dizer quais
 - [x] Tirar Inglês Geral, Matemáticas Gerais, etc
 - [x] Quando tento marcar uma avaliação (1º semestre - 9119) fica "a pensar" à procura de UC
+
+
+### Feedback reunião 24/05
+- [x] Marcar avaliações:
+  - [ ] Verificar se os métodos estão preenchidos
+  - [ ] Se não estiverem apresentar mensagem de erro e link para as Unidades Curriculares do curso
+  - [ ] Adicionar icone (check) nos métodos que já estão marcados
+  - [ ] Adicionar start e end date para avaliações (que se prolongam durante a semana, por exemplo)
+  - [ ] Retirar outras validações que limitem a plataforma
+- [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UC's dos seus cursos (ex: EI PL e D)
