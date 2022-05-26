@@ -122,33 +122,11 @@ https://github.com/rap2hpoutre/laravel-log-viewer
     - [ ] Traduções
     - [ ] Métodos
 
-
 - [ ] Detalhe Calendario
   - [ ] Otimizar load de permissões e outros pedidos
 
-- [ ] Adicionar exames
-  - [ ] Na criação de uma avaliação dá erro quando vai buscar as unidades curriculares depois de selecionar a época, não dando para prosseguir
-  - [ ] validar permissoes (popup intervencoes)
-  - [ ] ter em conta o ano letivo selecionado
-
-- [ ] Adicionar mais interrupções 
-- [ ] Publicar calendário
-
-- [ ] Ver exame
-  - [ ] Adicionar comentários
-
-
-- [ ] Submeter para próximas fases e fazer a gestão de quais as fases seguintes/anteriores
-
 
 - [ ] Melhorar logs dos cursos, na alteração de métodos
-- [ ] Criar botão para duplicar métodos para todas as épocas 
-  - [ ] apenas na época periódica. 
-  - [ ] substitui tudo o que houver definido para ficar igual ao que estiver na periódica
-  - [ ] mostra aviso que irá substituir dados de todas as épocas 
-  - [ ] (serve como acelerador para preencher as épocas de exames que normalmente são sempre iguais, e dps pode ser otimizado na periódica)
-
-
 - [ ] Rever sync/refresh ano letivo
 - [ ] Rever falta de warning das configs da escola, quando as opções não estão todas preenchidas
 
@@ -224,3 +202,28 @@ https://github.com/rap2hpoutre/laravel-log-viewer
   - [ ] Adicionar start e end date para avaliações (que se prolongam durante a semana, por exemplo)
   - [ ] Retirar outras validações que limitem a plataforma
 - [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UC's dos seus cursos (ex: EI PL e D)
+
+##### Extra stuff 
+- [ ] Marcar avaliações:
+  - [ ] Ter em conta o ano letivo selecionado
+  - [ ] Adicionar comentários
+  - [ ] Ignorar comentários
+  - [ ] Eliminar comentários (durante os 1ºs 10/15min ?!)
+  - [ ] Validar permissoes dos vários popups
+  - [ ] Melhorar loading popups ?!
+  - [ ] Rever traduções
+
+- [ ] Submeter calendário para próximas fases
+  - [ ] Criar popup para apresentar possibilidades
+    - [ ] Colocar calendário em Edição
+      - [ ] GOP
+      - [ ] Coordenador de Curso
+      - [ ] Responsável de UC (selecionar quais UCs)
+    - [ ] Colocar calendário em Avaliação
+      - [ ] Estudantes
+      - [ ] CCP
+      - [ ] GOP
+      - [ ] Conselho Pedagócio
+      - [ ] Direção        
+    - [ ] Publicar calendário
+      - [ ] Se for GOP, CC ou Direção
