@@ -162,37 +162,37 @@ const Calendar = () => {
         });
     }, []);
 
-    useEffect(() => {
-        if (typeof calendarPhase === 'number') {
-            setCalendarPermissions(JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((perm) => perm.phase_id === calendarPhase) || []);
-        }
-    }, [calendarPhase]);
+    // useEffect(() => {
+    //     if (typeof calendarPhase === 'number') {
+    //         setCalendarPermissions(JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((perm) => perm.phase_id === calendarPhase) || []);
+    //     }
+    // }, [calendarPhase]);
 
-    const patchCalendar = (fieldToUpdate, value) => axios.patch(`/calendar/${calendarId}`, {
-        [fieldToUpdate]: value,
-    });
+    // const patchCalendar = (fieldToUpdate, value) => axios.patch(`/calendar/${calendarId}`, {
+    //     [fieldToUpdate]: value,
+    // });
 
-    const updateCalendarStatus = (newTemporaryStatus) => {
-        patchCalendar('temporary', newTemporaryStatus).then((response) => {
-            if (response.status === 200) {
-                setIsTemporary(newTemporaryStatus);
-                toast(t('calendar.Estado do calendário atualizado!'), successConfig);
-            }
-        });
-    };
+    // const updateCalendarStatus = (newTemporaryStatus) => {
+    //     patchCalendar('temporary', newTemporaryStatus).then((response) => {
+    //         if (response.status === 200) {
+    //             setIsTemporary(newTemporaryStatus);
+    //             toast(t('calendar.Estado do calendário atualizado!'), successConfig);
+    //         }
+    //     });
+    // };
 
-    const updateCalendarPhase = (newCalendarPhase) => {
-        setUpdatingCalendarPhase(true);
-        patchCalendar('calendar_phase_id', newCalendarPhase).then(
-            (response) => {
-                setUpdatingCalendarPhase(false);
-                if (response.status === 200) {
-                    setCalendarPhase(newCalendarPhase);
-                    toast(t('calendar.Fase do calendário atualizada!'), successConfig);
-                }
-            },
-        );
-    };
+    // const updateCalendarPhase = (newCalendarPhase) => {
+    //     setUpdatingCalendarPhase(true);
+    //     patchCalendar('calendar_phase_id', newCalendarPhase).then(
+    //         (response) => {
+    //             setUpdatingCalendarPhase(false);
+    //             if (response.status === 200) {
+    //                 setCalendarPhase(newCalendarPhase);
+    //                 toast(t('calendar.Fase do calendário atualizada!'), successConfig);
+    //             }
+    //         },
+    //     );
+    // };
 
     const ignoreComment = (commentId) => {
         axios.post(`/comment/${commentId}/ignore`).then((res) => {
@@ -384,12 +384,9 @@ const Calendar = () => {
             if (!alreadyAddedColSpan || (isInterruption && courseIndex === 0)) {
                 alreadyAddedRowSpan = true;
                 return (
-                    <Table.Cell key={weekDayIndex}
-                                textAlign="center"
-                                className={isInterruption ? "calendar-day-interruption" : null  }
+                    <Table.Cell key={weekDayIndex} textAlign="center" className={isInterruption ? "calendar-day-interruption" : null  }
                                 rowSpan={courseYears.length}
-                                colSpan={isInterruption ? day?.interruptionDays : null}
-                    >
+                                colSpan={isInterruption ? day?.interruptionDays : null} >
                         <div>
                             {isInterruption ? interruption.description : null}
                         </div>
@@ -425,17 +422,7 @@ const Calendar = () => {
                 });
             }
             return (
-                <Table.Cell
-                    key={weekDayIndex}
-                    className={ 'calendar-day-' + epoch.code }
-                    textAlign="center"
-                    onContextMenu={(e,) => {
-                        e.preventDefault();
-                        if (!isPublished && existingExamsAtThisDate?.length === 0 && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) {
-                            setModalInfo({start_date: day.date});
-                            setOpenModal(true);
-                        }
-                    }}>
+                <Table.Cell key={weekDayIndex} className={ 'calendar-day-' + epoch.code } textAlign="center">
                     {examsComponents}
                     {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.ADD_EXAMS).length > 0 && (
                         <Button className="btn-schedule-exam" onClick={() => scheduleExamHandler(year, day.date, existingExamsAtThisDate)}>
@@ -459,17 +446,11 @@ const Calendar = () => {
                     <PageLoader
                         animate={{
                             opacity: 1,
-                            transition: {
-                                duration: 0.5,
-                                ease: [0.4, 0.0, 0.2, 1],
-                            },
+                            transition: { duration: 0.5, ease: [0.4, 0.0, 0.2, 1] },
                         }}
                         exit={{
                             opacity: 0,
-                            transition: {
-                                duration: 0.5,
-                                ease: [0.4, 0.0, 0.2, 1],
-                            },
+                            transition: { duration: 0.5, ease: [0.4, 0.0, 0.2, 1] },
                         }}
                     />
                 )}
