@@ -105,18 +105,18 @@ const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAd
         const numberOfWeeks = lastDate.diff(firstDate, 'weeks');
         let weeksToAdd = 0;
         if(numberOfWeeks >= 10){
-            //additionalInterruptions.forEach((item) => {
-            //    const diffDays = item.start_date.diff(item.end_date, 'days');
-            //    const diffWeeks = item.start_date.diff(item.end_date, 'weeks');
-            //    console.log(diffDays);
-            //    console.log(diffWeeks);
-            //    if(diffDays >= 5 ){
-            //        weeksToAdd++;
-            //        if(diffWeeks === 2){
-            //            weeksToAdd++;
-            //        }
-            //    }
-            //});
+            additionalInterruptions.forEach((item) => {
+                const diffDays = item.start_date.diff(item.end_date, 'days');
+                const diffWeeks = item.start_date.diff(item.end_date, 'weeks');
+                console.log(diffDays);
+                console.log(diffWeeks);
+                if(diffDays >= 5 ){
+                    weeksToAdd++;
+                    if(diffWeeks === 2){
+                        weeksToAdd++;
+                    }
+                }
+            });
             // first week does not count, so, it will be:
             // first week + 10 weeks + number of full weeks without school
             const tenthWeek = moment(initialDate).add(11 + weeksToAdd, 'weeks').format('YYYY-MM-DD');

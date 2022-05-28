@@ -102,7 +102,8 @@ class ExamController extends Controller
 
                if (($allHaveSameGroup && $courseUnit->group !== null) || $examToUpdate->id === $exam->id) {
                    $examToUpdate->room = $request->room;
-                   $examToUpdate->date = $request->date;
+                   $examToUpdate->date_start = $request->date_start;
+                   $examToUpdate->date_end = $request->date_end;
                    $examToUpdate->hour = $request->hour;
                    $examToUpdate->duration_minutes = $request->duration_minutes;
                    $examToUpdate->observations_pt = $request->observations_pt;
@@ -128,7 +129,8 @@ class ExamController extends Controller
             $exam->method_id       = $request->method_id;
 
             $exam->room = $request->room;
-            $exam->date = $request->date;
+            $exam->date_start = $request->date_start;
+            $exam->date_end = $request->date_end;
             $exam->hour = $request->hour;
             $exam->duration_minutes = $request->duration_minutes;
             $exam->observations_pt = $request->observations_pt;
