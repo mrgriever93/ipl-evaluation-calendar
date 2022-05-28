@@ -40,7 +40,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     const [calendarPhase, setCalendarPhase] = useState(true);
     const [changeData, setChangeData] = useState(false);
     const [savingExam, setSavingExam] = useState(false);
-    const [noMethods, setNoMethods] = useState(false);
+    const [showMissingMethodsLink, setShowMissingMethodsLink] = useState(false);
 
     useEffect( () => {
         if(!!scheduleInformation.epochs) {
@@ -77,17 +77,19 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                         }
 
                         const mapped = beforeSetCourseUnits?.map(
-                            ({id, name, methods, branch, is_complete}) => ({
+                            ({id, name, methods, branch, is_complete, has_methods}) => ({
                                 key: id,
                                 value: id,
                                 text: name,
                                 methods,
                                 branch,
-                                icon: (is_complete ? {color: 'green', name:'check circle'} : undefined),
+                                icon: ((!has_methods ? {color: 'yellow', name:'warning circle'} : is_complete ? {color: 'green', name:'check circle'} : undefined)),
+                                description: (!has_methods ? t("Métodos em falta") : undefined),
+                                disabled: !has_methods,
                             }),
                         );
                         setCourseUnits(mapped);
-                        setNoMethods(response.data.data?.length === 0 || beforeSetCourseUnits?.length === 0);
+                        setShowMissingMethodsLink(response.data.data?.length === 0 || beforeSetCourseUnits?.length === 0);
                     }
                 });
             setLoadRemainingCourseUnits(false);
@@ -171,7 +173,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
 
     useEffect(() => {
         if (!isOpen) {
-            setNoMethods(false);
+            setShowMissingMethodsLink(false);
             setSelectedEpoch(undefined);
             setCourseUnits([]);
             setMethodList([]);
@@ -223,7 +225,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                         { scheduleInformation?.exam_id ? t("Editar Avaliação")  :  t("Marcar Avaliação") }
                     </Modal.Header>
                     <Modal.Content>
-                        <Form>
+                        <Form warning>
                             <Header as="h4">{ t("Detalhes da avaliação") } </Header>
 
                             <Grid columns={2}>
@@ -273,13 +275,6 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                     />
                                                 )}
                                             </Field>
-                                            {noMethods
-                                                && (
-                                                    <Message negative>
-                                                        <Message.Header>Não foram encontradas unidades curriculares</Message.Header>
-                                                        <p>Não foram encontradas unidades curriculares com métodos de avaliação atríbuidos para esta época de avaliação.</p>
-                                                    </Message>
-                                                )}
                                             <Field name="courseUnit">
                                                 {({input: courseUnitInput}) => (
                                                     <Form.Dropdown
@@ -296,6 +291,14 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                     />
                                                 )}
                                             </Field>
+                                            { showMissingMethodsLink && (
+                                                    <Message size='tiny' warning={true}>
+                                                        <div>{ t("Existem Unidades Curriculares sem métodos definidos.")}</div>
+                                                        <div className='margin-top-xs'>
+                                                            <a href={ "/unidade-curricular?curso="+scheduleInformation?.courseId} target="_blank">{ t("Preencha aqui")} <Icon name="external alternate" /></a>
+                                                        </div>
+                                                    </Message>
+                                                )}
                                             <Field name="method">
                                                 {({input: methodInput}) => (
                                                     <Form.Dropdown
