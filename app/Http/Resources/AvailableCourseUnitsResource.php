@@ -14,7 +14,8 @@ class AvailableCourseUnitsResource extends JsonResource
             'name'          => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
             'initials'      => $this->initials,
             'methods'       => AvailableMethodsResource::collection($this->methods),
-            'is_complete'   => empty($this->mehods)
+            'is_complete'   => $this->is_complete,
+            'has_methods'   => empty($this->mehods)
             //'branch' => $this->branch,
         ];
     }

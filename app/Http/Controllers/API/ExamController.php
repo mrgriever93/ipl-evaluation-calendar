@@ -145,13 +145,13 @@ class ExamController extends Controller
         if ( $epochRecord->calendar->published ) {
             return response()->json("Not allowed to book exams on Published Calendars!", Response::HTTP_FORBIDDEN);
         }
-        $checkExam = Exam::where('epoch_id', '=', $epochId)->where('epoch_id', '=', $epochId)->where('method_id', '=', $method_id);
-        if($examId){
-            $checkExam->where('id', '<>', $examId);
-        }
-        if ( $checkExam->exists() ) {
-            return response()->json("Not allowed to insert the same exam on this calendar!", Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        // $checkExam = Exam::where('epoch_id', '=', $epochId)->where('epoch_id', '=', $epochId)->where('method_id', '=', $method_id);
+        // if($examId){
+        //     $checkExam->where('id', '<>', $examId);
+        // }
+        // if ( $checkExam->exists() ) {
+        //     return response()->json("Not allowed to insert the same exam on this calendar!", Response::HTTP_UNPROCESSABLE_ENTITY);
+        // }
 
         if ( $epochRecord->calendar->id !== $calendarId ) {
             return response()->json("The epoch id is not correct for the given calendar.", Response::HTTP_UNPROCESSABLE_ENTITY);

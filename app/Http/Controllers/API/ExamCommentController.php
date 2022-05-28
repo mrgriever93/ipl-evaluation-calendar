@@ -20,6 +20,7 @@ class ExamCommentController extends Controller
     public function store(ExamCommentRequest $request)
     {
         $newComment = new ExamComment($request->all());
+        $newComment->comment_language = $request->header("lang");
         $newComment->user()->associate(Auth::user());
         $newComment->save();
 

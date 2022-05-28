@@ -196,6 +196,14 @@ class CalendarController extends Controller
                     })->whereRelation('courseUnits', 'course_unit_id', $courseUnit['id'])
                     ->with('evaluationType')
                     ->get()->toArray();
+
+                $is_complete = !Method::whereHas('epochType', function (Builder $query) use($epoch_type_id) {
+                    $query->where('epoch_type_id', $epoch_type_id);
+                })->whereRelation('courseUnits', 'course_unit_id', $courseUnit['id'])
+                    ->doesntHave('exams')
+                    ->exists();//get()->toArray();
+                //dd($is_complete);
+                $response[$key]->is_complete = $is_complete;
             }
             return AvailableCourseUnitsResource::collection($response);
     }

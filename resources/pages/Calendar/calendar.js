@@ -76,7 +76,7 @@ const Calendar = () => {
             scholarYear: scholarYear,
             epochs: epochsList,
             course_unit_id: exam.course_unit_id,
-            date: exam.date,
+            date: exam.date_start,
             duration_minutes: exam.duration_minutes,
             exam_id: exam.id,
             epoch_id: exam.epoch_id,
@@ -330,7 +330,7 @@ const Calendar = () => {
                 return (<Table.HeaderCell key={index} />);
             }
         } else if (day?.date) {
-            const existingExamsAtThisDate = examList.filter((exam) => moment(exam.date).isSame(moment(day.date), 'day'));
+            const existingExamsAtThisDate = examList.filter((exam) => moment(exam.date_start).isSame(moment(day.date), 'day'));
             return (
                 <Table.HeaderCell key={index} textAlign="center">
                     {moment(day.date).format('DD-MM-YYYY')}
@@ -394,7 +394,7 @@ const Calendar = () => {
                 );
             }
         } else if (day?.date) {
-            const existingExamsAtThisDate = examList.filter((exam) => moment(exam.date).isSame(moment(day.date), 'day'));
+            const existingExamsAtThisDate = examList.filter((exam) => moment(exam.date_start).isSame(moment(day.date), 'day'));
             let examsComponents = null;
             if (existingExamsAtThisDate?.length) {
                 examsComponents = existingExamsAtThisDate.map((exam) => {

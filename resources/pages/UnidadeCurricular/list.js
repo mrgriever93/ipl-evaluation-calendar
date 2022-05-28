@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Card, Container, Table, Form, Icon, Modal, Button, Header, Dimmer, Loader, Popup} from 'semantic-ui-react';
 import axios from 'axios';
-import {Link} from 'react-router-dom';
+import {Link, useSearchParams} from 'react-router-dom';
 import _ from 'lodash';
 import {toast} from 'react-toastify';
 import {useTranslation} from "react-i18next";
@@ -16,6 +16,9 @@ import FilterOptionPerPage from "../../components/Filters/PerPage";
 import PaginationDetail from "../../components/Pagination";
 
 const CourseUnitsList = () => {
+    const [searchParams] = useSearchParams();
+    const searchCourse = searchParams.get('curso');
+
     const { t } = useTranslation();
     const [courseUnits, setCourseUnits] = useState([]);
     const [paginationInfo, setPaginationInfo] = useState({});
@@ -29,6 +32,12 @@ const CourseUnitsList = () => {
     const [searchFilter, setSearchFilter] = useState();
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+
+    useEffect(() => {
+        if(searchCourse){
+            setCourseFilter(searchCourse);
+        }
+    }, [searchCourse]);
 
     const fetchCourseUnits = () => {
         setContentLoading(true);
