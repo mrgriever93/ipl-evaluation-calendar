@@ -631,6 +631,29 @@ div.inline{
     overflow-y: auto;
 }
 
+.exam-detail-info .ui.list .list >.item, 
+.exam-detail-info .ui.list > .item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-base) var(--space-none);
+    width: 100%;
+}
+
+.exam-detail-info .ui.list > .item b {
+    font-size: 13px;
+}
+
+.exam-detail-info .ui.list > .item .floated.right {
+    font-style: italic;
+    max-width: 60%;
+    text-align: right;
+    word-break: break-word;
+}
+
+.exam-detail-info .ui.list > .item:after {
+    display: none;
+}
+
 .exam-detail-content {
     flex: 2;
     height: 100%;
