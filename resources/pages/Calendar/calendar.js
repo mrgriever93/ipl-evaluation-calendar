@@ -67,7 +67,8 @@ const Calendar = () => {
         setOpenScheduleExamModal(true);
     }
 
-    const editExamHandler = (scholarYear, exam) => {
+    const editExamHandler = (event, scholarYear, exam) => {
+        event.stopPropagation();
         setScheduleExamInfo({
             calendarId: parseInt(calendarId, 10),
             courseId: generalInfo?.course?.id,
@@ -407,7 +408,7 @@ const Calendar = () => {
                                 { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
                                     <div className="btn-action-wrapper">
                                         {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
-                                            <div className='btn-action-edit' onClick={() => editExamHandler(year, exam)}>
+                                            <div className='btn-action-edit' onClick={(event) => editExamHandler(event, year, exam)}>
                                                 <Icon name="edit"/>
                                             </div>
                                         )}
