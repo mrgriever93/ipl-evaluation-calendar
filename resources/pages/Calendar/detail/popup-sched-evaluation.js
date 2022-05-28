@@ -1,7 +1,6 @@
 import axios from 'axios';
-import _ from 'lodash';
 import moment from 'moment';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useParams, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {Field, Form as FinalForm} from 'react-final-form';
@@ -63,15 +62,14 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                 .then((response) => {
                     if (response.status === 200) {
                         let beforeSetCourseUnits = [];
-
+                        /*
                         if(scheduleInformation.hasExamsOnDate) {
                             const branches = scheduleInformation.hasExamsOnDate?.filter((x) => x.academic_year === scheduleInformation.scholarYear)?.map((y) => y?.course_unit?.branch?.id);
-                            beforeSetCourseUnits = response.data.data?.filter(
-                                (x) => !(branches.length ? branches?.includes(x?.branch?.id) : false)
-                            );
+                            beforeSetCourseUnits = response.data.data?.filter((x) => !(branches.length ? branches?.includes(x?.branch?.id) : false));
                         } else {
                             beforeSetCourseUnits = response.data.data;
-                        }
+                        }*/
+                        beforeSetCourseUnits = response.data.data;
 
                         const mapped = beforeSetCourseUnits?.map(
                             ({id, name, methods, branch, is_complete, has_methods}) => ({
@@ -86,7 +84,9 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                             }),
                         );
                         setCourseUnits(mapped);
-                        setShowMissingMethodsLink(response.data.data?.length === 0 || beforeSetCourseUnits?.length === 0);
+                        // has curricular unit with missing methods?
+                        //setShowMissingMethodsLink(response.data.data?.length === 0 || beforeSetCourseUnits?.length === 0);
+                        setShowMissingMethodsLink(beforeSetCourseUnits.filter((item) => item.has_methods).length > 0);
                     }
                 });
             setLoadRemainingCourseUnits(false);
@@ -229,7 +229,6 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                     <Modal.Content>
                         <Form warning>
                             <Header as="h4">{ t("Detalhes da avaliação") } </Header>
-
                             <Grid columns={2}>
                                 <GridColumn>
                                     <p>

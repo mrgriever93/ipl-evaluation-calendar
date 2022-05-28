@@ -148,10 +148,11 @@ class CalendarController extends Controller
         $epoch_type_id = Epoch::find($request->epoch_id)->epoch_type_id;
         $availableMethods = CourseUnit::where("curricular_year", $request->year)
                                         ->where('semester_id', $calendar->semester_id)
-                                        ->where('course_id', $calendar->course_id)
-                                        ->whereHas('methods.epochType', function (Builder $query) use($epoch_type_id) {
-                                            $query->where('epoch_type_id', $epoch_type_id);
-                                        });
+                                        ->where('course_id', $calendar->course_id);
+                                        //->whereHas('methods.epochType', function (Builder $query) use($epoch_type_id) {
+                                        //    $query->where('epoch_type_id', $epoch_type_id);
+                                        //});
+
                                        //->whereNotExists(function ($query) use($request) {
                                        //    $query->where("exams.epoch_id", $request->epoch_id);
                                        //})->get();
