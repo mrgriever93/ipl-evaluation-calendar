@@ -77,12 +77,13 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                         }
 
                         const mapped = beforeSetCourseUnits?.map(
-                            ({id, name, methods, branch}) => ({
+                            ({id, name, methods, branch, is_complete}) => ({
                                 key: id,
                                 value: id,
                                 text: name,
                                 methods,
                                 branch,
+                                icon: (is_complete ? {color: 'green', name:'check circle'} : undefined),
                             }),
                         );
                         setCourseUnits(mapped);
@@ -117,10 +118,11 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     const methodListFilterHandler = (course_unit_id) => {
         if(courseUnits?.length > 0 ) {
             setMethodList(
-                courseUnits.find((courseUnit) => courseUnit.value === course_unit_id)?.methods.map(({id, name, minimum, weight}) => ({
+                courseUnits.find((courseUnit) => courseUnit.value === course_unit_id)?.methods.map(({id, name, minimum, weight, is_done}) => ({
                         key: id,
                         value: id,
                         text: `${name} / Min. ${minimum} / Peso: ${parseInt(weight, 10)}%`,
+                        icon: (is_done ? {color: 'green', name:'check circle'} : undefined),
                     })
                 )
             );
