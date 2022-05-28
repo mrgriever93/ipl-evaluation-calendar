@@ -1,24 +1,23 @@
 import axios from 'axios';
 import _ from 'lodash';
 import moment from 'moment';
-import React, {useEffect, useMemo, useState} from 'react';
-import {useParams, useNavigate} from "react-router-dom";
+import React, {useEffect, useState} from 'react';
+// import {useParams, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-import {Field, Form as FinalForm} from 'react-final-form';
-import {DateInput, TimeInput} from 'semantic-ui-calendar-react-yz';
-import {Accordion, Button, Card, Container, Divider, Form, Grid, Header, Icon, List, Modal, Segment, Table, TextArea, Popup, Dropdown, Comment, Message} from 'semantic-ui-react';
+// import {Field, Form as FinalForm} from 'react-final-form';
+import { Button, Form, Header, Icon, List, Modal, Comment } from 'semantic-ui-react';
 import {toast} from 'react-toastify';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
+// import Swal from 'sweetalert2';
+// import withReactContent from 'sweetalert2-react-content';
 
 import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
 import SCOPES from '../../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
-const SweetAlertComponent = withReactContent(Swal);
+// const SweetAlertComponent = withReactContent(Swal);
 
 const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
-    const history = useNavigate();
+    // const history = useNavigate();
     const { t } = useTranslation();
 
     const [examDetailObject, setExamDetailObject] = useState({});
@@ -53,47 +52,18 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
         console.log(examDetailObject);
     }, [examDetailObject]);
 
-    const onSubmitExam = (values) => {
-        console.log(values);
-        toast('Feature não foi implementada', errorConfig);
-        // setSavingExam(true);
-        // const axiosFn = values?.id ? axios.patch : axios.post;
-        // axiosFn(`/exams/${values?.id ? values?.id : ''}`, {
-        //     calendar_id: parseInt(calendarId, 10),
-        //     course_id: examDetailObject?.course_unit?.branch?.id,
-        //     room: values.room || undefined,
-        //     date: moment(values.date).format('YYYY-MM-DD'),
-        //     hour: values.hour,
-        //     duration_minutes: values.durationMinutes || undefined,
-        //     observations: values.observations,
-        //     epoch_id: values.epoch,
-        //     method_id: values.method,
-        //     course_unit_id: values.courseUnit,
-        // })
-        //     .then((res) => {
-        //         setSavingExam(false);
-        //         if (res.status === 200 || res.status === 201) {
-        //             setOpenExamModal(false);
-        //             toast(`Avaliação ${values?.id ? 'guardada' : 'marcada'} com sucesso!`, successConfig);
-        //             // loadExamDetails(calendarId);
-        //         } else {
-        //             toast(`Ocorreu um erro ao ${values?.id ? 'guardar' : 'marcar'} a avaliação!`, errorConfig);
-        //         }
-        //     });
-    };
-
     const addComment = (examId) => {
-        toast('Feature não foi implementada', errorConfig);
-        // axios.post('/comment/', {
-        //     exam_id: examId,
-        //     comment: commentText,
-        // }).then((res) => {
-        //     if (res.status === 201) {
-        //         toast(t('calendar.O comentário foi adicionado com sucesso!'), successConfig);
-        //     } else {
-        //         toast(t('calendar.Ocorreu um erro ao adicionar o comentário!'), errorConfig);
-        //     }
-        // });
+        // toast('Feature não foi implementada', errorConfig);
+        axios.post('/comment/', {
+            exam_id: examId,
+            comment: commentText,
+        }).then((res) => {
+            if (res.status === 201) {
+                toast(t('calendar.O comentário foi adicionado com sucesso!'), successConfig);
+            } else {
+                toast(t('calendar.Ocorreu um erro ao adicionar o comentário!'), errorConfig);
+            }
+        });
     };
 
     const ignoreComment = (commentId) => {
@@ -113,49 +83,50 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
             <Modal.Content>
                 <div className='exam-detail-modal'>
                     <div className='exam-detail-info'>
-                        <p>
-                            <b>Curso: </b>
-                            {examDetailObject?.course_unit?.course?.name}
-                        </p>
-                        <p>
-                            <b>Ramo: </b>
-                            {examDetailObject?.course_unit?.branch?.name}
-                        </p>
-                        <p>
-                            <b>Ano Curricular: </b>
-                            { examDetailObject?.course_unit?.curricular_year ? (examDetailObject?.course_unit?.curricular_year + 'º Ano') : '-' }
-                        </p>
-                        <p>
-                            <b>Unidade Curricular: </b>
-                            {examDetailObject?.course_unit?.name}
-                        </p>
-                        <p>
-                            <b>Responsável da UC: </b>
-                            {examDetailObject?.course_unit?.responsible?.name}
-                        </p>
-                        <p>
-                            <b>Data: </b>
-                            {moment(examDetailObject?.date).format('DD MMMM, YYYY')}
-                        </p>
-                        <p>
-                            <b>Hora de ínicio: </b>
-                            {examDetailObject?.hour}
-                        </p>
-                        {examDetailObject?.duration_minutes && (
-                            <p>
-                                <b>Duração: </b>
-                                {examDetailObject?.duration_minutes}
-                                {' '} minutos
-                            </p>
-                        )}
-                        <p>
-                            <b>Salas de avaliação: </b>
-                            {examDetailObject?.room}
-                        </p>
-                        <div>
-                            <b>Observações: </b>
-                            <p>{examDetailObject?.observations || '-'}</p>
-                        </div>
+                        <List divided verticalAlign='middle'>
+                            <List.Item>
+                                <List.Content><b>Curso: </b></List.Content>
+                                <List.Content floated='right'>{examDetailObject?.course_unit?.course?.name}</List.Content>                            
+                            </List.Item>
+                            <List.Item>
+                                <List.Content><b>Ramo: </b></List.Content>
+                                <List.Content floated='right'>{examDetailObject?.course_unit?.branch?.name}</List.Content>                            
+                            </List.Item>
+                            <List.Item>
+                                <List.Content><b>Ano Curricular: </b></List.Content>
+                                <List.Content floated='right'>{ examDetailObject?.course_unit?.curricular_year ? (examDetailObject?.course_unit?.curricular_year + 'º Ano') : '-' }</List.Content>                            
+                            </List.Item>
+                            <List.Item>
+                                <List.Content><b>Unidade Curricular: </b></List.Content>
+                                <List.Content floated='right'>{examDetailObject?.course_unit?.name}</List.Content>                            
+                            </List.Item>
+                            <List.Item>
+                                <List.Content><b>Responsável da UC: </b></List.Content>
+                                <List.Content floated='right'>{examDetailObject?.course_unit?.responsible?.name}</List.Content>                            
+                            </List.Item>
+                            <List.Item>
+                                <List.Content><b>Data: </b></List.Content>
+                                <List.Content floated='right'>{moment(examDetailObject?.date).format('DD MMMM, YYYY')}</List.Content>                            
+                            </List.Item>
+                            <List.Item>
+                                <List.Content><b>Hora de ínicio: </b></List.Content>
+                                <List.Content floated='right'>{examDetailObject?.hour}</List.Content>                            
+                            </List.Item>
+                            {examDetailObject?.duration_minutes && (
+                                <List.Item>
+                                    <List.Content><b>Duração: </b></List.Content>
+                                    <List.Content floated='right'>{ (examDetailObject?.duration_minutes + ' ' + t('minutos')) }</List.Content>                            
+                                </List.Item>
+                            )}
+                            <List.Item>
+                                <List.Content><b>Salas de avaliação: </b></List.Content>
+                                <List.Content floated='right'>{examDetailObject?.room || '-'}</List.Content>                            
+                            </List.Item>
+                            <List.Item>
+                                <List.Content><b>Observações: </b></List.Content>
+                                <List.Content floated='right'>{examDetailObject?.observations || '-'}</List.Content>                            
+                            </List.Item>
+                        </List>
                     </div>
                     <div className='exam-detail-content'>
                         <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS, SCOPES.ADD_COMMENTS]}>
