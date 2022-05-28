@@ -17,7 +17,10 @@ import InfosAndActions from './detail/infos-and-actions';
 import PopupScheduleInterruption from './detail/popup-sched-interruption';
 import PopupScheduleEvaluation from './detail/popup-sched-evaluation';
 import PopupEvaluationDetail from './detail/popup-evaluation-detail';
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
 
+const SweetAlertComponent = withReactContent(Swal);
 
 const Calendar = () => {
     const history = useNavigate();
@@ -32,9 +35,7 @@ const Calendar = () => {
     const [epochsList, setEpochsList] = useState([]);
     const [generalInfo, setGeneralInfo] = useState();
     const [differences, setDifferences] = useState();
-    const [openModal, setOpenModal] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [modalInfo, setModalInfo] = useState({});
     const [openScheduleExamModal, setOpenScheduleExamModal] = useState(false);
     const [openExamDetailModal, setOpenExamDetailModal] = useState(false);
     const [viewExamId, setViewExamId] = useState(undefined);
@@ -60,7 +61,8 @@ const Calendar = () => {
             courseId: generalInfo?.course?.id,
             courseName: generalInfo?.course?.display_name,
             scholarYear: scholarYear,
-            date: date,
+            date_start: date,
+            date_end: date,
             hasExamsOnDate: existingExamsAtThisDate,
             epochs: epochsList,
         });
@@ -76,7 +78,8 @@ const Calendar = () => {
             scholarYear: scholarYear,
             epochs: epochsList,
             course_unit_id: exam.course_unit_id,
-            date: exam.date_start,
+            date_start: exam.date_start,
+            date_end: exam.date_end,
             duration_minutes: exam.duration_minutes,
             exam_id: exam.id,
             epoch_id: exam.epoch_id,
@@ -94,6 +97,7 @@ const Calendar = () => {
     };
 
     const addExamToList = (exam) => {
+        console.log(exam);
         setExamList((current) => [...current, exam]);
     }
     const removeExamFromList = (examId) => {
@@ -103,6 +107,33 @@ const Calendar = () => {
     /*
      * Interruptions
      */
+    // Force interruption when has some exams
+    const interruptionForceHandler = (date) => {
+        const sweetAlertConfigs = {
+            title: t('Atenção!'),
+            html: 'Ao adicionar uma interrupcao, ira eliminar exames nesta data, e terá de adicioná-los novamente em outra data a escolher!<br/><br/><strong>Tem a certeza que deseja eliminar os exames, e adicionar uma nova interrupcao?</strong>',
+            denyButtonText: t('Não'),
+            confirmButtonText: t('Sim'),
+            showConfirmButton: true,
+            showDenyButton: true,
+            confirmButtonColor: '#21ba45',
+            denyButtonColor: '#db2828',
+        };
+
+        SweetAlertComponent.fire(sweetAlertConfigs).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`/exams/date/${calendarId}/${moment(date).format( 'YYYY-MM-DD')}`).then((res) => {
+                    if (res.status === 200) {
+                        toast('Exames eliminados com sucesso deste calendário!', successConfig);
+                        interruptionHandler(undefined, date);
+                    } else {
+                        toast('Ocorreu um problema ao eliminar os exames deste calendário! ' +  res.response.data, errorConfig);
+                    }
+                });
+            }
+        });
+    };
+
     const interruptionHandler = (interruption, date) => {
         setInterruptionModalInfo((interruption ? interruption : {
             calendarId: parseInt(calendarId, 10),
@@ -207,8 +238,7 @@ const Calendar = () => {
     const loadCalendar = (calId) => {
         setIsLoading(true);
         setExamList([]);
-        axios
-            .get(`/calendar/${calId}`)
+        axios.get(`/calendar/${calId}`)
             .then((response) => {
                 if (response?.status >= 200 && response?.status < 300) {
                     const {
@@ -241,8 +271,7 @@ const Calendar = () => {
                 } else {
                     history('/calendario');
                 }
-            })
-            .catch((r) => alert(r));
+            }).catch((r) => alert(r));
     };
 
     const weekData = useMemo(() => _.orderBy(
@@ -330,11 +359,18 @@ const Calendar = () => {
                 return (<Table.HeaderCell key={index} />);
             }
         } else if (day?.date) {
+            // TODO check date_start/date_end
             const existingExamsAtThisDate = examList.filter((exam) => moment(exam.date_start).isSame(moment(day.date), 'day'));
             return (
                 <Table.HeaderCell key={index} textAlign="center">
                     {moment(day.date).format('DD-MM-YYYY')}
-                    { ( existingExamsAtThisDate.length > 0 ? null : (
+                    { ( existingExamsAtThisDate.length > 0 ? (
+                            <Button color={"orange"} className='btn-add-interruption' title="Adicionar Interrupção"
+                                    onClick={() => interruptionForceHandler(day.date)}>
+                                <Icon name="calendar times outline" />
+                                Adicionar Interrupção
+                            </Button>
+                        ) : (
                             !day.interruption ? (
                                 <Button className='btn-add-interruption' title="Adicionar Interrupção"
                                         onClick={() => interruptionHandler(undefined, day.date)}>
@@ -361,6 +397,7 @@ const Calendar = () => {
      * Content of week table
      */
     const weekDayContentCell = (epoch, days, courseIndex, year, weekDay, weekDayIndex) => {
+        // TODO add exam to the dates (by single cols or colspan)
         const day = days.find((day) => day.weekDay === weekDay);
         const firstDayAvailable = moment(days[0].date);
         const lastDayAvailable = moment(days[days.length - 1].date);
@@ -394,31 +431,32 @@ const Calendar = () => {
                 );
             }
         } else if (day?.date) {
-            const existingExamsAtThisDate = examList.filter((exam) => moment(exam.date_start).isSame(moment(day.date), 'day'));
+            const currentDate = moment(day.date);
+            const existingExamsAtThisDate = examList.filter((exam) => {
+                return  exam.academic_year === year &&
+                        currentDate.isBetween(exam.date_start, exam.date_end, 'date','[]');
+            });
             let examsComponents = null;
             if (existingExamsAtThisDate?.length) {
                 examsComponents = existingExamsAtThisDate.map((exam) => {
-                    if (exam.academic_year === year) {
-                        return (
-                            // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
-                            <Button className="btn-exam-details" color="blue" key={exam.id} onClick={() => openExamDetailHandler(year, exam)} >
-                                { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
-                                    <div className="btn-action-wrapper">
-                                        {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
-                                            <div className='btn-action-edit' onClick={(event) => editExamHandler(event, year, exam)}>
-                                                <Icon name="edit"/>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                                <div className="btn-exam-content">
-                                    <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : '') + exam.course_unit_initials }</div>
-                                    <div className="btn-exam-type">{ exam.method_name }</div>
+                    return (
+                        // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
+                        <Button className="btn-exam-details" color="blue" key={exam.id} onClick={() => openExamDetailHandler(year, exam)} >
+                            { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
+                                <div className="btn-action-wrapper">
+                                    {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
+                                        <div className='btn-action-edit' onClick={(event) => editExamHandler(event, year, exam)}>
+                                            <Icon name="edit"/>
+                                        </div>
+                                    )}
                                 </div>
-                            </Button>
-                        );
-                    }
-                    return null;
+                            )}
+                            <div className="btn-exam-content">
+                                <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : '') + exam.course_unit_initials }</div>
+                                <div className="btn-exam-type">{ exam.method_name }</div>
+                            </div>
+                        </Button>
+                    );
                 });
             }
             return (

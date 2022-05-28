@@ -26,11 +26,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
 
     const [epochsList, setEpochsList] = useState([]);
     const [calendarPermissions, setCalendarPermissions] = useState(JSON.parse(localStorage.getItem('calendarPermissions')) || []);
-    const [interruptionsList, setInterruptions] = useState([]);
-    const [generalInfo, setGeneralInfo] = useState();
     const [differences, setDifferences] = useState();
-    const [openModal, setOpenModal] = useState(false);
-    const [interruptionTypes, setInterruptionTypesList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [loadRemainingCourseUnits, setLoadRemainingCourseUnits] = useState(false);
     const [selectedEpoch, setSelectedEpoch] = useState();
@@ -43,9 +39,10 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     const [showMissingMethodsLink, setShowMissingMethodsLink] = useState(false);
 
     useEffect( () => {
+        console.log(scheduleInformation);
         if(!!scheduleInformation.epochs) {
             let availableEpochs = scheduleInformation.epochs.filter((epoch) => {
-                return moment(scheduleInformation.date).isBetween(moment(epoch.start_date), moment(epoch.end_date), undefined, '[]' );
+                return moment(scheduleInformation.date_start).isBetween(moment(epoch.start_date), moment(epoch.end_date), undefined, '[]' );
             });
 
             setEpochsList(availableEpochs);
@@ -141,11 +138,15 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
 
     const onSubmitExam = (values) => {
         setSavingExam(true);
+        const dateStart = moment(values.date_start).format('YYYY-MM-DD');
+        const dateEnd = values.date_end ? moment(values.date_end).format('YYYY-MM-DD') : undefined;
+
         const examScheduleObj = {
             calendar_id: parseInt(calendarId, 10),
             course_id: parseInt(scheduleInformation?.courseId),
             course_unit_id: values.courseUnit,
-            date: moment(values.date).format('YYYY-MM-DD'),
+            date_start: dateStart,
+            date_end: (dateEnd ? dateEnd : dateStart),
             duration_minutes: values.durationMinutes || undefined,
             epoch_id: selectedEpoch,
             hour: values.hour || undefined,
@@ -211,7 +212,8 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
         <FinalForm onSubmit={onSubmitExam}
             initialValues={{
                 exam_id:         scheduleInformation?.exam_id ? scheduleInformation?.exam_id           : null,
-                date:            moment(scheduleInformation?.date).format('DD MMMM YYYY'),
+                date_start:      moment(scheduleInformation?.date_start).format('DD MMMM YYYY'),
+                date_end:        moment(scheduleInformation?.date_end).format('DD MMMM YYYY'),
                 durationMinutes: scheduleInformation?.exam_id ? scheduleInformation?.duration_minutes  : null,
                 observations:    scheduleInformation?.exam_id ? scheduleInformation?.observations      : null,
                 hour:            scheduleInformation?.exam_id ? scheduleInformation?.hour              : null,
@@ -240,17 +242,39 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                     </p>
                                 </GridColumn>
                                 <GridColumn>
-                                    <p>
+                                    <div>
                                         <b>Data: </b>
-                                        {changeData ? (
-                                            <DateInput value={moment(scheduleInformation?.date).format('DD MMMM YYYY')}
-                                                onChange={(evt, {value}) => {
-                                                    scheduleInformation.date = moment(value, 'DD-MM-YYYY');
-                                                    setChangeData(false);
-                                                }}
-                                            />
-                                        ) : moment(scheduleInformation?.date).format('DD MMMM YYYY')}
-                                    </p>
+                                        { changeData ?
+                                            (
+                                                <div>
+                                                    <DateInput value={moment(scheduleInformation?.date_start).format('DD MMMM YYYY')}
+                                                               onChange={(evt, {value}) => {
+                                                                   scheduleInformation.date_start = moment(value, 'DD-MM-YYYY');
+                                                                   setChangeData(false);
+                                                               }}
+                                                    />
+                                                    <DateInput value={moment(scheduleInformation?.date_end).format('DD MMMM YYYY')}
+                                                               onChange={(evt, {value}) => {
+                                                                   scheduleInformation.date_end = moment(value, 'DD-MM-YYYY');
+                                                                   setChangeData(false);
+                                                               }}
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div>
+                                                    { moment(scheduleInformation?.date_start).format('DD MMMM YYYY') }
+                                                    { scheduleInformation.date_start != scheduleInformation?.date_end &&
+                                                        (
+                                                            <>
+                                                                { " " + t("ate") + " " }
+                                                                { moment(scheduleInformation?.date_end).format('DD MMMM YYYY') }
+                                                            </>
+                                                        )
+                                                    }
+                                                </div>
+                                            )
+                                        }
+                                    </div>
                                     <p>
                                         <Button color="yellow" icon labelPosition="left" onClick={() => setChangeData(true)}>
                                             <Icon name="calendar alternate"/>

@@ -171,6 +171,24 @@ class ExamController extends Controller
         return false;
     }
 
+    public function destroyByDate(Calendar $calendar, $date)
+    {
+        if($calendar->published){
+            return response()->json("Not allowed to delete exams on Published Calendars!", Response::HTTP_FORBIDDEN);
+        }
+        $exams = $calendar->exams()->where(function ($query) use($date) {
+                $query->whereDate('date_start', '>=', $date)
+                    ->whereDate('date_end', '<=', $date);
+                })->orWhere(function ($query) use($date) {
+                $query->whereDate('date_start', '<=', $date)
+                    ->whereDate('date_end', '>=', $date);
+                })->get();
+        foreach ($exams as $exam) {
+            $this->destroy($exam);
+        }
+        return response()->json("Removed!");
+    }
+
     public function destroy(Exam $exam)
     {
         if($exam->epoch->calendar->published){
@@ -192,8 +210,6 @@ class ExamController extends Controller
         } else {
             $exam->delete();
         }
-
-
         return response()->json("Removed!");
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Generic;
 
 use App\Http\Resources\Generic\CourseUnitResource;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ExamCalendarResource extends JsonResource
@@ -18,9 +19,10 @@ class ExamCalendarResource extends JsonResource
             'method_name'           => ($request->header("lang") == "en" ? $this->method->evaluationType->name_en : $this->method->evaluationType->name_pt),
             'epoch_id'              => $this->epoch_id,
             'method_id'             => $this->method_id,
-            'room'                  => $this->room,
-            'date'                  => $this->date,
+            'date_start'            => Carbon::create($this->date_start)->format('Y-m-d'),
+            'date_end'              => Carbon::create($this->date_end)->format('Y-m-d'),
             'hour'                  => $this->hour,
+            'room'                  => $this->room,
             'duration_minutes'      => $this->duration_minutes,
             'observations'          => $this->observations,
             'comments'              => $this->comments->count()

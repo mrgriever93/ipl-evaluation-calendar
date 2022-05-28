@@ -124,6 +124,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/exams/{exam}',           'show'   );
         Route::post('/exams',                 'store'  );
         Route::patch('/exams/{exam}',         'update' );
+        Route::delete('/exams/date/{calendar}/{date}',   'destroyByDate');
         Route::delete('/exams/{exam}',        'destroy');
     });
 
