@@ -27,7 +27,7 @@ class ExamController extends Controller
 
     public function show(Exam $exam)
     {
-        return new ExamResource($exam::with('courseUnit')->find($exam->id));
+        return new ExamResource($exam::with(['courseUnit', 'comments'])->find($exam->id));
     }
 
     public function store(NewExamRequest $request)

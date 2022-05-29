@@ -26,6 +26,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
     const [isPublished, setIsPublished] = useState(false);
     const [showIgnoredComments, setShowIgnoredComments] = useState(false);
     const [commentText, setCommentText] = useState(undefined);
+    const [commentsList, setCommentsList] = useState([]);
     const [calendarPermissions, setCalendarPermissions] = useState(JSON.parse(localStorage.getItem('calendarPermissions')) || []);
 
     useEffect(() => {
@@ -38,40 +39,11 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
         setIsLoading(true);
         axios.get(`/exams/${examId}`).then((response) => {
                 if (response?.status >= 200) {
-                    response.data.data.comments = [
-                        {
-                            comment: "Lorem ipsum dolor sit amet",
-                            date: "28-02-2022",
-                            ignored: false,
-                            user: {
-                                id: 2,
-                                name: "Miguel",
-                            },
-                        },
-                        {
-                            comment: "Lorem ipsum dolor sit amet",
-                            date: "26-02-2022",
-                            ignored: false,
-                            user: {
-                                id: 3,
-                                name: "Alexandre",
-                            },
-                        },
-                        {
-                            comment: "Lorem ipsum dolor sit amet",
-                            date: "24-02-2022",
-                            ignored: true,
-                            user: {
-                                id: 2,
-                                name: "Miguel",
-                            },
-                        }
-                    ];                        
                     setExamDetailObject(response.data.data);
+                    setCommentsList(response.data.data.comments);
                     setIsLoading(false);
                 }
-            })
-            .catch((error) => {
+            }).catch((error) => {
                 toast(t('Ocorreu um erro no load da avaliação'), errorConfig);
                 toast(error, errorConfig);
             });
@@ -89,6 +61,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
             if (res.status === 201) {
                 setCommentText('');
                 toast(t('calendar.O comentário foi adicionado com sucesso!'), successConfig);
+                setCommentsList(res.data);
             } else {
                 toast(t('calendar.Ocorreu um erro ao adicionar o comentário!'), errorConfig);
             }
@@ -99,14 +72,20 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
         axios.post(`/comment/${commentId}/ignore`).then((res) => {
             if (res.status === 200) {
                 toast(t('calendar.Comentário ignorado com sucesso!'), successConfig);
+                setCommentsList(res.data);
             } else {
                 toast(t('calendar.Ocorreu um erro ao ignorar o comentário!'), successConfig);
             }
         });
     };
 
+    const closeModal = () => {
+        examId = undefined;
+        onClose();
+    }
+
     return (
-        <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
+        <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={closeModal}>
             <Modal.Header>Detalhes da avaliação</Modal.Header>
             <Modal.Content>
                 <div className='exam-detail-modal'>
@@ -114,45 +93,45 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                         <List divided verticalAlign='middle'>
                             <List.Item>
                                 <List.Content><b>Curso: </b></List.Content>
-                                <List.Content floated='right'>{examDetailObject?.course_unit?.course?.name}</List.Content>                            
+                                <List.Content floated='right'>{examDetailObject?.course_unit?.course?.name}</List.Content>
                             </List.Item>
                             <List.Item>
                                 <List.Content><b>Ramo: </b></List.Content>
-                                <List.Content floated='right'>{examDetailObject?.course_unit?.branch?.name}</List.Content>                            
+                                <List.Content floated='right'>{examDetailObject?.course_unit?.branch?.name}</List.Content>
                             </List.Item>
                             <List.Item>
                                 <List.Content><b>Ano Curricular: </b></List.Content>
-                                <List.Content floated='right'>{ examDetailObject?.course_unit?.curricular_year ? (examDetailObject?.course_unit?.curricular_year + 'º Ano') : '-' }</List.Content>                            
+                                <List.Content floated='right'>{ examDetailObject?.course_unit?.curricular_year ? (examDetailObject?.course_unit?.curricular_year + 'º Ano') : '-' }</List.Content>
                             </List.Item>
                             <List.Item>
                                 <List.Content><b>Unidade Curricular: </b></List.Content>
-                                <List.Content floated='right'>{examDetailObject?.course_unit?.name}</List.Content>                            
+                                <List.Content floated='right'>{examDetailObject?.course_unit?.name}</List.Content>
                             </List.Item>
                             <List.Item>
                                 <List.Content><b>Responsável da UC: </b></List.Content>
-                                <List.Content floated='right'>{examDetailObject?.course_unit?.responsible?.name}</List.Content>                            
+                                <List.Content floated='right'>{examDetailObject?.course_unit?.responsible?.name}</List.Content>
                             </List.Item>
                             <List.Item>
                                 <List.Content><b>Data: </b></List.Content>
-                                <List.Content floated='right'>{moment(examDetailObject?.date).format('DD MMMM, YYYY')}</List.Content>                            
+                                <List.Content floated='right'>{moment(examDetailObject?.date).format('DD MMMM, YYYY')}</List.Content>
                             </List.Item>
                             <List.Item>
                                 <List.Content><b>Hora de ínicio: </b></List.Content>
-                                <List.Content floated='right'>{examDetailObject?.hour}</List.Content>                            
+                                <List.Content floated='right'>{examDetailObject?.hour}</List.Content>
                             </List.Item>
                             {examDetailObject?.duration_minutes && (
                                 <List.Item>
                                     <List.Content><b>Duração: </b></List.Content>
-                                    <List.Content floated='right'>{ (examDetailObject?.duration_minutes + ' ' + t('minutos')) }</List.Content>                            
+                                    <List.Content floated='right'>{ (examDetailObject?.duration_minutes + ' ' + t('minutos')) }</List.Content>
                                 </List.Item>
                             )}
                             <List.Item>
                                 <List.Content><b>Salas de avaliação: </b></List.Content>
-                                <List.Content floated='right'>{examDetailObject?.room || '-'}</List.Content>                            
+                                <List.Content floated='right'>{examDetailObject?.room || '-'}</List.Content>
                             </List.Item>
                             <List.Item>
                                 <List.Content><b>Observações: </b></List.Content>
-                                <List.Content floated='right'>{examDetailObject?.observations || '-'}</List.Content>                            
+                                <List.Content floated='right'>{examDetailObject?.observations || '-'}</List.Content>
                             </List.Item>
                         </List>
                     </div>
@@ -170,13 +149,13 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                                             <Divider clearing />
                                         </ShowComponentIfAuthorized>
                                     )}
-                                    {examDetailObject?.comments?.filter((x) => (showIgnoredComments ? true : !x.ignored))?.map((comment, commentIndex) => (
+                                    {commentsList?.filter((x) => (showIgnoredComments ? true : !x.ignored))?.map((comment, commentIndex) => (
                                         <Comment key={commentIndex}>
-                                            <Comment.Avatar src={`https://avatars.dicebear.com/api/human/${comment.user.id}.svg?w=50&h=50&mood[]=sad&mood[]=happy`}/>
+                                            <Comment.Avatar src={`https://avatars.dicebear.com/api/initials/${comment.user.initials}.svg?w=50&h=50&mood[]=sad&mood[]=happy`}/>
                                             <Comment.Content style={comment.ignored ? {backgroundColor: 'lightgrey'} : {}}>
                                                 <Comment.Author as="a">{comment.user.name}</Comment.Author>
                                                 <Comment.Metadata>
-                                                    <div>{comment.date}</div>
+                                                    <div>{comment.date_label}</div>
                                                 </Comment.Metadata>
                                                 <Comment.Text>
                                                     {comment.comment}
@@ -196,6 +175,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                                             </Comment.Content>
                                         </Comment>
                                     ))}
+                                    { commentsList?.length == 0 && (<div>No comments</div>)}
                                 </ShowComponentIfAuthorized>
                             </Comment.Group>
                         </ShowComponentIfAuthorized>

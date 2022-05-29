@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Http\Resources\Generic\CourseUnitExamResource;
+use App\Http\Resources\Generic\ExamCommentResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ExamResource extends JsonResource
@@ -21,7 +22,7 @@ class ExamResource extends JsonResource
             'date_end'          => $this->date_end,
             'hour'              => $this->hour,
             'duration_minutes'  => $this->duration_minutes,
-            'observations'      => $this->observations,
+            'observations'      => ($request->header("lang") == "en" ? $this->observations_en : $this->observations_pt),
             'comments'          => ExamCommentResource::collection($this->whenLoaded('comments')),
         ];
     }
