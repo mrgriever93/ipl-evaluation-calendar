@@ -11,9 +11,15 @@ class CourseUnitGroup extends Model
     use HasFactory, Filterable;
 
     protected $fillable = [
+        "academic_year_id",
         "description_pt",
         "description_en"
     ];
+
+    public function academicYears()
+    {
+        return $this->belongsToMany(AcademicYear::class);
+    }
 
     public function courseUnits()
     {

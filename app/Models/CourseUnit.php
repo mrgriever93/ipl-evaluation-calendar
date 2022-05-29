@@ -78,9 +78,7 @@ class CourseUnit extends Model
     }
 
     public function scopeOfAcademicYear($query, $academicYearId) {
-        return $query->whereHas('academicYears', function (Builder $q) use($academicYearId) {
-            $q->where('academic_year_id', $academicYearId);
-        });
+        return $query->where('academic_year_id', $academicYearId);
     }
 
     public function school() {

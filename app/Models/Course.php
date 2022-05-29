@@ -46,8 +46,6 @@ class Course extends Model
     }
 
     public function scopeOfAcademicYear($query, $academicYear) {
-        return $query->whereHas('academicYears', function (Builder $q) use($academicYear) {
-            return $q->where('academic_year_id', AcademicYear::findOrFail($academicYear)->id);
-        });
+        return $query->where('academic_year_id', AcademicYear::findOrFail($academicYear)->id);
     }
 }

@@ -139,7 +139,10 @@ class ExternalImports
                         }
                         // Retrieve Course by code or create it if it doesn't exist...
                         $course = Course::firstOrCreate(
-                            ["code" => $info[$school->index_course_code]],
+                            [
+                                "code" => $info[$school->index_course_code],
+                                "academic_year_id" => $academicYear->id
+                            ],
                             [
                                 "school_id" => $school->id,
                                 "initials" => $gen_initials,
@@ -164,7 +167,8 @@ class ExternalImports
                         $newestCourseUnit = CourseUnit::firstOrCreate(
                             [
                                 "code" => $info[$school->index_course_unit_code],
-                                "semester_id" => $semester_id
+                                "semester_id" => $semester_id,
+                                "academic_year_id" => $academicYear->id
                             ],
                             [
                                 "course_id" => $course->id,

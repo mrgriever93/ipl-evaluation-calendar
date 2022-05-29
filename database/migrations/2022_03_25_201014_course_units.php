@@ -19,6 +19,8 @@ return new class extends Migration
             $table->unsignedBigInteger('branch_id')->nullable();
             $table->unsignedBigInteger('responsible_user_id')->nullable();
             $table->unsignedBigInteger('course_unit_group_id')->nullable();
+            $table->unsignedBigInteger('academic_year_id');
+
             $table->string('code');
             $table->string('name_pt');
             $table->string('name_en');
@@ -29,8 +31,9 @@ return new class extends Migration
             $table->foreign('semester_id')->references('id')->on('semesters');
 
             $table->foreign('course_id')->references('id')->on('courses');
-            $table->foreign('branch_id')->references('id')->on('branches')->onDelete('set null');
+            $table->foreign('academic_year_id')->references('id')->on('academic_years');
             $table->foreign('responsible_user_id')->references('id')->on('users');
+            $table->foreign('branch_id')->references('id')->on('branches')->onDelete('set null');
             $table->foreign('course_unit_group_id')->references('id')->on('course_unit_groups')->onDelete('set null');
 
             $table->timestamp('created_at')->useCurrent();
