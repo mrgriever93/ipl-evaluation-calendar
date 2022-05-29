@@ -478,7 +478,7 @@ const Calendar = () => {
      */
     return (
         <Container>
-            <InfosAndActions></InfosAndActions>
+            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo}></InfosAndActions>
             <AnimatePresence>
                 {isLoading && (
                     <PageLoader
