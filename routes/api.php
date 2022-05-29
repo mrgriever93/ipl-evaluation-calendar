@@ -130,8 +130,10 @@ Route::middleware('auth:api')->group(function () {
 
     Route::controller(ExamCommentController::class)->group(function () {
         Route::post('/comment',                 'store' );
-        Route::post('/comment/{comment}/ignore','ignore');
+        Route::post('/comment/{comment}/hide',  'hideComment');
+        Route::post('/comment/{comment}/show',  'showHiddenComment');
         Route::patch('/comment/{examComment}',  'update');
+        Route::delete('/comment/{examComment}',  'delete');
     });
 
     Route::controller(AcademicYearController::class)->group(function () {
