@@ -5,7 +5,7 @@ import React, {useEffect, useState} from 'react';
 // import {useParams, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 // import {Field, Form as FinalForm} from 'react-final-form';
-import { Button, Form, Header, Icon, List, Modal, Comment } from 'semantic-ui-react';
+import { Button, Form, Header, Icon, List, Modal, Comment, Divider } from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 // import Swal from 'sweetalert2';
 // import withReactContent from 'sweetalert2-react-content';
@@ -38,6 +38,35 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
         setIsLoading(true);
         axios.get(`/exams/${examId}`).then((response) => {
                 if (response?.status >= 200) {
+                    response.data.data.comments = [
+                        {
+                            comment: "Lorem ipsum dolor sit amet",
+                            date: "28-02-2022",
+                            ignored: false,
+                            user: {
+                                id: 2,
+                                name: "Miguel",
+                            },
+                        },
+                        {
+                            comment: "Lorem ipsum dolor sit amet",
+                            date: "26-02-2022",
+                            ignored: false,
+                            user: {
+                                id: 3,
+                                name: "Alexandre",
+                            },
+                        },
+                        {
+                            comment: "Lorem ipsum dolor sit amet",
+                            date: "24-02-2022",
+                            ignored: true,
+                            user: {
+                                id: 2,
+                                name: "Miguel",
+                            },
+                        }
+                    ];                        
                     setExamDetailObject(response.data.data);
                     setIsLoading(false);
                 }
@@ -53,12 +82,12 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
     }, [examDetailObject]);
 
     const addComment = (examId) => {
-        // toast('Feature não foi implementada', errorConfig);
         axios.post('/comment/', {
             exam_id: examId,
             comment: commentText,
         }).then((res) => {
             if (res.status === 201) {
+                setCommentText('');
                 toast(t('calendar.O comentário foi adicionado com sucesso!'), successConfig);
             } else {
                 toast(t('calendar.Ocorreu um erro ao adicionar o comentário!'), errorConfig);
@@ -67,14 +96,13 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
     };
 
     const ignoreComment = (commentId) => {
-        toast('Feature não foi implementada', errorConfig);
-        // axios.post(`/comment/${commentId}/ignore`).then((res) => {
-        //     if (res.status === 200) {
-        //         toast(t('calendar.Comentário ignorado com sucesso!'), successConfig);
-        //     } else {
-        //         toast(t('calendar.Ocorreu um erro ao ignorar o comentário!'), successConfig);
-        //     }
-        // });
+        axios.post(`/comment/${commentId}/ignore`).then((res) => {
+            if (res.status === 200) {
+                toast(t('calendar.Comentário ignorado com sucesso!'), successConfig);
+            } else {
+                toast(t('calendar.Ocorreu um erro ao ignorar o comentário!'), successConfig);
+            }
+        });
     };
 
     return (
@@ -133,6 +161,15 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                             <Comment.Group>
                                 <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS]}>
                                     <Header as="h3" dividing>Comentários</Header>
+                                    {!isPublished && (
+                                        <ShowComponentIfAuthorized permission={[SCOPES.ADD_COMMENTS]}>
+                                            <Form reply className='focus--expander'>
+                                                <Form.TextArea rows={2} placeholder={ t('Adiciona aqui o teu comentário') } value={commentText} onChange={(ev, {value}) => setCommentText(value)}/>
+                                                <Button style={{marginBottom: 'var(--space-base)' }} onClick={() => addComment(examDetailObject?.id)} content="Adicionar comentário" labelPosition="right" icon="send" floated='right' primary />
+                                            </Form>
+                                            <Divider clearing />
+                                        </ShowComponentIfAuthorized>
+                                    )}
                                     {examDetailObject?.comments?.filter((x) => (showIgnoredComments ? true : !x.ignored))?.map((comment, commentIndex) => (
                                         <Comment key={commentIndex}>
                                             <Comment.Avatar src={`https://avatars.dicebear.com/api/human/${comment.user.id}.svg?w=50&h=50&mood[]=sad&mood[]=happy`}/>
@@ -160,14 +197,6 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                                         </Comment>
                                     ))}
                                 </ShowComponentIfAuthorized>
-                                {!isPublished && (
-                                    <ShowComponentIfAuthorized permission={[SCOPES.ADD_COMMENTS]}>
-                                        <Form reply>
-                                            <Form.TextArea onChange={(ev, {value}) => setCommentText(value)}/>
-                                            <Button onClick={() => addComment(examDetailObject?.id)} content="Adicionar comentário" labelPosition="left" icon="edit" primary/>
-                                        </Form>
-                                    </ShowComponentIfAuthorized>
-                                )}
                             </Comment.Group>
                         </ShowComponentIfAuthorized>
                     </div>

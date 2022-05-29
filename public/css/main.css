@@ -661,6 +661,16 @@ div.inline{
     overflow-y: auto;
     padding: 1.5rem;
 }
+
+.exam-detail-content  .ui.comments > .reply.form textarea {
+    height: 60px;
+    transition: height 0.3s ease-in-out ;
+}
+
+.exam-detail-content  .ui.comments > .reply.form.focus--expander textarea:focus {
+    height: 160px;
+}
+
 .table-week > table {
     user-select: none;
 }
