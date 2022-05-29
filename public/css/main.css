@@ -662,6 +662,29 @@ div.inline{
     padding: 1.5rem;
 }
 
+.exam-detail-content-header {
+    align-items: flex-end;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    margin-top: -8px;
+    margin-bottom: var(--space-base);
+    padding-bottom: var(--space-xs);
+}
+
+.exam-detail-content-header-title {
+    flex: 4 2;
+}
+
+.exam-detail-content-header-actions {
+    align-items: center;
+    display: flex;
+    flex: 3 1;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+}
+
 .exam-detail-content  .ui.comments > .reply.form textarea {
     height: 60px;
     transition: height 0.3s ease-in-out ;
