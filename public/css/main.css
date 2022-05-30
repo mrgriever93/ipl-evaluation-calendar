@@ -694,6 +694,25 @@ div.inline{
     height: 160px;
 }
 
+.exam-detail-content .ui.comments .comment {
+    background: #f3f5ff;
+    border-radius: 4px;
+    padding: var(--space-s);
+}
+
+.exam-detail-content .comment-ignored-icon {
+    color: #f6bebe;
+    font-size: 34px;
+    position: absolute;
+    right: var(--space-base);
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.exam-detail-content .ui.comments .comment.comment--ignored {
+    background: #ffe5e5;
+}
+
 .table-week > table {
     user-select: none;
 }

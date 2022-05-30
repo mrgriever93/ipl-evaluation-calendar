@@ -49,11 +49,16 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
             });
     };
 
-    useEffect(() => {
-        console.log(examDetailObject);
-    }, [examDetailObject]);
+    // useEffect(() => {
+    //     console.log(examDetailObject);
+    // }, [examDetailObject]);
 
     const addComment = (examId) => {
+        if(!commentText || commentText.trim().length == 0) {
+            toast(t('O comentário não pode estar vazio!'), errorConfig);
+            return false;
+        }
+
         axios.post('/comment/', {
             exam_id: examId,
             comment: commentText,
@@ -108,51 +113,51 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
 
     return (
         <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={closeModal}>
-            <Modal.Header>Detalhes da avaliação</Modal.Header>
+            <Modal.Header>{ t('Detalhes da avaliação')}</Modal.Header>
             <Modal.Content>
                 <div className='exam-detail-modal'>
                     <div className='exam-detail-info'>
                         <List divided verticalAlign='middle'>
                             <List.Item>
-                                <List.Content><b>Curso: </b></List.Content>
+                                <List.Content><b>{ t('Curso')}: </b></List.Content>
                                 <List.Content floated='right'>{examDetailObject?.course_unit?.course?.name}</List.Content>
                             </List.Item>
                             <List.Item>
-                                <List.Content><b>Ramo: </b></List.Content>
+                                <List.Content><b>{ t('Ramo')}: </b></List.Content>
                                 <List.Content floated='right'>{examDetailObject?.course_unit?.branch?.name}</List.Content>
                             </List.Item>
                             <List.Item>
-                                <List.Content><b>Ano Curricular: </b></List.Content>
+                                <List.Content><b>{ t('Ano Curricular')}: </b></List.Content>
                                 <List.Content floated='right'>{ examDetailObject?.course_unit?.curricular_year ? (examDetailObject?.course_unit?.curricular_year + 'º Ano') : '-' }</List.Content>
                             </List.Item>
                             <List.Item>
-                                <List.Content><b>Unidade Curricular: </b></List.Content>
+                                <List.Content><b>{ t('Unidade Curricular')}: </b></List.Content>
                                 <List.Content floated='right'>{examDetailObject?.course_unit?.name}</List.Content>
                             </List.Item>
                             <List.Item>
-                                <List.Content><b>Responsável da UC: </b></List.Content>
+                                <List.Content><b>{ t('Responsável da UC')}: </b></List.Content>
                                 <List.Content floated='right'>{examDetailObject?.course_unit?.responsible?.name}</List.Content>
                             </List.Item>
                             <List.Item>
-                                <List.Content><b>Data: </b></List.Content>
+                                <List.Content><b>{ t('Data')}: </b></List.Content>
                                 <List.Content floated='right'>{moment(examDetailObject?.date).format('DD MMMM, YYYY')}</List.Content>
                             </List.Item>
                             <List.Item>
-                                <List.Content><b>Hora de ínicio: </b></List.Content>
+                                <List.Content><b>{ t('Hora de ínicio')}: </b></List.Content>
                                 <List.Content floated='right'>{examDetailObject?.hour}</List.Content>
                             </List.Item>
                             {examDetailObject?.duration_minutes && (
                                 <List.Item>
-                                    <List.Content><b>Duração: </b></List.Content>
+                                    <List.Content><b>{ t('Duração')}: </b></List.Content>
                                     <List.Content floated='right'>{ (examDetailObject?.duration_minutes + ' ' + t('minutos')) }</List.Content>
                                 </List.Item>
                             )}
                             <List.Item>
-                                <List.Content><b>Salas de avaliação: </b></List.Content>
+                                <List.Content><b>{ t('Salas de avaliação')}: </b></List.Content>
                                 <List.Content floated='right'>{examDetailObject?.room || '-'}</List.Content>
                             </List.Item>
                             <List.Item>
-                                <List.Content><b>Observações: </b></List.Content>
+                                <List.Content><b>{ t('Observações')}: </b></List.Content>
                                 <List.Content floated='right'>{examDetailObject?.observations || '-'}</List.Content>
                             </List.Item>
                         </List>
@@ -163,7 +168,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                                 <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS]}>
                                     <div className='exam-detail-content-header'>
                                         <div className='exam-detail-content-header-title'>
-                                            <Header as="h3">Comentários</Header>
+                                            <Header as="h3">{ t('Comentários')}</Header>
                                         </div>
                                         <div className='exam-detail-content-header-actions'>
                                             {!isPublished && (
@@ -197,9 +202,9 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                                                 </Comment.Metadata>
                                                 <Comment.Text>
                                                     {comment.comment}
-                                                    {comment.ignored ? (
-                                                        <div style={{position: 'absolute', top: '5px', right: '5px', userSelect: 'none'}}>
-                                                            Comentário ignorado
+                                                    { !!comment.ignored ? (
+                                                        <div className='comment-ignored-icon'>
+                                                            <Icon name="eye slash outline" title={t('Comentário escondido')} />
                                                         </div>
                                                     ) : ''}
                                                 </Comment.Text>
@@ -214,7 +219,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                                                             { t('Mostrar') }
                                                         </Comment.Action>
                                                     )}
-                                                    { moment(new Date()).diff(moment(comment.date), 'minutes') <= 15 && (
+                                                    { moment(new Date()).diff(moment(comment.date), 'minutes') <= 15 && comment.user.id == localStorage.getItem('userId') && (
                                                         <>
                                                             <Comment.Action onClick={() => deleteCommentHandler(comment.id)} style={{color: 'red'}}>
                                                                 { t('Remover') }
@@ -251,14 +256,10 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                 <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS]}>
                     <Button icon floated='left' color={!showIgnoredComments ? 'green' : 'red'} labelPosition="left" onClick={() => setShowIgnoredComments((cur) => !cur)}>
                         <Icon name={'eye' + (showIgnoredComments ? ' slash' : '') }/>
-                        {!showIgnoredComments ? 'Mostrar' : 'Esconder'}
-                        {' '}
-                        ignorados
+                        {!showIgnoredComments ? t('Mostrar escondidos') : t('Ocultar escondidos') }
                     </Button>
                 </ShowComponentIfAuthorized>
-                <Button onClick={onClose}>
-                    Fechar
-                </Button>
+                <Button onClick={onClose}>{ t('Fechar') }</Button>
             </Modal.Actions>
         </Modal>
     );
