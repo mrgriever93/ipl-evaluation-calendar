@@ -18,6 +18,7 @@ use App\Models\Traducao;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 
 class LoginController extends Controller
@@ -37,6 +38,7 @@ class LoginController extends Controller
 
     public function login(LoginRequest $request)
     {
+        Log::channel('users_login')->info('Login requested: [ Email: ' . $request->email . ' ]');
         if (Auth::attempt($this->credentials($request))) {
             $user = Auth::user();
             $user->refresh();
