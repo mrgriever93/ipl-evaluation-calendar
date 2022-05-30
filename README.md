@@ -1,5 +1,8 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
+<!--suppress HtmlDeprecatedAttribute -->
+<p align="center"><a href="https://laravel.com" target="_blank"><img alt="logo" src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+
+<!--suppress HtmlDeprecatedAttribute -->
 <p align="center">
 <a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
@@ -230,3 +233,266 @@ https://github.com/rap2hpoutre/laravel-log-viewer
       - [ ] Direção        
     - [ ] Publicar calendário
       - [ ] Se for GOP, CC ou Direção
+
+    
+## Roles/Permissions test on Front End
+
+| **Roles**<br/>------<br/>**Pages** | Super Admin                     | Admin | GOP | CCP | Coordenador de Curso | Responsável de UC | RCP | Conselho Pedagócio | Direção | Docente | Estudante |
+|------------------------------------|---------------------------------|-------|-----|-----|----------------------|-------------------|-----|--------------------|---------|---------|-----------|
+| _**Calendario**_                   |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Apagar                           |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - comentar                         | ?                               |       |     |     |                      |                   |     |                    |         |         |
+| - Adicionar comentario             | ?                               |       |     |     |                      |                   |     |                    |         |         |           |
+| - ver comentario                   | ? mesma permissao? e o ocultar? |       |     |     |                      |                   |     |                    |         |         |           |
+| - ver historico                    |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - ver fase atual                   |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - publicar	                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - criar copia	                     |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Adicionar interrupcoes          |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar exame                 |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Editar exame                    |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| <br/>                              ||||||||||||
+| _**Fases do Calendario**_          |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - criar Fases                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - editar Fases                     |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Apagar Fases                     |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| <br/>                              ||||||||||||
+| _**Curso**_                        |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        | ????                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |
+| - Adicionar Ramos                  | ??????                          |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Apagar                           |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                              ||||||||||||
+| _**Unidade Curricular**_           |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Adicionar Metodos                |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Adicionar Professores            | (mesma que as permissoes?)      |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Apagar                           |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+||| <br/>                              ||||||||||
+| _**Agrupar Unidade Curricular**_   |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Adicionar Metodos                | ???????                         |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Apagar                           |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                              ||||||||||||
+| _**Ano Letivo**_                   |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Apagar                           |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                              ||||||||||||
+| _**Tipos De Avaliacao**_           |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Apagar                           |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                              ||||||||||||
+| _**Tipos de Interrupcoes**_        |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Apagar                           |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                              ||||||||||||
+| _**Escolas**_                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Apagar                           | ?????                           |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                              ||||||||||||
+| _**Permissoes**_                   |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Gerir Permissoes                 |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Definir Coordenador Curso        |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Definir RUC*                     |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Definir Professores UCs          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                              ||||||||||||
+| _**Grupo de Utilizador**_          |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Apagar                           |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                              ||||||||||||
+| _**Utilizadores**_                 |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Bloquear                         |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+
+
+CCP = Comissao Cientfico-Pedagocica
+RCP = Responsavel Conselho Pedagócio
+RUC = Responsavel Unidade Curricular
+
+## Permissoes do Calendario
+| Roles<br/>Fases                          | Super Admin | Admin | GOP | CCP | Coordenador de Curso | Responsável de UC | RCP | Conselho Pedagócio | Direção | Docente | Estudante |
+|------------------------------------------|-------------|-------|-----|-----|----------------------|-------------------|-----|--------------------|---------|---------|-----------|
+| _**Criado**_                             |             |       |     |     |                      |                   |     |                    |         |         |           |
+| - _Calendario_                           |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar Comentarios                 |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Mudar Fase                            |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar avaliacoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar avaliacoes                     |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover avaliacoes                    |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar interrupcoes                |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar interrupcoes                   |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover interrupcoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                                    ||||||||||||
+| _**Em edição (GOP)**_                    |             |       |     |     |                      |                   |     |                    |         |         |           |
+| - _Calendario_                           |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar Comentarios                 |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Mudar Fase                            |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar avaliacoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar avaliacoes                     |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover avaliacoes                    |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar interrupcoes                |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar interrupcoes                   |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover interrupcoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                                    ||||||||||||
+| _**Em edição (Coordenador de Curso)**_   |             |       |     |     |                      |                   |     |                    |         |         |           |
+| - _Calendario_                           |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar Comentarios                 |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Mudar Fase                            |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar avaliacoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar avaliacoes                     |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover avaliacoes                    |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar interrupcoes                |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar interrupcoes                   |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover interrupcoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                                    ||||||||||||
+| _**Em edição (Responsável UC)**_         |             |       |     |     |                      |                   |     |                    |         |         |           |
+| - _Calendario_                           |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar Comentarios                 |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Mudar Fase                            |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar avaliacoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar avaliacoes                     |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover avaliacoes                    |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar interrupcoes                |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar interrupcoes                   |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover interrupcoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                                    ||||||||||||
+| _**Em avaliação (CCP)**_                 |             |       |     |     |                      |                   |     |                    |         |         |           |
+| - _Calendario_                           |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar Comentarios                 |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Mudar Fase                            |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar avaliacoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar avaliacoes                     |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover avaliacoes                    |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar interrupcoes                |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar interrupcoes                   |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover interrupcoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                                    ||||||||||||
+| _**Em avaliação (Conselho Pedagógico)**_ |             |       |     |     |                      |                   |     |                    |         |         |           |
+| - _Calendario_                           |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar Comentarios                 |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Mudar Fase                            |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar avaliacoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar avaliacoes                     |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover avaliacoes                    |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar interrupcoes                |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar interrupcoes                   |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover interrupcoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                                    ||||||||||||
+| _**Em avaliação (GOP)**_                 |             |       |     |     |                      |                   |     |                    |         |         |           |
+| - _Calendario_                           |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar Comentarios                 |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Mudar Fase                            |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar avaliacoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar avaliacoes                     |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover avaliacoes                    |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar interrupcoes                |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar interrupcoes                   |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover interrupcoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                                    ||||||||||||
+| _**Em avaliação (Direção)**_             |             |       |     |     |                      |                   |     |                    |         |         |           |
+| - _Calendario_                           |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar Comentarios                 |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Mudar Fase                            |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar avaliacoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar avaliacoes                     |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover avaliacoes                    |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar interrupcoes                |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar interrupcoes                   |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover interrupcoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                                    ||||||||||||
+| _**Em avaliação (Alunos)**_              |             |       |     |     |                      |                   |     |                    |         |         |           |
+| - _Calendario_                           |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar Comentarios                 |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Mudar Fase                            |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar avaliacoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar avaliacoes                     |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover avaliacoes                    |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar interrupcoes                |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar interrupcoes                   |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover interrupcoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                                    ||||||||||||
+| _**Aprovado**_                           |             |       |     |     |                      |                   |     |                    |         |         |           |
+| - _Calendario_                           |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar Comentarios                 |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Mudar Fase                            |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar avaliacoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar avaliacoes                     |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover avaliacoes                    |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar interrupcoes                |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar interrupcoes                   |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover interrupcoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                                    ||||||||||||
+| _**Publicado**_                          |             |       |     |     |                      |                   |     |                    |         |         |           |
+| - _Calendario_                           |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar Comentarios                 |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Mudar Fase                            |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar avaliacoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar avaliacoes                     |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover avaliacoes                    |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar interrupcoes                |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar interrupcoes                   |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover interrupcoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| <br/>                                    ||||||||||||
+| _**System**_                             |             |       |     |     |                      |                   |     |                    |         |         |           |
+| - _Calendario_                           |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar Comentarios                 |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Mudar Fase                            |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar avaliacoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar avaliacoes                     |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover avaliacoes                    |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - _Tipos Avaliacao_                      |             |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar interrupcoes                |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Editar interrupcoes                   |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> remover interrupcoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
