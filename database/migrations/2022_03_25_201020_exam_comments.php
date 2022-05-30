@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('comment');
             $table->string('comment_language');
             $table->boolean('ignored')->default(false);
-            $table->foreign('exam_id')->references('id')->on('exams');
+            $table->foreign('exam_id')->references('id')->on('exams')->onDelete("cascade");
             $table->foreign('user_id')->references('id')->on('users');
 
             $table->timestamp('created_at')->useCurrent();

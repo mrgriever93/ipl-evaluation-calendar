@@ -25,4 +25,8 @@ class CourseUnitGroup extends Model
     {
         return $this->hasMany(CourseUnit::class);
     }
+
+    public function scopeOfAcademicYear($query, $academicYearId) {
+        return $query->where('academic_year_id', $academicYearId);
+    }
 }

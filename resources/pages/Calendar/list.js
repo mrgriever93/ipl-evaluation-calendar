@@ -15,12 +15,6 @@ import EmptyTable from "../../components/EmptyTable";
 import PaginationDetail from "../../components/Pagination";
 import Semesters from "../../components/Filters/Semesters";
 
-const Wrapper = styled.div`
-    .header {
-        display: inline;
-    }
-`;
-
 const MessageFading = styled(Message)`
     @keyframes flickerAnimation {
         0% {
@@ -130,13 +124,14 @@ const CalendarList = () => {
         {name: 'Curso',         align: 'center', style: {width: '40%' } },
         {
             name: 'Fase',
+            align: 'center',
             restrictedToCreators: true,
             permission: SCOPES.VIEW_ACTUAL_PHASE,
             style: {width: '10%' }
         },
         {
             name: 'Estado',
-            textAlign: 'center',
+            align: 'center',
             restrictedToCreators: true,
             permission: SCOPES.VIEW_CALENDAR_INFO,
             style: {width: '10%' }
@@ -156,7 +151,7 @@ const CalendarList = () => {
             )}
             <Card fluid>
                 <Card.Content>
-                    <Wrapper>
+                    <div>
                         <Header as="span">Calendários</Header>
                         <ShowComponentIfAuthorized permission={[SCOPES.CREATE_CALENDAR]} renderIfNotAllowed={() => (
                             <Button.Group floated={"right"}>
@@ -174,7 +169,7 @@ const CalendarList = () => {
                                 </Button>
                             </Link>
                         </ShowComponentIfAuthorized>
-                    </Wrapper>
+                    </div>
                 </Card.Content>
                 <Card.Content>
                     <Form>
@@ -197,17 +192,17 @@ const CalendarList = () => {
                             <Table celled fixed>
                                 <Table.Header>
                                     <Table.Row key={'table_header'}>
-                                        {columns.map(({name, textAlign, restrictedToCreators, permission, style}, index) => (
+                                        {columns.map(({name, align, restrictedToCreators, permission, style}, index) => (
                                             restrictedToCreators ?
                                                 (
                                                     <ShowComponentIfAuthorized permission={[permission]} key={'auth_table_header_cell_' + index}>
-                                                        <Table.HeaderCell textAlign={textAlign} key={'table_header_cell_' + index} style={style}>
+                                                        <Table.HeaderCell textAlign={align} key={'table_header_cell_' + index} style={style}>
                                                             {name}
                                                         </Table.HeaderCell>
                                                     </ShowComponentIfAuthorized>
                                                 ) :
                                                 (
-                                                    <Table.HeaderCell textAlign={textAlign} key={'table_header_cell_' + index} style={style}>
+                                                    <Table.HeaderCell textAlign={align} key={'table_header_cell_' + index} style={style}>
                                                         {name}
                                                     </Table.HeaderCell>
                                                 )
@@ -218,7 +213,7 @@ const CalendarList = () => {
                                 <Table.Body>
                                     {calendars.map(({id, display_id, course, temporary, phase, published}) => (
                                             <Table.Row key={id}>
-                                                <Table.Cell>{display_id}</Table.Cell>
+                                                <Table.Cell textAlign="center">{display_id}</Table.Cell>
                                                 <Table.Cell>{course}</Table.Cell>
                                                 <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
                                                     <Table.Cell>
@@ -238,7 +233,7 @@ const CalendarList = () => {
                                                         </ShowComponentIfAuthorized>
                                                     )}
                                                 </Table.Cell>
-                                                <Table.Cell>
+                                                <Table.Cell textAlign="center">
                                                     <Link to={`/calendario/${id}`}>
                                                         <Button color="green" icon>
                                                             <Icon name="eye"/>
