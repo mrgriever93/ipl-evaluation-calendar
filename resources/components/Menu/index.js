@@ -41,6 +41,7 @@ const HeaderMenu = () => {
         axios.post('/logout').then(() => {
             localStorage.removeItem('language');
             localStorage.removeItem('authToken');
+            localStorage.removeItem('userId');
             localStorage.removeItem('username');
             localStorage.removeItem('scopes');
             localStorage.removeItem('calendarPermissions');

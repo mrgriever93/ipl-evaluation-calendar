@@ -30,8 +30,16 @@ class ExamCommentController extends Controller
         return response()->json(ExamCommentResource::collection($comments), Response::HTTP_CREATED);
     }
 
-    public function ignore(ExamComment $comment) {
+    public function hideComment(ExamComment $comment) {
         $comment->ignored = true;
+        $comment->save();
+
+        $comments = ExamComment::where('exam_id', $comment->exam_id)->get();
+        return response()->json(ExamCommentResource::collection($comments), Response::HTTP_OK);
+    }
+
+    public function showHiddenComment(ExamComment $comment) {
+        $comment->ignored = false;
         $comment->save();
 
         $comments = ExamComment::where('exam_id', $comment->exam_id)->get();
@@ -47,7 +55,9 @@ class ExamCommentController extends Controller
 
 
     public function delete(ExamComment $comment) {
-
+        if(Auth::id() != $comment->user_id){
+            return response()->json("Comentario de utilizador diferente", Response::HTTP_FORBIDDEN);
+        }
         if(Carbon::now()->diffInMinutes($comment->created_at) >= 15 ){
             return response()->json("Passados 15 minutos da criacao do comentario", Response::HTTP_FORBIDDEN);
         }

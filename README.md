@@ -127,7 +127,7 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 
 
 - [ ] Melhorar logs dos cursos, na alteração de métodos
-- [ ] Rever sync/refresh ano letivo
+- [x] Rever sync/refresh ano letivo
 - [ ] Rever falta de warning das configs da escola, quando as opções não estão todas preenchidas
 
 
