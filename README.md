@@ -114,7 +114,7 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 
 - [ ] Criar calendario
   - [x] Criação de calendário com bug quando adicionamos uma interrupção ao calendário, e depois apagamos, ela não é efetivamente removida do array e vai no post de criação, gerando erro porque vai com uma data inválida.
-  - [ ] Loading feriados
+  - [x] Loading feriados
   - [ ] Otimizar load de permissões
 
 
@@ -122,13 +122,12 @@ https://github.com/rap2hpoutre/laravel-log-viewer
     - [ ] Traduções
     - [ ] Métodos
 
+
 - [ ] Detalhe Calendario
   - [ ] Otimizar load de permissões e outros pedidos
 
 
 - [ ] Melhorar logs dos cursos, na alteração de métodos
-- [x] Rever sync/refresh ano letivo
-- [ ] Rever falta de warning das configs da escola, quando as opções não estão todas preenchidas
 
 
 - [ ] Adicionar titulo as paginas
@@ -153,6 +152,10 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 --- 
  - 2022-05-16
  - [x] Nos cursos, UC's que não estão em tronco comum não aparecem (falta confirmar se foram carregadas na BD)
+
+-- 2022-05-29
+- [x] Rever sync/refresh ano letivo
+- [x] Rever falta de warning das configs da escola, quando as opções não estão todas preenchidas
 
 ### TRABALHO FUTURO:
 - [ ] Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos);
@@ -196,19 +199,19 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 
 ### Feedback reunião 24/05
 - [x] Marcar avaliações:
-  - [ ] Verificar se os métodos estão preenchidos
-  - [ ] Se não estiverem apresentar mensagem de erro e link para as Unidades Curriculares do curso
+  - [x] Verificar se os métodos estão preenchidos
+  - [x] Se não estiverem apresentar mensagem de erro e link para as Unidades Curriculares do curso
   - [X] Adicionar icone (check) nos métodos que já estão marcados
-  - [ ] Adicionar start e end date para avaliações (que se prolongam durante a semana, por exemplo)
-  - [ ] Retirar outras validações que limitem a plataforma
+  - [x] Adicionar start e end date para avaliações (que se prolongam durante a semana, por exemplo)
+  - [x] Retirar outras validações que limitem a plataforma
 - [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UC's dos seus cursos (ex: EI PL e D)
 
 ##### Extra stuff 
 - [ ] Marcar avaliações:
-  - [ ] Ter em conta o ano letivo selecionado
-  - [ ] Adicionar comentários
-  - [ ] Ignorar comentários
-  - [ ] Eliminar comentários (durante os 1ºs 10/15min ?!)
+  - [x] Ter em conta o ano letivo selecionado
+  - [x] Adicionar comentários
+  - [x] Ignorar comentários
+  - [x] Eliminar comentários (durante os 1ºs 10/15min ?!)
   - [ ] Validar permissoes dos vários popups
   - [ ] Melhorar loading popups ?!
   - [ ] Rever traduções
