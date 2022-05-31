@@ -73,7 +73,7 @@ const GroupPermissions = () => {
                                             {section.permissions.map((permission, indexP) => (
                                                 <div className='margin-top-base' key={indexP}>
                                                     <Checkbox toggle label={permission.description} defaultChecked={permission.isActive}
-                                                              onChange={ (e, data) => {updateGroupPermissions(data.checked, permission.permission_id, 12); permission.isActive = data.checked;}} />
+                                                              onChange={ (e, data) => {updateGroupPermissions(data.checked, permission.permission_id, null); permission.isActive = data.checked;}} />
                                                 </div>
                                             ))}
                                         </div>
