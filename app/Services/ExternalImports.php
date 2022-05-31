@@ -141,7 +141,7 @@ class ExternalImports
                         $course = Course::firstOrCreate(
                             [
                                 "code" => $info[$school->index_course_code],
-                                "academic_year_id" => $academicYear->id
+                                "academic_year_id" => $academicYearId
                             ],
                             [
                                 "school_id" => $school->id,
@@ -152,7 +152,7 @@ class ExternalImports
                             ]
                         );
                         // https://laravel.com/docs/9.x/eloquent-relationships#syncing-associations
-                        $course->academicYears()->syncWithoutDetaching($academicYearId);
+                        //$course->academicYears()->syncWithoutDetaching($academicYearId); // -> Old logic, it had a pivot table [academic_year_course]
                         // Retrieve Branch by course_id or create it if it doesn't exist...
                         $branch = Branch::firstOrCreate(
                             ["course_id" => $course->id],
@@ -179,7 +179,7 @@ class ExternalImports
                             ]
                         );
                         // https://laravel.com/docs/9.x/eloquent-relationships#syncing-associations
-                        $newestCourseUnit->academicYears()->syncWithoutDetaching($academicYearId);
+                        //$newestCourseUnit->academicYears()->syncWithoutDetaching($academicYearId); // -> Old logic, it had a pivot table [academic_year_course_unit]
                         // split teaches from request
                         // 2100;Matemáticas Gerais;210001;Matemática A ;Ana Cristina Felizardo Henriques(ana.f.henriques),Diogo Pedro Ferreira Nascimento Baptista(diogo.baptista),Fátima Maria Marques da Silva(fatima.silva),José Maria Gouveia Martins(jmmartins);1
                         $teachers = explode(",", $info[$school->index_course_unit_teachers]);

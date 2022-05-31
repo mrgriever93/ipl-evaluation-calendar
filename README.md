@@ -133,6 +133,9 @@ https://github.com/rap2hpoutre/laravel-log-viewer
     - [ ] Métodos
 
 
+- [ ] Lista Calendario
+    - [ ] Filtros so se houver calendarios noutros semestres ou no semestre atual
+
 - [ ] Detalhe Calendario
   - [ ] Otimizar load de permissões e outros pedidos
 

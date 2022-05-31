@@ -16,6 +16,7 @@ class CourseUnit extends Model
     protected $fillable = [
         "course_id",
         "branch_id",
+        "academic_year_id",
         "responsible_user_id",
         "code",
         "name_pt",
