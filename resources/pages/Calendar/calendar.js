@@ -339,6 +339,26 @@ const Calendar = () => {
     let alreadyAddedRowSpan = false;
     let interruptionDays = 0;
 
+    const allowDrop = (ev) => {
+        ev.preventDefault();
+        //console.log("allowDrop");
+        //console.log(ev);
+    }
+
+    const drag = (ev) => {
+        ev.dataTransfer.setData("text", ev.target.id);
+        //console.log("drag");
+        //console.log(ev);
+    }
+
+    const drop = (ev) => {
+        ev.preventDefault();
+        //let data = ev.dataTransfer.getData("text");
+        //ev.target.appendChild(document.getElementById(data));
+        //console.log("drop");
+        //console.log(ev);
+    }
+
     /*
      * Header of week table
      */
@@ -437,7 +457,7 @@ const Calendar = () => {
                 examsComponents = existingExamsAtThisDate.map((exam) => {
                     return (
                         // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
-                        <Button className="btn-exam-details" color="blue" key={exam.id} onClick={() => openExamDetailHandler(year, exam)} >
+                        <Button className="btn-exam-details" color="blue" key={exam.id} onClick={() => openExamDetailHandler(year, exam)} draggable="true" onDragStart={drag} >
                             { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
                                 <div className="btn-action-wrapper">
                                     {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
@@ -456,7 +476,7 @@ const Calendar = () => {
                 });
             }
             return (
-                <Table.Cell key={weekDayIndex} className={ 'calendar-day-' + epoch.code } textAlign="center">
+                <Table.Cell key={weekDayIndex} className={ 'calendar-day-' + epoch.code } textAlign="center" onDrop={drop} onDragOver={allowDrop}>
                     {examsComponents}
                     {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.ADD_EXAMS).length > 0 && (
                         <Button className="btn-schedule-exam" onClick={() => scheduleExamHandler(year, day.date, existingExamsAtThisDate)}>
@@ -494,7 +514,7 @@ const Calendar = () => {
                     <Grid.Row>
                         <Grid.Column width="16">
                             {epochsList.length > 0 && weekData.map(({week, year, days, epoch}, tableIndex) => {
-                                console.log('table week - ' + week);
+                                //console.log('table week - ' + week);
                                 interruptionDays = 0;
                                 alreadyAddedColSpan = false;
                                 return (
