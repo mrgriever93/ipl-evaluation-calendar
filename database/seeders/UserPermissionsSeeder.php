@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\CalendarPhase;
 use App\Models\Group;
 use App\Models\GroupPermission;
 use App\Models\Permission;
@@ -18,19 +19,23 @@ class UserPermissionsSeeder extends Seeder
     public function run()
     {
         $superAdminGroup = Group::where('code', 'super_admin')->first()->id;
-        $permissions = Permission::all();
+        $systemPhaseId = CalendarPhase::where('code', 'system')->first()->id;
+        $permissions = Permission::orderBy('id', 'asc')->get();
 
         foreach ($permissions as $perm) {
-            $newGroupPerm = new GroupPermission();
-            $newGroupPerm->group_id = $superAdminGroup;
-            $newGroupPerm->permission_id = $perm['id'];
-            $newGroupPerm->enabled = true;
-            if($perm['id'] < 45) {
-                $newGroupPerm->phase_id = 10;
+            if($perm->id < 45) {
+                $newGroupPerm = new GroupPermission();
+                $newGroupPerm->group_id = $superAdminGroup;
+                $newGroupPerm->permission_id = $perm['id'];
+                $newGroupPerm->enabled = true;
+                $newGroupPerm->phase_id = $systemPhaseId;
                 $newGroupPerm->save();
-            }
-            else {
+            } else {
                 for($i = 1; $i<11; $i++) {
+                    $newGroupPerm = new GroupPermission();
+                    $newGroupPerm->group_id = $superAdminGroup;
+                    $newGroupPerm->permission_id = $perm['id'];
+                    $newGroupPerm->enabled = true;
                     $newGroupPerm->phase_id = $i;
                     $newGroupPerm->save();
                 }
@@ -40,16 +45,19 @@ class UserPermissionsSeeder extends Seeder
         $adminGroup = Group::where('code', 'admin')->first()->id;
 
         foreach ($permissions as $perm) {
-            $newGroupPerm = new GroupPermission();
-            $newGroupPerm->group_id = $adminGroup;
-            $newGroupPerm->permission_id = $perm['id'];
-            $newGroupPerm->enabled = true;
             if($perm['id'] < 45) {
-                $newGroupPerm->phase_id = 10;
+                $newGroupPerm = new GroupPermission();
+                $newGroupPerm->group_id = $adminGroup;
+                $newGroupPerm->permission_id = $perm['id'];
+                $newGroupPerm->enabled = true;
+                $newGroupPerm->phase_id = $systemPhaseId;
                 $newGroupPerm->save();
-            }
-            else {
+            } else {
                 for($i = 1; $i<11; $i++) {
+                    $newGroupPerm = new GroupPermission();
+                    $newGroupPerm->group_id = $adminGroup;
+                    $newGroupPerm->permission_id = $perm['id'];
+                    $newGroupPerm->enabled = true;
                     $newGroupPerm->phase_id = $i;
                     $newGroupPerm->save();
                 }

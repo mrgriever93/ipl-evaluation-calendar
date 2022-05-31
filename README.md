@@ -113,6 +113,13 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 
 ---
 
+## Changes !!!important
+
+ Qualquer alteracao feita nas permissoes, tem de ser alterada tambem no ficheiro
+ > app/providers/AuthServiceProvider.php
+
+---
+
 ### TODO
 
 - [ ] Criar calendario
@@ -166,8 +173,9 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 - [ ] Users com mais do que um role (validar o que deve ser feito)
 - [ ] Log dos métodos: registar o que foi alterado e quem alterou;
 - [ ] Rever "voltar a lista" para navegar entre paginas de detalhe e listas (ex: curso e detalhe de unidades curriculares)
- 
-
+- [ ] Notificacoes de quando muda de fase ou adicionam  comentarios no calendario
+  - [ ] Notificacoes Web
+  - [ ] Notificacoes Email
 ### TODO Miguel
 - [ ] Limpeza "Requests Folder"
 
@@ -237,101 +245,100 @@ https://github.com/rap2hpoutre/laravel-log-viewer
     
 ## Roles/Permissions test on Front End
 
-| **Roles**<br/>------<br/>**Pages** | Super Admin                     | Admin | GOP | CCP | Coordenador de Curso | Responsável de UC | RCP | Conselho Pedagócio | Direção | Docente | Estudante |
-|------------------------------------|---------------------------------|-------|-----|-----|----------------------|-------------------|-----|--------------------|---------|---------|-----------|
-| _**Calendario**_                   |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Apagar                           |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Ver Detalhe                      |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - comentar                         | ?                               |       |     |     |                      |                   |     |                    |         |         |
-| - Adicionar comentario             | ?                               |       |     |     |                      |                   |     |                    |         |         |           |
-| - ver comentario                   | ? mesma permissao? e o ocultar? |       |     |     |                      |                   |     |                    |         |         |           |
-| - ver historico                    |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - ver fase atual                   |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - publicar	                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - criar copia	                     |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| -> Adicionar interrupcoes          |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| -> Adicionar exame                 |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| -> Editar exame                    |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| **Roles**<br/>------<br/>**Pages** | Super Admin                | Admin | GOP | CCP | Coordenador de Curso | Responsável de UC | RCP | Conselho Pedagócio | Direção | Docente | Estudante |
+|------------------------------------|----------------------------|-------|-----|-----|----------------------|-------------------|-----|--------------------|---------|---------|-----------|
+| _**Calendario**_                   |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Criar                            |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Apagar                           |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Adicionar comentario             | ?                          |       |     |     |                      |                   |     |                    |         |         |           |
+| - ver comentario                   | ?  e o ocultar?            |       |     |     |                      |                   |     |                    |         |         |           |
+| - ver historico                    |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - ver fase atual                   |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - publicar	                        |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - criar copia	                     |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| -> Adicionar interrupcoes          |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Adicionar exame                 |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| -> Editar exame                    |                            |       |     |     |                      |                   |     |                    |         |         |           |
 | <br/>                              ||||||||||||
-| _**Fases do Calendario**_          |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - criar Fases                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - editar Fases                     |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Apagar Fases                     |                                 |       |     |     |                      |                   |     |                    |         |         |           |
+| _**Fases do Calendario**_          |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - criar Fases                      |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - editar Fases                     |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Apagar Fases                     |                            |       |     |     |                      |                   |     |                    |         |         |           |
 | <br/>                              ||||||||||||
-| _**Curso**_                        |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Ver Lista                        | ????                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |
-| - Adicionar Ramos                  | ??????                          |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Apagar                           |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| _**Curso**_                        |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        | ????                       |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Criar                            |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                            |       |     |     | 	                    | 	                 |     |                    |         |         |
+| - Adicionar Ramos                  | ??????                     |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Apagar                           |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
 | <br/>                              ||||||||||||
-| _**Unidade Curricular**_           |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Adicionar Metodos                |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Adicionar Professores            | (mesma que as permissoes?)      |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Apagar                           |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| _**Unidade Curricular**_           |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Criar                            |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Adicionar Metodos                |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Adicionar Professores            | (mesma que as permissoes?) |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Apagar                           |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
 ||| <br/>                              ||||||||||
-| _**Agrupar Unidade Curricular**_   |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Adicionar Metodos                | ???????                         |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Apagar                           |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| _**Agrupar Unidade Curricular**_   |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Criar                            |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Adicionar Metodos                | ???????                    |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Apagar                           |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
 | <br/>                              ||||||||||||
-| _**Ano Letivo**_                   |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Apagar                           |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| _**Ano Letivo**_                   |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Criar                            |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Apagar                           |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
 | <br/>                              ||||||||||||
-| _**Tipos De Avaliacao**_           |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Apagar                           |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| _**Tipos De Avaliacao**_           |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Criar                            |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Apagar                           |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
 | <br/>                              ||||||||||||
-| _**Tipos de Interrupcoes**_        |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Apagar                           |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| _**Tipos de Interrupcoes**_        |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Criar                            |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Apagar                           |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
 | <br/>                              ||||||||||||
-| _**Escolas**_                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Apagar                           | ?????                           |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| _**Escolas**_                      |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Criar                            |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Apagar                           | ?????                      |       |     |     | 	                    | 	                 |     |                    |         |         |           |
 | <br/>                              ||||||||||||
-| _**Permissoes**_                   |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Gerir Permissoes                 |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Definir Coordenador Curso        |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Definir RUC*                     |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Definir Professores UCs          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| _**Permissoes**_                   |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Gerir Permissoes                 |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Definir Coordenador Curso        |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Definir RUC*                     |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Definir Professores UCs          |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
 | <br/>                              ||||||||||||
-| _**Grupo de Utilizador**_          |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Criar                            |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Apagar                           |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| _**Grupo de Utilizador**_          |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Criar                            |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Apagar                           |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
 | <br/>                              ||||||||||||
-| _**Utilizadores**_                 |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Ver Lista                        |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Ver Detalhe                      |                                 |       |     |     |                      |                   |     |                    |         |         |           |
-| - Editar	                          |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
-| - Bloquear                         |                                 |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| _**Utilizadores**_                 |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Ver Lista                        |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Ver Detalhe                      |                            |       |     |     |                      |                   |     |                    |         |         |           |
+| - Editar	                          |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+| - Bloquear                         |                            |       |     |     | 	                    | 	                 |     |                    |         |         |           |
 
 
 CCP = Comissao Cientfico-Pedagocica
@@ -496,3 +503,19 @@ RUC = Responsavel Unidade Curricular
 | -> Adicionar interrupcoes                |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
 | -> Editar interrupcoes                   |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
 | -> remover interrupcoes                  |             |       |     |     | 	                    | 	                 |     |                    |         |         |           |
+
+
+## Fase de um calendario
+| Id  | fases                              | Proxima fase                         | obs         |
+|-----|------------------------------------|--------------------------------------|-------------|
+| 1   | Criado                             | 2                                    |             |
+| 2   | Em edição (GOP)                    | 3                // 9                |             |
+| 3   | Em edição (Coordenador de Curso)   | 4,5 // 7  > (.)  // 2                |             |
+| 4   | Em edição (Responsável UC)         | 3>cc                                 |             |
+| 5   | Em avaliação (Alunos)              | 6>cc                                 | so comenta  |
+| 6   | Em avaliação (CCP)                 | 3>cc                                 | so comenta  |
+| 7   | Em avaliação (GOP)                 | ____// 3,8 > (.) //                  |             |
+| 8   | Em avaliação (Conselho Pedagógico) | ____// __________// 2,3 > (.) //     | so comenta  |
+| 9   | Em avaliação (Direção)             | ____// __________// __________// 10  |             |
+| 10  | Aprovado                           | ____// __________// __________// 11  |             |
+| 11  | Publicado                          |                                      |             |

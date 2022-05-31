@@ -225,21 +225,15 @@ const Calendar = () => {
     //     );
     // };
 
-    const ignoreComment = (commentId) => {
-        axios.post(`/comment/${commentId}/ignore`).then((res) => {
-            if (res.status === 200) {
-                toast(t('calendar.Comentário ignorado com sucesso!'), successConfig);
-            } else {
-                toast(t('calendar.Ocorreu um erro ao ignorar o comentário!'), successConfig);
-            }
-        });
-    };
 
     const loadCalendar = (calId) => {
         setIsLoading(true);
         setExamList([]);
+        console.log('loadCalendar');
+
         axios.get(`/calendar/${calId}`)
             .then((response) => {
+                console.log('loadCalendar - response');
                 if (response?.status >= 200 && response?.status < 300) {
                     const {
                         data: {
@@ -274,7 +268,9 @@ const Calendar = () => {
             }).catch((r) => alert(r));
     };
 
-    const weekData = useMemo(() => _.orderBy(
+    const weekData = useMemo(() => {
+        console.log('weekData');
+        return _.orderBy(
             epochsList.reduce((acc, curr) => {
                 const start_date = moment(curr.start_date);
                 const end_date = moment(curr.end_date);
@@ -327,7 +323,7 @@ const Calendar = () => {
                 return acc;
             }, []),
             ['year', 'week'],
-        ), [epochsList, interruptionsList]);
+        )}, [epochsList, interruptionsList]);
 
     useEffect(() => {
         loadCalendar(calendarId);
@@ -497,7 +493,8 @@ const Calendar = () => {
                 <Grid stackable className='calendar-tables'>
                     <Grid.Row>
                         <Grid.Column width="16">
-                            {weekData.map(({week, year, days, epoch}, tableIndex) => {
+                            {epochsList.length > 0 && weekData.map(({week, year, days, epoch}, tableIndex) => {
+                                console.log('table week - ' + week);
                                 interruptionDays = 0;
                                 alreadyAddedColSpan = false;
                                 return (

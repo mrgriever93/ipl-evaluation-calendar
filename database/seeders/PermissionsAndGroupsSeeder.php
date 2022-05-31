@@ -280,16 +280,6 @@ class PermissionsAndGroupsSeeder extends Seeder
             $newPermission->category_id = $newPerm["is_general"] ? $categoryGeneral->id : $categoryCalendar->id;
             $newPermission->section_id = PermissionSection::where('code', $newPerm["section_code"])->first()->id;
             $newPermission->save();
-
-            if ($newPerm["is_general"]) {
-                $newPermission->group()->attach(
-                    [ $super_admin_id ],
-                    [
-                        'phase_id' => $phase_system_id,
-                        'enabled' => true,
-                    ]
-                );
-            }
         }
 
         $epochTypes = [

@@ -68,6 +68,8 @@ class LoginController extends Controller
                 }
             }
             $scopes = $user->permissions()->where('group_permissions.enabled', true)->groupBy('permissions.code')->pluck('permissions.code')->values()->toArray();
+            //dd($user);
+
             $accessToken = $user->createToken('authToken', $scopes)->accessToken;
 
             $selectedYear = AcademicYear::where('selected', true)->first();
