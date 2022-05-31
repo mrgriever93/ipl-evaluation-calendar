@@ -7,7 +7,7 @@ import {useTranslation} from "react-i18next";
 import EmptyTable from "../../../components/EmptyTable";
 import moment from "moment";
 
-const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAdditionalInterruptions, holidays}) => {
+const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAdditionalInterruptions, holidays, tenWeek}) => {
     const { t } = useTranslation();
 
     const [interruptionTypes, setInterruptionTypes] = useState([]);
@@ -15,7 +15,7 @@ const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAd
     const [isLoadingHolidays, setIsLoadingHolidays] = useState(false);
     const [firstYear, setFirstYear] = useState(0);
     const [lastYear, setLastYear] = useState(0);
-    const [tenWeekDate, setTenWeekDate] = useState('');
+    const [tenWeekDate, setTenWeekDate] = useState();
 
 
     const importHolidays = () => {
@@ -120,6 +120,7 @@ const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAd
             // first week does not count, so, it will be:
             // first week + 10 weeks + number of full weeks without school
             const tenthWeek = moment(initialDate).add(11 + weeksToAdd, 'weeks').format('YYYY-MM-DD');
+            tenWeek(tenthWeek);
             setTenWeekDate(tenthWeek);
         }
     }

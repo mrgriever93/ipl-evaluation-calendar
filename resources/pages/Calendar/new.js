@@ -71,6 +71,7 @@ const NewCalendar = () => {
     const [finalDate, setFinalDate] = useState(0);
     const [holidaysList, setHolidaysList] = useState([]);
     const [additionalInterruptions, setAdditionalInterruptions] = useState([]);
+    const [tenWeekDate, setTenWeekDate] = useState();
 
     const addCourse = (course) => {
         setCourses([...courses, {...course}]);
@@ -79,6 +80,10 @@ const NewCalendar = () => {
     const removeCourse = (id) => {
         setCourses([...courses.filter((course) => course.id !== id)]);
     };
+
+    const setTenWeek = (date) => {
+        setTenWeekDate(date);
+    }
 
     const validateStep1 = (values) => {
         let isValid = false;
@@ -253,7 +258,7 @@ const NewCalendar = () => {
                         end_date: moment(values.step1.seasons[key].end_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
                     })),
                 ],
-                week_ten:  moment(values.step2.week_ten, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+                week_ten:  moment(tenWeekDate).format('YYYY-MM-DD'),
                 holidays: holidaysList,
                 interruptions: [
                     ...(values.step2?.additional_interruptions?.map(({interruption_type_id, start_date, end_date}) => ({
@@ -335,7 +340,7 @@ const NewCalendar = () => {
                                     <Step1 activeSemester={activeSemester} setActiveSemester={setActiveSemester} />
                                 </div>
                                 <div className={currentStep === 2 ? "display-block" : "display-none"}>
-                                    <Step2 holidays={getHolidays} finalDate={finalDate} initialDate={initialDate} isActive={currentStep === 2} additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} />
+                                    <Step2 holidays={getHolidays} finalDate={finalDate} initialDate={initialDate} tenWeek={setTenWeek} isActive={currentStep === 2} additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} />
                                 </div>
                                 <div className={currentStep === 3 ? "display-block" : "display-none"}>
                                     <Step3 allCourses={allCourses} setAllCourses={setAllCourses} courses={courses} removeCourse={removeCourse} addCourse={addCourse} loading={loading} setLoading={setLoading}/>
