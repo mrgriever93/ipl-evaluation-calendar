@@ -62,7 +62,7 @@ class CalendarController extends Controller
             $newCalendar->semester_id = Semester::where('code', $request->semester)->firstOrFail()->id;
             $newCalendar->course_id = $course["id"] ?? $course;
             // TODO garantir que este valor e sempre o correto
-            $newCalendar->calendar_phase_id = CalendarPhase::where('code', 'created')->firstOrFail()->id;
+            $newCalendar->calendar_phase_id = CalendarPhase::where('code', 'edit_gop')->firstOrFail()->id;
             $newCalendar->save();
 
             foreach ($request->epochs as $key => $epoch) {
