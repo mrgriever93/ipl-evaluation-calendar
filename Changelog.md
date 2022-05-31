@@ -43,22 +43,25 @@
 - [x] Atualizadas as permissões do lado da BD e do React
 - [x] Falta testar. O seeder das permissões agora está mal porque os id's mudaram... Devia ser refeito para quando formos testar isto melhor por user na VM
 --- 
-- 2022-05-16
-- [x] Nos cursos, UC's que não estão em tronco comum não aparecem (falta confirmar se foram carregadas na BD)
 
--- 2022-05-29
+# Meetings log
+
+---
+## 2022-05-16
+- [x] Nos cursos, UC's que não estão em tronco comum não aparecem (falta confirmar se foram carregadas na BD)
+---
+## 2022-05-29
 - [x] Rever sync/refresh ano letivo
 - [x] Rever falta de warning das configs da escola, quando as opções não estão todas preenchidas
-
-
-### Perguntas - 17-05-2022
+---
+## Perguntas - 2022-05-17
 - [ ] ao criar o calendario, adicionar campo para a 10 semana
     - so o gop
 - [ ] detalhe calendario
     - quando for para seguir para a proxima fase, mostrar popup com fases
 
 ----
-### Feedback prof. Pedro Gago
+## Feedback prof. Pedro Gago
 - [x] No separador de "Calendários" (GOP) deve haver filtros
 
 
@@ -73,8 +76,8 @@
 - [x] Tirar Inglês Geral, Matemáticas Gerais, etc
 - [x] Quando tento marcar uma avaliação (1º semestre - 9119) fica "a pensar" à procura de UC
 
-
-### Feedback reunião 24/05
+---
+## Feedback reunião 2022-05-24
 - [x] Marcar avaliações:
     - [x] Verificar se os métodos estão preenchidos
     - [x] Se não estiverem apresentar mensagem de erro e link para as Unidades Curriculares do curso
@@ -84,7 +87,7 @@
 - [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UC's dos seus cursos (ex: EI PL e D)
 
 ---
-## Reunião 31/05/2022
+## Reunião 2022-05-31
 **Notas távora**
 - [ ] Calendários desfasados por ano -
     - trabalho futuro
@@ -106,11 +109,6 @@
 - [ ] Descrição da avaliação
 - [ ] Bug no detalhe da avaliação
     - observação
-
-# Entregas
-- **14 julho** > relatorio inicial
-- **18 julho** > relatório final
-- **25/26 julho** > apresentacao
 
 ---
 
