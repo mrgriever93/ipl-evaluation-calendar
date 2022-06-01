@@ -98,9 +98,9 @@
 - [ ] Validações da 10a semana
 - [ ] validações datas época periódica, normal e Recurso, tem de ser superior às outras e ao ano letivo
 - [ ] Adicional + filtros na criação de calendário para selecionar o curso
-- [ ] ir buscar os dados do sigla e nome inglês do novo webservice
+- [ ] ir buscar os dados do sigla e nome inglês do novo webservice - QUANDO FOR CRIADO
 - [ ] Adicionar descrição dos métodos de avaliação
-- [ ] Botão Duplicar sticky nos métodos
+- [X] Botão Duplicar sticky nos métodos
 - [ ] Marcar mais do que uma prova no mesmo dia
 - [ ] Melhorar diferença das épocas
 - [ ] validar datas fora de época selecionada

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Field, Form as FinalForm} from 'react-final-form';
-import {Button, Form, Header, Icon, Label, Message, Grid, GridColumn, Modal, Segment, Table} from 'semantic-ui-react';
+import {Button, Form, Header, Icon, Label, Message, Grid, GridColumn, Modal, Sticky, Table} from 'semantic-ui-react';
 import axios from "axios";
 import {toast} from "react-toastify";
 import {errorConfig, successConfig} from "../../../utils/toastConfig";
@@ -268,18 +268,18 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                             </Message.List>
                         </Message>
                     )}
-                    <Segment basic>
-                        <Button onClick={onSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} disabled={!formValid}>
-                            <Icon name="save"/>
-                            { t("Guardar") }
-                        </Button>
-                        <Button onClick={() => setOpenClone(true)} icon labelPosition="left" floated="right">
-                            <Icon name={"clone outline"}/>
-                            { t("Duplicar metodos") }
-                        </Button>
-                    </Segment>
+                    <Sticky offset={50}>
+                        <div className='sticky-methods-header'>
+                            <Button onClick={() => setOpenClone(true)} icon labelPosition="left" color="yellow">
+                                <Icon name={"clone outline"}/>{ t("Duplicar metodos") }
+                            </Button>
+                            <Button onClick={onSubmit} color="green" icon labelPosition="left" loading={isSaving} disabled={!formValid}>
+                                <Icon name="save"/>{ t("Guardar") }
+                            </Button>
+                        </div>
+                    </Sticky>
                     {epochs?.map((item, index) => (
-                        <div className={"margin-top-base"} key={index}>
+                        <div className={ index > 0 ? "margin-top-m" : ""} key={index}>
                             <Header as="span">{item.name}</Header>
                             <Table compact celled className={"definition-last"}>
                                 <Table.Header>

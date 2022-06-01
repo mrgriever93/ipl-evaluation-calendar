@@ -741,3 +741,17 @@ div.inline{
     background-color: #c9c9c9;
     font-weight: bold;
 }
+
+.sticky-methods-header {
+    border-radius: 4px;
+    padding: var(--space-s) var(--space-base);
+    position: relative;
+    text-align: right;
+    transition: all .3s ease-in-out;
+}
+
+.sticky.fixed > .sticky-methods-header {
+    background: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 3px 1px rgba(0, 0, 0, .1);
+}
