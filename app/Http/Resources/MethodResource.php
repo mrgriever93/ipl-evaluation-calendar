@@ -13,7 +13,10 @@ class MethodResource extends JsonResource
             'evaluation_type_id'    => $this->evaluation_type_id,
             'name'                  => ($request->header("lang") == "en" ? $this->evaluationType->name_en : $this->evaluationType->name_pt),
             'minimum'               => (float) $this->minimum,
-            'weight'                => (float) $this->weight
+            'weight'                => (float) $this->weight,
+            'description'           => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
+            'description_pt'        => $this->description_pt,
+            'description_en'        => $this->description_en,
             //'epoch' => EpochResource::collection($this->epochs),
         ];
     }
