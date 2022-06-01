@@ -11,9 +11,13 @@
     - [ ] Traduções
     - [ ] Métodos
 
+- [ ] Ano-letivo
+  - [ ] Botao selected, corrigir o disable
+  - [ ] atualizar os loadings automaticamente
 
 - [ ] Lista Calendario
     - [ ] Filtros so se houver calendarios noutros semestres ou no semestre atual
+    - [ ] Botao disabled se nao houver anos-letivos
 
 - [ ] Detalhe Calendario
     - [ ] Otimizar load de permissões e outros pedidos
