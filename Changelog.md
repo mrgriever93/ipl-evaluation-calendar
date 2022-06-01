@@ -96,23 +96,22 @@
 - [ ] Calendários desfasados por ano -
     - trabalho futuro
 - [ ] Validações da 10a semana
-- [ ] validações datas época periódica, normal e Recurso, tem de ser superior às outras e ao ano letivo
+- [X] validações datas época periódica, normal e Recurso, tem de ser superior às outras e ao ano letivo
 - [ ] Adicional + filtros na criação de calendário para selecionar o curso
-- [ ] ir buscar os dados do sigla e nome inglês do novo webservice - QUANDO FOR CRIADO
+- [X] Bug no detalhe da avaliação - observações não está a guardar
 - [ ] Adicionar descrição dos métodos de avaliação
+- [ ] Descrição da avaliação
 - [X] Botão Duplicar sticky nos métodos
-- [ ] Marcar mais do que uma prova no mesmo dia
-- [ ] Melhorar diferença das épocas
-- [ ] validar datas fora de época selecionada
 - [ ] Diferenciar quando é feito em aula ou nao
     - cor diferente se for aula
+- [?] Marcar mais do que uma prova no mesmo dia
+- [ ] Melhorar diferença visual das épocas
+- [ ] validar datas fora de época selecionada (ao marcar avaliações)
 - [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
 - [ ] tipos de avaliações
     - [ ] Projetos e trabalhos
         - obrigatório data de lançamento dos enunciados
-- [ ] Descrição da avaliação
-- [ ] Bug no detalhe da avaliação
-    - observação
+- [ ] ir buscar os dados do sigla e nome inglês do novo webservice - QUANDO FOR CRIADO
 
 ---
 

@@ -86,6 +86,8 @@ const Calendar = () => {
             hour: exam.hour,
             method_id: exam.method_id,
             observations: exam.observations,
+            observations_pt: exam.observations_pt,
+            observations_en: exam.observations_en,
             room: exam.room,
         });
         setOpenScheduleExamModal(true);

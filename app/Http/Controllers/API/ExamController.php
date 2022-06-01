@@ -40,17 +40,6 @@ class ExamController extends Controller
             return $validation;
         }
 
-        //dd($courseUnitMethods);
-
-        // TODO
-        /**
-         * DO NOT ALLOW BOOK EXAM WHEN (COMMULATIVE):
-         * - Day is the same
-         * - Year of the CourseUnit is the same (1st, 2nd or 3rd)
-         * - Branch ("Ramo") is the same
-         */
-
-
         $courseUnitGroup = CourseUnit::find($request->course_unit_id)->group;
         $courseUnitGroup = $courseUnitGroup ? $courseUnitGroup->id : null;
         if ($courseUnitGroup) {
@@ -141,6 +130,15 @@ class ExamController extends Controller
     }
 
     public function checkIfCanEditExam($calendarId, $epochId, $course_id, $method_id, $course_unit_id, $examId = null){
+
+        // TODO
+        /**
+         * DO NOT ALLOW BOOK EXAM WHEN (COMMULATIVE):
+         * - Day is the same
+         * - Year of the CourseUnit is the same (1st, 2nd or 3rd)
+         * - Branch ("Ramo") is the same
+         */
+
         $epochRecord = Epoch::find($epochId);
         if ( $epochRecord->calendar->published ) {
             return response()->json("Not allowed to book exams on Published Calendars!", Response::HTTP_FORBIDDEN);

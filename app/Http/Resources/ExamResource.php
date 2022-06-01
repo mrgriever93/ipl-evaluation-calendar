@@ -23,6 +23,8 @@ class ExamResource extends JsonResource
             'hour'              => $this->hour,
             'duration_minutes'  => $this->duration_minutes,
             'observations'      => ($request->header("lang") == "en" ? $this->observations_en : $this->observations_pt),
+            'observations_pt'   => $this->observations_pt,
+            'observations_en'   => $this->observations_en,
             'comments'          => ExamCommentResource::collection($this->whenLoaded('comments')),
         ];
     }

@@ -31,7 +31,8 @@ class NewExamRequest extends FormRequest
                 "hour"              => "date_format:H:i",
                 "room"              => "string",
                 "duration_minutes"  => "integer|numeric",
-                "observations"      => "nullable|string"
+                "observations_pt"   => "nullable|string",
+                "observations_en"   => "nullable|string"
             ]);
 
     }

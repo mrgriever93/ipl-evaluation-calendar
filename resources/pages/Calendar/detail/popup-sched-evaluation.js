@@ -151,7 +151,8 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
             epoch_id: selectedEpoch,
             hour: values.hour || undefined,
             method_id: values.method,
-            observations: values.observations || undefined,
+            observations_pt: values.observationsPT || undefined,
+            observations_en: values.observationsEN || undefined,
             room: values.room || undefined,
         };
 
@@ -215,7 +216,8 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                 date_start:      moment(scheduleInformation?.date_start).format('DD MMMM YYYY'),
                 date_end:        moment(scheduleInformation?.date_end).format('DD MMMM YYYY'),
                 durationMinutes: scheduleInformation?.exam_id ? scheduleInformation?.duration_minutes  : null,
-                observations:    scheduleInformation?.exam_id ? scheduleInformation?.observations      : null,
+                observationsPT:  scheduleInformation?.exam_id ? scheduleInformation?.observations_pt   : null,
+                observationsEN:  scheduleInformation?.exam_id ? scheduleInformation?.observations_en   : null,
                 hour:            scheduleInformation?.exam_id ? scheduleInformation?.hour              : null,
                 room:            scheduleInformation?.exam_id ? scheduleInformation?.room              : null,
                 courseUnit:      scheduleInformation?.exam_id ? scheduleInformation?.course_unit_id    : -1,
@@ -226,7 +228,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                     <Modal.Header>
                         { scheduleInformation?.exam_id ? t("Editar Avaliação")  :  t("Marcar Avaliação") }
                     </Modal.Header>
-                    <Modal.Content>
+                    <Modal.Content scrolling>
                         <Form warning>
                             <Header as="h4">{ t("Detalhes da avaliação") } </Header>
                             <Grid columns={2}>
@@ -358,9 +360,14 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                 <Form.Input label={ t("Duração")} placeholder={ t("Duração em minutos (opcional)")}  type="number" step="1"{...durationMinutesInput}/>
                                             )}
                                         </Field>
-                                        <Field name="observations">
-                                            {({input: observationsInput}) => (
-                                                <Form.Input label={ t("Observações")} control={TextArea} {...observationsInput}/>
+                                        <Field name="observationsPT">
+                                            {({input: observationsPTInput}) => (
+                                                <Form.Input label={ t("Observações PT")} control={TextArea} rows={2} {...observationsPTInput}/>
+                                            )}
+                                        </Field>
+                                        <Field name="observationsEN">
+                                            {({input: observationsENInput}) => (
+                                                <Form.Input label={ t("Observações EN")} control={TextArea} rows={2} {...observationsENInput}/>
                                             )}
                                         </Field>
                                     </>

@@ -24,7 +24,9 @@ class ExamCalendarResource extends JsonResource
             'hour'                  => $this->hour,
             'room'                  => $this->room,
             'duration_minutes'      => $this->duration_minutes,
-            'observations'          => $this->observations,
+            'observations'          => ($request->header("lang") == "en" ? $this->observations_en : $this->observations_pt),
+            'observations_pt'       => $this->observations_pt,
+            'observations_en'       => $this->observations_en,
             'comments'              => $this->comments->count()
         ];
     }
