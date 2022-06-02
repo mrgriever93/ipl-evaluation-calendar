@@ -131,7 +131,9 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                         epoch_type_id: item.id,
                         evaluation_type_id: method.evaluation_type_id,
                         minimum: method.minimum,
-                        weight: method.weight
+                        weight: method.weight,
+                        description_pt: method.description_pt,
+                        description_en: method.description_en,
                     })
                 });
             });
@@ -178,6 +180,8 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                 weight: 100 - copy[index].methods.reduce((a, b) => a + (b?.weight || 0), 0,),
                 minimum: 9.5,
                 evaluation_type_id: undefined,
+                description_pt: '',
+                description_en: '',
             });
             return copy;
         });
@@ -284,16 +288,17 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                             <Table compact celled className={"definition-last"}>
                                 <Table.Header>
                                     <Table.Row>
-                                        <Table.HeaderCell width={5}>{ t("Tipo de avaliação") }</Table.HeaderCell>
-                                        <Table.HeaderCell width={5}>{ t("Nota mínima") }</Table.HeaderCell>
-                                        <Table.HeaderCell width={5}>{ t("Peso da avaliação") } (%)</Table.HeaderCell>
-                                        <Table.HeaderCell width={1} />
+                                        <Table.HeaderCell>{ t("Tipo de avaliação") }</Table.HeaderCell>
+                                        <Table.HeaderCell>{ t("Descrição") }</Table.HeaderCell>
+                                        <Table.HeaderCell>{ t("Nota mínima") }</Table.HeaderCell>
+                                        <Table.HeaderCell>{ t("Peso da avaliação") } (%)</Table.HeaderCell>
+                                        <Table.HeaderCell/>
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
                                     {item.methods?.map((method, methodIndex) => (
                                         <Table.Row key={methodIndex}>
-                                            <Table.Cell width={5}>
+                                            <Table.Cell width={3}>
                                                 <Form.Dropdown placeholder={t("Selecionar Tipo de avaliação")} fluid value={method.evaluation_type_id} selection search
                                                     options={evaluationTypes.map(({id, name, enabled}) => (enabled ? ({
                                                         key: id,
@@ -308,6 +313,25 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                                         })
                                                     }
                                                 />
+                                            </Table.Cell>
+                                            <Table.Cell width={3}>
+                                                <Form.Input placeholder={t("Descrição PT")} fluid value={method.description_pt} 
+                                                    onChange={
+                                                        (ev, {value}) => setEpochs((current) => {
+                                                            const copy = [...current];
+                                                            copy[index].methods[methodIndex].description_pt = value;
+                                                            return copy;
+                                                        })
+                                                    } />
+                                                
+                                                <Form.Input placeholder={t("Descrição EN")} fluid value={method.description_en} className="margin-top-base"  
+                                                    onChange={
+                                                        (ev, {value}) => setEpochs((current) => {
+                                                            const copy = [...current];
+                                                            copy[index].methods[methodIndex].description_en = value;
+                                                            return copy;
+                                                        })
+                                                    } />
                                             </Table.Cell>
                                             <Table.Cell width={5}>
                                                 <Slider step="0.5" min="0" max="20" value={method.minimum} inputSide={"left"} eventHandler={(value) => updateMethodMinimum(index, methodIndex, value)} />
@@ -324,7 +348,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
 
                                 <Table.Footer fullWidth>
                                     <Table.Row>
-                                        <Table.HeaderCell colSpan='4'>
+                                        <Table.HeaderCell colSpan='8'>
                                             { t("Total pesos avaliacao:") } <Label color={(getEpochValue(index) > 100 ? "red" : (getEpochValue(index) === 100 ? "green" : "yellow"))}>{ (epochs[index].methods || [])?.reduce((a, b) => a + (b?.weight || 0), 0)  }%</Label>
                                             <Button floated='right' icon labelPosition='left' color={"green"} size='small' onClick={() => {addNewMethod(index, item.id);}}>
                                                 <Icon name='plus' /> { t("Adicionar novo método") }

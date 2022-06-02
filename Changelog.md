@@ -99,7 +99,7 @@
 - [X] validações datas época periódica, normal e Recurso, tem de ser superior às outras e ao ano letivo
 - [ ] Adicional + filtros na criação de calendário para selecionar o curso
 - [X] Bug no detalhe da avaliação - observações não está a guardar
-- [ ] Adicionar descrição dos métodos de avaliação
+- [X] Adicionar descrição dos métodos de avaliação
 - [ ] Descrição da avaliação
 - [X] Botão Duplicar sticky nos métodos
 - [ ] Diferenciar quando é feito em aula ou nao
