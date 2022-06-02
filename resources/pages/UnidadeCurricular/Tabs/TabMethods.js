@@ -210,13 +210,14 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
             toast(t('As épocas selecionadas têm de ser diferentes!'), errorConfig);
             return false;
         }
-
+        
         let methodsToClone = JSON.parse(JSON.stringify(epochs.find((epoch) => epoch.id === selectedEpochFrom).methods));
         selectedEpochTo.forEach((item) => {
             let currEpochIndex = epochs.findIndex((epoch) => epoch.id === item);
             if(epochs[currEpochIndex].methods.length > 0){
-                let removedId = epochs[currEpochIndex].id;
-                setRemovedMethods((current) => [...current, removedId]);
+                epochs[currEpochIndex].methods.forEach((meth) => {
+                    setRemovedMethods((current) => [...current, meth.id]);
+                })
             }
             epochs[currEpochIndex].methods = methodsToClone;
             epochs[currEpochIndex].methods.forEach((item) => delete item.id);
