@@ -13,9 +13,9 @@
     - [ ] Métodos
 
 - [ ] Ano-letivo
-  - [ ] Botao selected, corrigir o disable
+  - [x] Botao selected, corrigir o disable
+  - [x] Refresh da pagina apos selecionar "selecionado" para atualizar o ano letivo escolhido
   - [ ] atualizar os loadings automaticamente
-  - [ ] Refresh da pagina apos selecionar "selecionado" para atualizar o ano letivo escolhido
 
 - [ ] Lista Calendario
     - [ ] Filtros so se houver calendarios noutros semestres ou no semestre atual

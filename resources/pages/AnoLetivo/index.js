@@ -7,7 +7,7 @@ import withReactContent from 'sweetalert2-react-content';
 import {toast} from 'react-toastify';
 import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
 import SCOPES from '../../utils/scopesConstants';
-import {successConfig, errorConfig} from '../../utils/toastConfig';
+import {successConfig, errorConfig, infoConfig} from '../../utils/toastConfig';
 import EmptyTable from "../../components/EmptyTable";
 import YearSelector from "./yearSelector";
 import moment from "moment";
@@ -67,52 +67,133 @@ const AnoLetivo = () => {
             }
         });
     };
-    // TODO miguel.cerejo
-    // UPDATE local list from index in next functions
+
     const handleYearSelected = (id, index) => {
         const toUpdateSelectedIndex = academicYearsList.findIndex((el) => el.id === id);
         const toUpdateUnSelectedIndex = academicYearsList.findIndex((el) => el.selected);
-        //if(toUpdateSelectedIndex !== toUpdateUnSelectedIndex && toUpdateSelectedIndex > -1 && toUpdateUnSelectedIndex > -1){
-            setLoading(true);
+
+        if(toUpdateSelectedIndex !== toUpdateUnSelectedIndex && toUpdateSelectedIndex > -1 && toUpdateUnSelectedIndex > -1){
+            setAcademicYearsList((current) => {
+                const oldList = [...current];
+                // update isSelectedLoading value
+                oldList.forEach((item) =>  item.isSelectedLoading = item.id === id);
+                return oldList;
+            });
             axios.post('/academic-year/' + id + "/selected").then((res) => {
                 setLoading(false);
                 if (res.status === 200) {
-                    setAcademicYearsList(res?.data?.data);
+                    setAcademicYearsList((current) => {
+                        const oldList = [...current];
+                        // update isSelectedLoading and selected value
+                        oldList.forEach((item) => {
+                            if(item.id === id) {
+                                item.selected = true;
+                                item.isSelectedLoading = false;
+                            }
+                            return item;
+                        });
+                        return oldList;
+                    });
                     toast(t('ano_letivo.Ano letivo atualizado com sucesso!'), successConfig);
-                    location.reload();
+                    document.location.reload();
                 } else {
                     toast(t('ano_letivo.Ocorreu um problema ao atualizar o ano letivo!'), errorConfig);
                 }
-                //getAcademicYearsList();
             });
-        //} else {
-          //  alert("There is always one selected");
-        //}
+        } else {
+            toast(t('O ano letivo já está selecionado!'), infoConfig);
+        }
     };
 
     const handleYearActive = (id, index) => {
-        const toUpdateSelectedIndex = academicYearsList.findIndex((el) => el.id === id);
-        academicYearsList[toUpdateSelectedIndex].isActiveLoading = true;
+        setAcademicYearsList((current) => {
+            const oldList = [...current];
+            // update isActiveLoading value
+            oldList.forEach((item) => item.isActiveLoading = (item.id === id ? true : item.isActiveLoading));
+            return oldList;
+        });
         axios.post('/academic-year/' + id + "/active").then((res) => {
             if (res.status === 200) {
                 toast(t('ano_letivo.Ano letivo atualizado com sucesso!'), successConfig);
-                academicYearsList[toUpdateSelectedIndex].isActiveLoading = false;
-                academicYearsList[toUpdateSelectedIndex].active = !academicYearsList[toUpdateSelectedIndex].active;
+                setAcademicYearsList((current) => {
+                    const oldList = [...current];
+                    // update isActiveLoading and active value
+                    oldList.forEach((item) => {
+                        if(item.id === id) {
+                            item.isActiveLoading = false;
+                            item.active = !item.active;
+                        }
+                        return item;
+                    });
+                    return oldList;
+                });
             } else {
                 toast(t('ano_letivo.Ocorreu um problema ao atualizar o ano letivo!'), errorConfig);
+                setAcademicYearsList((current) => {
+                    const oldList = [...current];
+                    // update isActiveLoading value
+                    oldList.forEach((item) => item.isActiveLoading = (item.id === id ? false : item.isActiveLoading));
+                    return oldList;
+                });
             }
         });
     };
     const syncSemester = (id, semester, year, index) => {
+        // update s[X]_sync_active, s[X]_sync_waiting value
+        setAcademicYearsList((current) => {
+            const oldList = [...current];
+            oldList.forEach((item) => {
+                if(item.id === id) {
+                    if(semester === 1) {
+                        item.s1_sync_waiting = true;
+                    } else {
+                        item.s2_sync_waiting = true;
+                    }
+                }
+                return item;
+            });
+            return oldList;
+        });
         axios.get('/academic-year/' + id + "/sync/" + semester).then((res) => {
             if (res.status === 200) {
-                toast(() => <div>{t('ano_letivo.Irá começar brevemente a sincronização do ano letivo')} <b>{year}</b>!
-                </div>, successConfig);
-                setAcademicYearsList(res?.data?.data);
-            } else if (res.status === 409){
-                toast(() => <div>{t(res.data)}</div>, errorConfig);
+                toast(() => <div>{t('ano_letivo.Irá começar brevemente a sincronização do ano letivo')} <b>{year}</b>!</div>, successConfig);
+                // update s[X]_sync_active, s[X]_sync_waiting value
+                setAcademicYearsList((current) => {
+                    const oldList = [...current];
+                    oldList.forEach((item) => {
+                        if(item.id === id) {
+                            if(semester === 1) {
+                                item.s1_sync_active = true;
+                                item.s1_sync_waiting = false;
+                            } else {
+                                item.s2_sync_active = true;
+                                item.s2_sync_waiting = false;
+                            }
+                        }
+                        return item;
+                    });
+                    return oldList;
+                });
             } else {
-                toast(() => <div>{t('ano_letivo.Ocorreu um problema ao tentar começar sincronizar o ano letivo')} <b>{ year }</b>!</div>, errorConfig);
+                setAcademicYearsList((current) => {
+                    const oldList = [...current];
+                    oldList.forEach((item) => {
+                        if(item.id === id) {
+                            if(semester === 1) {
+                                item.s1_sync_waiting = false;
+                            } else {
+                                item.s2_sync_waiting = false;
+                            }
+                        }
+                        return item;
+                    }); // update isActiveLoading value
+                    return oldList;
+                });
+                if (res.status === 409){ // conflict?
+                    toast(() => <div>{t(res.data)}</div>, errorConfig);
+                } else {
+                    toast(() => <div>{t('ano_letivo.Ocorreu um problema ao tentar começar sincronizar o ano letivo')} <b>{ year }</b>!</div>, errorConfig);
+                }
             }
         });
     }
@@ -180,14 +261,13 @@ const AnoLetivo = () => {
                                         <Table.Cell textAlign="center">
                                             <ShowComponentIfAuthorized permission={[SCOPES.EDIT_ACADEMIC_YEARS]} renderIfNotAllowed={<Checkbox toggle disabled defaultChecked={active}/>}>
                                                 { isActiveLoading && (<Icon loading name='spinner'/>)}
-                                                { /* TODO - Only be able to activate, if 2 syncs are done at least once */ }
                                                 <Checkbox toggle checked={active} disabled={!(s1_sync || s2_sync)} onChange={() => handleYearActive(id, index)} />
                                             </ShowComponentIfAuthorized>
                                         </Table.Cell>
                                         <Table.Cell textAlign="center">
                                             <ShowComponentIfAuthorized permission={[SCOPES.EDIT_ACADEMIC_YEARS]} renderIfNotAllowed={<Checkbox toggle disabled defaultChecked={selected}/>}>
                                                 { isSelectedLoading && (<Icon loading name='spinner'/>)}
-                                                <Checkbox toggle checked={selected} disabled={selected} onChange={() => handleYearSelected(id, index)} />
+                                                <Checkbox toggle checked={selected} disabled={selected || !active} onChange={() => handleYearSelected(id, index)} />
                                             </ShowComponentIfAuthorized>
                                         </Table.Cell>
                                         <Table.Cell>
