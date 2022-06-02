@@ -5,6 +5,7 @@
     - [x] Criação de calendário com bug quando adicionamos uma interrupção ao calendário, e depois apagamos, ela não é efetivamente removida do array e vai no post de criação, gerando erro porque vai com uma data inválida.
     - [x] Loading feriados
     - [ ] Otimizar load de permissões
+    - [ ] data de recurso nao tem validacao de minDate para a epoca normal 
 
 
 - [X] Rever HTML e detalhe dos Agrupamentos de UC
@@ -14,6 +15,7 @@
 - [ ] Ano-letivo
   - [ ] Botao selected, corrigir o disable
   - [ ] atualizar os loadings automaticamente
+  - [ ] Refresh da pagina apos selecionar "selecionado" para atualizar o ano letivo escolhido
 
 - [ ] Lista Calendario
     - [ ] Filtros so se houver calendarios noutros semestres ou no semestre atual
@@ -21,6 +23,7 @@
 
 - [ ] Detalhe Calendario
     - [ ] Otimizar load de permissões e outros pedidos
+    - [ ] Detalhe de exame, falta mostrar data de inicio/fim se existir
 
 
 - [ ] Melhorar logs dos cursos, na alteração de métodos
@@ -93,17 +96,16 @@
 ---
 ## Reunião 2022-05-31
 **Notas távora**
-- [ ] Calendários desfasados por ano -
-    - trabalho futuro
-- [ ] Validações da 10a semana
+- [x] Validações da 10a semana
 - [X] validações datas época periódica, normal e Recurso, tem de ser superior às outras e ao ano letivo
-- [ ] Adicional + filtros na criação de calendário para selecionar o curso
+- [x] Adicional + filtros na criação de calendário para selecionar o curso
 - [X] Bug no detalhe da avaliação - observações não está a guardar
 - [X] Adicionar descrição dos métodos de avaliação
+  - [ ] Atualizar no calendario a label
 - [X] Automatizar criação da descrição dos métodos ao selecionar o tipo de avaliação
-- [ ] BUG - Ao duplicar métodos, no FE ele limpa, mas não adiciona à lista de elementos a eliminar, e ao gravar mostra os elementos de avaliação antigos
+- [X] BUG - Ao duplicar métodos, no FE ele limpa, mas não adiciona à lista de elementos a eliminar, e ao gravar mostra os elementos de avaliação antigos
 - [X] Botão Duplicar sticky nos métodos
-- [ ] Diferenciar quando é feito em aula ou nao
+- [ ] Diferenciar quando é feito em aula ou nao (checkbox ou hora)
     - cor diferente se for aula
 - [?] Marcar mais do que uma prova no mesmo dia
 - [ ] Descrição da avaliação
@@ -153,10 +155,12 @@
 - [ ] Notificacoes de quando muda de fase ou adicionam  comentarios no calendario
     - [ ] Notificacoes Web
     - [ ] Notificacoes Email
-- [ ] subtipos de avaliação (Reunião 31/05/2022)
+- [ ] subtipos de avaliação **(Reunião 31/05/2022)**
     - poder adicionar subtipos na pagina de tipos de avaliacoes e depois quando se adicionar o metodo de avaliacao,
       estes sao automaticamente preenchidos, podendo ter o campo de obrigatoriedade ou nao.
-
+- [ ] Anos curriculares desfasados por ano no Calendários - **(Reunião 31/05/2022)**
+  - ex: o 1 ano pode comecar numa data diferente da do 2 e/ou 3 ano
+  - trabalho futuro
 
 ### TODO Miguel
 - [ ] Limpeza "Requests Folder"

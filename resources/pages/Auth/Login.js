@@ -30,6 +30,7 @@ const LoginPage = () => {
                     localStorage.setItem('userId', data.user.id);
                     localStorage.setItem('username', data.user.name);
                     localStorage.setItem('authToken', data.accessToken);
+                    localStorage.setItem('academicYear', data.academicYear);
                     const {scopes} = jwtDecode(data.accessToken);
                     localStorage.setItem('scopes', JSON.stringify(scopes));
                     if (scopes?.length === 0) {

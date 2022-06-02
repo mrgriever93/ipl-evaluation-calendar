@@ -15,6 +15,7 @@ use App\Models\InitialGroups;
 use App\Models\Interrupcao;
 use App\Models\TipoInterrupcao;
 use App\Models\Traducao;
+use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -79,9 +80,11 @@ class LoginController extends Controller
                 $activeYear = 0;
             }
 
+            $utils = new Utils();
             return response()->json([
-                'user' => new UserResource($user),
-                'accessToken' => $accessToken
+                'user'          => new UserResource($user),
+                'accessToken'   => $accessToken,
+                'academicYear'  => $utils->getFullYearsAcademicYear($selectedYear ? $selectedYear->display : 0)
             ], Response::HTTP_OK)->withCookie('academic_year', $activeYear);
         } else {
             return response()->json("Unauthorized.", Response::HTTP_UNAUTHORIZED);

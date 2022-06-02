@@ -45,6 +45,7 @@ const HeaderMenu = () => {
             localStorage.removeItem('username');
             localStorage.removeItem('scopes');
             localStorage.removeItem('calendarPermissions');
+            localStorage.removeItem('academicYear');
             dispatch(logout());
             navigate('/login');
         });

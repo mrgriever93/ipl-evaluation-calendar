@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {Button, Card, Checkbox, Container, Form, Icon, Message, Popup, Step} from 'semantic-ui-react';
+import {Button, Card, Checkbox, Container, Form, Header, Icon, Message, Popup, Step} from 'semantic-ui-react';
 import {Field, Form as FinalForm} from 'react-final-form';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -90,25 +90,25 @@ const NewCalendar = () => {
         // Check for the semester
         const hasSemester = values.semester !== "";
         // Check for every type of dates and if has start and end
-        const hasEpochs = values.hasOwnProperty("seasons") && values.seasons && Object.keys(values.seasons).length > 0;
+        const hasEpochs = values.hasOwnProperty("seasons") && values.seasons && values.seasons[values.semester] && Object.keys(values.seasons).length > 0;
         let hasAllDates = true;
         if(hasEpochs) {
-            const keys = Object.keys(values.seasons);
+            const keys = Object.keys(values.seasons[values.semester]);
             let initialDate = 0;
             let finalDate = 0;
             // get lower and higher dates
             keys.forEach((key, index) => {
-                if(!values.seasons[key].hasOwnProperty("start_date") || !values.seasons[key].hasOwnProperty("end_date")){
+                if(!values.seasons[values.semester][key].hasOwnProperty("start_date") || !values.seasons[values.semester][key].hasOwnProperty("end_date")){
                     hasAllDates = false;
                 } else {
                     // create date from  different format
-                    let startDate = (values.seasons[key].start_date).split("-");
+                    let startDate = (values.seasons[values.semester][key].start_date).split("-");
                     let compStartDate = new Date(startDate[2] + "-" + startDate[1] + "-" + startDate[0]);
                     // check if year is lower than the current one
                     if(initialDate > compStartDate || initialDate === 0) {
                         initialDate = compStartDate;
                     }
-                    let endDate = (values.seasons[key].end_date).split("-");
+                    let endDate = (values.seasons[values.semester][key].end_date).split("-");
                     let compEndDate = new Date(endDate[2] + "-" + endDate[1] + "-" + endDate[0]);
                     if(finalDate < compEndDate || finalDate === 0) {
                         finalDate = compEndDate;
@@ -252,13 +252,13 @@ const NewCalendar = () => {
                 //...(values.step3.allCourses ? null : {courses: [...values.step3.courses.map((x) => x.id)]}),
                 courses: [...values.step3.courses.map((x) => x.id)],
                 epochs: [
-                    ...Object.keys(values.step1.seasons).map((key) => ({
+                    ...Object.keys(values.step1.seasons[values.step1.semester]).map((key) => ({
                         code: key.split('__')[0],
-                        start_date: moment(values.step1.seasons[key].start_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
-                        end_date: moment(values.step1.seasons[key].end_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+                        start_date: moment(values.step1.seasons[values.step1.semester][key].start_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+                        end_date: moment(values.step1.seasons[values.step1.semester][key].end_date, 'DD-MM-YYYY').format('YYYY-MM-DD')
                     })),
                 ],
-                week_ten:  moment(tenWeekDate).format('YYYY-MM-DD'),
+                week_ten:  moment(tenWeekDate, "DD-MM-YYYY").format('YYYY-MM-DD'),
                 holidays: holidaysList,
                 interruptions: [
                     ...(values.step2?.additional_interruptions?.map(({interruption_type_id, start_date, end_date}) => ({
@@ -299,6 +299,13 @@ const NewCalendar = () => {
     const addNewInterruption = () => {
         setAdditionalInterruptions((current) => [...current, current.length]);
     }
+    const removeInterruption = (index) => {
+        setAdditionalInterruptions((current) => {
+            const copy = [...current];
+            copy.splice(index, 1);
+            return copy;
+        });
+    }
     const getHolidays = (holidays) => {
         setHolidaysList(holidays);
     }
@@ -307,6 +314,10 @@ const NewCalendar = () => {
         <Container>
             <FinalForm onSubmit={onSubmit} initialValues={formInitialValues} key={'form_new_calendar'} render={({handleSubmit, values}) => (
                 <div>
+
+                    <div className='main-content-title'>
+                        <Header as="h2">Novo Calendário</Header>
+                    </div>
                     <Step.Group widths={stepsData.length}>
                         {stepsData.map((step) => (
                             <Step link active={currentStep === step.number} disabled={maxStep < step.number} key={'step_' + step.number} completed={completedSteps.includes(step.number)} onClick={() => stepHeader(step.number)}>
@@ -319,7 +330,6 @@ const NewCalendar = () => {
                         ))}
                     </Step.Group>
                     <Card fluid>
-                        <Card.Content header="Novo Calendário"/>
                         { errorMessages.length > 0 && (
                             <Card.Content>
                                 <Message warning>
@@ -340,7 +350,8 @@ const NewCalendar = () => {
                                     <Step1 activeSemester={activeSemester} setActiveSemester={setActiveSemester} />
                                 </div>
                                 <div className={currentStep === 2 ? "display-block" : "display-none"}>
-                                    <Step2 holidays={getHolidays} finalDate={finalDate} initialDate={initialDate} tenWeek={setTenWeek} isActive={currentStep === 2} additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} />
+                                    <Step2 holidays={getHolidays} finalDate={finalDate} initialDate={initialDate} tenWeek={setTenWeek} isActive={currentStep === 2}
+                                           additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} removeAdditionalInterruptions={removeInterruption} />
                                 </div>
                                 <div className={currentStep === 3 ? "display-block" : "display-none"}>
                                     <Step3 allCourses={allCourses} setAllCourses={setAllCourses} courses={courses} removeCourse={removeCourse} addCourse={addCourse} loading={loading} setLoading={setLoading}/>
