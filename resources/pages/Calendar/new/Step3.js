@@ -99,7 +99,7 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
                             </Grid.Row>
                         ) : null}
                         <Grid.Row className={"justify_space_between"}>
-                            <Form.Input width={6} label="Pesquisar curso (Código, Sigla ou Nome)" placeholder="Pesquisar ..." fluid onChange={_.debounce(searchCourse, 900)}/>
+                            <Form.Input width={6} label={t("Pesquisar curso (Código, Sigla ou Nome)")} placeholder={ t("Pesquisar...") } fluid onChange={_.debounce(searchCourse, 900)}/>
                             <FilterOptionDegree widthSize={5} eventHandler={(value) => setDegree(value)}/>
                             <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                         </Grid.Row>
@@ -107,10 +107,10 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
                             <Table color="green">
                                 <Table.Header>
                                     <Table.Row>
-                                        <Table.HeaderCell>Código</Table.HeaderCell>
-                                        <Table.HeaderCell>Sigla</Table.HeaderCell>
-                                        <Table.HeaderCell>Nome</Table.HeaderCell>
-                                        <Table.HeaderCell>Adicionar?</Table.HeaderCell>
+                                        <Table.HeaderCell>{ t("Código") }</Table.HeaderCell>
+                                        <Table.HeaderCell>{ t("Sigla") }</Table.HeaderCell>
+                                        <Table.HeaderCell>{ t("Nome") }</Table.HeaderCell>
+                                        <Table.HeaderCell>{ t("Adicionar") }?</Table.HeaderCell>
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
@@ -136,9 +136,7 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
                         </Grid.Row>
                         {loading && (
                             <Dimmer active inverted>
-                                <Loader indeterminate>
-                                    A carregar os cursos
-                                </Loader>
+                                <Loader indeterminate>{ t("A carregar os cursos") }</Loader>
                             </Dimmer>
                         )}
                     </>
