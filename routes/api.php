@@ -58,6 +58,8 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::controller(CalendarController::class)->group(function () {
+
+        Route::get('/calendar-info',                        'info'             );
         Route::get('/calendar',                             'index'            );
         Route::get('/calendar/{calendar}',                  'show'             );
         Route::post('/calendar',                            'store'            );

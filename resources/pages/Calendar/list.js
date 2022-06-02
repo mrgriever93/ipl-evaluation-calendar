@@ -13,7 +13,7 @@ import Courses from "../../components/Filters/Courses";
 import FilterOptionPerPage from "../../components/Filters/PerPage";
 import EmptyTable from "../../components/EmptyTable";
 import PaginationDetail from "../../components/Pagination";
-import Semesters from "../../components/Filters/Semesters";
+import SemestersLocal from "../../components/Filters/SemestersLocal";
 
 const MessageFading = styled(Message)`
     @keyframes flickerAnimation {
@@ -47,6 +47,22 @@ const CalendarList = () => {
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [paginationInfo, setPaginationInfo] = useState({});
+    const [calendarInfo, setCalendarInfo] = useState();
+
+
+    const loadBase = () => {
+        axios.get('/calendar-info').then((response) => {
+            if (response.status >= 200 && response.status < 300) {
+                setCalendarInfo(response.data);
+            }
+        });
+    };
+
+    useEffect(() => {
+        if (!calendarInfo) {
+            loadBase();
+        }
+    }, []);
 
 
     const loadCalendars = () => {
@@ -120,17 +136,17 @@ const CalendarList = () => {
     };
 
     const columns = [
-        {name: 'ID',            align: 'center', style: {width: '5%' } },
-        {name: 'Curso',         align: 'center', style: {width: '40%' } },
+        {name: t('ID'),            align: 'center', style: {width: '5%' } },
+        {name: t('Curso'),         align: 'center', style: {width: '40%' } },
         {
-            name: 'Fase',
+            name: t('Fase'),
             align: 'center',
             restrictedToCreators: true,
             permission: SCOPES.VIEW_ACTUAL_PHASE,
             style: {width: '10%' }
         },
         {
-            name: 'Estado',
+            name: t('Estado'),
             align: 'center',
             restrictedToCreators: true,
             permission: SCOPES.VIEW_CALENDAR_INFO,
@@ -145,14 +161,14 @@ const CalendarList = () => {
                 <MessageFading
                     onDismiss={() => setMessageVisible(false)}
                     success
-                    header="Alterações ao calendário!"
-                    content="Deverá verificar com atenção todas as alterações."
+                    header={ t("Alterações ao calendário!") }
+                    content={ t("Deverá verificar com atenção todas as alterações.") }
                 />
             )}
             <Card fluid>
                 <Card.Content>
                     <div>
-                        <Header as="span">Calendários</Header>
+                        <Header as="span">{ t("Calendários") }</Header>
                         <ShowComponentIfAuthorized permission={[SCOPES.CREATE_CALENDAR]} renderIfNotAllowed={() => (
                             <Button.Group floated={"right"}>
                                 <Button floated="right" toggle active={myCourseOnly} onClick={() => setMyCourseOnly(true)}>
@@ -164,9 +180,7 @@ const CalendarList = () => {
                             </Button.Group>
                             )}>
                             <Link to="/calendario/novo">
-                                <Button floated="right" color="green">
-                                    Novo
-                                </Button>
+                                <Button floated="right" color="green">{ t("Novo") }</Button>
                             </Link>
                         </ShowComponentIfAuthorized>
                     </div>
@@ -174,10 +188,16 @@ const CalendarList = () => {
                 <Card.Content>
                     <Form>
                         <Form.Group>
-                            <Semesters widthSize={4} eventHandler={filterBySemester} withSpecial={true} isSearch={true} />
-                            <ShowComponentIfAuthorized permission={[SCOPES.CREATE_CALENDAR]}>
-                                <Courses widthSize={5} eventHandler={filterByCourse} />
-                            </ShowComponentIfAuthorized>
+                            { calendarInfo?.filters && (
+                              <React.Fragment>
+                                  <SemestersLocal semestersList={calendarInfo.filters.semesters} widthSize={4} eventHandler={filterBySemester} withSpecial={true} isSearch={true} />
+                                  { calendarInfo.filters.has_courses && (
+                                      <ShowComponentIfAuthorized permission={[SCOPES.CREATE_CALENDAR]}>
+                                          <Courses widthSize={5} eventHandler={filterByCourse} />
+                                      </ShowComponentIfAuthorized>
+                                  )}
+                              </React.Fragment>
+                            )}
                             { paginationInfo.last_page > 1 && (
                                 <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                             )}
@@ -223,13 +243,13 @@ const CalendarList = () => {
                                                 <Table.Cell textAlign="center">
                                                     { !published ? (
                                                         <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
-                                                            <Label color={"blue"}>Nao Publicado</Label>
+                                                            <Label color={"blue"}>{ t("Nao Publicado") }</Label>
                                                         </ShowComponentIfAuthorized>
                                                     ) : (
                                                         <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]} renderIfNotAllowed={() => (
-                                                                    <>{published ? <Label color={temporary ? undefined : 'blue' }>{temporary ? 'Provisório' : 'Definitivo'}</Label> : phase.description}</>
+                                                                <>{published ? <Label color={temporary ? undefined : 'blue' }>{temporary ? t('Provisório') : t('Definitivo')}</Label> : phase.description}</>
                                                             )}>
-                                                            <Label color={temporary ? undefined : 'blue' }>{temporary ? 'Provisório' : 'Definitivo'}</Label>
+                                                            <Label color={temporary ? undefined : 'blue' }>{temporary ? t('Provisório') : t('Definitivo')}</Label>
                                                         </ShowComponentIfAuthorized>
                                                     )}
                                                 </Table.Cell>
@@ -264,20 +284,13 @@ const CalendarList = () => {
                 </Card.Content>
             </Card>
             <Modal dimmer="blurring" open={modalOpen} onClose={handleModalClose}>
-                <Modal.Header>Remover Calendário</Modal.Header>
+                <Modal.Header>{ t("Remover Calendário") }</Modal.Header>
                 <Modal.Content>
-                    Tem a certeza que deseja remover o calendário do curso
-                    {' '}
-                    <strong>{modalInfo?.course}</strong>
-                    ?
+                    { t("Tem a certeza que deseja remover o calendário do curso") }{' '}<strong>{modalInfo?.course}</strong>?
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button negative onClick={handleModalClose}>
-                        Cancelar
-                    </Button>
-                    <Button positive onClick={handleRemoval}>
-                        Sim
-                    </Button>
+                    <Button negative onClick={handleModalClose}>{ t("Cancelar") }</Button>
+                    <Button positive onClick={handleRemoval}>{ t(" Sim") }</Button>
                 </Modal.Actions>
             </Modal>
         </Container>

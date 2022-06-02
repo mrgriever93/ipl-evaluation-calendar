@@ -72,6 +72,7 @@
         "ano_letivo.Apenas 1 sincronização pode acontecer de cada vez, para prevenir duplicações ou bloqueio do servidor.": "Only 1 synchronization can occur at a time, to prevent duplicated records or to block the server.",
         "ano_letivo.O que vai sincronizar?":  "What will be synchronized?",
         "ano_letivo.Irá sincronizar as escolas que já foram preenchidas. Para ver a lista pode seguir por este": "It will synchronize the schools that were already fulfilled. To check the list, you can be redirect there by this",
+        "O ano letivo já está selecionado!": "The school year is already selected!",
 
         "Tipos de Avaliação": "Evaluation Types",
         "Pesquisar tipo de avaliação...": "Search evaluation type...",
@@ -285,14 +286,14 @@
 
         "Ramos": "Branches",
         "Alunos": "Students",
-        "Ramo adicionado com sucesso!": "Ramo adicionado com sucesso!",
-        "Ocorreu um erro ao gravar o ramo!": "Ocorreu um erro ao gravar o ramo!",
-        "Ao eliminar este ramo, todas as UCs deste ramo, terão de ser atualizadas posteriormente!": "Ao eliminar este ramo, todas as UCs deste ramo, terão de ser atualizadas posteriormente!",
-        "Tem a certeza que deseja eliminar este ramo?": "Tem a certeza que deseja eliminar este ramo?",
-        "Ramo eliminado com sucesso!": "Ramo eliminado com sucesso!",
-        "Ocorreu um problema ao eliminar este ramo!": "Ocorreu um problema ao eliminar este ramo!",
-        "Nome do ramo": "Nome do ramo",
-        "Iniciais do ramo": "Iniciais do ramo",
+        "Ramo adicionado com sucesso!": "Branch added successfully!",
+        "Ocorreu um erro ao gravar o ramo!": "There was an error writing the branch!",
+        "Ao eliminar este ramo, todas as UCs deste ramo, terão de ser atualizadas posteriormente!": "By deleting this branch, all CUs in this branch will have to be updated later!",
+        "Tem a certeza que deseja eliminar este ramo?": "Are you sure you want to delete this branch?",
+        "Ramo eliminado com sucesso!": "Branch successfully deleted!",
+        "Ocorreu um problema ao eliminar este ramo!": "There was a problem deleting this branch!",
+        "Nome do ramo": "Branch name",
+        "Iniciais do ramo": "Branch initials",
         "Adicionar ramo":  "Add branch",
 
         "Adicionar professor": "Add teacher",
@@ -321,6 +322,21 @@
 
         "Os seguintes detalhes da Unidade curricular precisam da sua atenção": "The following curricular unit details need your attention",
         "Falta preencher a que ramo pertence.": "It remains to fill in which branch it belongs to.",
-        "10ª semana": "10th week"
+        "10ª semana": "10th week",
+
+        "Fase": "Phase",
+        "Estado": "Status",
+        "Alterações ao calendário!": "Calendar changes!",
+        "Deverá verificar com atenção todas as alterações.": "You should carefully check all changes.",
+        "Calendários": "Calendars",
+        "Meus calendários": "My calendars",
+        "Todos": "All",
+        "Ohh! Não foi possível encontrar Calendarios!": "Ohh! It wasn't possible to find calendars!",
+        "Nao Publicado": "Not published",
+        "Provisório": "Provisional",
+        "Definitivo": "Definitive",
+        "A carregar os calendarios": "Loading calendars",
+        "Remover Calendário": "Remove Calendar",
+        "Tem a certeza que deseja remover o calendário do curso": "Are you sure you want to remove the course calendar"
     }
 }
