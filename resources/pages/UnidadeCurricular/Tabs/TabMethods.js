@@ -309,6 +309,13 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                                         (ev, {value}) => setEpochs((current) => {
                                                             const copy = [...current];
                                                             copy[index].methods[methodIndex].evaluation_type_id = value;
+                                                            if(value == "" || !value) {
+                                                                copy[index].methods[methodIndex].description_pt = "";
+                                                                copy[index].methods[methodIndex].description_en = "";
+                                                            } else {
+                                                                copy[index].methods[methodIndex].description_pt = evaluationTypes.filter((x) => x.id === value)[0].name_pt+" "+(methodIndex+1);
+                                                                copy[index].methods[methodIndex].description_en = evaluationTypes.filter((x) => x.id === value)[0].name_en+" "+(methodIndex+1);
+                                                            }
                                                             return copy;
                                                         })
                                                     }

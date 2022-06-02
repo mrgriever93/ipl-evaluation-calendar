@@ -100,11 +100,13 @@
 - [ ] Adicional + filtros na criação de calendário para selecionar o curso
 - [X] Bug no detalhe da avaliação - observações não está a guardar
 - [X] Adicionar descrição dos métodos de avaliação
-- [ ] Descrição da avaliação
+- [X] Automatizar criação da descrição dos métodos ao selecionar o tipo de avaliação
+- [ ] BUG - Ao duplicar métodos, no FE ele limpa, mas não adiciona à lista de elementos a eliminar, e ao gravar mostra os elementos de avaliação antigos
 - [X] Botão Duplicar sticky nos métodos
 - [ ] Diferenciar quando é feito em aula ou nao
     - cor diferente se for aula
 - [?] Marcar mais do que uma prova no mesmo dia
+- [ ] Descrição da avaliação
 - [ ] Melhorar diferença visual das épocas
 - [ ] validar datas fora de época selecionada (ao marcar avaliações)
 - [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
