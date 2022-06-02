@@ -16,10 +16,13 @@ class Exam extends Model
         "room",
         "date_start",
         "date_end",
+        "in_class",
         "hour",
         "duration_minutes",
         "observations_pt",
-        "observations_en"
+        "observations_en",
+        "description_pt",
+        "description_en"
     ];
 
     public function epoch()

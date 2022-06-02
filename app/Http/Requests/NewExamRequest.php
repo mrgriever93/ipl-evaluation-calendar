@@ -28,11 +28,14 @@ class NewExamRequest extends FormRequest
                 "date_start"        => "required|date_format:Y-m-d",
                 "date_end"          => "required|date_format:Y-m-d",
 
+                "in_class"          => "required|boolean",
                 "hour"              => "date_format:H:i",
                 "room"              => "string",
                 "duration_minutes"  => "integer|numeric",
                 "observations_pt"   => "nullable|string",
-                "observations_en"   => "nullable|string"
+                "observations_en"   => "nullable|string",
+                "description_pt"    => "nullable|string",
+                "description_en"    => "nullable|string"
             ]);
 
     }
