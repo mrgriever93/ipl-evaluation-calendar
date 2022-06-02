@@ -20,11 +20,15 @@ class ExamResource extends JsonResource
             'room'              => $this->room,
             'date_start'        => $this->date_start,
             'date_end'          => $this->date_end,
+            'in_class'          => $this->in_class,
             'hour'              => $this->hour,
             'duration_minutes'  => $this->duration_minutes,
             'observations'      => ($request->header("lang") == "en" ? $this->observations_en : $this->observations_pt),
             'observations_pt'   => $this->observations_pt,
             'observations_en'   => $this->observations_en,
+            'description'       => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
+            'description_pt'    => $this->description_pt,
+            'description_en'    => $this->description_en,
             'comments'          => ExamCommentResource::collection($this->whenLoaded('comments')),
         ];
     }

@@ -21,12 +21,16 @@ class ExamCalendarResource extends JsonResource
             'method_id'             => $this->method_id,
             'date_start'            => Carbon::create($this->date_start)->format('Y-m-d'),
             'date_end'              => Carbon::create($this->date_end)->format('Y-m-d'),
+            'in_class'              => $this->in_class,
             'hour'                  => $this->hour,
             'room'                  => $this->room,
             'duration_minutes'      => $this->duration_minutes,
             'observations'          => ($request->header("lang") == "en" ? $this->observations_en : $this->observations_pt),
             'observations_pt'       => $this->observations_pt,
             'observations_en'       => $this->observations_en,
+            'description'           => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
+            'description_pt'        => $this->description_pt,
+            'description_en'        => $this->description_en,
             'comments'              => $this->comments->count()
         ];
     }

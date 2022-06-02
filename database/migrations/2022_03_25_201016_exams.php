@@ -20,10 +20,13 @@ return new class extends Migration
             $table->string('room')->nullable();
             $table->timestamp('date_start')->useCurrent();
             $table->timestamp('date_end')->useCurrent();
+            $table->boolean('in_class')->default(false);
             $table->string('hour')->nullable();
             $table->string('duration_minutes')->nullable();
             $table->string('observations_pt')->nullable();
             $table->string('observations_en')->nullable();
+            $table->string('description_pt')->nullable();
+            $table->string('description_en')->nullable();
             $table->foreign('epoch_id')->references('id')->on('epochs');
             $table->foreign('method_id')->references('id')->on('methods')->onDelete('cascade');
 
