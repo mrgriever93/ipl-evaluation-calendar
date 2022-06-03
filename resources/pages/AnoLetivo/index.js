@@ -72,7 +72,7 @@ const AnoLetivo = () => {
         const toUpdateSelectedIndex = academicYearsList.findIndex((el) => el.id === id);
         const toUpdateUnSelectedIndex = academicYearsList.findIndex((el) => el.selected);
 
-        if(toUpdateSelectedIndex !== toUpdateUnSelectedIndex && toUpdateSelectedIndex > -1 && toUpdateUnSelectedIndex > -1){
+        if(toUpdateUnSelectedIndex === -1 || (toUpdateSelectedIndex !== toUpdateUnSelectedIndex)){
             setAcademicYearsList((current) => {
                 const oldList = [...current];
                 // update isSelectedLoading value

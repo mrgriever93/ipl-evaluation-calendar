@@ -179,18 +179,24 @@ class CalendarController extends Controller
 
     public function info(Request $request)
     {
-        $has_courses = Course::ofAcademicYear($request->cookie('academic_year'))->count() > 0;
-        $academic_year = $request->cookie('academic_year');
-        $semesters = Semester::whereHas('calendar', function (Builder $query) use($academic_year) {
-            $query->ofAcademicYear($academic_year);
-        })->get();
         $utils = new Utils();
+        $has_academic_year = $utils->getCurrentAcademicYear($request) != 0;
+        if($has_academic_year) {
+            $has_courses = Course::ofAcademicYear($request->cookie('academic_year'))->count() > 0;
+            $academic_year = $request->cookie('academic_year');
+            $semesters = Semester::whereHas('calendar', function (Builder $query) use ($academic_year) {
+                $query->ofAcademicYear($academic_year);
+            })->get();
+        } else {
+            $has_courses = false;
+            $semesters = [];
+        }
         $response = [
             'filters' => [
                 'has_courses'   => $has_courses,
                 'semesters'     => SemestersSearchResource::collection($semesters),
             ],
-            'has_academic_year' => $utils->getCurrentAcademicYear($request) != 0
+            'has_academic_year' => $has_academic_year
         ];
 
         return response()->json($response);

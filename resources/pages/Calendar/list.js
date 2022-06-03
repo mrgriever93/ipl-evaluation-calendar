@@ -179,31 +179,31 @@ const CalendarList = () => {
                                 </Button>
                             </Button.Group>
                             )}>
-                                <Link to="/calendario/novo">
-                                    <Button floated="right" color="green" disabled={!calendarInfo?.has_academic_year}>{ t("Novo") }</Button>
-                                </Link>
+                            <Link to="/calendario/novo">
+                                <Button floated="right" color="green" disabled={!calendarInfo?.has_academic_year}>{ t("Novo") }</Button>
+                            </Link>
                         </ShowComponentIfAuthorized>
                     </div>
                 </Card.Content>
-                <Card.Content>
-                    <Form>
-                        <Form.Group>
-                            { calendarInfo?.filters && (
-                              <React.Fragment>
-                                  <SemestersLocal semestersList={calendarInfo.filters.semesters} widthSize={4} eventHandler={filterBySemester} withSpecial={true} isSearch={true} />
-                                  { calendarInfo.filters.has_courses && (
-                                      <ShowComponentIfAuthorized permission={[SCOPES.CREATE_CALENDAR]}>
-                                          <Courses widthSize={5} eventHandler={filterByCourse} />
-                                      </ShowComponentIfAuthorized>
-                                  )}
-                              </React.Fragment>
-                            )}
-                            { paginationInfo.last_page > 1 && (
-                                <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
-                            )}
-                        </Form.Group>
-                    </Form>
-                </Card.Content>
+                { calendarInfo?.filters && (calendarInfo?.filters.semesters.length > 0 || calendarInfo?.filters.has_courses) && (
+                    <Card.Content>
+                        <Form>
+                            <Form.Group>
+                                { calendarInfo.filters.semesters.length > 0 && (
+                                    <SemestersLocal semestersList={calendarInfo.filters.semesters} widthSize={4} eventHandler={filterBySemester} withSpecial={true} isSearch={true} />
+                                )}
+                                { calendarInfo.filters.has_courses && (
+                                    <ShowComponentIfAuthorized permission={[SCOPES.CREATE_CALENDAR]}>
+                                        <Courses widthSize={5} eventHandler={filterByCourse} />
+                                    </ShowComponentIfAuthorized>
+                                )}
+                                { paginationInfo.last_page > 1 && (
+                                    <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
+                                )}
+                            </Form.Group>
+                        </Form>
+                    </Card.Content>
+                )}
                 <Card.Content>
                     { calendars.length < 1 || isLoading ? (
                         <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar Calendarios!")}/>
