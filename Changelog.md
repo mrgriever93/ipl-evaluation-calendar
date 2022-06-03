@@ -13,22 +13,15 @@
     - [ ] Métodos
 
 - [ ] Ano-letivo
-  - [x] Botao selected, corrigir o disable
-  - [x] Refresh da pagina apos selecionar "selecionado" para atualizar o ano letivo escolhido
   - [ ] atualizar os loadings automaticamente
 
-- [ ] Lista Calendario
-    - [x] Filtros so se houver calendarios noutros semestres ou no semestre atual
-    - [ ] Botao disabled se nao houver anos-letivos
 
 - [ ] Detalhe Calendario
     - [ ] Otimizar load de permissões e outros pedidos
-    - [ ] Detalhe de exame, falta mostrar data de inicio/fim se existir
+    - [x] Detalhe de exame, falta mostrar data de inicio/fim se existir
 
 
 - [ ] Melhorar logs dos cursos, na alteração de métodos
-
-
 - [ ] Adicionar titulo as paginas
 
 ---
@@ -49,6 +42,15 @@
 - [x] Para adicionar mantém-se a modal?
 - [x] Atualizadas as permissões do lado da BD e do React
 - [x] Falta testar. O seeder das permissões agora está mal porque os id's mudaram... Devia ser refeito para quando formos testar isto melhor por user na VM
+
+
+- **(feito a 2-6-2022)**
+  - [x] Lista Calendario
+      - [x] Filtros so se houver calendarios noutros semestres ou no semestre atual
+      - [x] Botao disabled se nao houver anos-letivos
+  - [x] Ano-letivo
+      - [x] Botao selected, corrigir o disable
+      - [x] Refresh da pagina apos selecionar "selecionado" para atualizar o ano letivo escolhido
 --- 
 
 # Meetings log
@@ -70,7 +72,6 @@
 ----
 ## Feedback prof. Pedro Gago
 - [x] No separador de "Calendários" (GOP) deve haver filtros
-
 
 - [x] Na definição de métodos de avaliação falta uma opção que permita copiar entre épocas (é habitual a avaliação em exame ter os mesmos elementos tanto em recurso como em especial/mensal)
     - [x] FE
@@ -110,7 +111,8 @@
 - [?] Marcar mais do que uma prova no mesmo dia
 - [ ] Descrição da avaliação
 - [ ] Melhorar diferença visual das épocas
-- [ ] validar datas fora de época selecionada (ao marcar avaliações)
+- [x] validar datas fora de época selecionada (ao marcar avaliações)
+  - [ ] Esta a validar do calendario, mas pode ser adicionado validacao por epoca
 - [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
 - [ ] tipos de avaliações
     - [ ] Projetos e trabalhos
@@ -147,7 +149,7 @@
 
 
 ### TRABALHO FUTURO:
-- [X] Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos);
+- [X] Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos); **(Feito a ~~26/05/2022)**
 - [ ] Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;
 - [ ] Users com mais do que um role (validar o que deve ser feito)
 - [ ] Log dos métodos: registar o que foi alterado e quem alterou;
