@@ -13,27 +13,6 @@ import {useTranslation} from "react-i18next";
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const stepsData = [
-    {
-        number: 1,
-        icon: 'calendar alternate outline',
-        title: 'Época',
-        description: 'Selecione o semestre do calendário a criar, assim como as datas das épocas.'
-    },
-    {
-        number: 2,
-        icon: 'pause',
-        title: 'Interrupções Letivas',
-        description: 'Insira todas as informações das Interrupções letivas.'
-    },
-    {
-        number: 3,
-        icon: 'book',
-        title: 'Cursos',
-        description: 'Insira os cursos para os quais deseja criar o calendário.'
-    }
-];
-
 const formInitialValues = {
     step1: {
         semester: "first_semester",
@@ -55,6 +34,29 @@ const formInitialValues = {
 const NewCalendar = () => {
     const history = useNavigate();
     const { t } = useTranslation();
+
+    const stepsData = [
+        {
+            number: 1,
+            icon: 'calendar alternate outline',
+            title: t('Época'),
+            description: t('Selecione o semestre do calendário a criar, assim como as datas das épocas.')
+        },
+        {
+            number: 2,
+            icon: 'pause',
+            title: t('Interrupções Letivas'),
+            description: t('Insira todas as informações das Interrupções letivas.')
+        },
+        {
+            number: 3,
+            icon: 'book',
+            title: t('Cursos'),
+            description: t('Insira os cursos para os quais deseja criar o calendário.')
+        }
+    ];
+
+
     const [activeSemester, setActiveSemester] = useState(0);
     const [loading, setLoading] = useState(true);
 
@@ -258,7 +260,7 @@ const NewCalendar = () => {
                         end_date: moment(values.step1.seasons[values.step1.semester][key].end_date, 'DD-MM-YYYY').format('YYYY-MM-DD')
                     })),
                 ],
-                week_ten:  moment(tenWeekDate, "DD-MM-YYYY").format('YYYY-MM-DD'),
+                week_ten:  tenWeekDate ? moment(tenWeekDate, "DD-MM-YYYY").format('YYYY-MM-DD') : null,
                 holidays: holidaysList,
                 interruptions: [
                     ...(values.step2?.additional_interruptions?.map(({interruption_type_id, start_date, end_date}) => ({
@@ -275,8 +277,8 @@ const NewCalendar = () => {
                 const pluralOrSingularForm = values.step3.allCourses || values.step3.courses?.length > 1 ? 's' : '';
                 if (response.status === 201) {
                     SweetAlertComponent.fire({
-                        title: 'Sucesso!',
-                        text: `Calendário${pluralOrSingularForm} criado${pluralOrSingularForm} com sucesso!`,
+                        title: t('Sucesso!'),
+                        text: t(`Calendário${pluralOrSingularForm} criado${pluralOrSingularForm} com sucesso!`),
                         icon: 'success',
                         confirmButtonColor: '#21ba45',
                     });
@@ -286,8 +288,8 @@ const NewCalendar = () => {
                     Object.keys(response.response.data.errors).map((key) => errors.push(...response.response.data.errors[key]));
                     setErrorMessages(errors);
                     SweetAlertComponent.fire({
-                        title: 'Erro!',
-                        text: `Ocorreu um erro ao tentar criar o${pluralOrSingularForm} calendário${pluralOrSingularForm} de avaliação`,
+                        title: t('Erro!'),
+                        text: t(`Ocorreu um erro ao tentar criar o${pluralOrSingularForm} calendário${pluralOrSingularForm} de avaliação`),
                         icon: 'error',
                         confirmButtonColor: 'red',
                     });
@@ -316,7 +318,7 @@ const NewCalendar = () => {
                 <div>
 
                     <div className='main-content-title'>
-                        <Header as="h2">Novo Calendário</Header>
+                        <Header as="h2">{ t("Novo Calendário") }</Header>
                     </div>
                     <Step.Group widths={stepsData.length}>
                         {stepsData.map((step) => (
@@ -363,7 +365,7 @@ const NewCalendar = () => {
                                 {currentStep === 2 && (
                                     <>
                                         <Button icon labelPosition="left" color="teal" disabled={values.step2.noInterruptions} onClick={addNewInterruption}>
-                                            Adicionar interrupção
+                                            { t("Adicionar interrupção") }
                                             <Icon name="plus"/>
                                         </Button>
                                         <Field name="step2.noInterruptions" type="checkbox">
@@ -371,25 +373,25 @@ const NewCalendar = () => {
                                                 <Checkbox label={t('Sem Interrupções')} toggle checked={noInterruptions.checked} onClick={() => noInterruptions.onChange( !noInterruptions.checked) } />
                                             )}
                                         </Field>
-                                        <Popup content={<>Este calendário não terá interrupções, por isso não precisam de ser adicionadas.<br/><br/>As interrupções já adicionadas irão ser criadas na mesma. Caso não pretenda criar, apague-as.</>} header={"Sem Interrupções"} trigger={<Icon name={"info circle"} />}/>
+                                        <Popup content={<>{ t("Este calendário não terá interrupções, por isso não precisam de ser adicionadas.") }<br/><br/>{ t("As interrupções já adicionadas irão ser criadas na mesma. Caso não pretenda criar, apague-as.") }</>} header={ t("Sem Interrupções") } trigger={<Icon name={"info circle"} />}/>
                                     </>
                                 )}
                             </div>
                             <div>
                                 {currentStep > 1 && (
                                     <Button icon labelPosition="left" color="green" onClick={() => setCurrentStep(currentStep - 1)}>
-                                        Anterior
+                                        { t("Anterior") }
                                         <Icon name="left arrow"/>
                                     </Button>
                                 )}
                                 {currentStep < 3 && (
                                     <Button icon labelPosition="right" color="green" onClick={() => nextStep(currentStep + 1, values)}>
-                                        Seguinte <Icon name="right arrow"/>
+                                        { t("Seguinte") } <Icon name="right arrow"/>
                                     </Button>
                                 )}
                                 {currentStep === 3 && (
                                     <Button icon labelPosition="left" color="blue" loading={isSaving} onClick={handleSubmit}>
-                                        Criar Calendário
+                                        { t("Criar Calendário") }
                                         <Icon name="send"/>
                                     </Button>
                                 )}

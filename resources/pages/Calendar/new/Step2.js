@@ -83,12 +83,12 @@ const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAd
     useEffect(() => {
         axios.get('/interruption-types').then((response) => {
             if (response.status === 200) {
-                response.data.data.unshift({id: '', label: "Tipo de interrupção"});
+                response.data.data.unshift({id: '', label: t("Tipo de interrupção")});
                 setInterruptionTypes(response.data.data?.map(({id, label, mandatory}) => ({
                     key: id,
                     value: id,
                     text: label,
-                    icon: (mandatory ? {color: 'red', name:'attention'} : undefined),
+                    icon: (mandatory ? {color: 'red', name: 'attention'} : undefined),
                     //description: '1st semester'
                     //label: (mandatory ? { color: 'red', empty: true, circular: true } : { empty: true, circular: true }),
                 })));
@@ -126,7 +126,7 @@ const Step2 = ({isActive, initialDate, finalDate, additionalInterruptions, setAd
             });
         }
     }
-    // TODO get value of interruptions and set value of 10 week input
+
     const get10Week = () => {
         const firstDate = moment(initialDate);
         const lastDate = moment(finalDate);
