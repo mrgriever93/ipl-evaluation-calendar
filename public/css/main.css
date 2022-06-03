@@ -487,6 +487,10 @@ body {
     text-overflow: ellipsis;
 }
 
+.calendar-tables .table td .button.btn-exam-details.exam-in-class {
+    background: #9166ca;
+}
+
 /* Other stuff */
 
 .card-header-alignment {

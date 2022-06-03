@@ -459,7 +459,9 @@ const Calendar = () => {
                 examsComponents = existingExamsAtThisDate.map((exam) => {
                     return (
                         // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
-                        <Button className="btn-exam-details" color="blue" key={exam.id} onClick={() => openExamDetailHandler(year, exam)} draggable="true" onDragStart={drag} >
+                        <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )} 
+                            color="blue" key={exam.id} 
+                            onClick={() => openExamDetailHandler(year, exam)} draggable="false" onDragStart={drag} >
                             { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
                                 <div className="btn-action-wrapper">
                                     {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
