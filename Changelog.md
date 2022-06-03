@@ -18,7 +18,7 @@
   - [ ] atualizar os loadings automaticamente
 
 - [ ] Lista Calendario
-    - [ ] Filtros so se houver calendarios noutros semestres ou no semestre atual
+    - [x] Filtros so se houver calendarios noutros semestres ou no semestre atual
     - [ ] Botao disabled se nao houver anos-letivos
 
 - [ ] Detalhe Calendario
@@ -62,7 +62,7 @@
 - [x] Rever falta de warning das configs da escola, quando as opções não estão todas preenchidas
 ---
 ## Perguntas - 2022-05-17
-- [ ] ao criar o calendario, adicionar campo para a 10 semana
+- [x] ao criar o calendario, adicionar campo para a 10 semana
     - so o gop
 - [ ] detalhe calendario
     - quando for para seguir para a proxima fase, mostrar popup com fases
@@ -147,7 +147,7 @@
 
 
 ### TRABALHO FUTURO:
-- [ ] Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos);
+- [X] Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos);
 - [ ] Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;
 - [ ] Users com mais do que um role (validar o que deve ser feito)
 - [ ] Log dos métodos: registar o que foi alterado e quem alterou;

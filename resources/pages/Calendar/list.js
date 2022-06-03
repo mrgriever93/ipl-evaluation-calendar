@@ -179,9 +179,9 @@ const CalendarList = () => {
                                 </Button>
                             </Button.Group>
                             )}>
-                            <Link to="/calendario/novo">
-                                <Button floated="right" color="green">{ t("Novo") }</Button>
-                            </Link>
+                                <Link to="/calendario/novo">
+                                    <Button floated="right" color="green" disabled={!calendarInfo?.has_academic_year}>{ t("Novo") }</Button>
+                                </Link>
                         </ShowComponentIfAuthorized>
                     </div>
                 </Card.Content>

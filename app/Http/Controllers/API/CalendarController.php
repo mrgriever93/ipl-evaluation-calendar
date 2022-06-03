@@ -31,6 +31,7 @@ use App\Models\InterruptionTypesEnum;
 use App\Models\Method;
 use App\Models\Semester;
 use App\Services\ExternalImports;
+use App\Utils\Utils;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -183,12 +184,13 @@ class CalendarController extends Controller
         $semesters = Semester::whereHas('calendar', function (Builder $query) use($academic_year) {
             $query->ofAcademicYear($academic_year);
         })->get();
-
+        $utils = new Utils();
         $response = [
             'filters' => [
                 'has_courses'   => $has_courses,
                 'semesters'     => SemestersSearchResource::collection($semesters),
-            ]
+            ],
+            'has_academic_year' => $utils->getCurrentAcademicYear($request) != 0
         ];
 
         return response()->json($response);
