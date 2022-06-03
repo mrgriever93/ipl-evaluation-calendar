@@ -4,8 +4,8 @@ import React, {useEffect, useState} from 'react';
 import {useParams, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {Field, Form as FinalForm} from 'react-final-form';
-import {DateInput, TimeInput} from 'semantic-ui-calendar-react-yz';
-import {Button, Divider, Form, Grid, GridColumn, Header, Icon, Modal, TextArea, Message} from 'semantic-ui-react';
+import {DateInput, DatesRangeInput, TimeInput} from 'semantic-ui-calendar-react-yz';
+import {Button, Divider, Form, Grid, GridColumn, Header, Icon, Modal, Checkbox, TextArea, Message} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -149,6 +149,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
             date_end: (dateEnd ? dateEnd : dateStart),
             duration_minutes: values.durationMinutes || undefined,
             epoch_id: selectedEpoch,
+            in_class: values.inClass || undefined,
             hour: values.hour || undefined,
             method_id: values.method,
             observations_pt: values.observationsPT || undefined,
@@ -218,6 +219,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                 durationMinutes: scheduleInformation?.exam_id ? scheduleInformation?.duration_minutes  : null,
                 observationsPT:  scheduleInformation?.exam_id ? scheduleInformation?.observations_pt   : null,
                 observationsEN:  scheduleInformation?.exam_id ? scheduleInformation?.observations_en   : null,
+                inClass:         scheduleInformation?.exam_id ? scheduleInformation?.in_class          : null,
                 hour:            scheduleInformation?.exam_id ? scheduleInformation?.hour              : null,
                 room:            scheduleInformation?.exam_id ? scheduleInformation?.room              : null,
                 courseUnit:      scheduleInformation?.exam_id ? scheduleInformation?.course_unit_id    : -1,
@@ -248,7 +250,22 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                         { changeData ?
                                             (
                                                 <div>
-                                                    <DateInput value={moment(scheduleInformation?.date_start).format('DD MMMM YYYY')}
+                                                    <DatesRangeInput allowSameEndDate name="datesRange" placeholder={ t("Inserir datas") } iconPosition="left" closable  markColor={"blue"}
+                                                        value={(scheduleInformation?.date_start && scheduleInformation?.date_end ?
+                                                            moment(scheduleInformation?.date_start).isSame(moment(scheduleInformation?.date_end)) ? 
+                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') : 
+                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') + ` ${t("até")} ` + moment(scheduleInformation?.date_end).format('DD MMMM YYYY') 
+                                                             : "")}
+                                                        onChange={(event, {value}) => {
+                                                            let splitDates = value.split(" - ");
+                                                            if(splitDates.length === 2 && splitDates[1]) {
+                                                                scheduleInformation.date_start = moment(splitDates[0], 'DD-MM-YYYY');
+                                                                scheduleInformation.date_end = moment(splitDates[1], 'DD-MM-YYYY');
+                                                                setChangeData(false);
+                                                            }
+                                                        }} /*minDate={getMinDate(activeSemester, epoch?.code)} maxDate={getMaxDate(activeSemester, epoch?.code)}*/ />
+
+                                                     {/* <DateInput value={moment(scheduleInformation?.date_start).format('DD MMMM YYYY')}
                                                                onChange={(evt, {value}) => {
                                                                    scheduleInformation.date_start = moment(value, 'DD-MM-YYYY');
                                                                    setChangeData(false);
@@ -259,24 +276,19 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                                    scheduleInformation.date_end = moment(value, 'DD-MM-YYYY');
                                                                    setChangeData(false);
                                                                }}
-                                                    />
+                                                    /> */}
                                                 </div>
                                             ) : (
                                                 <div>
-                                                    { moment(scheduleInformation?.date_start).format('DD MMMM YYYY') }
-                                                    { scheduleInformation.date_start != scheduleInformation?.date_end &&
-                                                        (
-                                                            <>
-                                                                { " " + t("ate") + " " }
-                                                                { moment(scheduleInformation?.date_end).format('DD MMMM YYYY') }
-                                                            </>
-                                                        )
+                                                    { moment(scheduleInformation?.date_start).isSame(moment(scheduleInformation?.date_end)) ? 
+                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') : 
+                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') + ` ${t("até")} ` + moment(scheduleInformation?.date_end).format('DD MMMM YYYY') 
                                                     }
                                                 </div>
                                             )
                                         }
                                     </div>
-                                    <p>
+                                    <p className="margin-top-s">
                                         <Button color="yellow" icon labelPosition="left" onClick={() => setChangeData(true)}>
                                             <Icon name="calendar alternate"/>
                                             { t("Alterar data") }
@@ -342,17 +354,38 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                 </GridColumn>
                                 <GridColumn>
                                     <>
-                                        <Field name="hour">
-                                            {({input: hourInput}) => (
-                                                <Form.Field>
-                                                    <TimeInput label={ t("Hora de ínicio")} name="hour" iconPosition="left" placeholder={ t("Hora de ínicio (opcional)")} timeFormat="24" value={hourInput.value}
-                                                                onChange={(evt, {value}) => { hourInput.onChange(value); }}/>
-                                                </Form.Field>
-                                            )}
-                                        </Field>
-                                        <Field name="room" defaultValue={scheduleInformation?.id ? scheduleInformation?.room : null}>
-                                            {({input: roomInput}) => (
-                                                <Form.Input label={ t("Sala")} placeholder={ t("Sala da avaliação (opcional)")} {...roomInput} />
+                                        <Field name="inClass" type="checkbox">
+                                            {({input: inClassInput}) => (
+                                                <>
+                                                    {/* <Grid columns={2} verticalAlign="middle">
+                                                        <GridColumn className='margin-bottom-s'> */}
+                                                            <Form.Field>
+                                                                <Checkbox toggle label={ t("Na aula")} name="inClass" checked={inClassInput.checked}
+                                                                    onChange={(evt, {checked}) => { inClassInput.onChange(checked) }}/>
+                                                            </Form.Field>
+                                                        {/* </GridColumn> */}
+                                                            
+                                                        { ! inClassInput.checked && (
+                                                            // <GridColumn>
+                                                                <Field name="hour">
+                                                                    {({input: hourInput}) => (
+                                                                        <Form.Field>
+                                                                            <TimeInput label={ t("Hora de ínicio")} name="hour" iconPosition="left" placeholder={ t("Hora de ínicio (opcional)")} timeFormat="24" value={hourInput.value}
+                                                                                        onChange={(evt, {value}) => { hourInput.onChange(value); }}/>
+                                                                        </Form.Field>
+                                                                    )}
+                                                                </Field>
+                                                            // </GridColumn>
+                                                        )}
+                                                    {/* </Grid> */}
+                                                    { ! inClassInput.checked && (
+                                                        <Field name="room" defaultValue={scheduleInformation?.id ? scheduleInformation?.room : null}>
+                                                            {({input: roomInput}) => (
+                                                                <Form.Input label={ t("Sala")} placeholder={ t("Sala da avaliação (opcional)")} {...roomInput} />
+                                                            )}
+                                                        </Field>
+                                                    )}
+                                                </>
                                             )}
                                         </Field>
                                         <Field name="durationMinutes">

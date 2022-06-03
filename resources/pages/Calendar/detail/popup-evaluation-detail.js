@@ -140,22 +140,39 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                             </List.Item>
                             <List.Item>
                                 <List.Content><b>{ t('Data')}: </b></List.Content>
-                                <List.Content floated='right'>{moment(examDetailObject?.date).format('DD MMMM, YYYY')}</List.Content>
+                                <List.Content floated='right'>{ examDetailObject?.date_start === examDetailObject?.date_end ? 
+                                                moment(examDetailObject?.date_start).format('DD MMMM, YYYY') : (
+                                                    <>
+                                                        <div>{moment(examDetailObject?.date_start).format('DD MMMM, YYYY')}</div>
+                                                        <div>{moment(examDetailObject?.date_end).format('DD MMMM, YYYY')}</div>
+                                                    </>
+                                                )}</List.Content>
                             </List.Item>
-                            <List.Item>
-                                <List.Content><b>{ t('Hora de ínicio')}: </b></List.Content>
-                                <List.Content floated='right'>{examDetailObject?.hour}</List.Content>
-                            </List.Item>
+                            { examDetailObject?.in_class ? (
+                                <List.Item>
+                                    <List.Content><b>{ t('Na aula')}: </b></List.Content>
+                                    <List.Content floated='right'>{examDetailObject?.in_class}</List.Content>
+                                </List.Item>
+                            ) : (
+                                <>                           
+                                    {examDetailObject?.hour && (
+                                        <List.Item>
+                                            <List.Content><b>{ t('Hora de ínicio')}: </b></List.Content>
+                                            <List.Content floated='right'>{examDetailObject?.hour || '-'}</List.Content>
+                                        </List.Item>
+                                    )}
+                                    <List.Item>
+                                        <List.Content><b>{ t('Salas de avaliação')}: </b></List.Content>
+                                        <List.Content floated='right'>{examDetailObject?.room || '-'}</List.Content>
+                                    </List.Item>
+                                </>
+                            )}
                             {examDetailObject?.duration_minutes && (
                                 <List.Item>
                                     <List.Content><b>{ t('Duração')}: </b></List.Content>
                                     <List.Content floated='right'>{ (examDetailObject?.duration_minutes + ' ' + t('minutos')) }</List.Content>
                                 </List.Item>
                             )}
-                            <List.Item>
-                                <List.Content><b>{ t('Salas de avaliação')}: </b></List.Content>
-                                <List.Content floated='right'>{examDetailObject?.room || '-'}</List.Content>
-                            </List.Item>
                             <List.Item>
                                 <List.Content><b>{ t('Observações')}: </b></List.Content>
                                 <List.Content floated='right'>{examDetailObject?.observations || '-'}</List.Content>
