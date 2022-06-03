@@ -105,8 +105,8 @@
 - [X] Automatizar criação da descrição dos métodos ao selecionar o tipo de avaliação
 - [X] BUG - Ao duplicar métodos, no FE ele limpa, mas não adiciona à lista de elementos a eliminar, e ao gravar mostra os elementos de avaliação antigos
 - [X] Botão Duplicar sticky nos métodos
-- [ ] Diferenciar quando é feito em aula ou nao (checkbox ou hora)
-    - cor diferente se for aula
+- [X] Diferenciar quando é feito em aula ou nao (checkbox ou hora)
+  - [X] cor diferente se for aula
 - [?] Marcar mais do que uma prova no mesmo dia
 - [ ] Descrição da avaliação
 - [ ] Melhorar diferença visual das épocas

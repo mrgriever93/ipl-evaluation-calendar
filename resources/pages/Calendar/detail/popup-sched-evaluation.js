@@ -16,7 +16,7 @@ import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedExam, deletedExam} ) => {
+const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedExam, deletedExam, calendarDates} ) => {
     const history = useNavigate();
     const { t } = useTranslation();
     // get URL params
@@ -86,12 +86,11 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                         setCourseUnits(mapped);
                         // has curricular unit with missing methods?
                         //setShowMissingMethodsLink(response.data.data?.length === 0 || beforeSetCourseUnits?.length === 0);
-                        setShowMissingMethodsLink(beforeSetCourseUnits.filter((item) => item.has_methods).length > 0);
+                        setShowMissingMethodsLink(beforeSetCourseUnits.filter((item) => item.has_methods).length >= 0);
                     }
                 });
             setLoadRemainingCourseUnits(false);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [loadRemainingCourseUnits, scheduleInformation]);
 
     useEffect(() => {
@@ -111,7 +110,6 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
         setCourseUnits([]);
         setSelectedEpoch(value);
         setLoadRemainingCourseUnits(true);
-        // epochInput.onChange(value);
     };
 
     const methodListFilterHandler = (course_unit_id) => {
@@ -149,7 +147,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
             date_end: (dateEnd ? dateEnd : dateStart),
             duration_minutes: values.durationMinutes || undefined,
             epoch_id: selectedEpoch,
-            in_class: values.inClass || undefined,
+            in_class: values.inClass || false,
             hour: values.hour || undefined,
             method_id: values.method,
             observations_pt: values.observationsPT || undefined,
@@ -252,9 +250,9 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                 <div>
                                                     <DatesRangeInput allowSameEndDate name="datesRange" placeholder={ t("Inserir datas") } iconPosition="left" closable  markColor={"blue"}
                                                         value={(scheduleInformation?.date_start && scheduleInformation?.date_end ?
-                                                            moment(scheduleInformation?.date_start).isSame(moment(scheduleInformation?.date_end)) ? 
-                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') : 
-                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') + ` ${t("até")} ` + moment(scheduleInformation?.date_end).format('DD MMMM YYYY') 
+                                                            moment(scheduleInformation?.date_start).isSame(moment(scheduleInformation?.date_end)) ?
+                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') :
+                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') + ` ${t("até")} ` + moment(scheduleInformation?.date_end).format('DD MMMM YYYY')
                                                              : "")}
                                                         onChange={(event, {value}) => {
                                                             let splitDates = value.split(" - ");
@@ -263,7 +261,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                                 scheduleInformation.date_end = moment(splitDates[1], 'DD-MM-YYYY');
                                                                 setChangeData(false);
                                                             }
-                                                        }} /*minDate={getMinDate(activeSemester, epoch?.code)} maxDate={getMaxDate(activeSemester, epoch?.code)}*/ />
+                                                        }} minDate={calendarDates.minDate} maxDate={calendarDates.maxDate} />
 
                                                      {/* <DateInput value={moment(scheduleInformation?.date_start).format('DD MMMM YYYY')}
                                                                onChange={(evt, {value}) => {
@@ -280,9 +278,9 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                 </div>
                                             ) : (
                                                 <div>
-                                                    { moment(scheduleInformation?.date_start).isSame(moment(scheduleInformation?.date_end)) ? 
-                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') : 
-                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') + ` ${t("até")} ` + moment(scheduleInformation?.date_end).format('DD MMMM YYYY') 
+                                                    { moment(scheduleInformation?.date_start).isSame(moment(scheduleInformation?.date_end)) ?
+                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') :
+                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') + ` ${t("até")} ` + moment(scheduleInformation?.date_end).format('DD MMMM YYYY')
                                                     }
                                                 </div>
                                             )
@@ -364,7 +362,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                                     onChange={(evt, {checked}) => { inClassInput.onChange(checked) }}/>
                                                             </Form.Field>
                                                         {/* </GridColumn> */}
-                                                            
+
                                                         { ! inClassInput.checked && (
                                                             // <GridColumn>
                                                                 <Field name="hour">

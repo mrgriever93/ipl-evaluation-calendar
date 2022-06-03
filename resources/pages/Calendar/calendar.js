@@ -41,6 +41,9 @@ const Calendar = () => {
     const [viewExamId, setViewExamId] = useState(undefined);
     const [examList, setExamList] = useState([]);
 
+    const [calendarStartDate, setCalendarStartDate] = useState();
+    const [calendarEndDate, setCalendarEndDate] = useState();
+
     const [isTemporary, setIsTemporary] = useState(true);
     const [isPublished, setIsPublished] = useState(false);
     const [calendarPhase, setCalendarPhase] = useState(true);
@@ -63,6 +66,7 @@ const Calendar = () => {
             scholarYear: scholarYear,
             date_start: date,
             date_end: date,
+            in_class: false,
             hasExamsOnDate: existingExamsAtThisDate,
             epochs: epochsList,
         });
@@ -83,6 +87,7 @@ const Calendar = () => {
             duration_minutes: exam.duration_minutes,
             exam_id: exam.id,
             epoch_id: exam.epoch_id,
+            in_class: exam.in_class,
             hour: exam.hour,
             method_id: exam.method_id,
             observations: exam.observations,
@@ -256,9 +261,21 @@ const Calendar = () => {
                     setIsPublished(!!published);
                     setInterruptions(interruptions);
                     setEpochsList(epochs);
+                    let startDate = epochs.length > 0 ? epochs[0].start_date : undefined;
+                    let endDate = epochs.length > 0 ? epochs[0].end_date : undefined;
                     epochs.forEach((epoch) => {
+                        if(startDate > moment(epoch.start_date)){
+                            startDate = moment(epoch.start_date);
+                        }
+                        if(endDate < moment(epoch.end_date)){
+                            endDate = moment(epoch.end_date);
+                        }
                         setExamList((current) => [...current, ...epoch.exams]);
                     });
+                    // set calendar start and end dates
+                    setCalendarStartDate(moment(startDate).format("DD-MM-YYYY"));
+                    setCalendarEndDate(moment(endDate).format("DD-MM-YYYY"));
+
                     setGeneralInfo(general_info);
                     setDifferences(differences);
                     setIsLoading(false);
@@ -459,8 +476,8 @@ const Calendar = () => {
                 examsComponents = existingExamsAtThisDate.map((exam) => {
                     return (
                         // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
-                        <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )} 
-                            color="blue" key={exam.id} 
+                        <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )}
+                            color="blue" key={exam.id}
                             onClick={() => openExamDetailHandler(year, exam)} draggable="false" onDragStart={drag} >
                             { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
                                 <div className="btn-action-wrapper">
@@ -587,7 +604,8 @@ const Calendar = () => {
                 onClose={closeScheduleExamModal}
                 scheduleInformation={scheduleExamInfo}
                 addedExam={addExamToList}
-                deletedExam={removeExamFromList} />
+                deletedExam={removeExamFromList}
+                calendarDates={{minDate: calendarStartDate, maxDate: calendarEndDate}}/>
         </Container>
     );
 };
