@@ -161,6 +161,8 @@
 - [ ] Anos curriculares desfasados por ano no Calendários - **(Reunião 31/05/2022)**
   - ex: o 1 ano pode comecar numa data diferente da do 2 e/ou 3 ano
   - trabalho futuro
+  
+- [ ] accessibilidades pelo site
 
 ### TODO Miguel
 - [ ] Limpeza "Requests Folder"

@@ -185,14 +185,14 @@ const CalendarList = () => {
                         </ShowComponentIfAuthorized>
                     </div>
                 </Card.Content>
-                { calendarInfo?.filters && (calendarInfo?.filters.semesters.length > 0 || calendarInfo?.filters.has_courses) && (
+                { calendarInfo?.filters && calendarInfo?.filters.semesters.length > 0 && (
                     <Card.Content>
                         <Form>
                             <Form.Group>
                                 { calendarInfo.filters.semesters.length > 0 && (
                                     <SemestersLocal semestersList={calendarInfo.filters.semesters} widthSize={4} eventHandler={filterBySemester} withSpecial={true} isSearch={true} />
                                 )}
-                                { calendarInfo.filters.has_courses && (
+                                { (calendarInfo.filters.semesters.length > 0  && calendarInfo.filters.has_courses) && (
                                     <ShowComponentIfAuthorized permission={[SCOPES.CREATE_CALENDAR]}>
                                         <Courses widthSize={5} eventHandler={filterByCourse} />
                                     </ShowComponentIfAuthorized>

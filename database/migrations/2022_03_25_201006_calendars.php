@@ -27,7 +27,7 @@ return new class extends Migration
             $table->unsignedBigInteger('semester_id');
             $table->foreign('semester_id')->references('id')->on('semesters');
 
-            $table->timestamp('week_ten')->useCurrent();
+            $table->date('week_ten')->nullable();
 
             $table->string('observations_pt')->nullable();
             $table->string('observations_en')->nullable();

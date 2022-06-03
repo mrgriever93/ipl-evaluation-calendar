@@ -260,7 +260,7 @@ const NewCalendar = () => {
                         end_date: moment(values.step1.seasons[values.step1.semester][key].end_date, 'DD-MM-YYYY').format('YYYY-MM-DD')
                     })),
                 ],
-                week_ten:  moment(tenWeekDate, "DD-MM-YYYY").format('YYYY-MM-DD'),
+                week_ten:  tenWeekDate ? moment(tenWeekDate, "DD-MM-YYYY").format('YYYY-MM-DD') : null,
                 holidays: holidaysList,
                 interruptions: [
                     ...(values.step2?.additional_interruptions?.map(({interruption_type_id, start_date, end_date}) => ({
