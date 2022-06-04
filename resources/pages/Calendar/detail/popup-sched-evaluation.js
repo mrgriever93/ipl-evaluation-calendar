@@ -36,6 +36,9 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     const [changeData, setChangeData] = useState(false);
     const [savingExam, setSavingExam] = useState(false);
     const [showMissingMethodsLink, setShowMissingMethodsLink] = useState(false);
+    
+    const [epochStartDate, setEpochStartDate] = useState();
+    const [epochEndDate, setEpochEndDate] = useState();
 
     useEffect( () => {
         console.log(scheduleInformation);
@@ -51,6 +54,8 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
             }
             else if(availableEpochs.length == 1) {
                 setSelectedEpoch(availableEpochs[0].id);
+                setEpochStartDate(moment(availableEpochs[0].start_date).format("DD-MM-YYYY"));
+                setEpochEndDate(moment(availableEpochs[0].end_date).format("DD-MM-YYYY"));
                 setLoadRemainingCourseUnits(true);
             }
         }
@@ -110,6 +115,10 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
         setCourseUnits([]);
         setSelectedEpoch(value);
         setLoadRemainingCourseUnits(true);
+
+        let selectedEpoch = epochsList.filter((epoch) => epoch.id === value);
+        setEpochStartDate(moment(selectedEpoch[0].start_date).format("DD-MM-YYYY"));
+        setEpochEndDate(moment(selectedEpoch[0].end_date).format("DD-MM-YYYY"));
     };
 
     const methodListFilterHandler = (course_unit_id) => {
@@ -262,7 +271,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                                 scheduleInformation.date_end = moment(splitDates[1], 'DD-MM-YYYY');
                                                                 setChangeData(false);
                                                             }
-                                                        }} minDate={calendarDates.minDate} maxDate={calendarDates.maxDate} />
+                                                        }} minDate={epochStartDate || calendarDates.minDate} maxDate={epochEndDate || calendarDates.maxDate} />
 
                                                      {/* <DateInput value={moment(scheduleInformation?.date_start).format('DD MMMM YYYY')}
                                                                onChange={(evt, {value}) => {
