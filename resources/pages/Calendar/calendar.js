@@ -129,7 +129,7 @@ const Calendar = () => {
     };
 
     const addExamToList = (exam) => {
-        console.log(exam);
+        // console.log(exam);
         setExamList((current) => [...current, exam]);
     }
     const removeExamFromList = (examId) => {
@@ -209,6 +209,7 @@ const Calendar = () => {
     }
 
     const closeExamDetailHandler = () => {
+        setViewExamId(null);
         setOpenExamDetailModal(false);
     }
 
@@ -491,7 +492,6 @@ const Calendar = () => {
             let examsComponents = null;
             if (existingExamsAtThisDate?.length) {
                 examsComponents = existingExamsAtThisDate.map((exam) => {
-                    console.log(exam);
                     return (
                         // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
                         <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )} title={ exam.course_unit + " - " + (exam.method?.description || exam.method?.name) }
