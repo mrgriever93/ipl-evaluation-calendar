@@ -55,6 +55,25 @@ const Calendar = () => {
     const [openInterruptionModal, setOpenInterruptionModal] = useState(false);
     const [interruptionModalInfo, setInterruptionModalInfo] = useState({});
 
+
+    useEffect(() => {
+        // check if URL params are just numbers or else redirects to previous page
+        if(!/\d+/.test(calendarId)){
+            history(-1);
+            toast(t('calendar.Ocorreu um erro ao carregar a informacao pretendida'), errorConfig);
+        }
+        // validate if calendar Permissions already exists on the local storage
+        const permissionsLocal = localStorage.getItem('calendarPermissions');
+        if(!permissionsLocal) {
+            axios.get('/permissions/calendar').then((res) => {
+                if (res.status === 200) {
+                    localStorage.setItem('calendarPermissions', JSON.stringify(res.data.data));
+                }
+            });
+        }
+    }, []);
+
+
     /*
      * Create / Edit Exams
      */
@@ -187,19 +206,6 @@ const Calendar = () => {
         setOpenExamDetailModal(false);
     }
 
-    useEffect(() => {
-        // check if URL params are just numbers or else redirects to previous page
-        if(!/\d+/.test(calendarId)){
-            history(-1);
-            toast(t('calendar.Ocorreu um erro ao carregar a informacao pretendida'), errorConfig);
-        }
-        axios.get('/permissions/calendar').then((res) => {
-            if (res.status === 200) {
-                localStorage.setItem('calendarPermissions', JSON.stringify(res.data.data));
-            }
-        });
-    }, []);
-
     // useEffect(() => {
     //     if (typeof calendarPhase === 'number') {
     //         setCalendarPermissions(JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((perm) => perm.phase_id === calendarPhase) || []);
@@ -261,6 +267,7 @@ const Calendar = () => {
                     setIsPublished(!!published);
                     setInterruptions(interruptions);
                     setEpochsList(epochs);
+
                     let startDate = epochs.length > 0 ? epochs[0].start_date : undefined;
                     let endDate = epochs.length > 0 ? epochs[0].end_date : undefined;
                     epochs.forEach((epoch) => {
@@ -399,25 +406,27 @@ const Calendar = () => {
             return (
                 <Table.HeaderCell key={index} textAlign="center">
                     {moment(day.date).format('DD-MM-YYYY')}
-                    { ( existingExamsAtThisDate.length > 0 ? (
-                            <Button color={"orange"} className='btn-add-interruption' title="Adicionar Interrupção"
-                                    onClick={() => interruptionForceHandler(day.date)}>
-                                <Icon name="calendar times outline" />
-                                Adicionar Interrupção
-                            </Button>
-                        ) : (
-                            !day.interruption ? (
-                                <Button className='btn-add-interruption' title="Adicionar Interrupção"
-                                        onClick={() => interruptionHandler(undefined, day.date)}>
+                    { (!isPublished && existingExamsAtThisDate?.length === 0 && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) && (
+                        ( existingExamsAtThisDate.length > 0 ? (
+                                <Button color={"orange"} className='btn-add-interruption' title="Adicionar Interrupção"
+                                        onClick={() => interruptionForceHandler(day.date)}>
                                     <Icon name="calendar times outline" />
                                     Adicionar Interrupção
                                 </Button>
                             ) : (
-                                <Button color="yellow" className='btn-add-interruption' title="Editar Interrupção"
-                                        onClick={() => interruptionHandler(day.interruption, day.date)}>
-                                    <Icon name="calendar times outline" />
-                                    Editar Interrupção
-                                </Button>
+                                !day.interruption ? (
+                                    <Button className='btn-add-interruption' title="Adicionar Interrupção"
+                                            onClick={() => interruptionHandler(undefined, day.date)}>
+                                        <Icon name="calendar times outline" />
+                                        Adicionar Interrupção
+                                    </Button>
+                                ) : (
+                                    <Button color="yellow" className='btn-add-interruption' title="Editar Interrupção"
+                                            onClick={() => interruptionHandler(day.interruption, day.date)}>
+                                        <Icon name="calendar times outline" />
+                                        Editar Interrupção
+                                    </Button>
+                                )
                             )
                         )
                     )}
