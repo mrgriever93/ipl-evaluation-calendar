@@ -2,11 +2,9 @@ import axios from 'axios';
 import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
-import { Button, Modal, Dropdown } from 'semantic-ui-react';
+import { Button, Modal, Header, Dropdown, Card, Icon } from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 
-import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
-import SCOPES from '../../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
 const PopupEvaluationDetail = ( {isOpen, onClose, calendarId} ) => {
@@ -50,17 +48,44 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId} ) => {
             <Modal.Header>Submeter calendário para a próxima fase</Modal.Header>
             <Modal.Content>
                 <div>Selecionar próxima fase:</div>
-                <Dropdown 
+                <div className='margin-y-base'>
+                    <Card.Group itemsPerRow={3} >
+                        {calendarPhases.filter((x) => x.name !== 'system').map((phase) => {
+                                return (
+                                    <Card color='green' key={phase.key} onClick={(e) => updateCalendarPhase(phase.value) }>
+                                        <Card.Content textAlign='center'>
+                                            <div>
+                                                { phase.text.includes('Em edição') ? (
+                                                    <Icon color="grey" size="big" name="edit" />
+                                                ) : (
+                                                    phase.text.includes('Em avaliação') ? (
+                                                        <Icon color="grey" size="big" name="eye" />
+                                                    ) : (
+                                                        phase.text.includes('Publicado') ? (
+                                                            <Icon color="grey" size="big" name="check circle outline" />
+                                                        ) : ""
+                                                    )
+                                                )}
+                                            </div>
+                                            <Header as="h5" style={{marginTop: 'var(--space-s)' }}>{phase.text}</Header>
+                                        </Card.Content>
+                                    </Card>
+                                );
+                            },
+                        )}
+                    </Card.Group>
+                </div>
+                {/* <Dropdown 
                     options={calendarPhases.filter((x) => x.name !== 'system' && x.name !== 'published')}
                     selection fluid
                     label="Fase do Calendário"
                     loading={!calendarPhases.length}
                     onChange={(e, {value}) => {updateCalendarPhase(value);}}
                     value={calendarPhase}
-                />
+                /> */}
             </Modal.Content>
             <Modal.Actions>
-                <Button onClick={onClose}>Fechar</Button>
+                <Button onClick={onClose}>{t('Fechar')}</Button>
             </Modal.Actions>
         </Modal>
     );

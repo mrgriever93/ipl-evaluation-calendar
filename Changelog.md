@@ -112,7 +112,7 @@
 - [ ] Descrição da avaliação
 - [ ] Melhorar diferença visual das épocas
 - [X] validar datas fora de época selecionada (ao marcar avaliações)
-  - [ ] Esta a validar do calendario, mas pode ser adicionado validacao por epoca
+  - [X] Esta a validar do calendario, mas pode ser adicionado validacao por epoca
 - [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
 - [ ] tipos de avaliações
     - [ ] Projetos e trabalhos
