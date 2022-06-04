@@ -24,7 +24,6 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     const calendarId = id;
 
     const [epochsList, setEpochsList] = useState([]);
-    const [calendarPermissions, setCalendarPermissions] = useState(JSON.parse(localStorage.getItem('calendarPermissions')) || []);
     const [differences, setDifferences] = useState();
     const [isLoading, setIsLoading] = useState(true);
     const [loadRemainingCourseUnits, setLoadRemainingCourseUnits] = useState(false);
@@ -92,19 +91,6 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
             setLoadRemainingCourseUnits(false);
         }
     }, [loadRemainingCourseUnits, scheduleInformation]);
-
-    useEffect(() => {
-        // check if URL params are just numbers or else redirects to previous page
-        if(!/\d+/.test(calendarId)){
-            history(-1);
-            toast(t('calendar.Ocorreu um erro ao carregar a informacao pretendida'), errorConfig);
-        }
-        axios.get('/permissions/calendar').then((res) => {
-            if (res.status === 200) {
-                localStorage.setItem('calendarPermissions', JSON.stringify(res.data.data));
-            }
-        });
-    }, []);
 
     const epochDropdownOnChange = (event, value) => {
         setCourseUnits([]);

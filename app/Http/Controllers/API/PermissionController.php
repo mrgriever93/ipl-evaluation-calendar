@@ -16,6 +16,7 @@ use App\Http\Resources\GroupsResource;
 use App\Http\Resources\PermissionsResource;
 use App\Http\Resources\PhaseResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
@@ -29,11 +30,24 @@ class PermissionController extends Controller
             ->groupBy('permissions.code')->pluck('permissions.code')->values()->toArray();
     }
 
-    public function calendar() {
-        return CalendarPermissionsResource::collection(GroupPermission::where('phase_id', '!=', CalendarPhase::where('code', 'system')->first()->id)
-                        ->where('enabled', true)
-                        ->whereIn('group_id', Auth::user()->groups->pluck('id'))
-                        ->get());
+    public function calendar()
+    {
+        $calendarPhaseId = CalendarPhase::where('code', 'system')->first()->id;
+        $userGroupsId = Auth::user()->groups->pluck('id');
+
+        $permissions = Permission::select("code")->addSelect([
+            'phases' => GroupPermission::select(DB::raw('group_concat(phase_id)'))->where('phase_id', '!=', $calendarPhaseId)
+                        ->whereColumn('permission_id', 'permissions.id')
+                        ->where('group_permissions.enabled', true)
+                        ->whereIn('group_id', $userGroupsId)
+                        //->pluck('phases')
+            ])->leftJoin('group_permissions', 'permissions.id', '=', 'group_permissions.permission_id')
+                ->where("category_id", 2)
+                ->whereIn('group_permissions.group_id', $userGroupsId)
+                ->groupBy('code', 'phases')
+                ->get();
+
+        return CalendarPermissionsResource::collection($permissions);
     }
 
     public function store(PermissionRequest $request)

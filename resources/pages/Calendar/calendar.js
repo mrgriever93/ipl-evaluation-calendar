@@ -67,7 +67,13 @@ const Calendar = () => {
         if(!permissionsLocal) {
             axios.get('/permissions/calendar').then((res) => {
                 if (res.status === 200) {
-                    localStorage.setItem('calendarPermissions', JSON.stringify(res.data.data));
+                    let localPermissions = res.data.data;
+                    localPermissions.forEach((item) => {
+                        item.phases = item.phases.split(",").map(Number);
+                        return item;
+                    });
+                    localStorage.setItem('calendarPermissions', JSON.stringify(localPermissions));
+                    setCalendarPermissions(JSON.stringify(res.data.data));
                 }
             });
         }
@@ -206,11 +212,13 @@ const Calendar = () => {
         setOpenExamDetailModal(false);
     }
 
-    // useEffect(() => {
-    //     if (typeof calendarPhase === 'number') {
-    //         setCalendarPermissions(JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((perm) => perm.phase_id === calendarPhase) || []);
-    //     }
-    // }, [calendarPhase]);
+    useEffect(() => {
+        if (typeof calendarPhase === 'number') {
+            // filter permissions by phase of calendar
+            const localPermissions = JSON.parse(localStorage.getItem('calendarPermissions'));
+            setCalendarPermissions(localPermissions?.filter((item) => item.phases.includes(calendarPhase)) || []);
+        }
+    }, [calendarPhase]);
 
     // const patchCalendar = (fieldToUpdate, value) => axios.patch(`/calendar/${calendarId}`, {
     //     [fieldToUpdate]: value,
@@ -525,7 +533,7 @@ const Calendar = () => {
      */
     return (
         <Container>
-            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo}></InfosAndActions>
+            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase}/>
             <AnimatePresence>
                 {isLoading && (
                     <PageLoader
