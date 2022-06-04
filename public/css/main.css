@@ -388,6 +388,32 @@ body {
     font-size: 12px;
 }
 
+/* Calendar epoch colors */
+.calendar-day-periodic_season {
+    background-color: #ecfff0;
+}
+
+.calendar-day-normal_season {
+    background-color: #f5e6da;
+}
+
+.calendar-day-resource_season {
+    background-color: #f9dddd;
+}
+
+.calendar-day-special_season {
+    background-color: #dae5f5;
+}
+
+.calendar-day-very_special_season {
+    background-color: #fcefd8;
+}
+
+.calendar-day-interruption {
+    background-color: #c9c9c9;
+    font-weight: bold;
+}
+
 /* Calendar > Cell Buttons */
 .calendar-tables .table th,
 .calendar-tables .table td {
@@ -397,6 +423,7 @@ body {
 .calendar-tables .table td .button.btn-schedule-exam {
     margin: var(--space-none);
     opacity: 0;
+    padding: var(--space-s) var(--space-base);
 }
 
 .calendar-tables .table th .button.btn-add-interruption {
@@ -478,13 +505,18 @@ body {
 }
 
 .calendar-tables .table td .button.btn-exam-details .btn-exam-content > div {
-    white-space: nowrap;
-}
-
-.calendar-tables .table td .button.btn-exam-details .btn-exam-content > .btn-exam-type {
     max-width: 82px;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.calendar-tables .table td .button.btn-exam-details.exam-in-class {
+    background: #9166ca;
+}
+
+.calendar-tables .table td .ui.button + .ui.button {
+    margin-top: var(--space-s);
 }
 
 /* Other stuff */
@@ -631,6 +663,29 @@ div.inline{
     overflow-y: auto;
 }
 
+.exam-detail-info .ui.list .list >.item,
+.exam-detail-info .ui.list > .item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-base) var(--space-none);
+    width: 100%;
+}
+
+.exam-detail-info .ui.list > .item b {
+    font-size: 13px;
+}
+
+.exam-detail-info .ui.list > .item .floated.right {
+    font-style: italic;
+    max-width: 60%;
+    text-align: right;
+    word-break: break-word;
+}
+
+.exam-detail-info .ui.list > .item:after {
+    display: none;
+}
+
 .exam-detail-content {
     flex: 2;
     height: 100%;
@@ -638,31 +693,78 @@ div.inline{
     overflow-y: auto;
     padding: 1.5rem;
 }
+
+.exam-detail-content-header {
+    align-items: flex-end;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    margin-top: -8px;
+    margin-bottom: var(--space-base);
+    padding-bottom: var(--space-xs);
+}
+
+.exam-detail-content-header-title {
+    flex: 4 2;
+}
+
+.exam-detail-content-header-actions {
+    align-items: center;
+    display: flex;
+    flex: 3 1;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+}
+
+.exam-detail-content  .ui.comments > .reply.form textarea {
+    height: 60px;
+    transition: height 0.3s ease-in-out ;
+}
+
+.exam-detail-content  .ui.comments > .reply.form.focus--expander textarea:focus {
+    height: 160px;
+}
+
+.exam-detail-content .ui.comments .comment {
+    background: #f3f5ff;
+    border-radius: 4px;
+    padding: var(--space-s);
+}
+
+.exam-detail-content .comment-ignored-icon {
+    color: #f6bebe;
+    font-size: 34px;
+    position: absolute;
+    right: var(--space-base);
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.exam-detail-content .ui.comments .comment.comment--ignored {
+    background: #ffe5e5;
+}
+
 .table-week > table {
     user-select: none;
 }
-.calendar-tables .table tbody td .button.btn-schedule-exam{
-    margin-top: 10px;
+
+.sticky-methods-header {
+    border-radius: 4px;
+    padding: var(--space-s) var(--space-base);
+    position: relative;
+    text-align: right;
+    transition: all .3s ease-in-out;
 }
-.calendar-tables .table tbody td .button.btn-schedule-exam:only-child{
-    margin-top: 0;
+
+.sticky.fixed > .sticky-methods-header {
+    background: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 3px 1px rgba(0, 0, 0, .1);
 }
-.calendar-day-periodic_season{
-    background-color: #ecfff0;
-}
-.calendar-day-normal_season{
-    background-color: #f5e6da;
-}
-.calendar-day-resource_season{
-    background-color: #f9dddd;
-}
-.calendar-day-special_season{
-    background-color: #dae5f5;
-}
-.calendar-day-very_special_season{
-    background-color: #fcefd8;
-}
-.calendar-day-interruption{
-    background-color: #c9c9c9;
-    font-weight: bold;
+
+.active-phase{
+    position: absolute;
+    right: var(--space-s);
+    top: var(--space-s);
 }

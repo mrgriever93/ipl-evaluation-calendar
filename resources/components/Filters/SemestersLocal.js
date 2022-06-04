@@ -3,25 +3,15 @@ import {Form} from 'semantic-ui-react';
 import axios from 'axios';
 import {useTranslation} from "react-i18next";
 
-const FilterOptionSemester = ({withSpecial, widthSize, eventHandler, value, disabled, className, isSearch = true}) => {
+const FilterOptionSemesterLocal = ({semestersList, widthSize, eventHandler, value, disabled, className, isSearch = true}) => {
     const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [semestersOptions, setSemestersOptions] = useState([]);
     const [semester, setSemester] = useState();
 
     useEffect(() => {
-        setLoading(true);
-        axios.get('/semesters' + (withSpecial ? "?special=1" : "")).then((response) => {
-            if (response.status >= 200 && response.status < 300) {
-                if(isSearch){
-                    response.data.data.unshift({value: '', text: t("Todos os Semestres")});
-                }
-                setSemestersOptions(response.data.data);
-                setLoading(false);
-            }
-        });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        setSemestersOptions(semestersList);
+    }, [semestersList]);
 
     useEffect(() => {
         setSemester(value);
@@ -39,4 +29,4 @@ const FilterOptionSemester = ({withSpecial, widthSize, eventHandler, value, disa
     );
 };
 
-export default FilterOptionSemester;
+export default FilterOptionSemesterLocal;

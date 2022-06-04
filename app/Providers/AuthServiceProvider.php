@@ -78,16 +78,71 @@ class AuthServiceProvider extends ServiceProvider
             'create_courses'                    => '',
             'edit_courses'                      => '',
             'delete_courses'                    => '',
+            'view_calendar'                     => '',
             'add_comments'                      => '',
+            'ignore_comments'                   => '',
             'change_calendar_phase'             => '',
             'add_exams'                         => '',
             'edit_exams'                        => '',
             'remove_exams'                      => '',
             'add_interruption'                  => '',
             'edit_interruption'                 => '',
-            'remove_interruption'               => '',
+            'remove_interruption'               => ''
         ]);
 
         Passport::routes();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

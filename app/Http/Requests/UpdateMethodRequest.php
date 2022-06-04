@@ -16,10 +16,12 @@ class UpdateMethodRequest extends FormRequest
     {
         return [
             "evaluation_type_id" => "required|exists:evaluation_types,id",
-            "epoch_id" => "required|exists:epochs,id,deleted_at,NULL",
-            "course_unit_id" => "required|exists:course_units,id",
-            "minimum" => "required|numeric",
-            "weight" => "required|numeric",
+            "epoch_id"           => "required|exists:epochs,id,deleted_at,NULL",
+            "course_unit_id"     => "required|exists:course_units,id",
+            "minimum"            => "required|numeric",
+            "weight"             => "required|numeric",
+            'description_pt'     => "required",
+            'description_en'     => "required",
         ];
     }
 }

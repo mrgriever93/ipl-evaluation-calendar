@@ -100,6 +100,9 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
                                 text: label,
                             })),
                         );
+                        if(!info.id){
+                            setIsLoading(false);
+                        }
                     }
                 });
             }
@@ -113,8 +116,13 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
                 });
             }
         }
+
+        if(interruptionTypes?.length && !info.id){
+            setIsLoading(false);
+        }
         if(!isOpen){
             setModalInfo({});
+            setIsLoading(false);
         }
     }, [isOpen]);
 

@@ -1,23 +1,22 @@
 import axios from 'axios';
-import _ from 'lodash';
 import moment from 'moment';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useParams, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {Field, Form as FinalForm} from 'react-final-form';
-import {DateInput, TimeInput} from 'semantic-ui-calendar-react-yz';
-import {Button, Divider, Form, Grid, GridColumn, Header, Icon, Modal, TextArea, Message} from 'semantic-ui-react';
+import {DateInput, DatesRangeInput, TimeInput} from 'semantic-ui-calendar-react-yz';
+import {Button, Divider, Form, Grid, GridColumn, Header, Icon, Modal, Checkbox, TextArea, Message} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
-import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
-import SCOPES from '../../../utils/scopesConstants';
+// import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
+// import SCOPES from '../../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedExam, deletedExam} ) => {
+const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedExam, deletedExam, calendarDates} ) => {
     const history = useNavigate();
     const { t } = useTranslation();
     // get URL params
@@ -25,12 +24,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     const calendarId = id;
 
     const [epochsList, setEpochsList] = useState([]);
-    const [calendarPermissions, setCalendarPermissions] = useState(JSON.parse(localStorage.getItem('calendarPermissions')) || []);
-    const [interruptionsList, setInterruptions] = useState([]);
-    const [generalInfo, setGeneralInfo] = useState();
     const [differences, setDifferences] = useState();
-    const [openModal, setOpenModal] = useState(false);
-    const [interruptionTypes, setInterruptionTypesList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [loadRemainingCourseUnits, setLoadRemainingCourseUnits] = useState(false);
     const [selectedEpoch, setSelectedEpoch] = useState();
@@ -40,12 +34,16 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     const [calendarPhase, setCalendarPhase] = useState(true);
     const [changeData, setChangeData] = useState(false);
     const [savingExam, setSavingExam] = useState(false);
-    const [noMethods, setNoMethods] = useState(false);
+    const [showMissingMethodsLink, setShowMissingMethodsLink] = useState(false);
+    
+    const [epochStartDate, setEpochStartDate] = useState();
+    const [epochEndDate, setEpochEndDate] = useState();
 
     useEffect( () => {
+        console.log(scheduleInformation);
         if(!!scheduleInformation.epochs) {
             let availableEpochs = scheduleInformation.epochs.filter((epoch) => {
-                return moment(scheduleInformation.date).isBetween(moment(epoch.start_date), moment(epoch.end_date), undefined, '[]' );
+                return moment(scheduleInformation.date_start).isBetween(moment(epoch.start_date), moment(epoch.end_date), undefined, '[]' );
             });
 
             setEpochsList(availableEpochs);
@@ -55,6 +53,8 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
             }
             else if(availableEpochs.length == 1) {
                 setSelectedEpoch(availableEpochs[0].id);
+                setEpochStartDate(moment(availableEpochs[0].start_date).format("DD-MM-YYYY"));
+                setEpochEndDate(moment(availableEpochs[0].end_date).format("DD-MM-YYYY"));
                 setLoadRemainingCourseUnits(true);
             }
         }
@@ -66,61 +66,56 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                 .then((response) => {
                     if (response.status === 200) {
                         let beforeSetCourseUnits = [];
-
+                        /*
                         if(scheduleInformation.hasExamsOnDate) {
                             const branches = scheduleInformation.hasExamsOnDate?.filter((x) => x.academic_year === scheduleInformation.scholarYear)?.map((y) => y?.course_unit?.branch?.id);
-                            beforeSetCourseUnits = response.data.data?.filter(
-                                (x) => !(branches.length ? branches?.includes(x?.branch?.id) : false)
-                            );
+                            beforeSetCourseUnits = response.data.data?.filter((x) => !(branches.length ? branches?.includes(x?.branch?.id) : false));
                         } else {
                             beforeSetCourseUnits = response.data.data;
-                        }
+                        }*/
+                        beforeSetCourseUnits = response.data.data;
 
                         const mapped = beforeSetCourseUnits?.map(
-                            ({id, name, methods, branch}) => ({
+                            ({id, name, methods, branch, is_complete, has_methods}) => ({
                                 key: id,
                                 value: id,
                                 text: name,
                                 methods,
                                 branch,
+                                icon: ((!has_methods ? {color: 'yellow', name:'warning circle'} : is_complete ? {color: 'green', name:'check circle'} : undefined)),
+                                description: (!has_methods ? t("Métodos em falta") : undefined),
+                                disabled: !has_methods,
                             }),
                         );
                         setCourseUnits(mapped);
-                        setNoMethods(response.data.data?.length === 0 || beforeSetCourseUnits?.length === 0);
+                        // has curricular unit with missing methods?
+                        //setShowMissingMethodsLink(response.data.data?.length === 0 || beforeSetCourseUnits?.length === 0);
+                        setShowMissingMethodsLink(beforeSetCourseUnits.filter((item) => item.has_methods).length >= 0);
                     }
                 });
             setLoadRemainingCourseUnits(false);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [loadRemainingCourseUnits, scheduleInformation]);
-
-    useEffect(() => {
-        // check if URL params are just numbers or else redirects to previous page
-        if(!/\d+/.test(calendarId)){
-            history(-1);
-            toast(t('calendar.Ocorreu um erro ao carregar a informacao pretendida'), errorConfig);
-        }
-        axios.get('/permissions/calendar').then((res) => {
-            if (res.status === 200) {
-                localStorage.setItem('calendarPermissions', JSON.stringify(res.data.data));
-            }
-        });
-    }, []);
 
     const epochDropdownOnChange = (event, value) => {
         setCourseUnits([]);
         setSelectedEpoch(value);
         setLoadRemainingCourseUnits(true);
-        // epochInput.onChange(value);
+
+        let selectedEpoch = epochsList.filter((epoch) => epoch.id === value);
+        setEpochStartDate(moment(selectedEpoch[0].start_date).format("DD-MM-YYYY"));
+        setEpochEndDate(moment(selectedEpoch[0].end_date).format("DD-MM-YYYY"));
     };
 
     const methodListFilterHandler = (course_unit_id) => {
         if(courseUnits?.length > 0 ) {
             setMethodList(
-                courseUnits.find((courseUnit) => courseUnit.value === course_unit_id)?.methods.map(({id, name, minimum, weight}) => ({
+                courseUnits.find((courseUnit) => courseUnit.value === course_unit_id)?.methods.map(({id, description, name, minimum, weight, is_done}) => ({
                         key: id,
                         value: id,
-                        text: `${name} / Min. ${minimum} / Peso: ${parseInt(weight, 10)}%`,
+                        text: (description || name),
+                        description: `Min. ${minimum} / Peso: ${parseInt(weight, 10)}%`,
+                        icon: (is_done ? {color: 'green', name:'check circle'} : undefined),
                     })
                 )
             );
@@ -137,16 +132,22 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
 
     const onSubmitExam = (values) => {
         setSavingExam(true);
+        const dateStart = moment(values.date_start).format('YYYY-MM-DD');
+        const dateEnd = values.date_end ? moment(values.date_end).format('YYYY-MM-DD') : undefined;
+
         const examScheduleObj = {
             calendar_id: parseInt(calendarId, 10),
             course_id: parseInt(scheduleInformation?.courseId),
             course_unit_id: values.courseUnit,
-            date: moment(values.date).format('YYYY-MM-DD'),
+            date_start: dateStart,
+            date_end: (dateEnd ? dateEnd : dateStart),
             duration_minutes: values.durationMinutes || undefined,
             epoch_id: selectedEpoch,
+            in_class: values.inClass || false,
             hour: values.hour || undefined,
             method_id: values.method,
-            observations: values.observations || undefined,
+            observations_pt: values.observationsPT || undefined,
+            observations_en: values.observationsEN || undefined,
             room: values.room || undefined,
         };
 
@@ -169,7 +170,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
 
     useEffect(() => {
         if (!isOpen) {
-            setNoMethods(false);
+            setShowMissingMethodsLink(false);
             setSelectedEpoch(undefined);
             setCourseUnits([]);
             setMethodList([]);
@@ -207,9 +208,12 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
         <FinalForm onSubmit={onSubmitExam}
             initialValues={{
                 exam_id:         scheduleInformation?.exam_id ? scheduleInformation?.exam_id           : null,
-                date:            moment(scheduleInformation?.date).format('DD MMMM YYYY'),
+                date_start:      moment(scheduleInformation?.date_start).format('DD MMMM YYYY'),
+                date_end:        moment(scheduleInformation?.date_end).format('DD MMMM YYYY'),
                 durationMinutes: scheduleInformation?.exam_id ? scheduleInformation?.duration_minutes  : null,
-                observations:    scheduleInformation?.exam_id ? scheduleInformation?.observations      : null,
+                observationsPT:  scheduleInformation?.exam_id ? scheduleInformation?.observations_pt   : null,
+                observationsEN:  scheduleInformation?.exam_id ? scheduleInformation?.observations_en   : null,
+                inClass:         scheduleInformation?.exam_id ? scheduleInformation?.in_class          : null,
                 hour:            scheduleInformation?.exam_id ? scheduleInformation?.hour              : null,
                 room:            scheduleInformation?.exam_id ? scheduleInformation?.room              : null,
                 courseUnit:      scheduleInformation?.exam_id ? scheduleInformation?.course_unit_id    : -1,
@@ -220,10 +224,9 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                     <Modal.Header>
                         { scheduleInformation?.exam_id ? t("Editar Avaliação")  :  t("Marcar Avaliação") }
                     </Modal.Header>
-                    <Modal.Content>
-                        <Form>
+                    <Modal.Content scrolling>
+                        <Form warning>
                             <Header as="h4">{ t("Detalhes da avaliação") } </Header>
-
                             <Grid columns={2}>
                                 <GridColumn>
                                     <p>
@@ -236,18 +239,50 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                     </p>
                                 </GridColumn>
                                 <GridColumn>
-                                    <p>
+                                    <div>
                                         <b>Data: </b>
-                                        {changeData ? (
-                                            <DateInput value={moment(scheduleInformation?.date).format('DD MMMM YYYY')}
-                                                onChange={(evt, {value}) => {
-                                                    scheduleInformation.date = moment(value, 'DD-MM-YYYY');
-                                                    setChangeData(false);
-                                                }}
-                                            />
-                                        ) : moment(scheduleInformation?.date).format('DD MMMM YYYY')}
-                                    </p>
-                                    <p>
+                                        { changeData ?
+                                            (
+                                                <div>
+                                                    <DatesRangeInput allowSameEndDate name="datesRange" placeholder={ t("Inserir datas") } iconPosition="left" closable  markColor={"blue"}
+                                                        value={(scheduleInformation?.date_start && scheduleInformation?.date_end ?
+                                                            moment(scheduleInformation?.date_start).isSame(moment(scheduleInformation?.date_end)) ?
+                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') :
+                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') + ` ${t("até")} ` + moment(scheduleInformation?.date_end).format('DD MMMM YYYY')
+                                                             : "")}
+                                                        onChange={(event, {value}) => {
+                                                            let splitDates = value.split(" - ");
+                                                            if(splitDates.length === 2 && splitDates[1]) {
+                                                                scheduleInformation.date_start = moment(splitDates[0], 'DD-MM-YYYY');
+                                                                scheduleInformation.date_end = moment(splitDates[1], 'DD-MM-YYYY');
+                                                                setChangeData(false);
+                                                            }
+                                                        }} minDate={epochStartDate || calendarDates.minDate} maxDate={epochEndDate || calendarDates.maxDate} />
+
+                                                     {/* <DateInput value={moment(scheduleInformation?.date_start).format('DD MMMM YYYY')}
+                                                               onChange={(evt, {value}) => {
+                                                                   scheduleInformation.date_start = moment(value, 'DD-MM-YYYY');
+                                                                   setChangeData(false);
+                                                               }}
+                                                    />
+                                                    <DateInput value={moment(scheduleInformation?.date_end).format('DD MMMM YYYY')}
+                                                               onChange={(evt, {value}) => {
+                                                                   scheduleInformation.date_end = moment(value, 'DD-MM-YYYY');
+                                                                   setChangeData(false);
+                                                               }}
+                                                    /> */}
+                                                </div>
+                                            ) : (
+                                                <div>
+                                                    { moment(scheduleInformation?.date_start).isSame(moment(scheduleInformation?.date_end)) ?
+                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') :
+                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') + ` ${t("até")} ` + moment(scheduleInformation?.date_end).format('DD MMMM YYYY')
+                                                    }
+                                                </div>
+                                            )
+                                        }
+                                    </div>
+                                    <p className="margin-top-s">
                                         <Button color="yellow" icon labelPosition="left" onClick={() => setChangeData(true)}>
                                             <Icon name="calendar alternate"/>
                                             { t("Alterar data") }
@@ -271,13 +306,6 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                     />
                                                 )}
                                             </Field>
-                                            {noMethods
-                                                && (
-                                                    <Message negative>
-                                                        <Message.Header>Não foram encontradas unidades curriculares</Message.Header>
-                                                        <p>Não foram encontradas unidades curriculares com métodos de avaliação atríbuidos para esta época de avaliação.</p>
-                                                    </Message>
-                                                )}
                                             <Field name="courseUnit">
                                                 {({input: courseUnitInput}) => (
                                                     <Form.Dropdown
@@ -294,6 +322,14 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                     />
                                                 )}
                                             </Field>
+                                            { showMissingMethodsLink && (
+                                                    <Message size='tiny' warning={true}>
+                                                        <div>{ t("Existem Unidades Curriculares sem métodos definidos.")}</div>
+                                                        <div className='margin-top-xs'>
+                                                            <a href={ "/unidade-curricular?curso="+scheduleInformation?.courseId} target="_blank">{ t("Preencha aqui")} <Icon name="external alternate" /></a>
+                                                        </div>
+                                                    </Message>
+                                                )}
                                             <Field name="method">
                                                 {({input: methodInput}) => (
                                                     <Form.Dropdown
@@ -312,17 +348,38 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                 </GridColumn>
                                 <GridColumn>
                                     <>
-                                        <Field name="hour">
-                                            {({input: hourInput}) => (
-                                                <Form.Field>
-                                                    <TimeInput label={ t("Hora de ínicio")} name="hour" iconPosition="left" placeholder={ t("Hora de ínicio (opcional)")} timeFormat="24" value={hourInput.value}
-                                                                onChange={(evt, {value}) => { hourInput.onChange(value); }}/>
-                                                </Form.Field>
-                                            )}
-                                        </Field>
-                                        <Field name="room" defaultValue={scheduleInformation?.id ? scheduleInformation?.room : null}>
-                                            {({input: roomInput}) => (
-                                                <Form.Input label={ t("Sala")} placeholder={ t("Sala da avaliação (opcional)")} {...roomInput} />
+                                        <Field name="inClass" type="checkbox">
+                                            {({input: inClassInput}) => (
+                                                <>
+                                                    {/* <Grid columns={2} verticalAlign="middle">
+                                                        <GridColumn className='margin-bottom-s'> */}
+                                                            <Form.Field>
+                                                                <Checkbox toggle label={ t("Na aula")} name="inClass" checked={inClassInput.checked}
+                                                                    onChange={(evt, {checked}) => { inClassInput.onChange(checked) }}/>
+                                                            </Form.Field>
+                                                        {/* </GridColumn> */}
+
+                                                        { ! inClassInput.checked && (
+                                                            // <GridColumn>
+                                                                <Field name="hour">
+                                                                    {({input: hourInput}) => (
+                                                                        <Form.Field>
+                                                                            <TimeInput label={ t("Hora de ínicio")} name="hour" iconPosition="left" placeholder={ t("Hora de ínicio (opcional)")} timeFormat="24" value={hourInput.value}
+                                                                                        onChange={(evt, {value}) => { hourInput.onChange(value); }}/>
+                                                                        </Form.Field>
+                                                                    )}
+                                                                </Field>
+                                                            // </GridColumn>
+                                                        )}
+                                                    {/* </Grid> */}
+                                                    { ! inClassInput.checked && (
+                                                        <Field name="room" defaultValue={scheduleInformation?.id ? scheduleInformation?.room : null}>
+                                                            {({input: roomInput}) => (
+                                                                <Form.Input label={ t("Sala")} placeholder={ t("Sala da avaliação (opcional)")} {...roomInput} />
+                                                            )}
+                                                        </Field>
+                                                    )}
+                                                </>
                                             )}
                                         </Field>
                                         <Field name="durationMinutes">
@@ -330,9 +387,14 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                 <Form.Input label={ t("Duração")} placeholder={ t("Duração em minutos (opcional)")}  type="number" step="1"{...durationMinutesInput}/>
                                             )}
                                         </Field>
-                                        <Field name="observations">
-                                            {({input: observationsInput}) => (
-                                                <Form.Input label={ t("Observações")} control={TextArea} {...observationsInput}/>
+                                        <Field name="observationsPT">
+                                            {({input: observationsPTInput}) => (
+                                                <Form.Input label={ t("Observações PT")} control={TextArea} rows={2} {...observationsPTInput}/>
+                                            )}
+                                        </Field>
+                                        <Field name="observationsEN">
+                                            {({input: observationsENInput}) => (
+                                                <Form.Input label={ t("Observações EN")} control={TextArea} rows={2} {...observationsENInput}/>
                                             )}
                                         </Field>
                                     </>

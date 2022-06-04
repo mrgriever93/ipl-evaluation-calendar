@@ -12,114 +12,57 @@ import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthor
 import SCOPES from '../../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
+import PopupSubmitCalendar from './popup-submit';
+
 const SweetAlertComponent = withReactContent(Swal);
 
-const InfosAndActions = () => {
-    const history = useNavigate();
+const InfosAndActions = ( {epochs, calendarInfo}) => {
+    // const history = useNavigate();
     const { t } = useTranslation();
     // get URL params
     let { id } = useParams();
-    let paramsId = id;
+    const calendarId = id;
 
     const [calendarPermissions, setCalendarPermissions] = useState(JSON.parse(localStorage.getItem('calendarPermissions')) || []);
-    const [interruptionsList, setInterruptions] = useState([]);
-    const [epochsList, setEpochs] = useState([]);
-    const [generalInfo, setGeneralInfo] = useState();
-    const [differences, setDifferences] = useState();
-    const [isLoading, setIsLoading] = useState(true);
-    const [activeIndex, setActiveIndex] = useState(undefined);
+    const [openSubmitModal, setOpenSubmitModal] = useState(false);
     const [calendarPhases, setCalendarPhases] = useState([]);
-    const [examList, setExamList] = useState([]);
-    const [publishLoading, setPublishLoading] = useState(false);
     const [creatingCopy, setCreatingCopy] = useState(false);
+    const [differences, setDifferences] = useState();
+    // const [isLoading, setIsLoading] = useState(true);
+    // const [examList, setExamList] = useState([]);
+    // const [publishLoading, setPublishLoading] = useState(false);
 
     const [isTemporary, setIsTemporary] = useState(true);
     const [isPublished, setIsPublished] = useState(false);
     const [calendarPhase, setCalendarPhase] = useState(true);
-    const [updatingCalendarPhase, setUpdatingCalendarPhase] = useState(false);
-    const [previousFromDefinitive, setPreviousFromDefinitive] = useState(false);
+    // const [updatingCalendarPhase, setUpdatingCalendarPhase] = useState(false);
+    // const [previousFromDefinitive, setPreviousFromDefinitive] = useState(false);
 
+    // const patchCalendar = (fieldToUpdate, value) => axios.patch(`/calendar/${calendarId}`, {
+    //     [fieldToUpdate]: value,
+    // });
 
-     const calendarId = paramsId;
+    // const updateCalendarStatus = (newTemporaryStatus) => {
+    //     patchCalendar('temporary', newTemporaryStatus).then((response) => {
+    //         if (response.status === 200) {
+    //             setIsTemporary(newTemporaryStatus);
+    //             toast(t('calendar.Estado do calendário atualizado!'), successConfig);
+    //         }
+    //     });
+    // };
 
-    const patchCalendar = (fieldToUpdate, value) => axios.patch(`/calendar/${calendarId}`, {
-        [fieldToUpdate]: value,
-    });
-
-    const updateCalendarStatus = (newTemporaryStatus) => {
-        patchCalendar('temporary', newTemporaryStatus).then((response) => {
-            if (response.status === 200) {
-                setIsTemporary(newTemporaryStatus);
-                toast(t('calendar.Estado do calendário atualizado!'), successConfig);
-            }
-        });
-    };
-
-    const updateCalendarPhase = (newCalendarPhase) => {
-        setUpdatingCalendarPhase(true);
-        patchCalendar('calendar_phase_id', newCalendarPhase).then(
-            (response) => {
-                setUpdatingCalendarPhase(false);
-                if (response.status === 200) {
-                    setCalendarPhase(newCalendarPhase);
-                    toast(t('calendar.Fase do calendário atualizada!'), successConfig);
-                }
-            },
-        );
-    };
-
-
-    useEffect(() => {
-        // check if URL params are just numbers or else redirects to previous page
-        if(!/\d+/.test(paramsId)){
-            history(-1);
-            toast(t('calendar.Ocorreu um erro ao carregar a informacao pretendida'), errorConfig);
-        }
-        axios.get('/permissions/calendar').then((res) => {
-            if (res.status === 200) {
-                localStorage.setItem('calendarPermissions', JSON.stringify(res.data.data));
-            }
-        });
-    }, []);
-
-    const loadCalendar = (calId) => {
-        setIsLoading(true);
-        setExamList([]);
-        axios
-            .get(`/calendar/${calId}`)
-            .then((response) => {
-                if (response?.status >= 200 && response?.status < 300) {
-                    const {
-                        data: {
-                            data: {
-                                phase,
-                                published,
-                                interruptions,
-                                epochs,
-                                general_info,
-                                differences,
-                                previous_from_definitive,
-                            },
-                        },
-                    } = response;
-                    setIsTemporary(!!general_info?.temporary);
-                    setCalendarPhase(general_info?.phase?.id);
-                    setIsPublished(!!published);
-                    setInterruptions(interruptions);
-                    setEpochs(epochs);
-                    epochs.forEach((epoch) => {
-                        setExamList((current) => [...current, ...epoch.exams]);
-                    });
-                    setGeneralInfo(general_info);
-                    setDifferences(differences);
-                    setIsLoading(false);
-                    setPreviousFromDefinitive(previous_from_definitive);
-                } else {
-                    history('/calendario');
-                }
-            })
-            .catch((r) => alert(r));
-    };
+    // const updateCalendarPhase = (newCalendarPhase) => {
+    //     setUpdatingCalendarPhase(true);
+    //     patchCalendar('calendar_phase_id', newCalendarPhase).then(
+    //         (response) => {
+    //             setUpdatingCalendarPhase(false);
+    //             if (response.status === 200) {
+    //                 setCalendarPhase(newCalendarPhase);
+    //                 toast(t('calendar.Fase do calendário atualizada!'), successConfig);
+    //             }
+    //         },
+    //     );
+    // };
 
 
     useEffect(() => {
@@ -129,15 +72,11 @@ const InfosAndActions = () => {
     }, [calendarPhase]);
 
 
-    const handleFaqClick = (e, titleProps) => {
-        const {index} = titleProps;
-        const newIndex = activeIndex === index ? -1 : index;
-        setActiveIndex(newIndex);
-    };
-
-    useEffect(() => {
-        loadCalendar(calendarId);
-    }, [calendarId, history]);
+    // const handleFaqClick = (e, titleProps) => {
+    //     const {index} = titleProps;
+    //     const newIndex = activeIndex === index ? -1 : index;
+    //     setActiveIndex(newIndex);
+    // };
 
     useEffect(() => {
         axios.get('/calendar-phases').then((response) => {
@@ -154,32 +93,27 @@ const InfosAndActions = () => {
         });
     }, []);
 
-    const publishCalendar = () => {
-        setPublishLoading(true);
-        axios.post(`/calendar/${calendarId}/publish`).then((res) => {
-            setPublishLoading(false);
-            loadCalendar(calendarId);
-            if (res.status === 200) {
-                toast('Calendário publicado com sucesso!', successConfig);
-            } else {
-                toast('Ocorreu um erro ao tentar publicar o calendário!', errorConfig);
-            }
-        });
-    };
+    // const publishCalendar = () => {
+    //     setPublishLoading(true);
+    //     axios.post(`/calendar/${calendarId}/publish`).then((res) => {
+    //         setPublishLoading(false);
+    //         loadCalendar(calendarId);
+    //         if (res.status === 200) {
+    //             toast('Calendário publicado com sucesso!', successConfig);
+    //         } else {
+    //             toast('Ocorreu um erro ao tentar publicar o calendário!', errorConfig);
+    //         }
+    //     });
+    // };
 
-    const submitToNextPhase = () => {
-        // setPublishLoading(true);
-        // axios.post(`/calendar/${calendarId}/publish`).then((res) => {
-        //     setPublishLoading(false);
-        //     loadCalendar(calendarId);
-        //     if (res.status === 200) {
-        //         toast('Calendário publicado com sucesso!', successConfig);
-        //     } else {
-        //         toast('Ocorreu um erro ao tentar publicar o calendário!', errorConfig);
-        //     }
-        // });
-        alert("submitted! (not)")
-    };
+    const openSubmitModalHandler = () => {
+        // setViewExamId(exam.id);
+        setOpenSubmitModal(true);
+    }
+
+    const closeSubmitModalHandler = () => {
+        setOpenSubmitModal(false);
+    }
 
     const createCopy = () => {
         SweetAlertComponent.fire({
@@ -208,6 +142,10 @@ const InfosAndActions = () => {
             });
     };
 
+    const updatePhaseHandler = (newPhase) => {
+        setCalendarPhase(newPhase);
+        calendarInfo.phase.id =  newPhase;
+    }
 
 
     return (
@@ -216,18 +154,18 @@ const InfosAndActions = () => {
                 <div className='main-content-title'>
                     <Header as="h3">
                         Calendário de Avaliação
-                        <span className='heading-description'>{ generalInfo?.course?.name_pt ? " (" + generalInfo.course.name_pt + ")": '' }</span>
+                        <span className='heading-description'>{ calendarInfo?.course?.name_pt ? " (" + calendarInfo.course.name_pt + ")": '' }</span>
                     </Header>
                 </div>
                 <div className='main-content-actions'>
                     {!isPublished ? (
                         <>
-                            <ShowComponentIfAuthorized permission={[SCOPES.PUBLISH_CALENDAR]}>
-                                <Button color="teal" loading={publishLoading} onClick={publishCalendar}>Publicar esta versão</Button>
-                            </ShowComponentIfAuthorized>
-                            { calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0 && (
+                            {/* <ShowComponentIfAuthorized permission={[SCOPES.PUBLISH_CALENDAR]}>
+                                <Button color="teal" onClick={publishCalendar}>Publicar esta versão</Button>
+                            </ShowComponentIfAuthorized> */}
+                            { (SCOPES.PUBLISH_CALENDAR || calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0) && (
                                     <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE]}>
-                                        <Button color="teal" loading={publishLoading} onClick={submitToNextPhase}>Submeter</Button>
+                                        <Button color="teal" onClick={openSubmitModalHandler}>Submeter</Button>
                                     </ShowComponentIfAuthorized>
                                 )
                             }
@@ -247,7 +185,7 @@ const InfosAndActions = () => {
                                 <GridColumn>
                                     <Header as="h4">Legenda</Header>
                                     <List divided relaxed>
-                                        {epochsList.map((epoch, index) => (
+                                        {epochs.map((epoch, index) => (
                                             <div className='legend-list-item' key={index}>
                                                 <div className={'legend-list-item-square calendar-day-' + epoch.code}></div>
                                                 <Popup trigger={
@@ -287,12 +225,12 @@ const InfosAndActions = () => {
                                             ) : (
                                                 <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
                                                     <Header as="h5">Fase:</Header>
-                                                    <span>{calendarPhases.find((x) => x.key === calendarPhase)?.text || generalInfo?.phase?.description}</span>
+                                                    <span>{calendarPhases.find((x) => x.key === calendarPhase)?.text || calendarInfo?.phase?.description}</span>
                                                 </ShowComponentIfAuthorized>
                                             )
                                         } */}
                                         <Header as="h5">Fase:</Header>
-                                        <span>{calendarPhases.find((x) => x.key === calendarPhase)?.text || generalInfo?.phase?.description}</span>
+                                        <span>{calendarPhases.find((x) => x.key === calendarPhase)?.text || calendarInfo?.phase?.description}</span>
                                     </GridColumn>
                                 </ShowComponentIfAuthorized>
                                 <GridColumn>
@@ -333,13 +271,13 @@ const InfosAndActions = () => {
                                     <div>
                                         <span>
                                             <Header as="h5">Curso: </Header>
-                                            {generalInfo?.course?.name_pt}
+                                            {calendarInfo?.course?.name_pt}
                                         </span>
                                     </div> */}
                                     <div>
                                         <span>
                                             <Header as="h5">Última alteração:</Header>
-                                            {moment(generalInfo?.calendar_last_update,).format('DD MMMM, YYYY HH:mm')}
+                                            {moment(calendarInfo?.calendar_last_update,).format('DD MMMM, YYYY HH:mm')}
                                         </span>
                                     </div>
                                 </GridColumn>
@@ -348,6 +286,11 @@ const InfosAndActions = () => {
                     </Card>
                 </Sticky>
             </ShowComponentIfAuthorized>
+
+            <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE, SCOPES.PUBLISH_CALENDAR]}>
+                <PopupSubmitCalendar isOpen={openSubmitModal} onClose={closeSubmitModalHandler} calendarId={calendarId} currentPhaseId={calendarInfo?.phase?.id} updatePhase={updatePhaseHandler}/>
+            </ShowComponentIfAuthorized>
+
         </>
     );
 };

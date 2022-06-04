@@ -66,6 +66,11 @@ return [
             'path' => storage_path('logs/courses_sync.log'),
             'level' => env('LOG_LEVEL', 'debug'),
         ],
+        'users_login' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/users_login.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
 
         'daily' => [
             'driver' => 'daily',

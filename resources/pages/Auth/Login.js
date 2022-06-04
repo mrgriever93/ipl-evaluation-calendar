@@ -25,11 +25,12 @@ const LoginPage = () => {
                 email: values.email,
                 password: values.password,
                 remember_me: false,
-            })
-            .then(({data}) => {
+            }).then(({data}) => {
                 if (data.accessToken) {
+                    localStorage.setItem('userId', data.user.id);
                     localStorage.setItem('username', data.user.name);
                     localStorage.setItem('authToken', data.accessToken);
+                    localStorage.setItem('academicYear', data.academicYear);
                     const {scopes} = jwtDecode(data.accessToken);
                     localStorage.setItem('scopes', JSON.stringify(scopes));
                     if (scopes?.length === 0) {
@@ -37,8 +38,7 @@ const LoginPage = () => {
                     }
                     window.location = '/';
                 }
-            })
-            .catch((err) => {
+            }).catch((err) => {
                 setLoading(false);
                 SweetAlertComponent.fire({
                     title: 'Erro de autenticação!',

@@ -143,18 +143,17 @@ class PermissionsAndGroupsSeeder extends Seeder
         }
 
         $phases = [
-            ["code"=> "created",             "name_pt" => "Criado",                             "name_en" => "Created"                                ],
             ["code"=> "edit_gop",            "name_pt" => "Em edição (GOP)",                    "name_en" => "In edit (GOP)"                          ],
             ["code"=> "edit_cc",             "name_pt" => "Em edição (Coordenador de Curso)",   "name_en" => "In edit (Course coordinator)"           ],
             ["code"=> "edit_responsible",    "name_pt" => "Em edição (Responsável UC)",         "name_en" => "In edit (UC responsible)"               ],
-            ["code"=> "evaluation_ccp",      "name_pt" => "Em avaliação (CCP)",                 "name_en" => "Under evaluation (CCP)"                 ],
-            ["code"=> "evaluation_cp",       "name_pt" => "Em avaliação (Conselho Pedagógico)", "name_en" => "Under evaluation (Pedagogical Council)" ],
-            ["code"=> "evaluation_gop",      "name_pt" => "Em avaliação (GOP)",                 "name_en" => "Under evaluation (GOP)"                 ],
-            ["code"=> "evaluation_board",    "name_pt" => "Em avaliação (Direção)",             "name_en" => "Under evaluation (Direction)"           ],
             ["code"=> "evaluation_students", "name_pt" => "Em avaliação (Alunos)",              "name_en" => "Under evaluation (Students)"            ],
-            ["code"=> "approved",            "name_pt" => "Aprovado",                           "name_en" => "Approved"                               ],
+            ["code"=> "evaluation_ccp",      "name_pt" => "Em avaliação (CCP)",                 "name_en" => "Under evaluation (CCP)"                 ],
+            ["code"=> "evaluation_gop",      "name_pt" => "Em avaliação (GOP)",                 "name_en" => "Under evaluation (GOP)"                 ],
+            ["code"=> "evaluation_cp",       "name_pt" => "Em avaliação (Conselho Pedagógico)", "name_en" => "Under evaluation (Pedagogical Council)" ],
+            ["code"=> "evaluation_board",    "name_pt" => "Em avaliação (Direção)",             "name_en" => "Under evaluation (Direction)"           ],
             ["code"=> "published",           "name_pt" => "Publicado",                          "name_en" => "Published"                              ],
             ["code"=> "system",              "name_pt" => "System",                             "name_en" => "System"                                 ],
+//            ["code"=> "approved",            "name_pt" => "Aprovado",                           "name_en" => "Approved"                               ],
         ];
 
         foreach ($phases as $phase) {
@@ -258,7 +257,9 @@ class PermissionsAndGroupsSeeder extends Seeder
             ["code" => "delete_courses",                    "section_code" => "courses",            "name_pt" => "Eliminar cursos",                                 "name_en" => "Delete courses",                  "is_general" => true  ],
 
             // for each phase
+            ["code" => "view_calendar",                     "section_code" => "calendar",           "name_pt" => "Ver calendário",                                  "name_en" => "See calendar",                    "is_general" => false ],
             ["code" => "add_comments",                      "section_code" => "calendar",           "name_pt" => "Adicionar comentários",                           "name_en" => "Add comments",                    "is_general" => false ],
+            ["code" => "ignore_comments",                   "section_code" => "calendar",           "name_pt" => "Ignorar comentários",                             "name_en" => "Ignore comments",                 "is_general" => false ],
             ["code" => "change_calendar_phase",             "section_code" => "calendar",           "name_pt" => "Mudar fase de calendário",                        "name_en" => "Change calendar phase",           "is_general" => false ],
             ["code" => "add_exams",                         "section_code" => "evaluation",         "name_pt" => "Adicionar avaliações",                            "name_en" => "Add exams",                       "is_general" => false ],
             ["code" => "edit_exams",                        "section_code" => "evaluation",         "name_pt" => "Editar avaliações",                               "name_en" => "Edit exams",                      "is_general" => false ],
@@ -279,16 +280,6 @@ class PermissionsAndGroupsSeeder extends Seeder
             $newPermission->category_id = $newPerm["is_general"] ? $categoryGeneral->id : $categoryCalendar->id;
             $newPermission->section_id = PermissionSection::where('code', $newPerm["section_code"])->first()->id;
             $newPermission->save();
-
-            if ($newPerm["is_general"]) {
-                $newPermission->group()->attach(
-                    [ $super_admin_id ],
-                    [
-                        'phase_id' => $phase_system_id,
-                        'enabled' => true,
-                    ]
-                );
-            }
         }
 
         $epochTypes = [

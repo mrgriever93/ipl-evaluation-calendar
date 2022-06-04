@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {Button, Card, Checkbox, Container, Form, Icon, Message, Popup, Step} from 'semantic-ui-react';
+import {Button, Card, Checkbox, Container, Form, Header, Icon, Message, Popup, Step} from 'semantic-ui-react';
 import {Field, Form as FinalForm} from 'react-final-form';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -13,35 +13,14 @@ import {useTranslation} from "react-i18next";
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const stepsData = [
-    {
-        number: 1,
-        icon: 'calendar alternate outline',
-        title: 'Época',
-        description: 'Selecione o semestre do calendário a criar, assim como as datas das épocas.'
-    },
-    {
-        number: 2,
-        icon: 'pause',
-        title: 'Interrupções Letivas',
-        description: 'Insira todas as informações das Interrupções letivas.'
-    },
-    {
-        number: 3,
-        icon: 'book',
-        title: 'Cursos',
-        description: 'Insira os cursos para os quais deseja criar o calendário.'
-    }
-];
-
 const formInitialValues = {
     step1: {
         semester: "first_semester",
-        week_ten: null,
     },
     step2: {
         interruptions: {},
         noInterruptions: false,
+        week_ten: null,
     },
     step3: {
         allCourses: false,
@@ -55,6 +34,29 @@ const formInitialValues = {
 const NewCalendar = () => {
     const history = useNavigate();
     const { t } = useTranslation();
+
+    const stepsData = [
+        {
+            number: 1,
+            icon: 'calendar alternate outline',
+            title: t('Época'),
+            description: t('Selecione o semestre do calendário a criar, assim como as datas das épocas.')
+        },
+        {
+            number: 2,
+            icon: 'pause',
+            title: t('Interrupções Letivas'),
+            description: t('Insira todas as informações das Interrupções letivas.')
+        },
+        {
+            number: 3,
+            icon: 'book',
+            title: t('Cursos'),
+            description: t('Insira os cursos para os quais deseja criar o calendário.')
+        }
+    ];
+
+
     const [activeSemester, setActiveSemester] = useState(0);
     const [loading, setLoading] = useState(true);
 
@@ -71,6 +73,7 @@ const NewCalendar = () => {
     const [finalDate, setFinalDate] = useState(0);
     const [holidaysList, setHolidaysList] = useState([]);
     const [additionalInterruptions, setAdditionalInterruptions] = useState([]);
+    const [tenWeekDate, setTenWeekDate] = useState();
 
     const addCourse = (course) => {
         setCourses([...courses, {...course}]);
@@ -80,30 +83,34 @@ const NewCalendar = () => {
         setCourses([...courses.filter((course) => course.id !== id)]);
     };
 
+    const setTenWeek = (date) => {
+        setTenWeekDate(date);
+    }
+
     const validateStep1 = (values) => {
         let isValid = false;
         // Check for the semester
         const hasSemester = values.semester !== "";
         // Check for every type of dates and if has start and end
-        const hasEpochs = values.hasOwnProperty("seasons") && values.seasons && Object.keys(values.seasons).length > 0;
+        const hasEpochs = values.hasOwnProperty("seasons") && values.seasons && values.seasons[values.semester] && Object.keys(values.seasons).length > 0;
         let hasAllDates = true;
         if(hasEpochs) {
-            const keys = Object.keys(values.seasons);
+            const keys = Object.keys(values.seasons[values.semester]);
             let initialDate = 0;
             let finalDate = 0;
             // get lower and higher dates
             keys.forEach((key, index) => {
-                if(!values.seasons[key].hasOwnProperty("start_date") || !values.seasons[key].hasOwnProperty("end_date")){
+                if(!values.seasons[values.semester][key].hasOwnProperty("start_date") || !values.seasons[values.semester][key].hasOwnProperty("end_date")){
                     hasAllDates = false;
                 } else {
                     // create date from  different format
-                    let startDate = (values.seasons[key].start_date).split("-");
+                    let startDate = (values.seasons[values.semester][key].start_date).split("-");
                     let compStartDate = new Date(startDate[2] + "-" + startDate[1] + "-" + startDate[0]);
                     // check if year is lower than the current one
                     if(initialDate > compStartDate || initialDate === 0) {
                         initialDate = compStartDate;
                     }
-                    let endDate = (values.seasons[key].end_date).split("-");
+                    let endDate = (values.seasons[values.semester][key].end_date).split("-");
                     let compEndDate = new Date(endDate[2] + "-" + endDate[1] + "-" + endDate[0]);
                     if(finalDate < compEndDate || finalDate === 0) {
                         finalDate = compEndDate;
@@ -247,13 +254,13 @@ const NewCalendar = () => {
                 //...(values.step3.allCourses ? null : {courses: [...values.step3.courses.map((x) => x.id)]}),
                 courses: [...values.step3.courses.map((x) => x.id)],
                 epochs: [
-                    ...Object.keys(values.step1.seasons).map((key) => ({
+                    ...Object.keys(values.step1.seasons[values.step1.semester]).map((key) => ({
                         code: key.split('__')[0],
-                        start_date: moment(values.step1.seasons[key].start_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
-                        end_date: moment(values.step1.seasons[key].end_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+                        start_date: moment(values.step1.seasons[values.step1.semester][key].start_date, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+                        end_date: moment(values.step1.seasons[values.step1.semester][key].end_date, 'DD-MM-YYYY').format('YYYY-MM-DD')
                     })),
                 ],
-                week_ten:  moment(values.step1.week_ten, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+                week_ten:  tenWeekDate ? moment(tenWeekDate, "DD-MM-YYYY").format('YYYY-MM-DD') : null,
                 holidays: holidaysList,
                 interruptions: [
                     ...(values.step2?.additional_interruptions?.map(({interruption_type_id, start_date, end_date}) => ({
@@ -270,8 +277,8 @@ const NewCalendar = () => {
                 const pluralOrSingularForm = values.step3.allCourses || values.step3.courses?.length > 1 ? 's' : '';
                 if (response.status === 201) {
                     SweetAlertComponent.fire({
-                        title: 'Sucesso!',
-                        text: `Calendário${pluralOrSingularForm} criado${pluralOrSingularForm} com sucesso!`,
+                        title: t('Sucesso!'),
+                        text: t(`Calendário${pluralOrSingularForm} criado${pluralOrSingularForm} com sucesso!`),
                         icon: 'success',
                         confirmButtonColor: '#21ba45',
                     });
@@ -281,8 +288,8 @@ const NewCalendar = () => {
                     Object.keys(response.response.data.errors).map((key) => errors.push(...response.response.data.errors[key]));
                     setErrorMessages(errors);
                     SweetAlertComponent.fire({
-                        title: 'Erro!',
-                        text: `Ocorreu um erro ao tentar criar o${pluralOrSingularForm} calendário${pluralOrSingularForm} de avaliação`,
+                        title: t('Erro!'),
+                        text: t(`Ocorreu um erro ao tentar criar o${pluralOrSingularForm} calendário${pluralOrSingularForm} de avaliação`),
                         icon: 'error',
                         confirmButtonColor: 'red',
                     });
@@ -294,6 +301,13 @@ const NewCalendar = () => {
     const addNewInterruption = () => {
         setAdditionalInterruptions((current) => [...current, current.length]);
     }
+    const removeInterruption = (index) => {
+        setAdditionalInterruptions((current) => {
+            const copy = [...current];
+            copy.splice(index, 1);
+            return copy;
+        });
+    }
     const getHolidays = (holidays) => {
         setHolidaysList(holidays);
     }
@@ -302,6 +316,10 @@ const NewCalendar = () => {
         <Container>
             <FinalForm onSubmit={onSubmit} initialValues={formInitialValues} key={'form_new_calendar'} render={({handleSubmit, values}) => (
                 <div>
+
+                    <div className='main-content-title'>
+                        <Header as="h2">{ t("Novo Calendário") }</Header>
+                    </div>
                     <Step.Group widths={stepsData.length}>
                         {stepsData.map((step) => (
                             <Step link active={currentStep === step.number} disabled={maxStep < step.number} key={'step_' + step.number} completed={completedSteps.includes(step.number)} onClick={() => stepHeader(step.number)}>
@@ -314,7 +332,6 @@ const NewCalendar = () => {
                         ))}
                     </Step.Group>
                     <Card fluid>
-                        <Card.Content header="Novo Calendário"/>
                         { errorMessages.length > 0 && (
                             <Card.Content>
                                 <Message warning>
@@ -335,7 +352,8 @@ const NewCalendar = () => {
                                     <Step1 activeSemester={activeSemester} setActiveSemester={setActiveSemester} />
                                 </div>
                                 <div className={currentStep === 2 ? "display-block" : "display-none"}>
-                                    <Step2 holidays={getHolidays} finalDate={finalDate} initialDate={initialDate} isActive={currentStep === 2} additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} />
+                                    <Step2 holidays={getHolidays} finalDate={finalDate} initialDate={initialDate} tenWeek={setTenWeek} isActive={currentStep === 2}
+                                           additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} removeAdditionalInterruptions={removeInterruption} />
                                 </div>
                                 <div className={currentStep === 3 ? "display-block" : "display-none"}>
                                     <Step3 allCourses={allCourses} setAllCourses={setAllCourses} courses={courses} removeCourse={removeCourse} addCourse={addCourse} loading={loading} setLoading={setLoading}/>
@@ -347,7 +365,7 @@ const NewCalendar = () => {
                                 {currentStep === 2 && (
                                     <>
                                         <Button icon labelPosition="left" color="teal" disabled={values.step2.noInterruptions} onClick={addNewInterruption}>
-                                            Adicionar interrupção
+                                            { t("Adicionar interrupção") }
                                             <Icon name="plus"/>
                                         </Button>
                                         <Field name="step2.noInterruptions" type="checkbox">
@@ -355,25 +373,25 @@ const NewCalendar = () => {
                                                 <Checkbox label={t('Sem Interrupções')} toggle checked={noInterruptions.checked} onClick={() => noInterruptions.onChange( !noInterruptions.checked) } />
                                             )}
                                         </Field>
-                                        <Popup content={<>Este calendário não terá interrupções, por isso não precisam de ser adicionadas.<br/><br/>As interrupções já adicionadas irão ser criadas na mesma. Caso não pretenda criar, apague-as.</>} header={"Sem Interrupções"} trigger={<Icon name={"info circle"} />}/>
+                                        <Popup content={<>{ t("Este calendário não terá interrupções, por isso não precisam de ser adicionadas.") }<br/><br/>{ t("As interrupções já adicionadas irão ser criadas na mesma. Caso não pretenda criar, apague-as.") }</>} header={ t("Sem Interrupções") } trigger={<Icon name={"info circle"} />}/>
                                     </>
                                 )}
                             </div>
                             <div>
                                 {currentStep > 1 && (
                                     <Button icon labelPosition="left" color="green" onClick={() => setCurrentStep(currentStep - 1)}>
-                                        Anterior
+                                        { t("Anterior") }
                                         <Icon name="left arrow"/>
                                     </Button>
                                 )}
                                 {currentStep < 3 && (
                                     <Button icon labelPosition="right" color="green" onClick={() => nextStep(currentStep + 1, values)}>
-                                        Seguinte <Icon name="right arrow"/>
+                                        { t("Seguinte") } <Icon name="right arrow"/>
                                     </Button>
                                 )}
                                 {currentStep === 3 && (
                                     <Button icon labelPosition="left" color="blue" loading={isSaving} onClick={handleSubmit}>
-                                        Criar Calendário
+                                        { t("Criar Calendário") }
                                         <Icon name="send"/>
                                     </Button>
                                 )}

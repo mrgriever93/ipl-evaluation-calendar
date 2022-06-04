@@ -26,4 +26,13 @@ class Utils
 
         return $selectedAcademicYear;
     }
+
+    public function getFullYearsAcademicYear($academicYear){
+        $years = 0;
+        if($academicYear != 0){
+            $rawYears = explode("-", $academicYear);
+            $years = $rawYears[0] . "-20" . $rawYears[1];
+        }
+        return $years;
+    }
 }

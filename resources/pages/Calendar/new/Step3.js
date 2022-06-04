@@ -5,12 +5,16 @@ import {Field, useField} from 'react-final-form';
 import axios from "axios";
 import PaginationDetail from "../../../components/Pagination";
 import FilterOptionPerPage from "../../../components/Filters/PerPage";
+import {useTranslation} from "react-i18next";
+import FilterOptionDegree from "../../../components/Filters/Degree";
 
 const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loading, setLoading}) => {
+    const { t } = useTranslation();
     const {input: coursesFieldInput} = useField('step3.courses');
     const [courseList, setCourseList] = useState([]);
     const [courseSearch, setCourseSearch] = useState();
     const [currentPage, setCurrentPage] = useState(1);
+    const [degree, setDegree] = useState();
     const [perPage, setPerPage] = useState(10);
 
     const [paginationInfo, setPaginationInfo] = useState({});
@@ -27,13 +31,14 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
     useEffect(() => {
         fetchCourses();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [courseSearch, currentPage, perPage]);
+    }, [courseSearch, currentPage, perPage, degree]);
 
     const fetchCourses = () => {
         setLoading(true);
 
         let searchLink = `/courses?page=${currentPage}`;
         searchLink += `${courseSearch ? `&search=${courseSearch}` : ''}`;
+        searchLink += `${degree ? `&degree=${degree}` : ''}`;
         searchLink += '&per_page=' + perPage;
         //searchLink += `${school ? `&school=${school}` : ''}`;
         //searchLink += `${degree ? `&degree=${degree}` : ''}`;
@@ -93,19 +98,19 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
                                 ))}
                             </Grid.Row>
                         ) : null}
-
                         <Grid.Row className={"justify_space_between"}>
-                            <Form.Input width={6} label="Pesquisar curso (Código, Sigla ou Nome)" placeholder="Pesquisar ..." fluid onChange={_.debounce(searchCourse, 900)}/>
+                            <Form.Input width={6} label={t("Pesquisar curso (Código, Sigla ou Nome)")} placeholder={ t("Pesquisar...") } fluid onChange={_.debounce(searchCourse, 900)}/>
+                            <FilterOptionDegree widthSize={5} eventHandler={(value) => setDegree(value)}/>
                             <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                         </Grid.Row>
                         <Grid.Row>
                             <Table color="green">
                                 <Table.Header>
                                     <Table.Row>
-                                        <Table.HeaderCell>Código</Table.HeaderCell>
-                                        <Table.HeaderCell>Sigla</Table.HeaderCell>
-                                        <Table.HeaderCell>Nome</Table.HeaderCell>
-                                        <Table.HeaderCell>Adicionar?</Table.HeaderCell>
+                                        <Table.HeaderCell>{ t("Código") }</Table.HeaderCell>
+                                        <Table.HeaderCell>{ t("Sigla") }</Table.HeaderCell>
+                                        <Table.HeaderCell>{ t("Nome") }</Table.HeaderCell>
+                                        <Table.HeaderCell>{ t("Adicionar") }?</Table.HeaderCell>
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
@@ -115,9 +120,11 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
                                             <Table.Cell>{course.initials}</Table.Cell>
                                             <Table.Cell>{course.name}</Table.Cell>
                                             <Table.Cell>
-                                                <Button onClick={() => addCourse(course)} color="teal" disabled={!!courses.find(({id: courseId}) => courseId === course.id)} >
-                                                    Adicionar
-                                                </Button>
+                                                { ( !!courses.find(({id: courseId}) => courseId === course.id) ? (
+                                                    <Button onClick={() => removeCourse(course.id)} color="red">{ t("Remover") }</Button>
+                                                ) : (
+                                                    <Button onClick={() => addCourse(course)} color="teal">{ t("Adicionar") }</Button>
+                                                )) }
                                             </Table.Cell>
                                         </Table.Row>
                                     ))}
@@ -129,9 +136,7 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
                         </Grid.Row>
                         {loading && (
                             <Dimmer active inverted>
-                                <Loader indeterminate>
-                                    A carregar os cursos
-                                </Loader>
+                                <Loader indeterminate>{ t("A carregar os cursos") }</Loader>
                             </Dimmer>
                         )}
                     </>

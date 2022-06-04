@@ -12,6 +12,7 @@ class ExamComment extends Model
     protected $fillable = [
         "exam_id",
         "comment",
+        "comment_language",
         "language",
         "ignored",
         "user_id",
