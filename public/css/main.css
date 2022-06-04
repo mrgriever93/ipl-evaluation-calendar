@@ -663,7 +663,7 @@ div.inline{
     overflow-y: auto;
 }
 
-.exam-detail-info .ui.list .list >.item, 
+.exam-detail-info .ui.list .list >.item,
 .exam-detail-info .ui.list > .item {
     display: flex;
     justify-content: space-between;
@@ -761,4 +761,10 @@ div.inline{
     background: #fff;
     border: 1px solid #ccc;
     box-shadow: 0 0 3px 1px rgba(0, 0, 0, .1);
+}
+
+.active-phase{
+    position: absolute;
+    right: var(--space-s);
+    top: var(--space-s);
 }

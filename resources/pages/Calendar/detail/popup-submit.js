@@ -7,7 +7,7 @@ import {toast} from 'react-toastify';
 
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
-const PopupEvaluationDetail = ( {isOpen, onClose, calendarId} ) => {
+const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, updatePhase} ) => {
     // const history = useNavigate();
     const { t } = useTranslation();
 
@@ -30,7 +30,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId} ) => {
             }
         });
     }, []);
-    
+
     const updateCalendarPhase = (newCalendarPhase) => {
         // setUpdatingCalendarPhase(true);
         axios.patch(`/calendar/${calendarId}`, { 'calendar_phase_id': newCalendarPhase }).then((response) => {
@@ -40,6 +40,8 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId} ) => {
                     toast(t('calendar.Fase do calendário atualizada!'), successConfig);
                 }
         });
+        updatePhase(newCalendarPhase);
+        onClose();
     };
 
 
@@ -52,8 +54,11 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId} ) => {
                     <Card.Group itemsPerRow={3} >
                         {calendarPhases.filter((x) => x.name !== 'system').map((phase) => {
                                 return (
-                                    <Card color='green' key={phase.key} onClick={(e) => updateCalendarPhase(phase.value) }>
+                                    <Card color='green' key={phase.key} onClick={(e) => updateCalendarPhase(phase.value) } >
                                         <Card.Content textAlign='center'>
+                                            { phase.value == currentPhaseId && (
+                                                <Icon className={"active-phase"} color="green" size={"large"} name="check circle outline" />
+                                            )}
                                             <div>
                                                 { phase.text.includes('Em edição') ? (
                                                     <Icon color="grey" size="big" name="edit" />
@@ -75,7 +80,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId} ) => {
                         )}
                     </Card.Group>
                 </div>
-                {/* <Dropdown 
+                {/* <Dropdown
                     options={calendarPhases.filter((x) => x.name !== 'system' && x.name !== 'published')}
                     selection fluid
                     label="Fase do Calendário"

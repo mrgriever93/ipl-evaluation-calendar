@@ -292,4 +292,5 @@ class CalendarController extends Controller
         } while ($yearOfFirstDay++ < $yearOfLastDay);
         return response()->json($holidays, Response::HTTP_OK);
     }
+
 }

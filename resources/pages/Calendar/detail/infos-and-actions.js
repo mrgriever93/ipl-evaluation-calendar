@@ -142,6 +142,10 @@ const InfosAndActions = ( {epochs, calendarInfo}) => {
             });
     };
 
+    const updatePhaseHandler = (newPhase) => {
+        setCalendarPhase(newPhase);
+        calendarInfo.phase.id =  newPhase;
+    }
 
 
     return (
@@ -284,9 +288,9 @@ const InfosAndActions = ( {epochs, calendarInfo}) => {
             </ShowComponentIfAuthorized>
 
             <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE, SCOPES.PUBLISH_CALENDAR]}>
-                <PopupSubmitCalendar isOpen={openSubmitModal} onClose={closeSubmitModalHandler} calendarId={calendarId}/>
+                <PopupSubmitCalendar isOpen={openSubmitModal} onClose={closeSubmitModalHandler} calendarId={calendarId} currentPhaseId={calendarInfo?.phase?.id} updatePhase={updatePhaseHandler}/>
             </ShowComponentIfAuthorized>
-            
+
         </>
     );
 };
