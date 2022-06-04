@@ -19,44 +19,46 @@ const SCOPES = {
     CREATE_UC_GROUPS: 'create_uc_groups',
     EDIT_UC_GROUPS: 'edit_uc_groups',
     DELETE_UC_GROUPS: 'delete_uc_groups',
-    
+
     EDIT_USER_GROUPS: 'edit_user_groups',
     DELETE_USER_GROUPS: 'delete_user_groups',
     CREATE_USER_GROUPS: 'create_user_groups',
-    
+
     EDIT_USERS: 'edit_users',
     LOCK_USERS: 'lock_users',
-    
+
     CREATE_EVALUATION_TYPES: 'create_evaluation_types',
     EDIT_EVALUATION_TYPES: 'edit_evaluation_types',
     DELETE_EVALUATION_TYPES: 'delete_evaluation_types',
-    
+
     CREATE_INTERRUPTION_TYPES: 'create_interruption_types',
     EDIT_INTERRUPTION_TYPES: 'edit_interruption_types',
     DELETE_INTERRUPTION_TYPES: 'delete_interruption_types',
-    
+
     CREATE_CALENDAR_PHASES: 'create_calendar_phases',
     EDIT_CALENDAR_PHASES: 'edit_calendar_phases',
     DELETE_CALENDAR_PHASES: 'delete_calendar_phases',
-    
+
     CREATE_SCHOOLS: 'create_schools',
     EDIT_SCHOOLS: 'edit_schools',
-    
+
     CREATE_ACADEMIC_YEARS: 'create_academic_years',
     EDIT_ACADEMIC_YEARS: 'edit_academic_years',
     DELETE_ACADEMIC_YEARS: 'delete_academic_years',
-    
+
     CHANGE_PERMISSIONS: 'change_permissions',
     DEFINE_COURSE_COORDINATOR: 'define_course_coordinator',
     DEFINE_COURSE_UNIT_RESPONSIBLE: 'define_course_unit_responsible',
     DEFINE_COURSE_UNIT_TEACHERS: 'define_course_unit_teachers',
-    
+
     VIEW_COURSES: 'view_courses',
     CREATE_COURSES: 'create_courses',
     EDIT_COURSES: 'edit_courses',
     DELETE_COURSES: 'delete_courses',
-    
+
     ADD_COMMENTS: 'add_comments',
+    IGNORE_COMMENTS: 'ignore_comments',
+    VIEW_CALENDAR: 'view_calendar',
     CHANGE_CALENDAR_PHASE: 'change_calendar_phase',
     ADD_EXAMS: 'add_exams',
     EDIT_EXAMS: 'edit_exams',

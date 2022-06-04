@@ -105,13 +105,12 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
                         </Button>
                     </Segment>
                     */}
-                    { Object.keys(courseUnitsGrouped).map((year, index) => (
-
-                        <div className='margin-bottom-l'>
+                    { Object.keys(courseUnitsGrouped).map((year, indexUC) => (
+                        <div className='margin-bottom-l' key={indexUC}>
                             <Header as='h4'>
                                 { t("Ano") } {year}
                             </Header>
-                            <Table striped color="green" key={index}>
+                            <Table striped color="green">
                                 <Table.Header>
                                     <Table.Row>
                                         {columns.map((col, index) => (

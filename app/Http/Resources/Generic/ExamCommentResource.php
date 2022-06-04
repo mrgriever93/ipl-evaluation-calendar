@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Generic;
 
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -22,13 +22,14 @@ class ExamCommentResource extends JsonResource
         } else {
             $formatedDate = "Há {$differenceInDays} dias";
         }
-
         return [
             'id'        => $this->id,
             'comment'   => $this->comment,
             'ignored'   => $this->ignored,
-            'date'      => $formatedDate,
-            'user'      => new UserResource($this->user),
+            'date_label'=> $formatedDate,
+            'date'      => $this->created_at,
+            'user'      => new UserCommentResource($this->user),
         ];
+
     }
 }

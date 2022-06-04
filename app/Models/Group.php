@@ -8,17 +8,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InitialGroups
 {
-    const GOP = "gop";
     const SUPER_ADMIN = "super_admin";
-    const BOARD = "board";
     const ADMIN = "admin";
     const COMISSION_CCP = "comission";
     const PEDAGOGIC = "pedagogic";
-    const RESPONSIBLE_PEDAGOGIC = "responsible_pedagogic";
-    const TEACHER = "teacher";
-    const RESPONSIBLE = "responsible_course_unit";
     const COORDINATOR = "coordinator";
-    const STUDENT = "Estudante";
+    const BOARD = "board";
+    const GOP = "gop";
+    const TEACHER = "teacher";
+    const RESPONSIBLE_PEDAGOGIC = "responsible_pedagogic";
+    const RESPONSIBLE = "responsible_course_unit";
+    const STUDENT = "student";
 }
 
 class Group extends Model

@@ -151,8 +151,8 @@ const List = () => {
                                     <Table.Cell width="3">{description}</Table.Cell>
                                     <Table.Cell width="7">
                                         <ul>
-                                            {course_units?.map((uc) => (
-                                                <li>{uc.name + ' - ' + uc.course_description}</li>
+                                            {course_units?.map((uc, ucIndex) => (
+                                                <li key={"uc_" + ucIndex}>{uc.name + ' - ' + uc.course_description}</li>
                                             ))}
                                         </ul>
                                     </Table.Cell>
@@ -170,21 +170,6 @@ const List = () => {
                                                 <Icon name="trash"/>
                                             </Button>
                                         </ShowComponentIfAuthorized>
-                                        <ShowComponentIfAuthorized permission={[SCOPES.MANAGE_EVALUATION_METHODS]}>
-                                            <Link to={`/agrupamento-unidade-curricular/${course_units[0]?.id}/metodos`}>
-                                                <Button color="olive" icon labelPosition="left">
-                                                    <Icon name="file alternate"/> Métodos
-                                                </Button>
-                                            </Link>
-                                        </ShowComponentIfAuthorized>
-
-                                        {/* <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]}>
-                                            <Link to={`/escola/edit/${id}`}>
-                                            <Button color="yellow" icon>
-                                                <Icon name="edit" />
-                                            </Button>
-                                            </Link>
-                                        </ShowComponentIfAuthorized> */}
                                     </Table.Cell>
                                 </Table.Row>
                                 ))}

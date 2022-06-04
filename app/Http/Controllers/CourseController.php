@@ -53,11 +53,14 @@ class CourseController extends Controller
         $utils = new Utils();
         $courseList = Course::ofAcademicYear($utils->getCurrentAcademicYear($request))->where('degree', '<>', '');
         $hasSearch = false;
-        if($request->has('search') && !empty($request->has('search'))) {
+        if($request->has('search')) {
             $hasSearch = true;
             $courseList->filter($filters);
         }
-
+        if($request->has('include')) {
+            $courseList->orWhere('id', $request->get('include'))->orderByRaw('case when id = ' . $request->get('include') . ' then 0 else 1 end, id');
+        }
+        //dd($courseList->toSql());
         return CourseSearchListResource::collection(($hasSearch ? $courseList->get() : $courseList->limit(15)->get()));
     }
 

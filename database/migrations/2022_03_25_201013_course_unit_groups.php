@@ -15,8 +15,11 @@ return new class extends Migration
     {
         Schema::create('course_unit_groups', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
+            $table->unsignedBigInteger('academic_year_id');
             $table->string('description_pt');
             $table->string('description_en');
+
+            $table->foreign('academic_year_id')->references('id')->on('academic_years');
 
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();

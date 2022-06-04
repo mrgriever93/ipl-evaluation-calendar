@@ -1,14 +1,14 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+
+# Entregas
+- **14 julho** > relatorio inicial
+- **18 julho** > relatório final
+- **25/26 julho** > apresentacao
 
 ## About Project
-sdfghy
+- Laravel 9.x
+- React
+- Sail (docker)
 
 ## Installation
 
@@ -22,9 +22,20 @@ sdfghy
         https://www.digitalocean.com/community/tutorials/how-to-install-and-use-composer-on-ubuntu-20-04-pt
         https://www.vultr.com/docs/upgrade-from-php-7-to-php-8-on-ubuntu-20-04-with-apache/ 
 
-        https://oauth2.thephpleague.com/installation/
 
-        
+    https://stackoverflow.com/questions/58045685/uninstall-old-versions-of-php-in-ubuntu-18-04
+
+
+3) Create public and private keys:
+
+    https://oauth2.thephpleague.com/installation/
+    
+    Execute this commands:
+
+    $> openssl genrsa -out storage/oauth-private.key 2048
+
+    $> openssl rsa -in storage/oauth-private.key -pubout -out storage/oauth-public.key
+   
 
 4) Change to your project folder with `cd` command
 
@@ -110,107 +121,28 @@ https://github.com/rap2hpoutre/laravel-log-viewer
 
 ---
 
-### TODO
+## Changes !!!important
 
-- [ ] Criar calendario
-  - [x] Criação de calendário com bug quando adicionamos uma interrupção ao calendário, e depois apagamos, ela não é efetivamente removida do array e vai no post de criação, gerando erro porque vai com uma data inválida.
-  - [ ] Loading feriados
-  - [ ] Otimizar load de permissões
+ Qualquer alteracao feita nas permissoes, tem de ser alterada tambem no ficheiro
+ > app/providers/AuthServiceProvider.php
 
-
-- [X] Rever HTML e detalhe dos Agrupamentos de UC
-    - [ ] Traduções
-    - [ ] Métodos
-
-
-- [ ] Detalhe Calendario
-  - [ ] Otimizar load de permissões e outros pedidos
-
-- [ ] Adicionar exames
-  - [ ] Na criação de uma avaliação dá erro quando vai buscar as unidades curriculares depois de selecionar a época, não dando para prosseguir
-  - [ ] validar permissoes (popup intervencoes)
-  - [ ] ter em conta o ano letivo selecionado
-
-- [ ] Adicionar mais interrupções 
-- [ ] Publicar calendário
-
-- [ ] Ver exame
-  - [ ] Adicionar comentários
-
-
-- [ ] Submeter para próximas fases e fazer a gestão de quais as fases seguintes/anteriores
-
-
-- [ ] Melhorar logs dos cursos, na alteração de métodos
-- [ ] Criar botão para duplicar métodos para todas as épocas 
-  - [ ] apenas na época periódica. 
-  - [ ] substitui tudo o que houver definido para ficar igual ao que estiver na periódica
-  - [ ] mostra aviso que irá substituir dados de todas as épocas 
-  - [ ] (serve como acelerador para preencher as épocas de exames que normalmente são sempre iguais, e dps pode ser otimizado na periódica)
-
-
-- [ ] Rever sync/refresh ano letivo
-- [ ] Rever falta de warning das configs da escola, quando as opções não estão todas preenchidas
-
-
-- [ ] Adicionar titulo as paginas
 
 ---
-- [x] No curso, qdo pede para rever cenas tipo Coordenador:
-    - [x]  Dps de preencheres e gravar n atualiza para tirar o erro
-    - [x]  E mantem o triangulo a dizer q faltam coisas na listagem
-- [x] Mostrar um alerta quando estiver acima de 100% (métodos) para confirmar que quer submeter com mais de 100%;
-- [x] Guardar nos métodos nem sempre funciona;
-- [x] Rever Tabs dos Cursos
-    - [x] Erros na utilização
-- [x] Falta testar a pesquisa do coordenador de curso no detalhe do curso
-- [x] Rever Tabs dos Cursos
-    - Comentei botao de adicionar unidades curriculares, talvez trabalho futuro
-- [x] Mensagem de erro no detalhe do curso com infos que faltam
-- [x] Faltam traduções e validar se há mais mensagens a aparecer
-- [x] Refeita tab dos ramos para usar a tabela
-- [x] Para adicionar mantém-se a modal?
-- [x] Atualizadas as permissões do lado da BD e do React
-- [x] Falta testar. O seeder das permissões agora está mal porque os id's mudaram... Devia ser refeito para quando formos testar isto melhor por user na VM
---- 
- - 2022-05-16
- - [x] Nos cursos, UC's que não estão em tronco comum não aparecem (falta confirmar se foram carregadas na BD)
 
-### TRABALHO FUTURO:
-- [ ] Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos);
-- [ ] Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;
-- [ ] Users com mais do que um role (validar o que deve ser feito)
-- [ ] Log dos métodos: registar o que foi alterado e quem alterou;
-- [ ] Rever "voltar a lista" para navegar entre paginas de detalhe e listas (ex: curso e detalhe de unidades curriculares)
- 
+## Troubleshooting
 
-### TODO Miguel
-- [ ] Limpeza "Requests Folder"
+Caso aconteça o erro seguinte:
 
+    user@MACHINE: ~/sites/ipl-evaluation-calendar$ alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
+    user@MACHINE: ~/sites/ipl-evaluation-calendar$ sail up -d
+    [+] Running 5/6
+    ⠿ Container ipl-evaluation-calendar-selenium-1          Started
+    ⠿ Container ipl-evaluation-calendar-mysql-1             Started
+    ⠿ Container ipl-evaluation-calendar-redis-1             Started
+    ⠿ Container ipl-evaluation-calendar-mailhog-1           Started
+    ⠿ Container ipl-evaluation-calendar-meilisearch-1       Started
+    ⠿ Container ipl-evaluation-calendar-calendar-v2.test-1  Starting
 
-### Perguntas - 17-05-2022
-- [ ] Ao criar novo exame, mostra todos as unidades curriculares, ou so as que lhe pertencem? (ex. sou prof de fisica, vejo algebra?)
-  - o professor so tem acesso as dele
-  - Gop e Coordenador de curso tem acesso as cadeiras do curso
-- [ ] Qualquer user pode marcar interrupcoes?
-  - ja existem as permissoes por fase na parte do calendario
-- [ ] ao criar o calendario, adicionar campo para a 10 semana
-  - so o gop
-- [ ] detalhe calendario
-  - quando for para seguir para a proxima fase, mostrar popup com fases
-
-----
-### Feedback prof. Pedro Gago
-- [x] No separador de "Calendários" (GOP) deve haver filtros
-
-
-- [x] Na definição de métodos de avaliação falta uma opção que permita copiar entre épocas (é habitual a avaliação em exame ter os mesmos elementos tanto em recurso como em especial/mensal)
-    - [x] FE
-    - [x] BE
-    - [x] Na definição de métodos de avaliação devia ir gravando o que se vai fazendo (está a obrigar a preencher tudo de uma vez)
-- [x] É provavelmente melhor retirar a opção de criação de calendário para todos os cursos (são cursos a mais)
-- [X] Na criação de Novo Calendário, se se escolher apenas a opção de avançar, 
-  - [x] pede "Tem de selecionar as interrupcoes mandatorias pelo menos!" - mudar para obrigatórias e/ou 
-  - [x] dizer quais
-- [x] Tirar Inglês Geral, Matemáticas Gerais, etc
-- [x] Quando tento marcar uma avaliação (1º semestre - 9119) fica "a pensar" à procura de UC
+    Error response from daemon: Ports are not available: exposing port TCP 0.0.0.0:80 -> 0.0.0.0:0: listen tcp 0.0.0.0:80: bind: An attempt was made to access a socket in a way forbidden by its access permissions.        
+    alexandre@DESKTOP-GRIEVER:~/sites/ipl-evaluation-calendar$ netsh http add iplisten ipaddress=::
+    netsh: command not found

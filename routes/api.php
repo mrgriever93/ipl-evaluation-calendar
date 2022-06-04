@@ -58,6 +58,8 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::controller(CalendarController::class)->group(function () {
+
+        Route::get('/calendar-info',                        'info'             );
         Route::get('/calendar',                             'index'            );
         Route::get('/calendar/{calendar}',                  'show'             );
         Route::post('/calendar',                            'store'            );
@@ -124,13 +126,16 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/exams/{exam}',           'show'   );
         Route::post('/exams',                 'store'  );
         Route::patch('/exams/{exam}',         'update' );
+        Route::delete('/exams/date/{calendar}/{date}',   'destroyByDate');
         Route::delete('/exams/{exam}',        'destroy');
     });
 
     Route::controller(ExamCommentController::class)->group(function () {
         Route::post('/comment',                 'store' );
-        Route::post('/comment/{comment}/ignore','ignore');
+        Route::post('/comment/{comment}/hide',  'hideComment');
+        Route::post('/comment/{comment}/show',  'showHiddenComment');
         Route::patch('/comment/{examComment}',  'update');
+        Route::delete('/comment/{comment}',     'delete');
     });
 
     Route::controller(AcademicYearController::class)->group(function () {

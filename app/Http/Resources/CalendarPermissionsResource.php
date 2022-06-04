@@ -9,8 +9,8 @@ class CalendarPermissionsResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'phase_id' => $this->phase_id,
-            'name'     => $this->permission->code,
+            'name'      => $this->code,
+            'phases'    => $this->phases,
         ];
     }
 }

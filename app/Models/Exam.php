@@ -14,11 +14,15 @@ class Exam extends Model
         "epoch_id",
         "method_id",
         "room",
-        "date",
+        "date_start",
+        "date_end",
+        "in_class",
         "hour",
         "duration_minutes",
         "observations_pt",
-        "observations_en"
+        "observations_en",
+        "description_pt",
+        "description_en"
     ];
 
     public function epoch()

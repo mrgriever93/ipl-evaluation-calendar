@@ -10,6 +10,7 @@ use App\Models\Calendar;
 use App\Models\CourseUnit;
 use App\Models\CourseUnitGroup;
 use App\Models\Epoch;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class CourseUnitGroupController extends Controller
@@ -19,9 +20,10 @@ class CourseUnitGroupController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(CourseUnitGroupFilters $filters)
+    public function index(Request $request, CourseUnitGroupFilters $filters)
     {
-        return CourseUnitGroupListResource::collection(CourseUnitGroup::with('courseUnits')->filter($filters)->resolve());
+        $list = CourseUnitGroup::with('courseUnits')->filter($filters)->ofAcademicYear($request->cookie('academic_year'))->resolve();
+        return CourseUnitGroupListResource::collection($list);
     }
 
     /**

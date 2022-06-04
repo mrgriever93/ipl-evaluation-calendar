@@ -10,7 +10,7 @@ class Method extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["evaluation_type_id", "academic_year_id", "minimum", "weight", "enabled"];
+    protected $fillable = ["evaluation_type_id", "academic_year_id", "minimum", "weight", "description_pt", "description_en", "enabled"];
 
     public function academicYear() {
         return $this->belongsTo(AcademicYear::class);

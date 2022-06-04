@@ -13,12 +13,7 @@ import Courses from "../../components/Filters/Courses";
 import FilterOptionPerPage from "../../components/Filters/PerPage";
 import EmptyTable from "../../components/EmptyTable";
 import PaginationDetail from "../../components/Pagination";
-
-const Wrapper = styled.div`
-    .header {
-        display: inline;
-    }
-`;
+import SemestersLocal from "../../components/Filters/SemestersLocal";
 
 const MessageFading = styled(Message)`
     @keyframes flickerAnimation {
@@ -46,13 +41,28 @@ const CalendarList = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     const [contentLoading, setContentLoading] = useState(true);
-    const [semesterList, setSemesterList] = useState([]);
     const [courseFilter, setCourseFilter] = useState();
     const [semesterFilter, setSemesterFilter] = useState();
     const [phaseFilter, setPhaseFilter] = useState();
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [paginationInfo, setPaginationInfo] = useState({});
+    const [calendarInfo, setCalendarInfo] = useState();
+
+
+    const loadBase = () => {
+        axios.get('/calendar-info').then((response) => {
+            if (response.status >= 200 && response.status < 300) {
+                setCalendarInfo(response.data);
+            }
+        });
+    };
+
+    useEffect(() => {
+        if (!calendarInfo) {
+            loadBase();
+        }
+    }, []);
 
 
     const loadCalendars = () => {
@@ -73,17 +83,6 @@ const CalendarList = () => {
             }
         });
     };
-
-    useEffect(() => {
-        axios.get('/new-calendar/semesters').then((response) => {
-            if (response.status >= 200 && response.status < 300) {
-                setSemesterList(response.data.data);
-                if(response.data.data.length > 0) {
-                    setSemesterFilter(response.data.data[0].code);
-                }
-            }
-        });
-    }, []);
 
     useEffect(() => {
         if (calendars.filter((x) => JSON.parse(x.differences)?.length)?.length > 0) {
@@ -137,17 +136,18 @@ const CalendarList = () => {
     };
 
     const columns = [
-        {name: 'ID',            align: 'center', style: {width: '5%' } },
-        {name: 'Curso',         align: 'center', style: {width: '40%' } },
+        {name: t('ID'),            align: 'center', style: {width: '5%' } },
+        {name: t('Curso'),         align: 'center', style: {width: '40%' } },
         {
-            name: 'Fase',
+            name: t('Fase'),
+            align: 'center',
             restrictedToCreators: true,
             permission: SCOPES.VIEW_ACTUAL_PHASE,
             style: {width: '10%' }
         },
         {
-            name: 'Estado',
-            textAlign: 'center',
+            name: t('Estado'),
+            align: 'center',
             restrictedToCreators: true,
             permission: SCOPES.VIEW_CALENDAR_INFO,
             style: {width: '10%' }
@@ -161,48 +161,49 @@ const CalendarList = () => {
                 <MessageFading
                     onDismiss={() => setMessageVisible(false)}
                     success
-                    header="Alterações ao calendário!"
-                    content="Deverá verificar com atenção todas as alterações."
+                    header={ t("Alterações ao calendário!") }
+                    content={ t("Deverá verificar com atenção todas as alterações.") }
                 />
             )}
             <Card fluid>
                 <Card.Content>
-                    <Wrapper>
-                        <Header as="span">Calendários</Header>
-                        <ShowComponentIfAuthorized permission={[SCOPES.CREATE_CALENDAR]}
-                            renderIfNotAllowed={() => (
-                                <Button floated="right" toggle active={myCourseOnly} onClick={() => setMyCourseOnly((curr) => !curr)} icon labelPosition="left">
-                                    <Icon name="eye"/>
-                                    {myCourseOnly ? 'Meus calendários' : 'Todos'}
+                    <div>
+                        <Header as="span">{ t("Calendários") }</Header>
+                        <ShowComponentIfAuthorized permission={[SCOPES.CREATE_CALENDAR]} renderIfNotAllowed={() => (
+                            <Button.Group floated={"right"}>
+                                <Button floated="right" toggle active={myCourseOnly} onClick={() => setMyCourseOnly(true)}>
+                                    { t('Meus calendários') }
                                 </Button>
+                                <Button floated="right" toggle active={!myCourseOnly} onClick={() => setMyCourseOnly(false)}>
+                                    { t('Todos') }
+                                </Button>
+                            </Button.Group>
                             )}>
                             <Link to="/calendario/novo">
-                                <Button floated="right" color="green">
-                                    Novo
-                                </Button>
+                                <Button floated="right" color="green" disabled={!calendarInfo?.has_academic_year}>{ t("Novo") }</Button>
                             </Link>
                         </ShowComponentIfAuthorized>
-                    </Wrapper>
+                    </div>
                 </Card.Content>
-                <Card.Content>
-                    <Form>
-                        <Form.Group>
-                            <Button.Group>
-                                {semesterList.length > 0 && semesterList.map((semester, index) => (
-                                    <Button key={'semester_button_' + index} toggle active={semesterFilter === semester.code} onClick={() => setSemesterFilter(semester.code)}>
-                                        {semester.name}
-                                    </Button>
-                                ))}
-                            </Button.Group>
-                        </Form.Group>
-                        <Form.Group>
-                            <Courses widthSize={5} eventHandler={filterByCourse} />
-                            { paginationInfo.last_page > 1 && (
-                                <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
-                            )}
-                        </Form.Group>
-                    </Form>
-                </Card.Content>
+                { calendarInfo?.filters && calendarInfo?.filters.semesters.length > 0 && (
+                    <Card.Content>
+                        <Form>
+                            <Form.Group>
+                                { calendarInfo.filters.semesters.length > 0 && (
+                                    <SemestersLocal semestersList={calendarInfo.filters.semesters} widthSize={4} eventHandler={filterBySemester} withSpecial={true} isSearch={true} />
+                                )}
+                                { (calendarInfo.filters.semesters.length > 0  && calendarInfo.filters.has_courses) && (
+                                    <ShowComponentIfAuthorized permission={[SCOPES.CREATE_CALENDAR]}>
+                                        <Courses widthSize={5} eventHandler={filterByCourse} />
+                                    </ShowComponentIfAuthorized>
+                                )}
+                                { paginationInfo.last_page > 1 && (
+                                    <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
+                                )}
+                            </Form.Group>
+                        </Form>
+                    </Card.Content>
+                )}
                 <Card.Content>
                     { calendars.length < 1 || isLoading ? (
                         <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar Calendarios!")}/>
@@ -211,17 +212,17 @@ const CalendarList = () => {
                             <Table celled fixed>
                                 <Table.Header>
                                     <Table.Row key={'table_header'}>
-                                        {columns.map(({name, textAlign, restrictedToCreators, permission, style}, index) => (
+                                        {columns.map(({name, align, restrictedToCreators, permission, style}, index) => (
                                             restrictedToCreators ?
                                                 (
                                                     <ShowComponentIfAuthorized permission={[permission]} key={'auth_table_header_cell_' + index}>
-                                                        <Table.HeaderCell textAlign={textAlign} key={'table_header_cell_' + index} style={style}>
+                                                        <Table.HeaderCell textAlign={align} key={'table_header_cell_' + index} style={style}>
                                                             {name}
                                                         </Table.HeaderCell>
                                                     </ShowComponentIfAuthorized>
                                                 ) :
                                                 (
-                                                    <Table.HeaderCell textAlign={textAlign} key={'table_header_cell_' + index} style={style}>
+                                                    <Table.HeaderCell textAlign={align} key={'table_header_cell_' + index} style={style}>
                                                         {name}
                                                     </Table.HeaderCell>
                                                 )
@@ -232,7 +233,7 @@ const CalendarList = () => {
                                 <Table.Body>
                                     {calendars.map(({id, display_id, course, temporary, phase, published}) => (
                                             <Table.Row key={id}>
-                                                <Table.Cell>{display_id}</Table.Cell>
+                                                <Table.Cell textAlign="center">{display_id}</Table.Cell>
                                                 <Table.Cell>{course}</Table.Cell>
                                                 <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
                                                     <Table.Cell>
@@ -242,17 +243,17 @@ const CalendarList = () => {
                                                 <Table.Cell textAlign="center">
                                                     { !published ? (
                                                         <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
-                                                            <Label color={"blue"}>Nao Publicado</Label>
+                                                            <Label color={"blue"}>{ t("Nao Publicado") }</Label>
                                                         </ShowComponentIfAuthorized>
                                                     ) : (
                                                         <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]} renderIfNotAllowed={() => (
-                                                                    <>{published ? <Label color={temporary ? undefined : 'blue' }>{temporary ? 'Provisório' : 'Definitivo'}</Label> : phase.description}</>
+                                                                <>{published ? <Label color={temporary ? undefined : 'blue' }>{temporary ? t('Provisório') : t('Definitivo')}</Label> : phase.description}</>
                                                             )}>
-                                                            <Label color={temporary ? undefined : 'blue' }>{temporary ? 'Provisório' : 'Definitivo'}</Label>
+                                                            <Label color={temporary ? undefined : 'blue' }>{temporary ? t('Provisório') : t('Definitivo')}</Label>
                                                         </ShowComponentIfAuthorized>
                                                     )}
                                                 </Table.Cell>
-                                                <Table.Cell>
+                                                <Table.Cell textAlign="center">
                                                     <Link to={`/calendario/${id}`}>
                                                         <Button color="green" icon>
                                                             <Icon name="eye"/>
@@ -283,20 +284,13 @@ const CalendarList = () => {
                 </Card.Content>
             </Card>
             <Modal dimmer="blurring" open={modalOpen} onClose={handleModalClose}>
-                <Modal.Header>Remover Calendário</Modal.Header>
+                <Modal.Header>{ t("Remover Calendário") }</Modal.Header>
                 <Modal.Content>
-                    Tem a certeza que deseja remover o calendário do curso
-                    {' '}
-                    <strong>{modalInfo?.course}</strong>
-                    ?
+                    { t("Tem a certeza que deseja remover o calendário do curso") }{' '}<strong>{modalInfo?.course}</strong>?
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button negative onClick={handleModalClose}>
-                        Cancelar
-                    </Button>
-                    <Button positive onClick={handleRemoval}>
-                        Sim
-                    </Button>
+                    <Button negative onClick={handleModalClose}>{ t("Cancelar") }</Button>
+                    <Button positive onClick={handleRemoval}>{ t(" Sim") }</Button>
                 </Modal.Actions>
             </Modal>
         </Container>

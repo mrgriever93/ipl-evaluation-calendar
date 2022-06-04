@@ -101,9 +101,9 @@ class AcademicYearController extends Controller
         $year->save();
 
         // TODO Validate response, it returns 200 but will wait for response anyway
-        ProcessNewAcademicYear::dispatch($year->code, $semester)->afterResponse();
+        ProcessNewAcademicYear::dispatchAfterResponse($year->code, $semester);
 
-        return ($this->getList())->response()->setStatusCode(Response::HTTP_OK);
+        return response("sync started");
     }
 
     public function destroy($id)

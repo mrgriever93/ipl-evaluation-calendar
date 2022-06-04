@@ -8,6 +8,8 @@ import axios from 'axios';
 import {toast} from 'react-toastify';
 import {successConfig, errorConfig} from '../../utils/toastConfig';
 import {useTranslation} from "react-i18next";
+import SCOPES from "../../utils/scopesConstants";
+import ShowComponentIfAuthorized from "../../components/ShowComponentIfAuthorized";
 
 const New = () => {
     const { t } = useTranslation();
@@ -138,6 +140,15 @@ const New = () => {
                                 <Icon name={isEditMode ? 'save' : 'plus'}/>
                                 {isEditMode ? 'Guardar' : 'Criar'}
                             </Button>
+                        </Card.Content>
+                        <Card.Content>
+                            <ShowComponentIfAuthorized permission={[SCOPES.MANAGE_EVALUATION_METHODS]}>
+                                <Link to={`/agrupamento-unidade-curricular/${course_units[0]?.id}/metodos`}>
+                                    <Button color="olive" icon labelPosition="left">
+                                        <Icon name="file alternate"/> Métodos
+                                    </Button>
+                                </Link>
+                            </ShowComponentIfAuthorized>
                         </Card.Content>
                     </Card>
                 </Form>

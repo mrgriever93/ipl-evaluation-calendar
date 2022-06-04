@@ -17,7 +17,10 @@ import InfosAndActions from './detail/infos-and-actions';
 import PopupScheduleInterruption from './detail/popup-sched-interruption';
 import PopupScheduleEvaluation from './detail/popup-sched-evaluation';
 import PopupEvaluationDetail from './detail/popup-evaluation-detail';
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
 
+const SweetAlertComponent = withReactContent(Swal);
 
 const Calendar = () => {
     const history = useNavigate();
@@ -32,13 +35,14 @@ const Calendar = () => {
     const [epochsList, setEpochsList] = useState([]);
     const [generalInfo, setGeneralInfo] = useState();
     const [differences, setDifferences] = useState();
-    const [openModal, setOpenModal] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [modalInfo, setModalInfo] = useState({});
     const [openScheduleExamModal, setOpenScheduleExamModal] = useState(false);
     const [openExamDetailModal, setOpenExamDetailModal] = useState(false);
     const [viewExamId, setViewExamId] = useState(undefined);
     const [examList, setExamList] = useState([]);
+
+    const [calendarStartDate, setCalendarStartDate] = useState();
+    const [calendarEndDate, setCalendarEndDate] = useState();
 
     const [isTemporary, setIsTemporary] = useState(true);
     const [isPublished, setIsPublished] = useState(false);
@@ -51,6 +55,31 @@ const Calendar = () => {
     const [openInterruptionModal, setOpenInterruptionModal] = useState(false);
     const [interruptionModalInfo, setInterruptionModalInfo] = useState({});
 
+
+    useEffect(() => {
+        // check if URL params are just numbers or else redirects to previous page
+        if(!/\d+/.test(calendarId)){
+            history(-1);
+            toast(t('calendar.Ocorreu um erro ao carregar a informacao pretendida'), errorConfig);
+        }
+        // validate if calendar Permissions already exists on the local storage
+        const permissionsLocal = localStorage.getItem('calendarPermissions');
+        if(!permissionsLocal) {
+            axios.get('/permissions/calendar').then((res) => {
+                if (res.status === 200) {
+                    let localPermissions = res.data.data;
+                    localPermissions.forEach((item) => {
+                        item.phases = item.phases.split(",").map(Number);
+                        return item;
+                    });
+                    localStorage.setItem('calendarPermissions', JSON.stringify(localPermissions));
+                    setCalendarPermissions(JSON.stringify(res.data.data));
+                }
+            });
+        }
+    }, []);
+
+
     /*
      * Create / Edit Exams
      */
@@ -60,14 +89,17 @@ const Calendar = () => {
             courseId: generalInfo?.course?.id,
             courseName: generalInfo?.course?.display_name,
             scholarYear: scholarYear,
-            date: date,
+            date_start: date,
+            date_end: date,
+            in_class: false,
             hasExamsOnDate: existingExamsAtThisDate,
             epochs: epochsList,
         });
         setOpenScheduleExamModal(true);
     }
 
-    const editExamHandler = (scholarYear, exam) => {
+    const editExamHandler = (event, scholarYear, exam) => {
+        event.stopPropagation();
         setScheduleExamInfo({
             calendarId: parseInt(calendarId, 10),
             courseId: generalInfo?.course?.id,
@@ -75,13 +107,17 @@ const Calendar = () => {
             scholarYear: scholarYear,
             epochs: epochsList,
             course_unit_id: exam.course_unit_id,
-            date: exam.date,
+            date_start: exam.date_start,
+            date_end: exam.date_end,
             duration_minutes: exam.duration_minutes,
             exam_id: exam.id,
             epoch_id: exam.epoch_id,
+            in_class: exam.in_class,
             hour: exam.hour,
-            method_id: exam.method_id,
+            method_id: exam.method?.id,
             observations: exam.observations,
+            observations_pt: exam.observations_pt,
+            observations_en: exam.observations_en,
             room: exam.room,
         });
         setOpenScheduleExamModal(true);
@@ -93,6 +129,7 @@ const Calendar = () => {
     };
 
     const addExamToList = (exam) => {
+        // console.log(exam);
         setExamList((current) => [...current, exam]);
     }
     const removeExamFromList = (examId) => {
@@ -102,6 +139,33 @@ const Calendar = () => {
     /*
      * Interruptions
      */
+    // Force interruption when has some exams
+    const interruptionForceHandler = (date) => {
+        const sweetAlertConfigs = {
+            title: t('Atenção!'),
+            html: 'Ao adicionar uma interrupcao, ira eliminar exames nesta data, e terá de adicioná-los novamente em outra data a escolher!<br/><br/><strong>Tem a certeza que deseja eliminar os exames, e adicionar uma nova interrupcao?</strong>',
+            denyButtonText: t('Não'),
+            confirmButtonText: t('Sim'),
+            showConfirmButton: true,
+            showDenyButton: true,
+            confirmButtonColor: '#21ba45',
+            denyButtonColor: '#db2828',
+        };
+
+        SweetAlertComponent.fire(sweetAlertConfigs).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`/exams/date/${calendarId}/${moment(date).format( 'YYYY-MM-DD')}`).then((res) => {
+                    if (res.status === 200) {
+                        toast('Exames eliminados com sucesso deste calendário!', successConfig);
+                        interruptionHandler(undefined, date);
+                    } else {
+                        toast('Ocorreu um problema ao eliminar os exames deste calendário! ' +  res.response.data, errorConfig);
+                    }
+                });
+            }
+        });
+    };
+
     const interruptionHandler = (interruption, date) => {
         setInterruptionModalInfo((interruption ? interruption : {
             calendarId: parseInt(calendarId, 10),
@@ -145,70 +209,53 @@ const Calendar = () => {
     }
 
     const closeExamDetailHandler = () => {
+        setViewExamId(null);
         setOpenExamDetailModal(false);
     }
 
     useEffect(() => {
-        // check if URL params are just numbers or else redirects to previous page
-        if(!/\d+/.test(calendarId)){
-            history(-1);
-            toast(t('calendar.Ocorreu um erro ao carregar a informacao pretendida'), errorConfig);
-        }
-        axios.get('/permissions/calendar').then((res) => {
-            if (res.status === 200) {
-                localStorage.setItem('calendarPermissions', JSON.stringify(res.data.data));
-            }
-        });
-    }, []);
-
-    useEffect(() => {
         if (typeof calendarPhase === 'number') {
-            setCalendarPermissions(JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((perm) => perm.phase_id === calendarPhase) || []);
+            // filter permissions by phase of calendar
+            const localPermissions = JSON.parse(localStorage.getItem('calendarPermissions'));
+            setCalendarPermissions(localPermissions?.filter((item) => item.phases.includes(calendarPhase)) || []);
         }
     }, [calendarPhase]);
 
-    const patchCalendar = (fieldToUpdate, value) => axios.patch(`/calendar/${calendarId}`, {
-        [fieldToUpdate]: value,
-    });
+    // const patchCalendar = (fieldToUpdate, value) => axios.patch(`/calendar/${calendarId}`, {
+    //     [fieldToUpdate]: value,
+    // });
 
-    const updateCalendarStatus = (newTemporaryStatus) => {
-        patchCalendar('temporary', newTemporaryStatus).then((response) => {
-            if (response.status === 200) {
-                setIsTemporary(newTemporaryStatus);
-                toast(t('calendar.Estado do calendário atualizado!'), successConfig);
-            }
-        });
-    };
+    // const updateCalendarStatus = (newTemporaryStatus) => {
+    //     patchCalendar('temporary', newTemporaryStatus).then((response) => {
+    //         if (response.status === 200) {
+    //             setIsTemporary(newTemporaryStatus);
+    //             toast(t('calendar.Estado do calendário atualizado!'), successConfig);
+    //         }
+    //     });
+    // };
 
-    const updateCalendarPhase = (newCalendarPhase) => {
-        setUpdatingCalendarPhase(true);
-        patchCalendar('calendar_phase_id', newCalendarPhase).then(
-            (response) => {
-                setUpdatingCalendarPhase(false);
-                if (response.status === 200) {
-                    setCalendarPhase(newCalendarPhase);
-                    toast(t('calendar.Fase do calendário atualizada!'), successConfig);
-                }
-            },
-        );
-    };
+    // const updateCalendarPhase = (newCalendarPhase) => {
+    //     setUpdatingCalendarPhase(true);
+    //     patchCalendar('calendar_phase_id', newCalendarPhase).then(
+    //         (response) => {
+    //             setUpdatingCalendarPhase(false);
+    //             if (response.status === 200) {
+    //                 setCalendarPhase(newCalendarPhase);
+    //                 toast(t('calendar.Fase do calendário atualizada!'), successConfig);
+    //             }
+    //         },
+    //     );
+    // };
 
-    const ignoreComment = (commentId) => {
-        axios.post(`/comment/${commentId}/ignore`).then((res) => {
-            if (res.status === 200) {
-                toast(t('calendar.Comentário ignorado com sucesso!'), successConfig);
-            } else {
-                toast(t('calendar.Ocorreu um erro ao ignorar o comentário!'), successConfig);
-            }
-        });
-    };
 
     const loadCalendar = (calId) => {
         setIsLoading(true);
         setExamList([]);
-        axios
-            .get(`/calendar/${calId}`)
+        console.log('loadCalendar');
+
+        axios.get(`/calendar/${calId}`)
             .then((response) => {
+                console.log('loadCalendar - response');
                 if (response?.status >= 200 && response?.status < 300) {
                     const {
                         data: {
@@ -229,9 +276,22 @@ const Calendar = () => {
                     setIsPublished(!!published);
                     setInterruptions(interruptions);
                     setEpochsList(epochs);
+
+                    let startDate = epochs.length > 0 ? epochs[0].start_date : undefined;
+                    let endDate = epochs.length > 0 ? epochs[0].end_date : undefined;
                     epochs.forEach((epoch) => {
+                        if(startDate > moment(epoch.start_date)){
+                            startDate = moment(epoch.start_date);
+                        }
+                        if(endDate < moment(epoch.end_date)){
+                            endDate = moment(epoch.end_date);
+                        }
                         setExamList((current) => [...current, ...epoch.exams]);
                     });
+                    // set calendar start and end dates
+                    setCalendarStartDate(moment(startDate).format("DD-MM-YYYY"));
+                    setCalendarEndDate(moment(endDate).format("DD-MM-YYYY"));
+
                     setGeneralInfo(general_info);
                     setDifferences(differences);
                     setIsLoading(false);
@@ -240,11 +300,12 @@ const Calendar = () => {
                 } else {
                     history('/calendario');
                 }
-            })
-            .catch((r) => alert(r));
+            }).catch((r) => alert(r));
     };
 
-    const weekData = useMemo(() => _.orderBy(
+    const weekData = useMemo(() => {
+        console.log('weekData');
+        return _.orderBy(
             epochsList.reduce((acc, curr) => {
                 const start_date = moment(curr.start_date);
                 const end_date = moment(curr.end_date);
@@ -297,7 +358,7 @@ const Calendar = () => {
                 return acc;
             }, []),
             ['year', 'week'],
-        ), [epochsList, interruptionsList]);
+        )}, [epochsList, interruptionsList]);
 
     useEffect(() => {
         loadCalendar(calendarId);
@@ -312,6 +373,26 @@ const Calendar = () => {
     let alreadyAddedColSpan = false;
     let alreadyAddedRowSpan = false;
     let interruptionDays = 0;
+
+    const allowDrop = (ev) => {
+        ev.preventDefault();
+        //console.log("allowDrop");
+        //console.log(ev);
+    }
+
+    const drag = (ev) => {
+        ev.dataTransfer.setData("text", ev.target.id);
+        //console.log("drag");
+        //console.log(ev);
+    }
+
+    const drop = (ev) => {
+        ev.preventDefault();
+        //let data = ev.dataTransfer.getData("text");
+        //ev.target.appendChild(document.getElementById(data));
+        //console.log("drop");
+        //console.log(ev);
+    }
 
     /*
      * Header of week table
@@ -329,23 +410,32 @@ const Calendar = () => {
                 return (<Table.HeaderCell key={index} />);
             }
         } else if (day?.date) {
-            const existingExamsAtThisDate = examList.filter((exam) => moment(exam.date).isSame(moment(day.date), 'day'));
+            // TODO check date_start/date_end
+            const existingExamsAtThisDate = examList.filter((exam) => moment(exam.date_start).isSame(moment(day.date), 'day'));
             return (
                 <Table.HeaderCell key={index} textAlign="center">
                     {moment(day.date).format('DD-MM-YYYY')}
-                    { ( existingExamsAtThisDate.length > 0 ? null : (
-                            !day.interruption ? (
-                                <Button className='btn-add-interruption' title="Adicionar Interrupção"
-                                        onClick={() => interruptionHandler(undefined, day.date)}>
+                    { (!isPublished && existingExamsAtThisDate?.length === 0 && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) && (
+                        ( existingExamsAtThisDate.length > 0 ? (
+                                <Button color={"orange"} className='btn-add-interruption' title="Adicionar Interrupção"
+                                        onClick={() => interruptionForceHandler(day.date)}>
                                     <Icon name="calendar times outline" />
                                     Adicionar Interrupção
                                 </Button>
                             ) : (
-                                <Button color="yellow" className='btn-add-interruption' title="Editar Interrupção"
-                                        onClick={() => interruptionHandler(day.interruption, day.date)}>
-                                    <Icon name="calendar times outline" />
-                                    Editar Interrupção
-                                </Button>
+                                !day.interruption ? (
+                                    <Button className='btn-add-interruption' title="Adicionar Interrupção"
+                                            onClick={() => interruptionHandler(undefined, day.date)}>
+                                        <Icon name="calendar times outline" />
+                                        Adicionar Interrupção
+                                    </Button>
+                                ) : (
+                                    <Button color="yellow" className='btn-add-interruption' title="Editar Interrupção"
+                                            onClick={() => interruptionHandler(day.interruption, day.date)}>
+                                        <Icon name="calendar times outline" />
+                                        Editar Interrupção
+                                    </Button>
+                                )
                             )
                         )
                     )}
@@ -360,6 +450,7 @@ const Calendar = () => {
      * Content of week table
      */
     const weekDayContentCell = (epoch, days, courseIndex, year, weekDay, weekDayIndex) => {
+        // TODO add exam to the dates (by single cols or colspan)
         const day = days.find((day) => day.weekDay === weekDay);
         const firstDayAvailable = moment(days[0].date);
         const lastDayAvailable = moment(days[days.length - 1].date);
@@ -383,12 +474,9 @@ const Calendar = () => {
             if (!alreadyAddedColSpan || (isInterruption && courseIndex === 0)) {
                 alreadyAddedRowSpan = true;
                 return (
-                    <Table.Cell key={weekDayIndex}
-                                textAlign="center"
-                                className={isInterruption ? "calendar-day-interruption" : null  }
+                    <Table.Cell key={weekDayIndex} textAlign="center" className={isInterruption ? "calendar-day-interruption" : null  }
                                 rowSpan={courseYears.length}
-                                colSpan={isInterruption ? day?.interruptionDays : null}
-                    >
+                                colSpan={isInterruption ? day?.interruptionDays : null} >
                         <div>
                             {isInterruption ? interruption.description : null}
                         </div>
@@ -396,45 +484,38 @@ const Calendar = () => {
                 );
             }
         } else if (day?.date) {
-            const existingExamsAtThisDate = examList.filter((exam) => moment(exam.date).isSame(moment(day.date), 'day'));
+            const currentDate = moment(day.date);
+            const existingExamsAtThisDate = examList.filter((exam) => {
+                return  exam.academic_year === year &&
+                        currentDate.isBetween(exam.date_start, exam.date_end, 'date','[]');
+            });
             let examsComponents = null;
             if (existingExamsAtThisDate?.length) {
                 examsComponents = existingExamsAtThisDate.map((exam) => {
-                    if (exam.academic_year === year) {
-                        return (
-                            // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
-                            <Button className="btn-exam-details" color="blue" key={exam.id} onClick={() => openExamDetailHandler(year, exam)} >
-                                { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
-                                    <div className="btn-action-wrapper">
-                                        {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
-                                            <div className='btn-action-edit' onClick={() => editExamHandler(year, exam)}>
-                                                <Icon name="edit"/>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                                <div className="btn-exam-content">
-                                    <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : '') + exam.course_unit_initials }</div>
-                                    <div className="btn-exam-type">{ exam.method_name }</div>
+                    return (
+                        // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
+                        <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )} title={ exam.course_unit + " - " + (exam.method?.description || exam.method?.name) }
+                            color="blue" key={exam.id}
+                            onClick={() => openExamDetailHandler(year, exam)} draggable="false" onDragStart={drag} >
+                            { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
+                                <div className="btn-action-wrapper">
+                                    {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
+                                        <div className='btn-action-edit' onClick={(event) => editExamHandler(event, year, exam)}>
+                                            <Icon name="edit"/>
+                                        </div>
+                                    )}
                                 </div>
-                            </Button>
-                        );
-                    }
-                    return null;
+                            )}
+                            <div className="btn-exam-content">
+                                <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : '') + (exam.course_unit_initials || exam.course_unit) }</div>
+                                <div className="btn-exam-type">{ (exam.method?.description || exam.method?.name) }</div>
+                            </div>
+                        </Button>
+                    );
                 });
             }
             return (
-                <Table.Cell
-                    key={weekDayIndex}
-                    className={ 'calendar-day-' + epoch.code }
-                    textAlign="center"
-                    onContextMenu={(e,) => {
-                        e.preventDefault();
-                        if (!isPublished && existingExamsAtThisDate?.length === 0 && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) {
-                            setModalInfo({start_date: day.date});
-                            setOpenModal(true);
-                        }
-                    }}>
+                <Table.Cell key={weekDayIndex} className={ 'calendar-day-' + epoch.code } textAlign="center" onDrop={drop} onDragOver={allowDrop}>
                     {examsComponents}
                     {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.ADD_EXAMS).length > 0 && (
                         <Button className="btn-schedule-exam" onClick={() => scheduleExamHandler(year, day.date, existingExamsAtThisDate)}>
@@ -447,85 +528,83 @@ const Calendar = () => {
         return null;
     }
 
+    /*
+     * Calendar
+     */
     return (
         <Container>
-            <InfosAndActions></InfosAndActions>
+            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase}/>
             <AnimatePresence>
                 {isLoading && (
                     <PageLoader
                         animate={{
                             opacity: 1,
-                            transition: {
-                                duration: 0.5,
-                                ease: [0.4, 0.0, 0.2, 1],
-                            },
+                            transition: { duration: 0.5, ease: [0.4, 0.0, 0.2, 1] },
                         }}
                         exit={{
                             opacity: 0,
-                            transition: {
-                                duration: 0.5,
-                                ease: [0.4, 0.0, 0.2, 1],
-                            },
+                            transition: { duration: 0.5, ease: [0.4, 0.0, 0.2, 1] },
                         }}
                     />
                 )}
             </AnimatePresence>
             <div className='margin-top-l'>
-            <Grid stackable className='calendar-tables'>
-                <Grid.Row>
-                    <Grid.Column width="16">
-                        {weekData.map(({week, year, days, epoch}, tableIndex) => {
-                            interruptionDays = 0;
-                            alreadyAddedColSpan = false;
-                            return (
-                                <div key={tableIndex} className={"table-week"}>
-                                    {weekTen === week && (
-                                        <Divider horizontal style={{marginTop: "var(--space-l)"}}>
-                                            <Header as='h4' style={{textTransform: "uppercase"}}>
-                                                <Icon name='calendar alternate outline' />
-                                                { t("10ª semana") }
-                                            </Header>
-                                        </Divider>
-                                    )}
-                                    <Table celled>
-                                        <Table.Header>
-                                            <Table.Row textAlign="center">
-                                                <Table.HeaderCell width="2">Week #{week}</Table.HeaderCell>
-                                                <Table.HeaderCell width="2">{t('calendar.2ª Feira')}</Table.HeaderCell>
-                                                <Table.HeaderCell width="2">{t('calendar.3ª Feira')}</Table.HeaderCell>
-                                                <Table.HeaderCell width="2">{t('calendar.4ª Feira')}</Table.HeaderCell>
-                                                <Table.HeaderCell width="2">{t('calendar.5ª Feira')}</Table.HeaderCell>
-                                                <Table.HeaderCell width="2">{t('calendar.6ª Feira')}</Table.HeaderCell>
-                                                <Table.HeaderCell width="2">{t('calendar.Sábado')}</Table.HeaderCell>
-                                            </Table.Row>
-                                            <Table.Row>
-                                                <Table.HeaderCell textAlign="center">
-                                                    {year}
-                                                </Table.HeaderCell>
-                                                {weekDays.map((weekDay, index) => weekDayHeaderCell(days, weekDay, index) )}
-                                            </Table.Row>
-                                        </Table.Header>
-                                        <Table.Body>
-                                            {courseYears.map((year, courseIndex) => {
-                                                    alreadyAddedColSpan = false;
-                                                    return (
-                                                        <Table.Row key={courseIndex}>
-                                                            <Table.Cell textAlign="center">{ t("Ano") + " " + year }</Table.Cell>
-                                                            {weekDays.map((weekDay, weekDayIndex) => weekDayContentCell(epoch, days, courseIndex, year, weekDay, weekDayIndex))}
-                                                        </Table.Row>
-                                                    );
-                                                },
-                                            )}
-                                        </Table.Body>
-                                    </Table>
-                                </div>
-                            );
-                        })}
-                    </Grid.Column>
-                </Grid.Row>
-            </Grid>
+                <Grid stackable className='calendar-tables'>
+                    <Grid.Row>
+                        <Grid.Column width="16">
+                            {epochsList.length > 0 && weekData.map(({week, year, days, epoch}, tableIndex) => {
+                                //console.log('table week - ' + week);
+                                interruptionDays = 0;
+                                alreadyAddedColSpan = false;
+                                return (
+                                    <div key={tableIndex} className={"table-week"}>
+                                        {weekTen === week && (
+                                            <Divider horizontal style={{marginTop: "var(--space-l)"}}>
+                                                <Header as='h4' style={{textTransform: "uppercase"}}>
+                                                    <Icon name='calendar alternate outline' />
+                                                    { t("10ª semana") }
+                                                </Header>
+                                            </Divider>
+                                        )}
+                                        <Table celled>
+                                            <Table.Header>
+                                                <Table.Row textAlign="center">
+                                                    <Table.HeaderCell width="2">Week #{week}</Table.HeaderCell>
+                                                    <Table.HeaderCell width="2">{t('calendar.2ª Feira')}</Table.HeaderCell>
+                                                    <Table.HeaderCell width="2">{t('calendar.3ª Feira')}</Table.HeaderCell>
+                                                    <Table.HeaderCell width="2">{t('calendar.4ª Feira')}</Table.HeaderCell>
+                                                    <Table.HeaderCell width="2">{t('calendar.5ª Feira')}</Table.HeaderCell>
+                                                    <Table.HeaderCell width="2">{t('calendar.6ª Feira')}</Table.HeaderCell>
+                                                    <Table.HeaderCell width="2">{t('calendar.Sábado')}</Table.HeaderCell>
+                                                </Table.Row>
+                                                <Table.Row>
+                                                    <Table.HeaderCell textAlign="center">
+                                                        {year}
+                                                    </Table.HeaderCell>
+                                                    {weekDays.map((weekDay, index) => weekDayHeaderCell(days, weekDay, index) )}
+                                                </Table.Row>
+                                            </Table.Header>
+                                            <Table.Body>
+                                                {courseYears.map((year, courseIndex) => {
+                                                        alreadyAddedColSpan = false;
+                                                        return (
+                                                            <Table.Row key={courseIndex}>
+                                                                <Table.Cell textAlign="center">{ t("Ano") + " " + year }</Table.Cell>
+                                                                {weekDays.map((weekDay, weekDayIndex) => weekDayContentCell(epoch, days, courseIndex, year, weekDay, weekDayIndex))}
+                                                            </Table.Row>
+                                                        );
+                                                    },
+                                                )}
+                                            </Table.Body>
+                                        </Table>
+                                    </div>
+                                );
+                            })}
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
             </div>
-            // TODO pass min and max dates
+            { /* TODO pass min and max dates */ }
             <PopupScheduleInterruption
                 isOpen={openInterruptionModal}
                 onClose={closeInterruptionModal}
@@ -543,7 +622,8 @@ const Calendar = () => {
                 onClose={closeScheduleExamModal}
                 scheduleInformation={scheduleExamInfo}
                 addedExam={addExamToList}
-                deletedExam={removeExamFromList} />
+                deletedExam={removeExamFromList}
+                calendarDates={{minDate: calendarStartDate, maxDate: calendarEndDate}}/>
         </Container>
     );
 };

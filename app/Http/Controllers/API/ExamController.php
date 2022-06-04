@@ -27,7 +27,7 @@ class ExamController extends Controller
 
     public function show(Exam $exam)
     {
-        return new ExamResource($exam::with('courseUnit')->find($exam->id));
+        return new ExamResource($exam::with(['courseUnit', 'comments'])->find($exam->id));
     }
 
     public function store(NewExamRequest $request)
@@ -39,17 +39,6 @@ class ExamController extends Controller
         if($validation){
             return $validation;
         }
-
-        //dd($courseUnitMethods);
-
-        // TODO
-        /**
-         * DO NOT ALLOW BOOK EXAM WHEN (COMMULATIVE):
-         * - Day is the same
-         * - Year of the CourseUnit is the same (1st, 2nd or 3rd)
-         * - Branch ("Ramo") is the same
-         */
-
 
         $courseUnitGroup = CourseUnit::find($request->course_unit_id)->group;
         $courseUnitGroup = $courseUnitGroup ? $courseUnitGroup->id : null;
@@ -102,7 +91,8 @@ class ExamController extends Controller
 
                if (($allHaveSameGroup && $courseUnit->group !== null) || $examToUpdate->id === $exam->id) {
                    $examToUpdate->room = $request->room;
-                   $examToUpdate->date = $request->date;
+                   $examToUpdate->date_start = $request->date_start;
+                   $examToUpdate->date_end = $request->date_end;
                    $examToUpdate->hour = $request->hour;
                    $examToUpdate->duration_minutes = $request->duration_minutes;
                    $examToUpdate->observations_pt = $request->observations_pt;
@@ -128,8 +118,10 @@ class ExamController extends Controller
             $exam->method_id       = $request->method_id;
 
             $exam->room = $request->room;
-            $exam->date = $request->date;
+            $exam->date_start = $request->date_start;
+            $exam->date_end = $request->date_end;
             $exam->hour = $request->hour;
+            $exam->in_class = $request->in_class;
             $exam->duration_minutes = $request->duration_minutes;
             $exam->observations_pt = $request->observations_pt;
             $exam->observations_en = $request->observations_en;
@@ -139,17 +131,26 @@ class ExamController extends Controller
     }
 
     public function checkIfCanEditExam($calendarId, $epochId, $course_id, $method_id, $course_unit_id, $examId = null){
+
+        // TODO
+        /**
+         * DO NOT ALLOW BOOK EXAM WHEN (COMMULATIVE):
+         * - Day is the same
+         * - Year of the CourseUnit is the same (1st, 2nd or 3rd)
+         * - Branch ("Ramo") is the same
+         */
+
         $epochRecord = Epoch::find($epochId);
         if ( $epochRecord->calendar->published ) {
             return response()->json("Not allowed to book exams on Published Calendars!", Response::HTTP_FORBIDDEN);
         }
-        $checkExam = Exam::where('epoch_id', '=', $epochId)->where('epoch_id', '=', $epochId)->where('method_id', '=', $method_id);
-        if($examId){
-            $checkExam->where('id', '<>', $examId);
-        }
-        if ( $checkExam->exists() ) {
-            return response()->json("Not allowed to insert the same exam on this calendar!", Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        // $checkExam = Exam::where('epoch_id', '=', $epochId)->where('epoch_id', '=', $epochId)->where('method_id', '=', $method_id);
+        // if($examId){
+        //     $checkExam->where('id', '<>', $examId);
+        // }
+        // if ( $checkExam->exists() ) {
+        //     return response()->json("Not allowed to insert the same exam on this calendar!", Response::HTTP_UNPROCESSABLE_ENTITY);
+        // }
 
         if ( $epochRecord->calendar->id !== $calendarId ) {
             return response()->json("The epoch id is not correct for the given calendar.", Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -167,6 +168,24 @@ class ExamController extends Controller
             return response()->json("Not allowed to create this exam until you have all the methods completed!", Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return false;
+    }
+
+    public function destroyByDate(Calendar $calendar, $date)
+    {
+        if($calendar->published){
+            return response()->json("Not allowed to delete exams on Published Calendars!", Response::HTTP_FORBIDDEN);
+        }
+        $exams = $calendar->exams()->where(function ($query) use($date) {
+                $query->whereDate('date_start', '>=', $date)
+                    ->whereDate('date_end', '<=', $date);
+                })->orWhere(function ($query) use($date) {
+                $query->whereDate('date_start', '<=', $date)
+                    ->whereDate('date_end', '>=', $date);
+                })->get();
+        foreach ($exams as $exam) {
+            $this->destroy($exam);
+        }
+        return response()->json("Removed!");
     }
 
     public function destroy(Exam $exam)
@@ -190,8 +209,6 @@ class ExamController extends Controller
         } else {
             $exam->delete();
         }
-
-
         return response()->json("Removed!");
     }
 }

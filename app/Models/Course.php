@@ -12,7 +12,7 @@ class Course extends Model
 {
     use HasFactory, Filterable, SoftDeletes;
 
-    protected $fillable = ["code", "name_pt", "name_en", "initials", "degree", "num_years", "coordinator_user_id", "school_id"];
+    protected $fillable = ["code", "name_pt", "name_en", "initials", "degree", "academic_year_id", "num_years", "coordinator_user_id", "school_id"];
 
     public function academicYears()
     {
@@ -46,8 +46,6 @@ class Course extends Model
     }
 
     public function scopeOfAcademicYear($query, $academicYear) {
-        return $query->whereHas('academicYears', function (Builder $q) use($academicYear) {
-            return $q->where('academic_year_id', AcademicYear::findOrFail($academicYear)->id);
-        });
+        return $query->where('academic_year_id', AcademicYear::findOrFail($academicYear)->id);
     }
 }

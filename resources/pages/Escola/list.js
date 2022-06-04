@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Container, Table, Button, Header, Icon } from 'semantic-ui-react';
+import {Card, Container, Table, Button, Header, Icon, Popup, List} from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import {useTranslation} from "react-i18next";
@@ -7,7 +7,7 @@ import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorize
 import SCOPES from '../../utils/scopesConstants';
 import EmptyTable from "../../components/EmptyTable";
 
-const List = () => {
+const ListSchools = () => {
     const { t } = useTranslation();
     const columns = [
         {name: t('Iniciais'), style: {width: '10%'} },
@@ -21,7 +21,7 @@ const List = () => {
 
     const fetchSchools = () => {
         setIsLoading(true);
-        
+
         axios.get('/schools/').then((response) => {
             setIsLoading(false);
             if (response.status >= 200 && response.status < 300) {
@@ -49,7 +49,7 @@ const List = () => {
                         </ShowComponentIfAuthorized>
                     </div>
                 </Card.Content>
-                
+
                 <Card.Content>
                 { schoolList.length < 1 || isLoading ? (
                     <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar Escolas!")}/>
@@ -63,12 +63,26 @@ const List = () => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            { schoolList?.map(({ id, name, description, is_configured }, index ) => (
+                            { schoolList?.map(({ id, name, description, is_configured, has_link, has_gop, has_board, has_pedagogic }, index ) => (
                                 <Table.Row key={index}>
                                     <Table.Cell>{name}</Table.Cell>
                                     <Table.Cell>{description}</Table.Cell>
                                     <Table.Cell textAlign="center">
-                                        <Icon name={!is_configured ? 'close' : 'check'} />
+                                        {   is_configured ?
+                                            (
+                                                <Icon name={'check'} />
+                                            ) :
+                                            (
+                                                <Popup trigger={<Icon name='close' />} >
+                                                    <List divided relaxed>
+                                                        { !has_link &&      ( <List.Item icon='linkify' content={ t("Link de sincronização não configurado.") } />) }
+                                                        { !has_gop &&       ( <List.Item icon='users'   content={ t("Grupo GOP da escola não configurado.") } />) }
+                                                        { !has_board &&     ( <List.Item icon='users'   content={ t("Grupo Direção da escola não configurado.") } />) }
+                                                        { !has_pedagogic && ( <List.Item icon='users'   content={ t("Grupo Pedagógico da escola não configurado.") } />) }
+                                                    </List>
+                                                </Popup>
+                                            )
+                                        }
                                     </Table.Cell>
                                     <Table.Cell textAlign="center">
                                         <ShowComponentIfAuthorized permission={[SCOPES.EDIT_SCHOOLS]}>
@@ -90,4 +104,4 @@ const List = () => {
     );
 };
 
-export default List;
+export default ListSchools;
