@@ -388,6 +388,32 @@ body {
     font-size: 12px;
 }
 
+/* Calendar epoch colors */
+.calendar-day-periodic_season {
+    background-color: #ecfff0;
+}
+
+.calendar-day-normal_season {
+    background-color: #f5e6da;
+}
+
+.calendar-day-resource_season {
+    background-color: #f9dddd;
+}
+
+.calendar-day-special_season {
+    background-color: #dae5f5;
+}
+
+.calendar-day-very_special_season {
+    background-color: #fcefd8;
+}
+
+.calendar-day-interruption {
+    background-color: #c9c9c9;
+    font-weight: bold;
+}
+
 /* Calendar > Cell Buttons */
 .calendar-tables .table th,
 .calendar-tables .table td {
@@ -397,6 +423,7 @@ body {
 .calendar-tables .table td .button.btn-schedule-exam {
     margin: var(--space-none);
     opacity: 0;
+    padding: var(--space-s) var(--space-base);
 }
 
 .calendar-tables .table th .button.btn-add-interruption {
@@ -478,17 +505,18 @@ body {
 }
 
 .calendar-tables .table td .button.btn-exam-details .btn-exam-content > div {
-    white-space: nowrap;
-}
-
-.calendar-tables .table td .button.btn-exam-details .btn-exam-content > .btn-exam-type {
     max-width: 82px;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .calendar-tables .table td .button.btn-exam-details.exam-in-class {
     background: #9166ca;
+}
+
+.calendar-tables .table td .ui.button + .ui.button {
+    margin-top: var(--space-s);
 }
 
 /* Other stuff */
@@ -719,31 +747,6 @@ div.inline{
 
 .table-week > table {
     user-select: none;
-}
-.calendar-tables .table tbody td .button.btn-schedule-exam{
-    margin-top: 10px;
-}
-.calendar-tables .table tbody td .button.btn-schedule-exam:only-child{
-    margin-top: 0;
-}
-.calendar-day-periodic_season{
-    background-color: #ecfff0;
-}
-.calendar-day-normal_season{
-    background-color: #f5e6da;
-}
-.calendar-day-resource_season{
-    background-color: #f9dddd;
-}
-.calendar-day-special_season{
-    background-color: #dae5f5;
-}
-.calendar-day-very_special_season{
-    background-color: #fcefd8;
-}
-.calendar-day-interruption{
-    background-color: #c9c9c9;
-    font-weight: bold;
 }
 
 .sticky-methods-header {

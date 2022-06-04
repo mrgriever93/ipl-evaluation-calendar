@@ -108,7 +108,7 @@ const Calendar = () => {
             epoch_id: exam.epoch_id,
             in_class: exam.in_class,
             hour: exam.hour,
-            method_id: exam.method_id,
+            method_id: exam.method?.id,
             observations: exam.observations,
             observations_pt: exam.observations_pt,
             observations_en: exam.observations_en,
@@ -483,9 +483,10 @@ const Calendar = () => {
             let examsComponents = null;
             if (existingExamsAtThisDate?.length) {
                 examsComponents = existingExamsAtThisDate.map((exam) => {
+                    console.log(exam);
                     return (
                         // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
-                        <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )}
+                        <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )} title={ exam.course_unit + " - " + (exam.method?.description || exam.method?.name) }
                             color="blue" key={exam.id}
                             onClick={() => openExamDetailHandler(year, exam)} draggable="false" onDragStart={drag} >
                             { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
@@ -498,8 +499,8 @@ const Calendar = () => {
                                 </div>
                             )}
                             <div className="btn-exam-content">
-                                <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : '') + exam.course_unit_initials }</div>
-                                <div className="btn-exam-type">{ exam.method_name }</div>
+                                <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : '') + (exam.course_unit_initials || exam.course_unit) }</div>
+                                <div className="btn-exam-type">{ (exam.method?.description || exam.method?.name) }</div>
                             </div>
                         </Button>
                     );

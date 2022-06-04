@@ -5,7 +5,7 @@ import React, {useEffect, useState} from 'react';
 // import {useParams, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 // import {Field, Form as FinalForm} from 'react-final-form';
-import { Button, Form, Header, Icon, List, Modal, Comment, Divider, Segment } from 'semantic-ui-react';
+import { Button, Form, Header, Icon, List, Modal, Comment, Divider, Segment, Dimmer, Loader } from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 // import Swal from 'sweetalert2';
 // import withReactContent from 'sweetalert2-react-content';
@@ -47,6 +47,12 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                 toast(t('Ocorreu um erro no load da avaliação'), errorConfig);
                 toast(error, errorConfig);
             });
+    };
+
+    const closeModalHandler = () => {
+        setExamDetailObject({});
+        setCommentsList([]);
+        onClose();
     };
 
     // useEffect(() => {
@@ -113,161 +119,179 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
 
     return (
         <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={closeModal}>
-            <Modal.Header>{ t('Detalhes da avaliação')}</Modal.Header>
-            <Modal.Content>
-                <div className='exam-detail-modal'>
-                    <div className='exam-detail-info'>
-                        <List divided verticalAlign='middle'>
-                            <List.Item>
-                                <List.Content><b>{ t('Curso')}: </b></List.Content>
-                                <List.Content floated='right'>{examDetailObject?.course_unit?.course?.name}</List.Content>
-                            </List.Item>
-                            <List.Item>
-                                <List.Content><b>{ t('Ramo')}: </b></List.Content>
-                                <List.Content floated='right'>{examDetailObject?.course_unit?.branch?.name}</List.Content>
-                            </List.Item>
-                            <List.Item>
-                                <List.Content><b>{ t('Ano Curricular')}: </b></List.Content>
-                                <List.Content floated='right'>{ examDetailObject?.course_unit?.curricular_year ? (examDetailObject?.course_unit?.curricular_year + 'º Ano') : '-' }</List.Content>
-                            </List.Item>
-                            <List.Item>
-                                <List.Content><b>{ t('Unidade Curricular')}: </b></List.Content>
-                                <List.Content floated='right'>{examDetailObject?.course_unit?.name}</List.Content>
-                            </List.Item>
-                            <List.Item>
-                                <List.Content><b>{ t('Responsável da UC')}: </b></List.Content>
-                                <List.Content floated='right'>{examDetailObject?.course_unit?.responsible?.name}</List.Content>
-                            </List.Item>
-                            <List.Item>
-                                <List.Content><b>{ t('Data')}: </b></List.Content>
-                                <List.Content floated='right'>{ examDetailObject?.date_start === examDetailObject?.date_end ? 
-                                                moment(examDetailObject?.date_start).format('DD MMMM, YYYY') : (
-                                                    <>
-                                                        <div>{moment(examDetailObject?.date_start).format('DD MMMM, YYYY')}</div>
-                                                        <div>{moment(examDetailObject?.date_end).format('DD MMMM, YYYY')}</div>
-                                                    </>
-                                                )}</List.Content>
-                            </List.Item>
-                            { examDetailObject?.in_class ? (
+            <Modal.Header>
+                { t('Detalhes da avaliação') }
+                <span className='heading-description'>{ examDetailObject?.method?.description ? " (" + examDetailObject?.method?.description + ")": '' }</span>
+            </Modal.Header>
+            <Modal.Content> 
+                { isLoading && (
+                    <Dimmer active inverted>
+                        <Loader indeterminate>
+                            { t("A carregar informação") }
+                        </Loader>
+                    </Dimmer>
+                )}
+                { !isLoading && (
+                    <div className='exam-detail-modal'>
+                        <div className='exam-detail-info'>
+                            <List divided verticalAlign='middle'>
                                 <List.Item>
-                                    <List.Content><b>{ t('Na aula')}: </b></List.Content>
-                                    <List.Content floated='right'>{examDetailObject?.in_class}</List.Content>
+                                    <List.Content><b>{ t('Curso')}: </b></List.Content>
+                                    <List.Content floated='right'>{examDetailObject?.course_unit?.course?.name}</List.Content>
                                 </List.Item>
-                            ) : (
-                                <>                           
-                                    {examDetailObject?.hour && (
-                                        <List.Item>
-                                            <List.Content><b>{ t('Hora de ínicio')}: </b></List.Content>
-                                            <List.Content floated='right'>{examDetailObject?.hour || '-'}</List.Content>
-                                        </List.Item>
-                                    )}
-                                    <List.Item>
-                                        <List.Content><b>{ t('Salas de avaliação')}: </b></List.Content>
-                                        <List.Content floated='right'>{examDetailObject?.room || '-'}</List.Content>
-                                    </List.Item>
-                                </>
-                            )}
-                            {examDetailObject?.duration_minutes && (
                                 <List.Item>
-                                    <List.Content><b>{ t('Duração')}: </b></List.Content>
-                                    <List.Content floated='right'>{ (examDetailObject?.duration_minutes + ' ' + t('minutos')) }</List.Content>
+                                    <List.Content><b>{ t('Ramo')}: </b></List.Content>
+                                    <List.Content floated='right'>{examDetailObject?.course_unit?.branch?.name}</List.Content>
                                 </List.Item>
-                            )}
-                            <List.Item>
-                                <List.Content><b>{ t('Observações')}: </b></List.Content>
-                                <List.Content floated='right'>{examDetailObject?.observations || '-'}</List.Content>
-                            </List.Item>
-                        </List>
-                    </div>
-                    <div className='exam-detail-content'>
-                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS, SCOPES.ADD_COMMENTS]}>
-                            <Comment.Group>
-                                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS]}>
-                                    <div className='exam-detail-content-header'>
-                                        <div className='exam-detail-content-header-title'>
-                                            <Header as="h3">{ t('Comentários')}</Header>
-                                        </div>
-                                        <div className='exam-detail-content-header-actions'>
-                                            {!isPublished && (
-                                                <ShowComponentIfAuthorized permission={[SCOPES.ADD_COMMENTS]}>
-                                                    <Button 
-                                                        content={ t('Adicionar comentário')}
-                                                        labelPosition="right" 
-                                                        icon="send" 
-                                                        primary onClick={() => addComment(examDetailObject?.id)} 
-                                                    />
-                                                </ShowComponentIfAuthorized>
-                                            )}
-                                        </div>
-                                    </div>
-                                    {!isPublished && (
-                                        <ShowComponentIfAuthorized permission={[SCOPES.ADD_COMMENTS]}>
-                                            <Form reply className='focus--expander'>
-                                                <Form.TextArea rows={2} placeholder={ t('Adiciona aqui o teu comentário') } value={commentText} onChange={(ev, {value}) => setCommentText(value)}/>
-                                                {/* <Button style={{marginBottom: 'var(--space-base)' }} onClick={() => addComment(examDetailObject?.id)} content="Adicionar comentário" labelPosition="right" icon="send" floated='right' primary /> */}
-                                            </Form>
-                                            <Divider clearing />
-                                        </ShowComponentIfAuthorized>
-                                    )}
-                                    {commentsList?.filter((x) => (showIgnoredComments ? true : !x.ignored))?.map((comment, commentIndex) => (
-                                        <Comment key={commentIndex} className={comment.ignored ? 'comment--ignored' : ''}>
-                                            <Comment.Avatar src={`https://avatars.dicebear.com/api/initials/${comment.user.initials}.svg?w=50&h=50&mood[]=sad&mood[]=happy`}/>
-                                            <Comment.Content>
-                                                <Comment.Author as="span">{comment.user.name}</Comment.Author>
-                                                <Comment.Metadata>
-                                                    <div>{comment.date_label}</div>
-                                                </Comment.Metadata>
-                                                <Comment.Text>
-                                                    {comment.comment}
-                                                    { !!comment.ignored ? (
-                                                        <div className='comment-ignored-icon'>
-                                                            <Icon name="eye slash outline" title={t('Comentário escondido')} />
-                                                        </div>
-                                                    ) : ''}
-                                                </Comment.Text>
-                                                <Comment.Actions>
-                                                    {!comment.ignored && (
-                                                        <Comment.Action onClick={() => hideCommentHandler(comment.id)}>
-                                                            { t('Esconder') }
-                                                        </Comment.Action>
-                                                    )}
-                                                    { !!comment.ignored && (
-                                                        <Comment.Action onClick={() => showCommentHandler(comment.id)}>
-                                                            { t('Mostrar') }
-                                                        </Comment.Action>
-                                                    )}
-                                                    { moment(new Date()).diff(moment(comment.date), 'minutes') <= 15 && comment.user.id == localStorage.getItem('userId') && (
+                                <List.Item>
+                                    <List.Content><b>{ t('Ano Curricular')}: </b></List.Content>
+                                    <List.Content floated='right'>{ examDetailObject?.course_unit?.curricular_year ? (examDetailObject?.course_unit?.curricular_year + 'º Ano') : '-' }</List.Content>
+                                </List.Item>
+                                <List.Item>
+                                    <List.Content><b>{ t('Unidade Curricular')}: </b></List.Content>
+                                    <List.Content floated='right'>{examDetailObject?.course_unit?.name}</List.Content>
+                                </List.Item>
+                                <List.Item>
+                                    <List.Content><b>{ t('Responsável da UC')}: </b></List.Content>
+                                    <List.Content floated='right'>{examDetailObject?.course_unit?.responsible?.name}</List.Content>
+                                </List.Item>
+                                <List.Item>
+                                    <List.Content><b>{ t('Método de avaliação')}: </b></List.Content>
+                                    <List.Content floated='right'>{examDetailObject?.method?.name}</List.Content>
+                                </List.Item>
+                                
+
+                                <List.Item>
+                                    <List.Content><b>{ t('Data')}: </b></List.Content>
+                                    <List.Content floated='right'>{ examDetailObject?.date_start === examDetailObject?.date_end ? 
+                                                    moment(examDetailObject?.date_start).format('DD MMMM, YYYY') : (
                                                         <>
-                                                            <Comment.Action onClick={() => deleteCommentHandler(comment.id)} style={{color: 'red'}}>
-                                                                { t('Remover') }
-                                                            </Comment.Action>
+                                                            <div>{moment(examDetailObject?.date_start).format('DD MMMM, YYYY')}</div>
+                                                            <div>{moment(examDetailObject?.date_end).format('DD MMMM, YYYY')}</div>
                                                         </>
-                                                    )}
-                                                </Comment.Actions>
-                                            </Comment.Content>
-                                        </Comment>
-                                    ))}
-                                    { (commentsList?.length == 0 || (!showIgnoredComments && (
-                                                (commentsList?.filter((x) => (x.ignored)).length > 0 && commentsList?.filter((x) => (!x.ignored)).length == 0))) ) && 
-                                    (
-                                        <Segment placeholder textAlign="center">
-                                            <Header icon>
-                                                <Icon name='comments outline' />
-                                                <div>{ t('Não existem comentários para esta avaliação...')}</div>
-                                            </Header>
-                                            { commentsList?.filter((x) => (x.ignored)).length > 1 && (
-                                                <div> { t('Existem') +" " + commentsList?.filter((x) => (x.ignored)).length + " " + t('comentários escondidos') }</div>
-                                            ) }
-                                            { commentsList?.filter((x) => (x.ignored)).length == 1 && (
-                                                <div> { t('Existe') +" " + commentsList?.filter((x) => (x.ignored)).length + " " + t('comentário escondido') }</div>
-                                            ) }                                               
-                                        </Segment>
-                                    )}
-                                </ShowComponentIfAuthorized>
-                            </Comment.Group>
-                        </ShowComponentIfAuthorized>
+                                                    )}</List.Content>
+                                </List.Item>
+                                { examDetailObject?.in_class ? (
+                                    <List.Item>
+                                        <List.Content><b>{ t('Hora e sala')}: </b></List.Content>
+                                        <List.Content floated='right'>{ t('Na aula')}</List.Content>
+                                    </List.Item>
+                                ) : (
+                                    <>                           
+                                        {examDetailObject?.hour && (
+                                            <List.Item>
+                                                <List.Content><b>{ t('Hora de ínicio')}: </b></List.Content>
+                                                <List.Content floated='right'>{examDetailObject?.hour || '-'}</List.Content>
+                                            </List.Item>
+                                        )}
+                                        <List.Item>
+                                            <List.Content><b>{ t('Salas de avaliação')}: </b></List.Content>
+                                            <List.Content floated='right'>{examDetailObject?.room || '-'}</List.Content>
+                                        </List.Item>
+                                    </>
+                                )}
+                                {examDetailObject?.duration_minutes && (
+                                    <List.Item>
+                                        <List.Content><b>{ t('Duração')}: </b></List.Content>
+                                        <List.Content floated='right'>{ (examDetailObject?.duration_minutes + ' ' + t('minutos')) }</List.Content>
+                                    </List.Item>
+                                )}
+                                <List.Item>
+                                    <List.Content><b>{ t('Observações')}: </b></List.Content>
+                                    <List.Content floated='right'>{examDetailObject?.observations || '-'}</List.Content>
+                                </List.Item>
+                            </List>
+                        </div>
+                        <div className='exam-detail-content'>
+                            <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS, SCOPES.ADD_COMMENTS]}>
+                                <Comment.Group>
+                                    <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS]}>
+                                        <div className='exam-detail-content-header'>
+                                            <div className='exam-detail-content-header-title'>
+                                                <Header as="h3">{ t('Comentários')}</Header>
+                                            </div>
+                                            <div className='exam-detail-content-header-actions'>
+                                                {!isPublished && (
+                                                    <ShowComponentIfAuthorized permission={[SCOPES.ADD_COMMENTS]}>
+                                                        <Button 
+                                                            content={ t('Adicionar comentário')}
+                                                            labelPosition="right" 
+                                                            icon="send" 
+                                                            primary onClick={() => addComment(examDetailObject?.id)} 
+                                                        />
+                                                    </ShowComponentIfAuthorized>
+                                                )}
+                                            </div>
+                                        </div>
+                                        {!isPublished && (
+                                            <ShowComponentIfAuthorized permission={[SCOPES.ADD_COMMENTS]}>
+                                                <Form reply className='focus--expander'>
+                                                    <Form.TextArea rows={2} placeholder={ t('Adiciona aqui o teu comentário') } value={commentText} onChange={(ev, {value}) => setCommentText(value)}/>
+                                                    {/* <Button style={{marginBottom: 'var(--space-base)' }} onClick={() => addComment(examDetailObject?.id)} content="Adicionar comentário" labelPosition="right" icon="send" floated='right' primary /> */}
+                                                </Form>
+                                                <Divider clearing />
+                                            </ShowComponentIfAuthorized>
+                                        )}
+                                        {commentsList?.filter((x) => (showIgnoredComments ? true : !x.ignored))?.map((comment, commentIndex) => (
+                                            <Comment key={commentIndex} className={comment.ignored ? 'comment--ignored' : ''}>
+                                                <Comment.Avatar src={`https://avatars.dicebear.com/api/initials/${comment.user.initials}.svg?w=50&h=50&mood[]=sad&mood[]=happy`}/>
+                                                <Comment.Content>
+                                                    <Comment.Author as="span">{comment.user.name}</Comment.Author>
+                                                    <Comment.Metadata>
+                                                        <div>{comment.date_label}</div>
+                                                    </Comment.Metadata>
+                                                    <Comment.Text>
+                                                        {comment.comment}
+                                                        { !!comment.ignored ? (
+                                                            <div className='comment-ignored-icon'>
+                                                                <Icon name="eye slash outline" title={t('Comentário escondido')} />
+                                                            </div>
+                                                        ) : ''}
+                                                    </Comment.Text>
+                                                    <Comment.Actions>
+                                                        {!comment.ignored && (
+                                                            <Comment.Action onClick={() => hideCommentHandler(comment.id)}>
+                                                                { t('Esconder') }
+                                                            </Comment.Action>
+                                                        )}
+                                                        { !!comment.ignored && (
+                                                            <Comment.Action onClick={() => showCommentHandler(comment.id)}>
+                                                                { t('Mostrar') }
+                                                            </Comment.Action>
+                                                        )}
+                                                        { moment(new Date()).diff(moment(comment.date), 'minutes') <= 15 && comment.user.id == localStorage.getItem('userId') && (
+                                                            <>
+                                                                <Comment.Action onClick={() => deleteCommentHandler(comment.id)} style={{color: 'red'}}>
+                                                                    { t('Remover') }
+                                                                </Comment.Action>
+                                                            </>
+                                                        )}
+                                                    </Comment.Actions>
+                                                </Comment.Content>
+                                            </Comment>
+                                        ))}
+                                        { (commentsList?.length == 0 || (!showIgnoredComments && (
+                                                    (commentsList?.filter((x) => (x.ignored)).length > 0 && commentsList?.filter((x) => (!x.ignored)).length == 0))) ) && 
+                                        (
+                                            <Segment placeholder textAlign="center">
+                                                <Header icon>
+                                                    <Icon name='comments outline' />
+                                                    <div>{ t('Não existem comentários para esta avaliação...')}</div>
+                                                </Header>
+                                                { commentsList?.filter((x) => (x.ignored)).length > 1 && (
+                                                    <div> { t('Existem') +" " + commentsList?.filter((x) => (x.ignored)).length + " " + t('comentários escondidos') }</div>
+                                                ) }
+                                                { commentsList?.filter((x) => (x.ignored)).length == 1 && (
+                                                    <div> { t('Existe') +" " + commentsList?.filter((x) => (x.ignored)).length + " " + t('comentário escondido') }</div>
+                                                ) }                                               
+                                            </Segment>
+                                        )}
+                                    </ShowComponentIfAuthorized>
+                                </Comment.Group>
+                            </ShowComponentIfAuthorized>
+                        </div>
                     </div>
-                </div>
+                )}
             </Modal.Content>
             <Modal.Actions>
                 <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS]}>
@@ -276,7 +300,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                         {!showIgnoredComments ? t('Mostrar escondidos') : t('Ocultar escondidos') }
                     </Button>
                 </ShowComponentIfAuthorized>
-                <Button onClick={onClose}>{ t('Fechar') }</Button>
+                <Button onClick={closeModalHandler}>{ t('Fechar') }</Button>
             </Modal.Actions>
         </Modal>
     );

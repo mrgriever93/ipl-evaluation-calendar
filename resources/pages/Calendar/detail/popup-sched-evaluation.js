@@ -115,10 +115,11 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     const methodListFilterHandler = (course_unit_id) => {
         if(courseUnits?.length > 0 ) {
             setMethodList(
-                courseUnits.find((courseUnit) => courseUnit.value === course_unit_id)?.methods.map(({id, name, minimum, weight, is_done}) => ({
+                courseUnits.find((courseUnit) => courseUnit.value === course_unit_id)?.methods.map(({id, description, name, minimum, weight, is_done}) => ({
                         key: id,
                         value: id,
-                        text: `${name} / Min. ${minimum} / Peso: ${parseInt(weight, 10)}%`,
+                        text: (description || name),
+                        description: `Min. ${minimum} / Peso: ${parseInt(weight, 10)}%`,
                         icon: (is_done ? {color: 'green', name:'check circle'} : undefined),
                     })
                 )
