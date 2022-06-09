@@ -58,6 +58,16 @@ Features/issues ainda pendentes:
 
 ## Versão 0.1 - 19/04/2022
 
+- Reconhecimento do projeto, instalação e configuração em ambiente local
+- Atualização do código base para Laravel 9 e React 17
+- Validação das funcionalidades do projeto existentes e problemas
+- Resolução e refatorização base das várias páginas e menus de configurações de administração
+- Atualizações base na UI para melhorar alguns problemas visuais do layout
+- Revisão da estrutura da BD e atualização dos ficherios de Migrations e Seeders do Laravel, para atualização mais fácil da VM
+- Atualização da BD para possibilidade de ter 2 idiomas (PT e EN)
+- Revisão do código de sincronização dos cursos e do LDAP para autenticação
+- Melhoramentos de performance na forma de carregamento dos ficheiros/componentes React
+
 
 ## Versão 0.0 - 04/03/2022
 
