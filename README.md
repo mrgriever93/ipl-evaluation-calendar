@@ -143,6 +143,11 @@ Caso aconteça o erro seguinte:
     ⠿ Container ipl-evaluation-calendar-meilisearch-1       Started
     ⠿ Container ipl-evaluation-calendar-calendar-v2.test-1  Starting
 
-    Error response from daemon: Ports are not available: exposing port TCP 0.0.0.0:80 -> 0.0.0.0:0: listen tcp 0.0.0.0:80: bind: An attempt was made to access a socket in a way forbidden by its access permissions.        
-    alexandre@DESKTOP-GRIEVER:~/sites/ipl-evaluation-calendar$ netsh http add iplisten ipaddress=::
-    netsh: command not found
+    Error response from daemon: Ports are not available: exposing port TCP 0.0.0.0:80 -> 0.0.0.0:0: listen tcp 0.0.0.0:80: bind: An attempt was made to access a socket in a way forbidden by its access permissions.
+
+
+You can run these commands on Windows, and should solve that issue:
+
+    C:\Documents\: ~/sites/ipl-evaluation-calendar$ netsh http add iplisten ipaddress=::
+    
+    C:\Documents\: ~/sites/ipl-evaluation-calendar$ netsh http delete iplisten ipaddress=::

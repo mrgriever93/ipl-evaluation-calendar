@@ -49,11 +49,47 @@ Features/issues ainda pendentes:
 
 ## Versão 0.4 - 17/05/2022
 
+- Adicionar páginas de 404 e RickRoll plugin no servidor
+- Update e validação de toda a estrutura base relacionada com os agrupamentos de UCs
+- Update dos detalhes de curso e UCs para adicionar readonly/disabled nos campos que vêm do WebService.
+- Continuação da limpeza e organização da informação das várias ações do detalhe do calendário (adicionar exames/interrupções e visualizar)
+
 
 ## Versão 0.3 - 10/05/2022
 
+- Melhoramento e adicionar mensagens de erro (e traduções) pela aplicação de forma geral
+- Detalhe das Unidades Curriculares
+    - Refatorização da UI para melhor aproveitamento do espaço
+    - Atualização das tabelas
+- Separação dos Agrupamentos de UC's das UC's
+    - Atualização e criação das permissões em separado
+    - Update da UI do menu para mostrar os menus conforme as novas permissões
+- Adicionar campo "obrigatório" para tipos de interrupções, para a criação de um calendário
+    - Melhoramento do processo de criação de calendário tendo em conta este novo campo
+- Mostrar o ano selecionado no menu de navegação
+- Limpeza de código dos resources do servidor
+- Adicionar mais mensagens de erro e validações no processo de criação de calendário
+- Update da forma de trabalhar local para trabalhar no WSL, e tornar a app mais rápida localmente
+- Reorganização da informação da página de detalhe do calendário
+    - Limpar sidebar
+    - Adicionar barra sticky em cima com as infos do calendário
+    - Limpeza e divisão de código da página de detalhe em vários componentes mais pequenos.
 
 ## Versão 0.2 - 26/04/2022
+
+- Pequenos problemas do servidor e sync de ambos os semestres numa tarefa de cron
+- Updates ao layout base, header e navegação
+- Traduções de mais algumas paginas
+- Rework das páginas de detalhe das UC's & criação do mecanismo de Logs
+- Update do código da conexão ao LDAP para melhor performance
+- Adicionar popup para confirmar que quer eliminar uma UC
+- Adicionar algumas informações dos cursos e UCs aos seeders (porque não era possível sincronizar normalmente)
+- Melhorar o flow de criação de calendário, e remover o 4º step (extras) que não estava a ser bem aplicado
+- Pequenas correções na página do calendário para ser possível abrir
+- Criação do mapeamento das iniciais do curso ao fazer a sincronização (porque não existe essa informação no WebService)
+- Refatorização do processo de configuração dos métodos das UC's
+    - Adicionar os sliders nos métodos
+- Adicionar warnings nas tabelas em que identificamos que faltam informações (UCs e Cursos)
 
 
 ## Versão 0.1 - 19/04/2022
