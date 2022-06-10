@@ -238,6 +238,11 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/search/students',      [LdapController::class, 'searchStudents']   );
 });
 
+
+Route::controller(ExamController::class)->group(function () {
+    Route::get('/ext/exams/',   'externalList' );
+});
+
 // TODO
 /**
  * Entities to finish Controllers

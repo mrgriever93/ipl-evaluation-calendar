@@ -211,4 +211,9 @@ class ExamController extends Controller
         }
         return response()->json("Removed!");
     }
+
+    public function externalList()
+    {
+        return ExamListResource::collection(Exams::all());
+    }
 }
