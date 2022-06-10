@@ -46,13 +46,36 @@ Features/issues ainda pendentes:
 
 ## Versão 0.5 - 24/05/2022
 
+Novas features: 
+- No detalhe das UC's:
+    - Adicionar uma opção para duplicação dos métodos de avaliação entre épocas
+    - Remoção da obrigatoriedade de preencher todos os métodos de uma vez para poder guardar.
+- Na listagem de calendários:
+    - Adicionados filtros na página de lista de calendários
+- Na criação de calendário:
+    - Adicionar forma de definir a 10ª semana de aulas na criação do calendário
+- No detalhe de calendário:
+    - Automatização da marcação de avaliações, selecionando a epoca pretendida ao inicio se for apenas uma
+    - Finalização do Popup de marcação/edição de avaliações
+    - Adicionar opção para remover exames marcados
+    - Criação do Popup de adicionar / editar interrupções caso não existam exames marcados
+- Atualização de traduções nos métodos e calendário
+
+Issues corrigidos: 
+- Retirada a opção de criação de calendário para todos os cursos de uma vez, a pedido dos professores
+- Correções em alguns textos da aplicação, especialmente troca de "mandatório" por "obrigatório"
+- Adicionar e corrigir warnings na criação do calendário, quando não adicionamos interrupções obrigatórias
+- Remover cursos sem "grau de ensino" (Inglês Geral e Matemática Geral) da listagem de cursos
+
 
 ## Versão 0.4 - 17/05/2022
 
 - Adicionar páginas de 404 e RickRoll plugin no servidor
+- Added server logs viewer, to help understand issues on server sync requests
 - Update e validação de toda a estrutura base relacionada com os agrupamentos de UCs
 - Update dos detalhes de curso e UCs para adicionar readonly/disabled nos campos que vêm do WebService.
 - Continuação da limpeza e organização da informação das várias ações do detalhe do calendário (adicionar exames/interrupções e visualizar)
+- Pequenos updates gerais para correções no processo de marcação de Avaliações e definição dos métodos
 
 
 ## Versão 0.3 - 10/05/2022
