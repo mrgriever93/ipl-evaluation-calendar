@@ -96,7 +96,7 @@
 
 ---
 ## Reunião 2022-05-31
-**Notas távora**
+**Notas Távora**
 - [X] Validações da 10a semana
 - [X] validações datas época periódica, normal e Recurso, tem de ser superior às outras e ao ano letivo
 - [X] Adicional + filtros na criação de calendário para selecionar o curso
@@ -118,6 +118,27 @@
     - [ ] Projetos e trabalhos
         - obrigatório data de lançamento dos enunciados
 - [ ] ir buscar os dados do sigla e nome inglês do novo webservice - QUANDO FOR CRIADO
+
+---
+## Reunião 2022-06-07
+**Notas Pedro**
+- [ ] Validação das épocas não está bem:
+  - [ ] Deu para criar uma época de recurso no meio da época periódica
+- [ ] Issue do sticky na tab dos métodos que não renderiza bem até fazer scroll (já sabíamos)
+- [ ] Ao alterar uma data de uma avaliação, obriga a fazer refresh. Falta atualizar os dados no calendário (já sabíamos)
+- [ ] Devíamos adicionar uma notificação caso alguma avaliação dure mais do que 1 semana.
+
+
+- [ ] arranjar um webservice que disponibilize os dados das avaliações para outro grupo usar? **Pedido pelo Teams**
+  - Penso que não haverá problema em ser pública (os calendários são públicos). A ser necessária, a parte da autenticação poderá ficar em trabalho futuro.
+  - Só me parece necessário ter, para cada avaliação: UC, Tipo de Avaliação, Data. Se for possível, juntar o peso na nota final e o mínimo, caso exista.
+  - Só português (nesta fase é só para eles poderem ligar datas de avaliação a possível abandono escolar)
+
+**Notas Távora**
+- não testou.
+- [ ] WebService já foi atualizado com Siglas das UC's e deve estar quase a ter também as UC's traduzidas
+- [ ] Deve permitir desfasar os anos. Eventualmente com uma checkbox quando criamos um calendário
+- [ ] Não deve ser possível copiar da época periódica para as outras épocas (querem mesmo limitar pq agr qdo há as fichas das FUC tb têm de introduzir pelo menos duas épocas)
 
 ---
 
