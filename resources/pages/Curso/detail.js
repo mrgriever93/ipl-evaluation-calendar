@@ -175,7 +175,7 @@ const Detail = () => {
                                 </Field>
                                 <Field name="name_en">
                                     {({input: nameEnInput}) => (
-                                        <Form.Input disabled={ loading || !hasPermissionToEdit} label={ t("Nome EN") } {...nameEnInput}/>
+                                        <Form.Input disabled={true || loading || !hasPermissionToEdit} label={ t("Nome EN") } {...nameEnInput}/>
                                     )}
                                 </Field>
                             </Form.Group>
