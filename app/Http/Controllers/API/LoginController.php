@@ -5,16 +5,10 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Resources\UserResource;
-use App\Http\Resources\v1\UtilizadorAutenticadoResource;
 use App\Models\AcademicYear;
 use App\Models\Course;
-use App\Models\Entidade;
 use App\Models\Group;
-use App\Models\Idioma;
 use App\Models\InitialGroups;
-use App\Models\Interrupcao;
-use App\Models\TipoInterrupcao;
-use App\Models\Traducao;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -102,10 +96,8 @@ class LoginController extends Controller
     /**
      * GET utilizador autenticado
      */
-    public function user(Request $request)
-    {
-        // TODO - VALIDATE -> UtilizadorAutenticadoResource
-        $User = $request->user();
-        return new UtilizadorAutenticadoResource($User);
-    }
+//    public function user(Request $request) {
+//        $User = $request->user();
+//        return new UtilizadorAutenticadoResource($User);
+//    }
 }
