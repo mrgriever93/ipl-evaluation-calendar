@@ -25,15 +25,15 @@ class V1ExamController extends Controller
         }
         // get exams from a specific academic year and a specific school
         $exams = Exam::whereHas('method', function ($query) use($ids) {
-            $query->ofAcademicYear($ids['academicYearId']);             // get only exams for the current year
+            $query->ofAcademicYear($ids['academicYearId']);                 // get only exams for the current year
         })->whereHas('course', function ($query) use($ids) {
-            $query->where('school_id', $ids['schoolId']);               // get exams for the requested school
-        })->when($ids['semesterId'], function ($q_c) use($ids) {        // will only filter by semester if requested
-            $q_c->whereHas('calendar', function ($q_s) use($ids) {
-                $q_s->where('published', true)->where("temporary", false)
-                    ->where("calendar_phase_id", CalendarPhase::phasePublished())
-                    ->where('semester_id', $ids['semesterId']);         // get exams for the requested semester
-            });
+            $query->where('school_id', $ids['schoolId']);                   // get exams for the requested school
+        })->whereHas('calendar', function ($query) use($ids) {
+            $query->where('published', true)//->where("temporary", false)
+            ->where("calendar_phase_id", CalendarPhase::phasePublished())
+                ->when($ids['semesterId'], function ($q_s) use($ids) {      // will only filter by semester if requested
+                    $q_s->where('semester_id', $ids['semesterId']);         // get exams for the requested semester
+                });
         })->get();
 
         return ExamListResource::collection($exams);
@@ -48,15 +48,15 @@ class V1ExamController extends Controller
         }
         // get exams from a specific academic year and a specific school
         $exams = Exam::whereHas('method', function ($query) use($ids) {
-            $query->ofAcademicYear($ids['academicYearId']);                                 // get only exams for the current year
+            $query->ofAcademicYear($ids['academicYearId']);                                         // get only exams for the current year
         })->whereHas('course', function ($query) use($ids) {
             $query->where("courses.id", $ids['courseId'])->where('school_id', $ids['schoolId']);    // get exams for the requested course and school
-        })->when($ids['semesterId'], function ($q_c) use($ids) {                            // will only filter by semester if requested
-            $q_c->whereHas('calendar', function ($q_s) use($ids) {
-                $q_s->where('published', true)->where("temporary", false)
-                    ->where("calendar_phase_id", CalendarPhase::phasePublished())
-                    ->where('semester_id', $ids['semesterId']);         // get exams for the requested semester
-            });
+        })->whereHas('calendar', function ($query) use($ids) {
+            $query->where('published', true)//->where("temporary", false)
+                ->where("calendar_phase_id", CalendarPhase::phasePublished())
+                ->when($ids['semesterId'], function ($q_s) use($ids) {                              // will only filter by semester if requested
+                    $q_s->where('semester_id', $ids['semesterId']);                                 // get exams for the requested semester
+                });
         })->get();
 
         return ExamListResource::collection($exams);
@@ -71,17 +71,17 @@ class V1ExamController extends Controller
         }
         // get exams from a specific academic year and a specific school
         $exams = Exam::whereHas('method', function ($query) use($ids) {
-            $query->ofAcademicYear($ids['academicYearId']);             // get only exams for the current year
+            $query->ofAcademicYear($ids['academicYearId']);                 // get only exams for the current year
         })->whereHas('course', function ($query) use($ids) {
             $query->where('school_id', $ids['schoolId']);
         })->whereHas('courseUnit', function ($query) use($ids) {
-            $query->where("course_units.id", $ids['courseUnitId']);                  // get exams for the requested curricular unit
-        })->when($ids['semesterId'], function ($q_c) use($ids) {        // will only filter by semester if requested
-            $q_c->whereHas('calendar', function ($q_s) use($ids) {
-                $q_s->where('published', true)->where("temporary", false)
-                    ->where("calendar_phase_id", CalendarPhase::phasePublished())
-                    ->where('semester_id', $ids['semesterId']);         // get exams for the requested semester
-            });
+            $query->where("course_units.id", $ids['courseUnitId']);         // get exams for the requested curricular unit
+        })->whereHas('calendar', function ($query) use($ids) {
+            $query->where('published', true)//->where("temporary", false)
+            ->where("calendar_phase_id", CalendarPhase::phasePublished())
+                ->when($ids['semesterId'], function ($q_s) use($ids) {      // will only filter by semester if requested
+                    $q_s->where('semester_id', $ids['semesterId']);         // get exams for the requested semester
+                });
         })->get();
 
         return ExamListResource::collection($exams);
