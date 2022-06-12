@@ -96,7 +96,7 @@
 
 ---
 ## Reunião 2022-05-31
-**Notas távora**
+**Notas Távora**
 - [X] Validações da 10a semana
 - [X] validações datas época periódica, normal e Recurso, tem de ser superior às outras e ao ano letivo
 - [X] Adicional + filtros na criação de calendário para selecionar o curso
@@ -118,6 +118,27 @@
     - [ ] Projetos e trabalhos
         - obrigatório data de lançamento dos enunciados
 - [ ] ir buscar os dados do sigla e nome inglês do novo webservice - QUANDO FOR CRIADO
+
+---
+## Reunião 2022-06-07
+**Notas Pedro**
+- [ ] Validação das épocas não está bem:
+  - [ ] Deu para criar uma época de recurso no meio da época periódica
+- [ ] Issue do sticky na tab dos métodos que não renderiza bem até fazer scroll (já sabíamos)
+- [ ] Ao alterar uma data de uma avaliação, obriga a fazer refresh. Falta atualizar os dados no calendário (já sabíamos)
+- [ ] Devíamos adicionar uma notificação caso alguma avaliação dure mais do que 1 semana.
+
+
+- [ ] arranjar um webservice que disponibilize os dados das avaliações para outro grupo usar? **Pedido pelo Teams**
+  - Penso que não haverá problema em ser pública (os calendários são públicos). A ser necessária, a parte da autenticação poderá ficar em trabalho futuro.
+  - Só me parece necessário ter, para cada avaliação: UC, Tipo de Avaliação, Data. Se for possível, juntar o peso na nota final e o mínimo, caso exista.
+  - Só português (nesta fase é só para eles poderem ligar datas de avaliação a possível abandono escolar)
+
+**Notas Távora**
+- não testou.
+- [ ] WebService já foi atualizado com Siglas das UC's e deve estar quase a ter também as UC's traduzidas
+- [ ] Deve permitir desfasar os anos. Eventualmente com uma checkbox quando criamos um calendário
+- [ ] Não deve ser possível copiar da época periódica para as outras épocas (querem mesmo limitar pq agr qdo há as fichas das FUC tb têm de introduzir pelo menos duas épocas)
 
 ---
 
@@ -174,70 +195,3 @@
 
 - [ ] Quando abrimos um popup de edição e alteramos a data, ele limpa as informações dos outros campos
 - [ ] Quando alteramos alguma coisa, e gravamos, ele não altera no calendário (exemplo datas)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Boa tarde professores. Fizemos ontem uma nova passagem para a VM do projeto. 
-Como foram duas semanas desde a última versão que colocámos na VM, tentei descrever de forma mais pormenorizada  o que foi alterado, mas podem existir pequenas coisas que tenham ficado omissas.
-Tentámos iterar sobre quase todo o feedback que recebemos nas semanas anteriores, pelo que em relação a esta nova versão temos: 
-
-Novas features: 
-- Adicionar comentários
-- Esconder comentários
-- Eliminar comentários (durante os 1ºs 15min)
-- Adicionaram-se filtros na página de lista e criação de calendários
-- Foi adicionada a opção de selecionar qual a 10ª semana de aulas (pré-calculada)
-- Foi acrescentado um campo para a descrição dos métodos de avaliação, que é automaticamente preenchido tendo em conta o tipo de método que está a ser marcado.
-
-Issues corrigidos: 
-- Foi melhorada a feature de duplicar metodos e para poder ir gravar sem ter os métodos todos preenchidos
-    - Os botões de guardar e duplicar ficaram também sticky, de forma a podermos ir fazendo scroll e continuar a ver os botões sempre disponíveis no ecrã)
-- Foi retirada a opção de poder criar calendários para todos os cursos
-- Foi melhorada a forma de selecionar e desselecionar os cursos para os quais queremos criar o calendário
-- Foi melhorado de forma geral o processo criação de calendário
-    - Adicionadas validações nas datas
-    - Adicionados mais alertas visuais para as interrupções "obrigatórias"
-    - Trocado o componente para DateRange para ser mais fácil selecionar o periodo das épocas
-- Foi melhorada a marcação de avaliações
-    - Adicionadas opções para avaliações que precisem de mais do que 1 dia (start e end date)
-    - Adicionada opção para selecionar quando a avaliação é realizada na aula
-    - Foi melhorado a seleção de UC's e métodos de avaliação ao marcar o exame: 
-        - Agora é possível ver todas as UCs do curso e do semestre a que estamos a marcar
-        - Caso não tenha métodos aparece o aviso e não pode selecionar
-        - Caso existam métodos por marcar, aparce um aviso com um atalho para a lista de UC's do curso, onde podem adicionar os métodos
-    - Foram retiradas outras validações que tinham sido colocadas pelo antigo grupo, como apenas poder ter uma avaliação por dia, ou ser obrigatório colocar a hora.
-- Foi melhorada a página de detalhe de calendário
-    - Foi criada uma distinção visual para avaliações em aula e avaliações não em aula (quando visualizamos o calendário)
-    - Foi alterada a informação mostrada na avaliação do calendário 
-        - Caso não tenha iniciais, aparece o nome completo da UC em vez de "null"
-        - Em vez do tipo de avaliação, agora aparece a descrição da avaliação (com base na atualização dos métodos)
-        - Foi adicionada uma "tooltip" com o nome completo da UC e descrição da UC (caso o texto seja grande e fique cortado) que aparecer ao fazer hover na avaliação.
-    - Foi adicionada a possibilidade de adicionar interrupções em dias que já têm avaliações marcadas (sendo que as avaliações são eliminadas)
-- A nível de BD, foi revista a forma como os Cursos e UCs se relacionavam com o ano letivo, as fases de calendários e as permissões foram limpas para a maioria dos utilizadores.
-
-
-Features/issues ainda pendentes: 
-- Ir buscar os dados do sigla e nome inglês do novo webservice (QUANDO FOR DISPONIBILIZADO)
-- Melhorar diferença visual das épocas
-- Ao adicionar uma interrupção numa avaliação contínua, só deve apagar o dia a escolhido e não todos os dias da avaliação
-- Automatizar melhor o processo de projetos e trabalhos (obrigatório calendarizar data de lançamento dos enunciados, entrega do projeto e apresentação/defesa)
-- Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UC's dos seus cursos (ex: EI PL e D)
-- Rever todas as funcionalidades para cada grupo de permissões e validar que está tudo a funcionar como definido no fluxo inicial.
- 
-Como falámos na útlima reunião, o Miguel estará de férias esta semana, mas eu estarei disponível para estar na reunião de 3ª-feira. Seria bom se conseguissem testar mais um pouco da aplicação novamente, para recolher mais feedback na reunião.
- 
-Em relação a esta semana, o plano para mim será estar mais focado no relatório que entretanto tem ficado sempre para 2º plano.

@@ -32,7 +32,7 @@ class PermissionController extends Controller
 
     public function calendar()
     {
-        $calendarPhaseId = CalendarPhase::where('code', 'system')->first()->id;
+        $calendarPhaseId = CalendarPhase::phaseSystem();
         $userGroupsId = Auth::user()->groups->pluck('id');
 
         $permissions = Permission::select("code")->addSelect([
@@ -70,7 +70,7 @@ class PermissionController extends Controller
                     $request['group_id']
                 ],
                 [
-                    'phase_id' => $request['phase_id'] ?? CalendarPhase::where('code', 'system')->first()->id,
+                    'phase_id' => $request['phase_id'] ?? CalendarPhase::phaseSystem(),
                     'enabled' => $request['enabled'],
                 ]
             );
@@ -90,7 +90,7 @@ class PermissionController extends Controller
         $isCalendarPermissions = $type === 'calendar';
         if ($isCalendarPermissions) {
             $operator = '=';
-            $phases = CalendarPhase::whereNotIn('code', ['system', 'published'])->get();
+            $phases = CalendarPhase::whereNotIn('code', [CalendarPhase::phaseSystem(), CalendarPhase::phasePublished()])->get();
         }
 
         $category = PermissionCategory::where('code', '=', 'calendar')->first('id');

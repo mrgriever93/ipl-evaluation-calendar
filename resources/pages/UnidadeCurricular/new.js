@@ -132,7 +132,7 @@ const New = () => {
                                 </Field>
                                 <Field name="initials">
                                     {({input: initialsInput}) => (
-                                        <Form.Input required label={t("Iniciais")} placeholder={t("Iniciais")} {...initialsInput} />
+                                        <Form.Input required label={t("Iniciais")} disabled={isEditMode} placeholder={t("Iniciais")} {...initialsInput} />
                                     )}
                                 </Field>
                             </Form.Group>
@@ -145,7 +145,7 @@ const New = () => {
                                 </Field>
                                 <Field name="name_en">
                                     {({input: nameEnInput}) => (
-                                        <Form.Input label={t("Nome EN")} placeholder={t("Nome EN")} {...nameEnInput} />
+                                        <Form.Input label={t("Nome EN")} disabled={isEditMode} placeholder={t("Nome EN")} {...nameEnInput} />
                                     )}
                                 </Field>
                             </Form.Group>

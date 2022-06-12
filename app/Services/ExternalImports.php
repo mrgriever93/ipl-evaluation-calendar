@@ -132,11 +132,11 @@ class ExternalImports
                          * $info[] => this will be based on the settings for each school, set on the admin page
                          */
                         $info = explode(";", $courseUnit);
-                        $course_initials = preg_match_all("/[A-Z]/", $info[$school->index_course_name], $matches, PREG_SET_ORDER, 0);
-                        $gen_initials = "";
-                        for ($i = 0; $i < $course_initials; $i++) {
-                            $gen_initials .= implode("", $matches[$i]);
-                        }
+//                        $course_initials = preg_match_all("/[A-Z]/", $info[$school->index_course_name_pt], $matches, PREG_SET_ORDER, 0);
+//                        $gen_initials = "";
+//                        for ($i = 0; $i < $course_initials; $i++) {
+//                            $gen_initials .= implode("", $matches[$i]);
+//                        }
                         // Retrieve Course by code or create it if it doesn't exist...
                         $course = Course::firstOrCreate(
                             [
@@ -145,10 +145,10 @@ class ExternalImports
                             ],
                             [
                                 "school_id" => $school->id,
-                                "initials" => $gen_initials,
-                                "name_pt" => $info[$school->index_course_name],
-                                "name_en" => $info[$school->index_course_name], // this will duplicate the value as default, to prevent empty states
-                                "degree" => DegreesUtil::getDegreeId($info[$school->index_course_name])
+                                "initials" => $info[$school->index_course_initials],//$gen_initials,
+                                "name_pt" => $info[$school->index_course_name_pt],
+                                "name_en" => $info[$school->index_course_name_en], // this will duplicate the value as default, to prevent empty states
+                                "degree" => DegreesUtil::getDegreeId($info[$school->index_course_name_pt])
                             ]
                         );
                         // https://laravel.com/docs/9.x/eloquent-relationships#syncing-associations
@@ -174,8 +174,9 @@ class ExternalImports
                                 "course_id" => $course->id,
                                 "branch_id" => $branch->id,
                                 "curricular_year" => $info[$school->index_course_unit_curricular_year],
-                                "name_pt" => $info[$school->index_course_unit_name],
-                                "name_en" => $info[$school->index_course_unit_name] // this will duplicate the value as default, to prevent empty states
+                                "initials" => $info[$school->index_course_unit_initials],
+                                "name_pt" => $info[$school->index_course_unit_name_pt],
+                                "name_en" => $info[$school->index_course_unit_name_en] // this will duplicate the value as default, to prevent empty states
                             ]
                         );
                         // https://laravel.com/docs/9.x/eloquent-relationships#syncing-associations

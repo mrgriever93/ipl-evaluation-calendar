@@ -157,23 +157,6 @@ const AnoLetivo = () => {
             return oldList;
         });
         axios.get('/academic-year/' + id + "/sync/" + semester).then((res) => {
-            // update s[X]_sync_active, s[X]_sync_waiting value
-            setAcademicYearsList((current) => {
-                const oldList = [...current];
-                oldList.forEach((item) => {
-                    if(item.id === id) {
-                        if(semester === 1) {
-                            item.s1_sync_active = false;
-                            item.s1_sync_waiting = false;
-                        } else {
-                            item.s2_sync_active = false;
-                            item.s2_sync_waiting = false;
-                        }
-                    }
-                    return item;
-                });
-                return oldList;
-            });
             if (res.status === 200) {
                 toast(() => <div>{t('ano_letivo.Irá começar brevemente a sincronização do ano letivo')} <b>{year}</b>!</div>, successConfig);
             } else {
@@ -182,6 +165,23 @@ const AnoLetivo = () => {
                 } else {
                     toast(() => <div>{t('ano_letivo.Ocorreu um problema ao tentar começar sincronizar o ano letivo')} <b>{ year }</b>!</div>, errorConfig);
                 }
+                // update s[X]_sync_active, s[X]_sync_waiting value
+                setAcademicYearsList((current) => {
+                    const oldList = [...current];
+                    oldList.forEach((item) => {
+                        if(item.id === id) {
+                            if(semester === 1) {
+                                item.s1_sync_active = false;
+                                item.s1_sync_waiting = false;
+                            } else {
+                                item.s2_sync_active = false;
+                                item.s2_sync_waiting = false;
+                            }
+                        }
+                        return item;
+                    });
+                    return oldList;
+                });
             }
         });
     }

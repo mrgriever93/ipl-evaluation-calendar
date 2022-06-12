@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\v1;
+namespace App\Http\Resources\OldResources_Users;
 
 use App\Models\Dicionario;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -20,7 +20,7 @@ class UtilizadorAutenticadoResource extends JsonResource
             'permissoes_calendario'     => UtilizadorAutenticadoPermissoesCalendarioResource::collection($this->permissoesCalendario()),
             'dicionario'                => DicionarioResource::collection(Dicionario::where('idioma_id', '=', $this->idioma->id)->get()),
             'grupos'                    => GrupoUserAuthResource::collection($this->grupos),
-            'responsavelucs'=>UcResponsavelResource::collection($this->unidadesCurricularesResponsavel),
+            'responsavelucs'            =>UcResponsavelResource::collection($this->unidadesCurricularesResponsavel),
         ];
     }
 }
