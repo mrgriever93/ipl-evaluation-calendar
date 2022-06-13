@@ -130,9 +130,12 @@ const New = () => {
                                         <Form.Input className='input-readonly' disabled={isEditMode} label={t("Código")} placeholder={t("Código")} {...codeInput} />
                                     )}
                                 </Field>
+                                <a href={"/curso/" + courseUnitDetail.course} target={"_blank"} className="margin-right-m margin-top-l" title={ t("Ver curso") }>
+                                    <Icon name={"external alternate"} />
+                                </a>
                                 <Field name="initials">
                                     {({input: initialsInput}) => (
-                                        <Form.Input required label={t("Iniciais")} disabled={isEditMode} placeholder={t("Iniciais")} {...initialsInput} />
+                                        <Form.Input className='input-readonly' disabled={isEditMode} label={t("Iniciais")} placeholder={t("Iniciais")} {...initialsInput} />
                                     )}
                                 </Field>
                             </Form.Group>
@@ -145,7 +148,7 @@ const New = () => {
                                 </Field>
                                 <Field name="name_en">
                                     {({input: nameEnInput}) => (
-                                        <Form.Input label={t("Nome EN")} disabled={isEditMode} placeholder={t("Nome EN")} {...nameEnInput} />
+                                        <Form.Input className='input-readonly' disabled={isEditMode} label={t("Nome EN")} placeholder={t("Nome EN")} {...nameEnInput} />
                                     )}
                                 </Field>
                             </Form.Group>
