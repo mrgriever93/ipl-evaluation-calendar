@@ -400,7 +400,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                         <Field name="epoch">
                                             {({input: epochFromInput}) => (
                                                 <Form.Dropdown
-                                                    options={epochs.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name, disabled: selectedEpochTo.includes(epoch.id) || epoch.methods.length === 0 }))}
+                                                    options={epochs.filter((item) => item.id != 1).map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name, disabled: selectedEpochTo.includes(epoch.id) || epoch.methods.length === 0 }))}
                                                     value={selectedEpochFrom || -1} placeholder={t("Época a copiar")} selectOnBlur={false} selection search label={ t("De") }
                                                     onChange={(e, {value}) => epochFromDropdownOnChange(e, value)}
                                                 />
