@@ -169,7 +169,7 @@ class CalendarController extends Controller
             $clone->save();
         }
         if (!$calendar->published) {
-            $calendar->calendar_phase_id = CalendarPhase::where('code', "published")->first()->id;
+            $calendar->calendar_phase_id = CalendarPhase::phasePublished();
             $calendar->published = true;
             $calendar->save();
             CalendarPublished::dispatch($calendar);

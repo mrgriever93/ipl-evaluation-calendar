@@ -18,7 +18,7 @@ const PhasesList = lazy(() => import('./pages/CalendarPhases/list'));
 const CursoList = lazy(() => import('./pages/Curso/list'));
 const CursoDetail = lazy(() => import('./pages/Curso/detail'));
     //Utilizador Pages
-const UtilizadorDetail = lazy(() => import('./pages/Utilizador/edit'));
+const UtilizadorDetail = lazy(() => import('./pages/Utilizador/detail'));
 const UtilizadorList = lazy(() => import('./pages/Utilizador/list'));
     //Interrupacao Pages
 const InterrupcaoNew = lazy(() => import('./pages/TipoInterrupcao/new'));
@@ -33,12 +33,11 @@ const GrupoUtilizadorList = lazy(() => import('./pages/GrupoUtilizador/list'));
 // const Permissoes = lazy(() => import('./pages/Permissoes'));
     //AgrupamentoUnidadeCurricular Pages
 const AgrupamentoUnidadeCurricularList = lazy(() => import('./pages/AgrupamentoUnidadeCurricular/list'));
-const AgrupamentoUnidadeCurricularNew = lazy(() => import('./pages/AgrupamentoUnidadeCurricular/new'));
+const AgrupamentoUnidadeCurricularDetail = lazy(() => import('./pages/AgrupamentoUnidadeCurricular/detail'));
 const AgrupamentoUnidadeCurricularMethods = lazy(() => import('./pages/AgrupamentoUnidadeCurricular/methods'));
     //UnidadeCurricular Pages
 const UnidadeCurricularList = lazy(() => import('./pages/UnidadeCurricular/list'));
-const UnidadeCurricularNew = lazy(() => import('./pages/UnidadeCurricular/new'));
-const UnidadeCurricularMethods = lazy(() => import('./pages/UnidadeCurricular/methods'));
+const UnidadeCurricularDetail = lazy(() => import('./pages/UnidadeCurricular/detail'));
     //AnoLetivo Pages
 const AnoLetivo = lazy(() => import('./pages/AnoLetivo'));
     //Escola Pages
@@ -128,10 +127,9 @@ const RouterList = (isLoggedIn) => {
                     path: "/unidade-curricular",
                     element: (isAuthorized.VIEW_COURSE_UNITS) ? <MultiPageBase /> : <Navigate to="/no-permissions" />,
                     children: [
-                        { path: 'novo', exact: true, element: <UnidadeCurricularNew />},
-                        { path: ':id', exact: true, element: <UnidadeCurricularNew />},
-                        { path: 'edit/:id', exact: true, element: <UnidadeCurricularNew />},
-                        { path: ':id/metodos', exact: true, element: <UnidadeCurricularMethods />},
+                        { path: 'novo', exact: true, element: <UnidadeCurricularDetail />},
+                        { path: ':id', exact: true, element: <UnidadeCurricularDetail />},
+                        { path: 'edit/:id', exact: true, element: <UnidadeCurricularDetail />},
                         { path: '', exact: true, element: <UnidadeCurricularList /> },
                         { path: '*', element: <NotFoundPage />}
                     ]
@@ -140,8 +138,8 @@ const RouterList = (isLoggedIn) => {
                     path: "/agrupamento-unidade-curricular",
                     element: (isAuthorized.VIEW_UC_GROUPS) ? <MultiPageBase /> : <Navigate to="/no-permissions" />,
                     children: [
-                        { path: 'novo', exact: true, element: <AgrupamentoUnidadeCurricularNew />},
-                        { path: 'edit/:id', exact: true, element: <AgrupamentoUnidadeCurricularNew />},
+                        { path: 'novo', exact: true, element: <AgrupamentoUnidadeCurricularDetail />},
+                        { path: 'edit/:id', exact: true, element: <AgrupamentoUnidadeCurricularDetail />},
                         { path: ':id/metodos', exact: true, element: <AgrupamentoUnidadeCurricularMethods />},
                         { path: '', exact: true, element: <AgrupamentoUnidadeCurricularList /> },
                         { path: '*', element: <NotFoundPage />}

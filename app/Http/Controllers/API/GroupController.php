@@ -47,7 +47,7 @@ class GroupController extends Controller
     }
 
     public function groupPermissions(Group $group) {
-        return $this->getPermissions( 1, $group->id, CalendarPhase::where('code', 'system')->first()->id);
+        return $this->getPermissions( 1, $group->id, CalendarPhase::phaseSystem());
     }
 
     public function groupCalendarPermissions(Group $group){

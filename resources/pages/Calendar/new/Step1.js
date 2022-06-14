@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {Field, useField} from 'react-final-form';
-import {DateInput, DatesRangeInput} from 'semantic-ui-calendar-react-yz';
-import {Grid, Button, Card, Form, Header} from 'semantic-ui-react';
+import {Field, useField, useFormState} from 'react-final-form';
+import {DatesRangeInput} from 'semantic-ui-calendar-react-yz';
+import {Button, Card, Form, Header} from 'semantic-ui-react';
 import axios from "axios";
 import {useTranslation} from "react-i18next";
+import moment from "moment";
 
 const Step1 = ({setActiveSemester, activeSemester}) => {
     const { t } = useTranslation();
@@ -13,6 +14,9 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
 
     const { input: seasons } = useField('step1.seasons');
     const clearSeasons = () => seasons.onChange(null);
+
+    const formState = useFormState();
+    let seasonsDates = formState.values.step1.seasons;
 
     useEffect(() => {
         const currYear = localStorage.getItem('academicYear'); // 2021-2022
@@ -27,27 +31,36 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
         });
     }, []);
 
-    const getPreviousDates = (code) => {
-        let indexCode = semesterList.indexOf((item) => {
-            console.log(item);
-        });
-    }
-
     const getMinDate = (semester, code) => {
-        //const { input: startDate } = useField('step1.seasons.' + semester + '.' + code + '.start_date');
-        //const { input: endDate } = useField('step1.seasons.' + semester + '.' + code + '.end_date');
-        //getPreviousDates(code);
-        //if(startDate.value  && startDate.value < minDate){
-        //    return startDate.value;
-        //}
-        return minDate;
+        //console.log("getMinDate > [semester: " + semester + "] / {code: " + code + "}");
+        let startDate = minDate;
+        if(seasonsDates && seasonsDates[semester]) {
+            if (code !== "periodic_season") {
+                if (semester === "first_semester" || semester === "second_semester") {
+                    if (code === "normal_season" && seasonsDates[semester].periodic_season) {
+                        startDate = seasonsDates[semester].periodic_season.end_date;
+                        if(startDate){
+                            startDate = moment(startDate, "DD-MM-YYYY").subtract(3, "w").format("DD-MM-YYYY");
+                        }
+                    }
+                    if (code === "resource_season" && seasonsDates[semester].normal_season) {
+                        startDate = seasonsDates[semester].normal_season.end_date;
+                    }
+                }
+            }
+        }
+        return startDate;
     }
     const getMaxDate = (semester, code = undefined) => {
-        //if(code) {
-        //    const { input: startDate } = useField('step1.seasons.' + semester + '.' + code + '.start_date');
-        //    const { input: endDate } = useField('step1.seasons.' + semester + '.' + code + '.end_date');
-        //    if(endDate.value  && endDate.value > maxDate){
-        //        return endDate.value;
+        //let endDate = maxDate;
+        //if(code !== "normal_season") {
+        //    if (semester === "first_semester" || semester === "second_semester") {
+        //        if (code === "periodic_season") {
+        //            endDate = seasonsDates[semester].normal_season.end_date;
+        //        }
+        //        if (code === "resource_season") {
+        //            endDate = seasonsDates[semester].periodic_season.end_date;
+        //        }
         //    }
         //}
         return maxDate;
@@ -81,16 +94,17 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
                 <Card.Group itemsPerRow={3} >
                     {semesterList[activeSemester]?.epochs?.map((epoch, index) => (
                         <Field name={`step1.seasons.${semesterList[activeSemester].code}.${epoch?.code}.start_date`} key={'step1_field_start' + index}>
-                            {({input: startDateInput, valuesStart}) => (
-                                <Field name={`step1.seasons.${semesterList[activeSemester].code}.${epoch?.code}.end_date`} key={'step1_field_end' + index}>
-                                    {({input: endDateInput, valuesEnd}) => (
+                            {({input: startDateInput}) => (
+                                <Field name={`step1.seasons.${semesterList[activeSemester].code}.${epoch?.code}.end_date`} key={'step1_field_end' + index} >
+                                    {({input: endDateInput}, data) => (
                                         <Card>
                                             <Card.Content>
                                                 <Header as={"h4"}>{epoch.name}</Header>
                                             </Card.Content>
                                             <Card.Content>
+                                                {data}
                                                 <Form.Field>
-                                                    <DatesRangeInput name="datesRange" placeholder={ t("Inserir datas") } iconPosition="left" closable  markColor={"blue"}
+                                                    <DatesRangeInput name="datesRange" placeholder={ t("Inserir datas") } iconPosition="left" closable
                                                                      value={(startDateInput.value && endDateInput.value ? startDateInput.value + ` ${t("até")} ` + endDateInput.value : "")}
                                                                      onChange={(event, {value}) => {
                                                                          let splitDates = value.split(" - ");
@@ -98,7 +112,9 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
                                                                              startDateInput.onChange(splitDates[0]);
                                                                              endDateInput.onChange(splitDates[1]);
                                                                          }
-                                                                     }} minDate={getMinDate(activeSemester, epoch?.code)} maxDate={getMaxDate(activeSemester, epoch?.code)} />
+                                                                     }}
+                                                                     minDate={ getMinDate(semesterList[activeSemester].code, epoch?.code) }
+                                                                     maxDate={ getMaxDate(semesterList[activeSemester].code, epoch?.code) } />
                                                 </Form.Field>
                                             </Card.Content>
                                         </Card>

@@ -56,6 +56,8 @@ const HeaderMenu = () => {
                 switch_to: academicYear.id,
             })
             .then(() => {
+                const splitYear = (academicYear.display).split("-");
+                localStorage.setItem('academicYear', splitYear[0] + "-20" + splitYear[1]);
                 dispatch(setAcademicYear(academicYear));
                 window.location.reload();
             });

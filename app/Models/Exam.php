@@ -49,4 +49,10 @@ class Exam extends Model
     {
         return $this->hasOneDeepFromRelations($this->courseUnit(), (new CourseUnit)->course());
     }
+
+
+    public function calendar()
+    {
+        return $this->hasOneDeepFromRelations($this->epoch(), (new Epoch())->calendar());
+    }
 }
