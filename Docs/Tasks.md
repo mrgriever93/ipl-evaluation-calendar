@@ -142,7 +142,42 @@
 - [ ] Deve permitir desfasar os anos. Eventualmente com uma checkbox quando criamos um calendário
     - **Trabalho Futuro?**
 ---
+## Reunião 14/06/2022
 
+- [ ] Verificar regulamento para regras das datas;
+
+**Metodos**
+- [ ] Voltar a deixar duplicar entre todas as épocas;
+- [ ] Adicionar validação campo a campo (não saber inputs com erro)
+
+
+- [ ] Dia seguinte na validação das datas na criação do calendário
+- [ ] voltar a colocar 2 inputs nos Range
+- [ ] "Tipo de curso" em vez de “grau de ensino"
+
+- [ ] Adicionar “volta” na criação e detalhe na calendario
+- [ ] Adicionar warning na tab professores quando responsável não está selecionado
+- [ ] Trocar ordem das tabs "métodos e professores
+- [ ] Definir números dos métodos de acordo com o tipo
+- [ ] Falta Acrescente métodos automáticos do projeto
+- [ ] "Época de origem" e "época de destino" em vez de “de" e "para"
+- [ ] No duplicar trocar os dropdowns para checkboxes.
+
+**Detalhe avaliacao - Calendário**
+- [ ] Nos métodos não está a funcionar bem. (label no
+- [ ] "Remover Avaliação" e "Alterar Data"
+
+**Detalhe calendário**
+- [ ] Adicionar validações que faltam preencher UC's no calendário.
+- [ ] Adicionar aviso visual que falta marcar Uc's
+- [ ] "Elemento de avaliação" em vez de "método"
+- [ ] Quando se marca dois métodos no mesmo dia está a substituir
+- [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
+- [ ] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
+- [ ] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
+
+
+---
 ##### Extra stuff
 - [ ] Marcar avaliações:
     - [X] Ter em conta o ano letivo selecionado
