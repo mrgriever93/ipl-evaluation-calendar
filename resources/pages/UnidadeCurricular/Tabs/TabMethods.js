@@ -1,6 +1,18 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, createRef} from 'react';
 import {Field, Form as FinalForm} from 'react-final-form';
-import {Button, Form, Header, Icon, Label, Message, Grid, GridColumn, Modal, Sticky, Table} from 'semantic-ui-react';
+import {
+    Button,
+    Form,
+    Header,
+    Icon,
+    Label,
+    Message,
+    Grid,
+    GridColumn,
+    Modal,
+    Sticky,
+    Table
+} from 'semantic-ui-react';
 import axios from "axios";
 import {toast} from "react-toastify";
 import {errorConfig, successConfig} from "../../../utils/toastConfig";
@@ -10,6 +22,8 @@ import {useTranslation} from "react-i18next";
 
 const UnitTabMethods = ({ unitId, warningsHandler }) => {
     const { t } = useTranslation();
+    const contextRef = createRef();
+
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [formValid, setFormValid] = useState(false);
@@ -210,7 +224,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
             toast(t('As épocas selecionadas têm de ser diferentes!'), errorConfig);
             return false;
         }
-        
+
         let methodsToClone = JSON.parse(JSON.stringify(epochs.find((epoch) => epoch.id === selectedEpochFrom).methods));
         selectedEpochTo.forEach((item) => {
             let currEpochIndex = epochs.findIndex((epoch) => epoch.id === item);
@@ -243,7 +257,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
     }
 
     return (
-        <div>
+        <div ref={contextRef}>
             { epochs?.length < 1 || isLoading ? (
                 <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar metodos para esta Unidade Curricular!")}/>
             ) : (
@@ -273,7 +287,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                             </Message.List>
                         </Message>
                     )}
-                    <Sticky offset={50}>
+                    <Sticky offset={50} context={contextRef}>
                         <div className='sticky-methods-header'>
                             <Button onClick={() => setOpenClone(true)} icon labelPosition="left" color="yellow">
                                 <Icon name={"clone outline"}/>{ t("Duplicar metodos") }
@@ -323,7 +337,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                                 />
                                             </Table.Cell>
                                             <Table.Cell width={3}>
-                                                <Form.Input placeholder={t("Descrição PT")} fluid value={method.description_pt} 
+                                                <Form.Input placeholder={t("Descrição PT")} fluid value={method.description_pt}
                                                     onChange={
                                                         (ev, {value}) => setEpochs((current) => {
                                                             const copy = [...current];
@@ -331,8 +345,8 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                                             return copy;
                                                         })
                                                     } />
-                                                
-                                                <Form.Input placeholder={t("Descrição EN")} fluid value={method.description_en} className="margin-top-base"  
+
+                                                <Form.Input placeholder={t("Descrição EN")} fluid value={method.description_en} className="margin-top-base"
                                                     onChange={
                                                         (ev, {value}) => setEpochs((current) => {
                                                             const copy = [...current];
@@ -386,7 +400,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                         <Field name="epoch">
                                             {({input: epochFromInput}) => (
                                                 <Form.Dropdown
-                                                    options={epochs.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name, disabled: selectedEpochTo.includes(epoch.id) || epoch.methods.length === 0 }))}
+                                                    options={epochs.filter((item) => item.id != 1).map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name, disabled: selectedEpochTo.includes(epoch.id) || epoch.methods.length === 0 }))}
                                                     value={selectedEpochFrom || -1} placeholder={t("Época a copiar")} selectOnBlur={false} selection search label={ t("De") }
                                                     onChange={(e, {value}) => epochFromDropdownOnChange(e, value)}
                                                 />

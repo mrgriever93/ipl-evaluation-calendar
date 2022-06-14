@@ -377,6 +377,8 @@
         "Lista de Interrupções": "Lista de Interrupções",
         "Pesquisar curso (Código, Sigla ou Nome)": "Pesquisar curso (Código, Sigla ou Nome)",
         "Pesquisar...": "Pesquisar...",
-        "Remover": "Remover"
+        "Remover": "Remover",
+
+        "Esta avaliação dura mais do que 5 dias": "Esta avaliação dura mais do que 5 dias"
     }
 }

@@ -85,12 +85,20 @@ class PermissionsAndGroupsSeeder extends Seeder
                 "name_pt"                           => "Escola Superior de Tecnologia e Gestão",
                 "name_en"                           => "School of Technology and Management",
                 "base_link"                         => "http://www.dei.estg.ipleiria.pt/intranet/horarios/ws/inscricoes/cursos_ucs.php",
+
                 "index_course_code"                 => "3",//"0",
-                "index_course_name"                 => "4",//"1",
+                "index_course_name_pt"              => "4",//"1",
+                "index_course_name_en"              => "14",
+                "index_course_initials"             => "11",
+
                 "index_course_unit_code"            => "5",//"2",
-                "index_course_unit_name"            => "6",//"3",
+                "index_course_unit_name_pt"         => "6",//"3",
+                "index_course_unit_name_en"         => "13",
+                "index_course_unit_initials"        => "12",
+
                 "index_course_unit_teachers"        => "7",//"4",
                 "index_course_unit_curricular_year" => "2",//"5",
+
                 "query_param_academic_year"         => "anoletivo",
                 "query_param_semester"              => "periodo",
                 "gop_group_id"                      => "12",

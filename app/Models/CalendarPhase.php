@@ -20,4 +20,19 @@ class CalendarPhase extends Model
     {
         return $this->hasMany(Calendar::class);
     }
+
+    /*
+     * "Hardcoded" phases
+     * easier to maintain and change
+     */
+    public static function phaseSystem()
+    {
+        //return $this->where('code', 'system')->first()->id;
+        return 10;
+    }
+    public static function phasePublished()
+    {
+        //return $this->where('code', 'published')->first()->id;
+        return 9;
+    }
 }

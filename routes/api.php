@@ -6,6 +6,7 @@ use App\Http\Controllers\API\EvaluationTypeController;
 use App\Http\Controllers\API\GroupController;
 use App\Http\Controllers\API\InterruptionTypeController;
 use App\Http\Controllers\API\LoginController;
+use App\Http\Controllers\API\v1\V1ExamController;
 use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Services\ExternalImports;
@@ -36,10 +37,26 @@ use App\Http\Controllers\SchoolController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+// Get active version of API
 Route::get('/version', function () {
-    return 'v2';
+    return 'v1';
 });
 
+// External/Public api requests
+Route::prefix('v1')->group(function () {
+
+    // Get exams by filters
+    Route::controller(V1ExamController::class)->group(function () {
+        Route::get('/{schoolCode}/{academicYearCode}/exams',                 'list'          );
+        Route::get('/{schoolCode}/{academicYearCode}/exams/course/{code}',   'listByCourse'  );
+        Route::get('/{schoolCode}/{academicYearCode}/exams/unit/{code}',     'listByUnit'    );
+    });
+
+});
+
+/****************************
+ *     APP Functionality    *
+ ***************************/
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -48,7 +65,6 @@ Route::post('/login',   [LoginController::class, "login"]   ); //'API\LoginContr
 Route::post('/logout',  [LoginController::class, "logout"]  );
 
 Route::middleware('auth:api')->group(function () {
-
     /** NEW ENDPOINTS! **/
     Route::get('/calendar-history/{calendar}',   [CalendarChangeController::class, 'show']);
 

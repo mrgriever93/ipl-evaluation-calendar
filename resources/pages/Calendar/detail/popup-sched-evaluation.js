@@ -35,7 +35,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     const [changeData, setChangeData] = useState(false);
     const [savingExam, setSavingExam] = useState(false);
     const [showMissingMethodsLink, setShowMissingMethodsLink] = useState(false);
-    
+
     const [epochStartDate, setEpochStartDate] = useState();
     const [epochEndDate, setEpochEndDate] = useState();
 
@@ -174,6 +174,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
             setSelectedEpoch(undefined);
             setCourseUnits([]);
             setMethodList([]);
+            setChangeData(false);
         }
     }, [isOpen]);
 
@@ -244,12 +245,12 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                         { changeData ?
                                             (
                                                 <div>
-                                                    <DatesRangeInput allowSameEndDate name="datesRange" placeholder={ t("Inserir datas") } iconPosition="left" closable  markColor={"blue"}
-                                                        value={(scheduleInformation?.date_start && scheduleInformation?.date_end ?
-                                                            moment(scheduleInformation?.date_start).isSame(moment(scheduleInformation?.date_end)) ?
-                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') :
-                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') + ` ${t("até")} ` + moment(scheduleInformation?.date_end).format('DD MMMM YYYY')
-                                                             : "")}
+                                                    <DatesRangeInput allowSameEndDate name="datesRange" placeholder={ t("Inserir datas") } iconPosition="left" closable dateFormat={"DD-MM-YYYY"}
+                                                        value={(
+                                                            scheduleInformation?.date_start && scheduleInformation?.date_end && moment(scheduleInformation?.date_start).isSame(moment(scheduleInformation?.date_end)) ?
+                                                            moment(scheduleInformation?.date_start).format('DD-MM-YYYY') :
+                                                            moment(scheduleInformation?.date_start).format('DD-MM-YYYY') + " - " + moment(scheduleInformation?.date_end).format('DD-MM-YYYY')
+                                                            )}
                                                         onChange={(event, {value}) => {
                                                             let splitDates = value.split(" - ");
                                                             if(splitDates.length === 2 && splitDates[1]) {
@@ -257,7 +258,9 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                                 scheduleInformation.date_end = moment(splitDates[1], 'DD-MM-YYYY');
                                                                 setChangeData(false);
                                                             }
-                                                        }} minDate={epochStartDate || calendarDates.minDate} maxDate={epochEndDate || calendarDates.maxDate} />
+                                                        }}  initialDate={ moment(scheduleInformation?.date_start, 'DD-MM-YYYY') }
+                                                            minDate={ moment(epochStartDate || calendarDates.minDate, 'DD-MM-YYYY') }
+                                                            maxDate={ moment(epochEndDate || calendarDates.maxDate, 'DD-MM-YYYY') } />
 
                                                      {/* <DateInput value={moment(scheduleInformation?.date_start).format('DD MMMM YYYY')}
                                                                onChange={(evt, {value}) => {
@@ -283,11 +286,16 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                         }
                                     </div>
                                     <p className="margin-top-s">
-                                        <Button color="yellow" icon labelPosition="left" onClick={() => setChangeData(true)}>
+                                        <Button color="yellow" icon labelPosition="left" onClick={() => setChangeData((old) => !old)}>
                                             <Icon name="calendar alternate"/>
                                             { t("Alterar data") }
                                         </Button>
                                     </p>
+                                    { moment(scheduleInformation?.date_end).diff(moment(scheduleInformation?.date_start), "days") > 5  && (
+                                        <Message size='tiny' warning={true}>
+                                            <div>{ t("Esta avaliação dura mais do que 5 dias")}.</div>
+                                        </Message>
+                                    )}
                                 </GridColumn>
                             </Grid>
                             <Divider/>

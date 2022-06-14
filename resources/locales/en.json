@@ -377,6 +377,8 @@
         "Lista de Interrupções": "Interrupt List",
         "Pesquisar curso (Código, Sigla ou Nome)": "Search course (Code, Acronym or Name)",
         "Pesquisar...": "Search...",
-        "Remover": "Remove"
+        "Remover": "Remove",
+
+        "Esta avaliação dura mais do que 5 dias": "This evaluation takes more then 5 days"
     }
 }
