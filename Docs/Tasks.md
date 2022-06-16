@@ -43,7 +43,8 @@
 - [ ] Falta Acrescente métodos automáticos do projeto
 
 **Detalhe avaliacao - Calendário**
-- [ ] Nos métodos não está a funcionar bem. (label na drodpwon não está correta)
+- [X] Nos métodos não está a funcionar bem. (label na drodpwon não está correta)
+  - [X] Erro na API não devolve a description
 - [X] "Remover Avaliação" e "Alterar Data"
 - [X] "Elemento de avaliação" em vez de "método"
 
@@ -183,7 +184,7 @@
 ---
 ## Reunião 14/06/2022
 
-- [ ] Verificar regulamento para regras das datas;
+- [X] Verificar regulamento para regras das datas;
 
 **Metodos**
 - [X] Voltar a deixar duplicar entre todas as épocas;
@@ -203,13 +204,14 @@
 - [X] No duplicar trocar os dropdowns para checkboxes.
 
 **Detalhe avaliacao - Calendário**
-- [ ] Nos métodos não está a funcionar bem. (label no
-- [ ] "Remover Avaliação" e "Alterar Data"
+- [X] Nos métodos não está a funcionar bem. (label na drodpwon não está correta)
+  - [X] Erro na API não devolve a description
+- [X] "Remover Avaliação" e "Alterar Data"
+- [X] "Elemento de avaliação" em vez de "método"
 
 **Detalhe calendário**
 - [ ] Adicionar validações que faltam preencher UC's no calendário.
 - [ ] Adicionar aviso visual que falta marcar Uc's
-- [ ] "Elemento de avaliação" em vez de "método"
 - [ ] Quando se marca dois métodos no mesmo dia está a substituir
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - [ ] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
