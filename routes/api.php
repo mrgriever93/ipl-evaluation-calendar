@@ -167,7 +167,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::controller(SchoolController::class)->group(function () {
         Route::get('/schools',                  'index' );
-        Route::get('/schools-list',             'list' );
+        Route::get('/schools-list',             'listDropdown' );
         Route::post('/schools',                 'store' );
         Route::get('/schools/{school}',         'show'  );
         Route::patch('/schools/{school}',       'update');
