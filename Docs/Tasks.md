@@ -1,68 +1,49 @@
 # TODO
 
-- [ ] Criar calendario
-    - [X] Criação de calendário com bug quando adicionamos uma interrupção ao calendário, e depois apagamos, ela não é efetivamente removida do array e vai no post de criação, gerando erro porque vai com uma data inválida.
-    - [X] Loading feriados
-    - [ ] Otimizar load de permissões
-    - [X] data de recurso nao tem validacao de minDate para a epoca normal 
-
-
-- [X] Rever HTML e detalhe dos Agrupamentos de UC
-    - [ ] Traduções
-    - [ ] Métodos
-
-- [ ] Ano-letivo
-  - [ ] atualizar os loadings automaticamente
-
-
-- [ ] Detalhe Calendario
-    - [ ] Otimizar load de permissões e outros pedidos
-    - [X] Detalhe de exame, falta mostrar data de inicio/fim se existir
-
-
-- [ ] Melhorar logs dos cursos, na alteração de métodos
-- [ ] Adicionar titulo as paginas
-
----
-- [ ] Melhorar diferença visual das épocas
-- [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
-- [ ] tipos de avaliações
+**Metodos**
+- [ ] Falta Acrescente métodos automáticos do projeto
     - [ ] Projetos e trabalhos
         - obrigatório data de lançamento dos enunciados
 
-- [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UC's dos seus cursos (ex: EI PL e D)
-
-- [ ] Ao alterar uma data de uma avaliação, obriga a fazer refresh. Falta atualizar os dados no calendário (já sabíamos)
-
-
+**Criação do calendário**
 - [ ] Dia seguinte na validação das datas na criação do calendário
-- [ ] voltar a colocar 2 inputs nos Range
-- [ ] "Tipo de curso" em vez de “grau de ensino"
-
-- [ ] Adicionar “volta” na criação e detalhe na calendario
-- [ ] Falta Acrescente métodos automáticos do projeto
-
-**Detalhe avaliacao - Calendário**
-- [X] Nos métodos não está a funcionar bem. (label na drodpwon não está correta)
-  - [X] Erro na API não devolve a description
-- [X] "Remover Avaliação" e "Alterar Data"
-- [X] "Elemento de avaliação" em vez de "método"
+- [ ] Voltar a colocar inputs de start e end date em vez dos Range Picker
+- [ ] Adicionar “voltar” na criação do calendario
+- [ ] Otimizar load de permissões
 
 **Detalhe calendário**
-- [ ] Adicionar validações que faltam preencher UC's no calendário.
-- [ ] Adicionar aviso visual que falta marcar Uc's
-- [ ] Quando se marca dois métodos no mesmo dia está a substituir
+- [ ] Quando abrimos um popup de edição e alteramos a data, ele limpa as informações dos outros campos
+- [ ] Adicionar “voltar” no detalhe na calendario
+- [ ] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
+- [ ] Quando se marca dois métodos no mesmo dia está a substituir ?!
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - [ ] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
-- [ ] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
-- [ ] 
+- [ ] Adicionar validações que faltam preencher UC's no calendário.
+- [ ] Adicionar aviso visual que falta marcar Uc's
+- [ ] Ao alterar uma data de uma avaliação, obriga a fazer refresh. Falta atualizar os dados no calendário (já sabíamos)
+- [ ] Melhorar diferença visual das épocas
+- [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
+- [ ] Quando alteramos alguma coisa, e gravamos, ele não altera no calendário (exemplo datas)
+- [ ] Otimizar load de permissões
+
+**Agrupamentos**
+- [ ] Traduções
+- [ ] Métodos
+- [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UC's dos seus cursos (ex: EI PL e D)
+
+
+### A Rever
+
+**Calendário e marcação de avaliações**
+  - [ ] Rever traduções
+  - [ ] Melhorar logs dos cursos, na alteração de métodos
+  - [ ] Adicionar titulo as paginas
+
+**Ano Letivo**
+  - [ ] Atualizar os loadings automaticamente
+
 ### TODO Miguel
 - [ ] Limpeza "Requests Folder"
-
-### BUGS
-
-- [ ] Quando abrimos um popup de edição e alteramos a data, ele limpa as informações dos outros campos
-- [ ] Quando alteramos alguma coisa, e gravamos, ele não altera no calendário (exemplo datas)
 
 ---
 # Done
@@ -185,23 +166,18 @@
 ## Reunião 14/06/2022
 
 - [X] Verificar regulamento para regras das datas;
+  - Não havia nada de importante em relação às datas. Apenas as precedências de cada época
 
 **Metodos**
 - [X] Voltar a deixar duplicar entre todas as épocas;
 - [X] Adicionar validação campo a campo (não saber inputs com erro)
-
-
-- [ ] Dia seguinte na validação das datas na criação do calendário
-- [ ] voltar a colocar 2 inputs nos Range
-- [ ] "Tipo de curso" em vez de “grau de ensino"
-
-- [ ] Adicionar “volta” na criação e detalhe na calendario
-- [ ] Falta Acrescente métodos automáticos do projeto
+- [X] "Tipo de curso" em vez de “grau de ensino"
 - [X] Adicionar warning na tab professores quando responsável não está selecionado
 - [X] Trocar ordem das tabs "métodos e professores
 - [X] Definir números dos métodos de acordo com o tipo
 - [X] "Época de origem" e "época de destino" em vez de “de" e "para"
 - [X] No duplicar trocar os dropdowns para checkboxes.
+- [ ] Falta Acrescente métodos automáticos do projeto
 
 **Detalhe avaliacao - Calendário**
 - [X] Nos métodos não está a funcionar bem. (label na drodpwon não está correta)
@@ -209,25 +185,25 @@
 - [X] "Remover Avaliação" e "Alterar Data"
 - [X] "Elemento de avaliação" em vez de "método"
 
+**Criação do calendário**
+- [ ] Dia seguinte na validação das datas na criação do calendário
+- [ ] Voltar a colocar inputs de start e end date em vez dos Range Picker
+- [ ] Adicionar “voltar” na criação do calendario
+
 **Detalhe calendário**
-- [ ] Adicionar validações que faltam preencher UC's no calendário.
-- [ ] Adicionar aviso visual que falta marcar Uc's
-- [ ] Quando se marca dois métodos no mesmo dia está a substituir
+- [ ] Adicionar “voltar” no detalhe na calendario
+- [ ] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
+- [ ] Quando se marca dois métodos no mesmo dia está a substituir ?!
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - [ ] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
-- [ ] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
+- [ ] Adicionar validações que faltam preencher UC's no calendário.
+- [ ] Adicionar aviso visual que falta marcar Uc's
 
 - [X] atualizar campos da escola no detalhe
 
 ---
 #### Extra stuff
-- [ ] Marcar avaliações:
-    - [X] Ter em conta o ano letivo selecionado
-    - [X] Adicionar comentários
-    - [X] Ignorar comentários
-    - [X] Eliminar comentários (durante os 1ºs 10/15min ?!)
-    - [ ] Validar permissoes dos vários popups
-    - [ ] Melhorar loading popups ?!
+- [ ] Calendário e marcação de avaliações:
     - [ ] Rever traduções
 
 - [ ] Submeter calendário para próximas fases

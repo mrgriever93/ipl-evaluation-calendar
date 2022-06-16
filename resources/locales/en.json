@@ -150,7 +150,7 @@
         "Descrição EN": "Description EN",
 
         "Por Página": "Per Page",
-        "Grau de ensino": "Degrees",
+        "Tipo de curso": "Course Type",
         "Todas as Escolas": "All Schools",
         "Grupo de Utilizador": "User Groups",
 
@@ -212,7 +212,6 @@
 
         "Unidade de Ensino": "Teaching Unit",
         "Sigla": "Initials",
-        "Grau de Ensino": "Teaching Degree",
         "Numero de Anos": "Number of years",
         "Atenção!": "Attention!",
         "Ao eliminar o curso, todos os calendários, avaliações e métodos serão também eliminados.": "When you delete the course, all calendars, assessments and methods will also be deleted.",

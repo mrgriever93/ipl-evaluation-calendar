@@ -122,7 +122,7 @@ const Detail = () => {
                             <Message.Item>{ t('É necessário configurar a Sigla do Curso') }</Message.Item>
                         )}
                         { !initialValues.degree_id && (
-                            <Message.Item>{ t('É necessário configurar o Grau de Ensino do Curso') }</Message.Item>
+                            <Message.Item>{ t('É necessário configurar o Tipo de Curso') }</Message.Item>
                         )}
                     </Message.List>
                 </Message>
