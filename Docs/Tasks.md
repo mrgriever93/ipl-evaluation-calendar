@@ -24,6 +24,38 @@
 - [ ] Melhorar logs dos cursos, na alteração de métodos
 - [ ] Adicionar titulo as paginas
 
+
+- [ ] Melhorar diferença visual das épocas
+- [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
+- [ ] tipos de avaliações
+    - [ ] Projetos e trabalhos
+        - obrigatório data de lançamento dos enunciados
+
+- [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UC's dos seus cursos (ex: EI PL e D)
+
+- [ ] Ao alterar uma data de uma avaliação, obriga a fazer refresh. Falta atualizar os dados no calendário (já sabíamos)
+
+
+- [ ] Dia seguinte na validação das datas na criação do calendário
+- [ ] voltar a colocar 2 inputs nos Range
+- [ ] "Tipo de curso" em vez de “grau de ensino"
+
+- [ ] Adicionar “volta” na criação e detalhe na calendario
+- [ ] Falta Acrescente métodos automáticos do projeto
+
+**Detalhe avaliacao - Calendário**
+- [ ] Nos métodos não está a funcionar bem. (label no
+- [ ] "Remover Avaliação" e "Alterar Data"
+
+**Detalhe calendário**
+- [ ] Adicionar validações que faltam preencher UC's no calendário.
+- [ ] Adicionar aviso visual que falta marcar Uc's
+- [ ] "Elemento de avaliação" em vez de "método"
+- [ ] Quando se marca dois métodos no mesmo dia está a substituir
+- [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
+- [ ] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
+- [ ] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
+
 ---
 ## Done
 - [X] No curso, qdo pede para rever cenas tipo Coordenador:
@@ -117,7 +149,7 @@
 - [ ] tipos de avaliações
     - [ ] Projetos e trabalhos
         - obrigatório data de lançamento dos enunciados
-- [X] ir buscar os dados do sigla e nome inglês do novo webservice - QUANDO FOR CRIADO
+- [X] ir buscar os dados da sigla e nome inglês do novo webservice - QUANDO FOR CRIADO
 
 ---
 ## Reunião 2022-06-07
@@ -147,8 +179,8 @@
 - [ ] Verificar regulamento para regras das datas;
 
 **Metodos**
-- [x] Voltar a deixar duplicar entre todas as épocas;
-- [ ] Adicionar validação campo a campo (não saber inputs com erro)
+- [X] Voltar a deixar duplicar entre todas as épocas;
+- [X] Adicionar validação campo a campo (não saber inputs com erro)
 
 
 - [ ] Dia seguinte na validação das datas na criação do calendário
@@ -224,6 +256,8 @@
   - trabalho futuro
   
 - [ ] Melhorar accessibilidades pelo site (WCAG checklist) - especialmente cores e navegação com o keyboard
+- [ ] Deve permitir desfasar os anos. Eventualmente com uma checkbox quando criamos um calendário - **(Reunião 2022-06-07)**
+
 
 ### TODO Miguel
 - [ ] Limpeza "Requests Folder"
