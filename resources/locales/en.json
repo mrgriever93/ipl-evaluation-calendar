@@ -194,6 +194,8 @@
         "Métodos": "Methods",
         "Remover Unidade Curricular": "Delete Curricular Unit",
         "Tem a certeza que deseja remover a Unidade Curricular": "Are you sure you want to delete this Curricular Unit",
+        "Época de origem": "Original Epoch",
+        "Época de destino": "Destiny Epoch",
 
         "Utilizador atualizado com sucesso": "User updated with success",
         "Editar Utilizador": "Edit user",
@@ -316,6 +318,8 @@
         "Peso da avaliação": "Evaluation weight",
         "Total pesos avaliacao:": "Total evaluation weights:",
         "Adicionar novo método": "Add new method",
+        "Falta adicionar os métodos desta unidade curricular": "This UC does not have any saved methods",
+        "Falta selecionar o responsável da unidade curricular": "This UC does not have a responsible assigned",
 
         "Ínicio": "Start",
         "Fim": "End",

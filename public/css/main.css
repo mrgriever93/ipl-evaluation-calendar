@@ -271,6 +271,10 @@ body {
 .padding-left-xl   { padding-left: var(--space-xl);   }
 .padding-left-xxl  { padding-left: var(--space-xxl);  }
 
+.text-bold{
+    font-weight: bold;
+}
+
 /* Custom Component > Section */
 .section {
     margin-top: var(--space-m);

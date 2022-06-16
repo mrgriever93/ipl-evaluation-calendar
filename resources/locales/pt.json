@@ -194,6 +194,8 @@
         "Métodos": "Métodos",
         "Remover Unidade Curricular": "Remover Unidade Curricular",
         "Tem a certeza que deseja remover a Unidade Curricular": "Tem a certeza que deseja remover a Unidade Curricular",
+        "Época de origem": "Época de origem",
+        "Época de destino": "Época de destino",
 
         "Utilizador atualizado com sucesso": "Utilizador atualizado com sucesso",
         "Editar Utilizador": "Editar Utilizador",
@@ -316,6 +318,8 @@
         "Peso da avaliação": "Peso da avaliação",
         "Total pesos avaliacao:": "Total pesos avaliacao:",
         "Adicionar novo método": "Adicionar novo método",
+        "Falta adicionar os métodos desta unidade curricular": "Falta adicionar os métodos desta unidade curricular",
+        "Falta selecionar o responsável da unidade curricular": "Falta selecionar o responsável da unidade curricular",
 
         "Ínicio": "Ínicio",
         "Fim": "Fim",

@@ -147,7 +147,7 @@
 - [ ] Verificar regulamento para regras das datas;
 
 **Metodos**
-- [ ] Voltar a deixar duplicar entre todas as épocas;
+- [x] Voltar a deixar duplicar entre todas as épocas;
 - [ ] Adicionar validação campo a campo (não saber inputs com erro)
 
 
@@ -156,12 +156,12 @@
 - [ ] "Tipo de curso" em vez de “grau de ensino"
 
 - [ ] Adicionar “volta” na criação e detalhe na calendario
-- [ ] Adicionar warning na tab professores quando responsável não está selecionado
-- [ ] Trocar ordem das tabs "métodos e professores
-- [ ] Definir números dos métodos de acordo com o tipo
 - [ ] Falta Acrescente métodos automáticos do projeto
-- [ ] "Época de origem" e "época de destino" em vez de “de" e "para"
-- [ ] No duplicar trocar os dropdowns para checkboxes.
+- [X] Adicionar warning na tab professores quando responsável não está selecionado
+- [X] Trocar ordem das tabs "métodos e professores
+- [X] Definir números dos métodos de acordo com o tipo
+- [X] "Época de origem" e "época de destino" em vez de “de" e "para"
+- [X] No duplicar trocar os dropdowns para checkboxes.
 
 **Detalhe avaliacao - Calendário**
 - [ ] Nos métodos não está a funcionar bem. (label no
@@ -176,6 +176,8 @@
 - [ ] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
 - [ ] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
 
+
+- [X] atualizar campos da escola no detalhe
 
 ---
 ##### Extra stuff

@@ -246,8 +246,15 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
         setSelectedEpochFrom(value);
     };
 
-    const epochToDropdownOnChange = (event, value) => {
-        setSelectedEpochTo(value);
+    const epochToDropdownOnChange = (epochId, isChecked) => {
+        setSelectedEpochTo((current) => {
+            const copy = [...current];
+            if(isChecked){
+                copy.push(epochId);
+                return copy;
+            }
+            return copy.filter((item) => item !== epochId);
+        });
     };
 
     const closeModal = () => {
@@ -312,7 +319,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                 </Table.Header>
                                 <Table.Body>
                                     {item.methods?.map((method, methodIndex) => (
-                                        <Table.Row key={methodIndex}>
+                                        <Table.Row key={methodIndex} error={!epochs[index].methods[methodIndex].evaluation_type_id}>
                                             <Table.Cell width={3}>
                                                 <Form.Dropdown placeholder={t("Selecionar Tipo de avaliação")} fluid value={method.evaluation_type_id} selection search
                                                     options={evaluationTypes.map(({id, name, enabled}) => (enabled ? ({
@@ -322,19 +329,29 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                                     }) : undefined))}
                                                     onChange={
                                                         (ev, {value}) => setEpochs((current) => {
+                                                            console.log("te");
                                                             const copy = [...current];
+                                                            // set number for descricion. Needs to be before the next line because its
+                                                            // when we set the current adding of the item
+                                                            const nextExamIndex = copy[index].methods.filter((item) => item.evaluation_type_id === value).length + 1;
                                                             copy[index].methods[methodIndex].evaluation_type_id = value;
                                                             if(value == "" || !value) {
                                                                 copy[index].methods[methodIndex].description_pt = "";
                                                                 copy[index].methods[methodIndex].description_en = "";
                                                             } else {
-                                                                copy[index].methods[methodIndex].description_pt = evaluationTypes.filter((x) => x.id === value)[0].name_pt+" "+(methodIndex+1);
-                                                                copy[index].methods[methodIndex].description_en = evaluationTypes.filter((x) => x.id === value)[0].name_en+" "+(methodIndex+1);
+                                                                copy[index].methods[methodIndex].description_pt = evaluationTypes.filter((x) => x.id === value)[0].name_pt + " " + nextExamIndex;
+                                                                copy[index].methods[methodIndex].description_en = evaluationTypes.filter((x) => x.id === value)[0].name_en + " " + nextExamIndex;
                                                             }
                                                             return copy;
                                                         })
                                                     }
                                                 />
+                                                {!epochs[index].methods[methodIndex].evaluation_type_id && (
+                                                    <div>
+                                                        <Icon color='orange' name="warning sign" />
+                                                        { t("Falta selecionar o tipo de avaliacao") }
+                                                    </div>
+                                                )}
                                             </Table.Cell>
                                             <Table.Cell width={3}>
                                                 <Form.Input placeholder={t("Descrição PT")} fluid value={method.description_pt}
@@ -400,23 +417,25 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                         <Field name="epoch">
                                             {({input: epochFromInput}) => (
                                                 <Form.Dropdown
-                                                    options={epochs.filter((item) => item.id != 1).map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name, disabled: selectedEpochTo.includes(epoch.id) || epoch.methods.length === 0 }))}
-                                                    value={selectedEpochFrom || -1} placeholder={t("Época a copiar")} selectOnBlur={false} selection search label={ t("De") }
+                                                    options={epochs.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name, disabled: selectedEpochTo.includes(epoch.id) || epoch.methods.length === 0 }))}
+                                                    value={selectedEpochFrom || -1} placeholder={t("Época a copiar")} selectOnBlur={false} selection search label={ t("Época de origem") }
                                                     onChange={(e, {value}) => epochFromDropdownOnChange(e, value)}
                                                 />
                                             )}
                                         </Field>
                                     </GridColumn>
                                     <GridColumn>
-                                        <Field name="epoch">
-                                            {({input: epochToInput}) => (
-                                                <Form.Dropdown
-                                                    options={epochs.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name, disabled: epoch.id === selectedEpochFrom}))}
-                                                    value={selectedEpochTo || []} selectOnBlur={false} placeholder={t("Épocas a receber")} multiple selection search label={ t("Para") }
-                                                    onChange={(e, {value}) => epochToDropdownOnChange(e, value)}
-                                                />
-                                            )}
-                                        </Field>
+                                        <label className={"display-block text-bold margin-bottom-s"}>{ t("Época de destino") }</label>
+                                        { epochs.filter((epoch) => epoch.id != selectedEpochFrom).map((epoch, index) => (
+                                            <Field name="epoch" key={index}>
+                                                {({input: epochToInput}) => (
+                                                    <Form.Checkbox checked={selectedEpochTo.includes(epoch.id)} label={ epoch.name } disabled={selectedEpochFrom == -1}
+                                                                   onChange={(e, {checked}) => epochToDropdownOnChange(epoch.id, checked)}
+                                                    />
+                                                )}
+                                            </Field>
+                                        )
+                                        )}
                                     </GridColumn>
                                 </Grid>
                             </Form>
