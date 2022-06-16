@@ -36,6 +36,8 @@ const Calendar = () => {
     const [generalInfo, setGeneralInfo] = useState();
     const [differences, setDifferences] = useState();
     const [isLoading, setIsLoading] = useState(true);
+    const [isCalendarInfoLoading, setIsCalendarInfoLoading] = useState(true);
+
     const [openScheduleExamModal, setOpenScheduleExamModal] = useState(false);
     const [openExamDetailModal, setOpenExamDetailModal] = useState(false);
     const [viewExamId, setViewExamId] = useState(undefined);
@@ -250,6 +252,7 @@ const Calendar = () => {
 
     const loadCalendar = (calId) => {
         setIsLoading(true);
+        setIsCalendarInfoLoading(true);
         setExamList([]);
         console.log('loadCalendar');
 
@@ -297,6 +300,8 @@ const Calendar = () => {
                     setIsLoading(false);
                     setPreviousFromDefinitive(previous_from_definitive);
                     setWeekTen(moment(week_ten).week());
+
+                    setIsCalendarInfoLoading(false);
                 } else {
                     history('/calendario');
                 }
@@ -304,61 +309,62 @@ const Calendar = () => {
     };
 
     const weekData = useMemo(() => {
-        console.log('weekData');
-        return _.orderBy(
-            epochsList.reduce((acc, curr) => {
-                const start_date = moment(curr.start_date);
-                const end_date = moment(curr.end_date);
-                while (start_date <= end_date) {
-                    if (start_date.day() !== 0) {
-                        if (!acc.filter(({week}) => week === start_date.isoWeek()).length) {
-                            acc.push({
-                                week: start_date.isoWeek(),
-                                year: start_date.year(),
-                                days: [],
-                            });
+        if(epochsList.length > 0 && !isCalendarInfoLoading) {
+            console.log('weekData');
+            return _.orderBy(
+                epochsList.reduce((acc, curr) => {
+                    const start_date = moment(curr.start_date);
+                    const end_date = moment(curr.end_date);
+                    while (start_date <= end_date) {
+                        if (start_date.day() !== 0) {
+                            if (!acc.filter(({week}) => week === start_date.isoWeek()).length) {
+                                acc.push({
+                                    week: start_date.isoWeek(),
+                                    year: start_date.year(),
+                                    days: [],
+                                });
+                            }
+
+                            const currentInterruption = interruptionsList.find(
+                                (interruption) => {
+                                    const interruptionStartDate = moment(interruption.start_date, 'YYYY-MM-DD');
+                                    const interruptionEndDate = moment(interruption.end_date, 'YYYY-MM-DD');
+                                    return (
+                                        (start_date.isAfter(interruptionStartDate) && start_date.isBefore(interruptionEndDate))
+                                        || start_date.isSame(interruptionStartDate, 'day')
+                                        || start_date.isSame(interruptionEndDate, 'day')
+                                    );
+                                },
+                            );
+
+                            const week = acc.find(({week}) => week === start_date.isoWeek());
+                            if (!week.days.find((day) => day.weekDay === start_date.day())) {
+                                week.days.push({
+                                    weekDay: start_date.day(),
+                                    date: start_date.format(),
+                                    interruption: currentInterruption,
+                                    interruptionDays: 1,
+                                });
+                            }
+
+                            const foundMultipleDaysWithSameInterruption = acc.find(({week}) => week === start_date.isoWeek())
+                                .days.filter((x) => x.interruption?.id === currentInterruption?.id);
+
+                            if (foundMultipleDaysWithSameInterruption?.length) {
+                                foundMultipleDaysWithSameInterruption[0].interruptionDays = foundMultipleDaysWithSameInterruption.length;
+                            }
+
+                            week.epoch = {
+                                name: curr.name,
+                                code: curr.code
+                            };
                         }
-
-                        const currentInterruption = interruptionsList.find(
-                            (interruption) => {
-                                const interruptionStartDate = moment(interruption.start_date, 'YYYY-MM-DD');
-                                const interruptionEndDate = moment(interruption.end_date, 'YYYY-MM-DD');
-                                return (
-                                    (start_date.isAfter(interruptionStartDate) && start_date.isBefore(interruptionEndDate))
-                                    || start_date.isSame(interruptionStartDate, 'day')
-                                    || start_date.isSame(interruptionEndDate, 'day')
-                                );
-                            },
-                        );
-
-                        const week = acc.find(({week}) => week === start_date.isoWeek());
-                        if (!week.days.find((day) => day.weekDay === start_date.day())) {
-                            week.days.push({
-                                weekDay: start_date.day(),
-                                date: start_date.format(),
-                                interruption: currentInterruption,
-                                interruptionDays: 1,
-                            });
-                        }
-
-                        const foundMultipleDaysWithSameInterruption = acc.find(({week}) => week === start_date.isoWeek())
-                            .days.filter((x) => x.interruption?.id === currentInterruption?.id);
-
-                        if (foundMultipleDaysWithSameInterruption?.length) {
-                            foundMultipleDaysWithSameInterruption[0].interruptionDays = foundMultipleDaysWithSameInterruption.length;
-                        }
-
-                        week.epoch = {
-                            name: curr.name,
-                            code: curr.code
-                        };
+                        start_date.add(1, 'days');
                     }
-                    start_date.add(1, 'days');
-                }
-                return acc;
-            }, []),
-            ['year', 'week'],
-        )}, [epochsList, interruptionsList]);
+                    return acc;
+                }, []), ['year', 'week']);
+        }
+    }, [epochsList, interruptionsList, isCalendarInfoLoading]);
 
     useEffect(() => {
         loadCalendar(calendarId);
@@ -456,14 +462,18 @@ const Calendar = () => {
         const lastDayAvailable = moment(days[days.length - 1].date);
         const {interruption} = day || {};
         const isInterruption = !!interruption;
+        // check has interruptions
         if (isInterruption && courseIndex === 0 && interruption.id !== days.find((day) => day.weekDay === weekDay - 1)?.interruption?.id) {
             interruptionDays = 0;
             alreadyAddedRowSpan = false;
         }
+        // check interruption already marked
         if ((isInterruption && alreadyAddedRowSpan && courseIndex > 0) || (isInterruption && interruptionDays++ >= day?.interruptionDays)) {
             return null;
         }
+        // check if is 1 year and not a date OR if is an interruption
         if ((year === 1 && !day?.date) || isInterruption) {
+            // is an interruption and for multiple days
             if (!isInterruption && (weekDay === 1 || (lastDayAvailable.day() < 6 && !alreadyAddedColSpan))) {
                 alreadyAddedColSpan = true;
                 return (<Table.Cell
@@ -471,26 +481,30 @@ const Calendar = () => {
                     colSpan={isInterruption && lastDayAvailable.day() < 6 ? 6 - lastDayAvailable.day() : firstDayAvailable.day() - 1}
                     rowSpan={courseYears.length}/>);
             }
+            // interruption already marked and is for multiple days
             if (!alreadyAddedColSpan || (isInterruption && courseIndex === 0)) {
                 alreadyAddedRowSpan = true;
                 return (
                     <Table.Cell key={weekDayIndex} textAlign="center" className={isInterruption ? "calendar-day-interruption" : null  }
-                                rowSpan={courseYears.length}
-                                colSpan={isInterruption ? day?.interruptionDays : null} >
+                                rowSpan={courseYears.length} colSpan={isInterruption ? day?.interruptionDays : null} >
                         <div>
                             {isInterruption ? interruption.description : null}
                         </div>
                     </Table.Cell>
                 );
             }
+        // check if is a day
         } else if (day?.date) {
             const currentDate = moment(day.date);
+            // get exams for this date
             const existingExamsAtThisDate = examList.filter((exam) => {
                 return  exam.academic_year === year &&
                         currentDate.isBetween(exam.date_start, exam.date_end, 'date','[]');
             });
             let examsComponents = null;
+            // this date has any exams?
             if (existingExamsAtThisDate?.length) {
+                // show a button per exam in this day
                 examsComponents = existingExamsAtThisDate.map((exam) => {
                     return (
                         // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
@@ -514,6 +528,7 @@ const Calendar = () => {
                     );
                 });
             }
+            // create a button to add exams for this date
             return (
                 <Table.Cell key={weekDayIndex} className={ 'calendar-day-' + epoch.code } textAlign="center" onDrop={drop} onDragOver={allowDrop}>
                     {examsComponents}
@@ -528,6 +543,14 @@ const Calendar = () => {
         return null;
     }
 
+    const pageLoaderAnimate = {
+        opacity: 1,
+        transition: { duration: 0.5, ease: [0.4, 0.0, 0.2, 1] }
+    };
+    const pageLoaderExit = {
+        opacity: 0,
+        transition: { duration: 0.5, ease: [0.4, 0.0, 0.2, 1] }
+    };
     /*
      * Calendar
      */
@@ -535,24 +558,13 @@ const Calendar = () => {
         <Container>
             <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase}/>
             <AnimatePresence>
-                {isLoading && (
-                    <PageLoader
-                        animate={{
-                            opacity: 1,
-                            transition: { duration: 0.5, ease: [0.4, 0.0, 0.2, 1] },
-                        }}
-                        exit={{
-                            opacity: 0,
-                            transition: { duration: 0.5, ease: [0.4, 0.0, 0.2, 1] },
-                        }}
-                    />
-                )}
+                {isLoading && (<PageLoader animate={pageLoaderAnimate} exit={pageLoaderExit}/>)}
             </AnimatePresence>
             <div className='margin-top-l'>
                 <Grid stackable className='calendar-tables'>
                     <Grid.Row>
                         <Grid.Column width="16">
-                            {epochsList.length > 0 && weekData.map(({week, year, days, epoch}, tableIndex) => {
+                            {epochsList.length > 0 && weekData && weekData.map(({week, year, days, epoch}, tableIndex) => {
                                 //console.log('table week - ' + week);
                                 interruptionDays = 0;
                                 alreadyAddedColSpan = false;
@@ -578,9 +590,7 @@ const Calendar = () => {
                                                     <Table.HeaderCell width="2">{t('calendar.Sábado')}</Table.HeaderCell>
                                                 </Table.Row>
                                                 <Table.Row>
-                                                    <Table.HeaderCell textAlign="center">
-                                                        {year}
-                                                    </Table.HeaderCell>
+                                                    <Table.HeaderCell textAlign="center">{year}</Table.HeaderCell>
                                                     {weekDays.map((weekDay, index) => weekDayHeaderCell(days, weekDay, index) )}
                                                 </Table.Row>
                                             </Table.Header>

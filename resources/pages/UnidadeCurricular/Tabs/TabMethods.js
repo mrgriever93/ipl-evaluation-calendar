@@ -189,9 +189,11 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
             if (!copy[index].methods?.length) {
                 copy[index].methods = [];
             }
+            let newWeight = 100 - copy[index].methods.reduce((a, b) => a + (b?.weight || 0), 0,);
+            newWeight = (newWeight >= 0 ? newWeight : 0);
             copy[index].methods.push({
                 epoch_type_id: epoch_id,
-                weight: 100 - copy[index].methods.reduce((a, b) => a + (b?.weight || 0), 0,),
+                weight: newWeight,
                 minimum: 9.5,
                 evaluation_type_id: undefined,
                 description_pt: '',
