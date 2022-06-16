@@ -286,9 +286,9 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                         }
                                     </div>
                                     <p className="margin-top-s">
-                                        <Button color="yellow" icon labelPosition="left" onClick={() => setChangeData((old) => !old)}>
+                                        <Button color={ !changeData ? 'yellow' : '' } icon labelPosition="left" onClick={() => setChangeData((old) => !old)}>
                                             <Icon name="calendar alternate"/>
-                                            { t("Alterar data") }
+                                            { !changeData ? t("Alterar data") : t("Cancelar edição") }
                                         </Button>
                                     </p>
                                     { moment(scheduleInformation?.date_end).diff(moment(scheduleInformation?.date_start), "days") > 5  && (
@@ -341,7 +341,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                             <Field name="method">
                                                 {({input: methodInput}) => (
                                                     <Form.Dropdown
-                                                        label={ t("Método de Avaliação")}
+                                                        label={ t("Elemento de Avaliação")}
                                                         options={ methodList }
                                                         {...methodInput}
                                                         selection search
@@ -414,7 +414,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                         { scheduleInformation.exam_id && (
                             <Button floated='left' negative icon labelPosition='left' onClick={() => removeExam(scheduleInformation?.exam_id)}>
                                 <Icon name="trash alternate outline" />
-                                { t("Remover exame") }
+                                { t("Remover avaliação") }
                             </Button>
                         )}
                         <Button onClick={onClose} >{ t("Cancelar") }</Button>
