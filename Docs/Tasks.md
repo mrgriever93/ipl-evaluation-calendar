@@ -44,7 +44,7 @@
 - [ ] Falta Acrescente métodos automáticos do projeto
 
 **Detalhe avaliacao - Calendário**
-- [ ] Nos métodos não está a funcionar bem. (label no
+- [ ] Nos métodos não está a funcionar bem. (label na drodpwon não está correta)
 - [ ] "Remover Avaliação" e "Alterar Data"
 
 **Detalhe calendário**
@@ -55,6 +55,14 @@
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - [ ] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
 - [ ] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
+- [ ] 
+### TODO Miguel
+- [ ] Limpeza "Requests Folder"
+
+### BUGS
+
+- [ ] Quando abrimos um popup de edição e alteramos a data, ele limpa as informações dos outros campos
+- [ ] Quando alteramos alguma coisa, e gravamos, ele não altera no calendário (exemplo datas)
 
 ---
 ## Done
@@ -257,13 +265,9 @@
   
 - [ ] Melhorar accessibilidades pelo site (WCAG checklist) - especialmente cores e navegação com o keyboard
 - [ ] Deve permitir desfasar os anos. Eventualmente com uma checkbox quando criamos um calendário - **(Reunião 2022-06-07)**
+- [ ] Adicionar alertas de sistema para relembrar publicação do calendário provisório e definitivo (Artigo 21) **Ideia Alexandre**
+  - [ ] Provisório - até 1º dia de aulas
+  - [ ] Definitivo - até 5a semana de aulas
 
 
-### TODO Miguel
-- [ ] Limpeza "Requests Folder"
 
-
-### BUGS
-
-- [ ] Quando abrimos um popup de edição e alteramos a data, ele limpa as informações dos outros campos
-- [ ] Quando alteramos alguma coisa, e gravamos, ele não altera no calendário (exemplo datas)
