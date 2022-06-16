@@ -1,5 +1,4 @@
-
-### TODO
+# TODO
 
 - [ ] Criar calendario
     - [X] Criação de calendário com bug quando adicionamos uma interrupção ao calendário, e depois apagamos, ela não é efetivamente removida do array e vai no post de criação, gerando erro porque vai com uma data inválida.
@@ -24,7 +23,7 @@
 - [ ] Melhorar logs dos cursos, na alteração de métodos
 - [ ] Adicionar titulo as paginas
 
-
+---
 - [ ] Melhorar diferença visual das épocas
 - [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
 - [ ] tipos de avaliações
@@ -65,7 +64,7 @@
 - [ ] Quando alteramos alguma coisa, e gravamos, ele não altera no calendário (exemplo datas)
 
 ---
-## Done
+# Done
 - [X] No curso, qdo pede para rever cenas tipo Coordenador:
     - [X]  Dps de preencheres e gravar n atualiza para tirar o erro
     - [X]  E mantem o triangulo a dizer q faltam coisas na listagem
@@ -216,11 +215,10 @@
 - [ ] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
 - [ ] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
 
-
 - [X] atualizar campos da escola no detalhe
 
 ---
-##### Extra stuff
+#### Extra stuff
 - [ ] Marcar avaliações:
     - [X] Ter em conta o ano letivo selecionado
     - [X] Adicionar comentários
@@ -246,8 +244,7 @@
             - [ ] Se for GOP, CC ou Direção
 
 
-
-### TRABALHO FUTURO:
+## TRABALHO FUTURO:
 - [X] Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos); **(Feito a ~~26/05/2022)**
 - [ ] Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;
 - [ ] Users com mais do que um role (validar o que deve ser feito)
@@ -269,5 +266,5 @@
   - [ ] Provisório - até 1º dia de aulas
   - [ ] Definitivo - até 5a semana de aulas
 
-
-
+## TODO Miguel
+- [ ] Limpeza "Requests Folder"
