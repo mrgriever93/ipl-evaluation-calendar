@@ -260,24 +260,21 @@ const InfosAndActions = ( {epochs, calendarInfo}) => {
                                             )}
                                         </span>
                                     </div>
-                                </GridColumn>
-                                <GridColumn>
-                                    {/* <div>
-                                        <span>
-                                            <Header as="h5">Ano Letivo:</Header>
-                                            2019-20
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <span>
-                                            <Header as="h5">Curso: </Header>
-                                            {calendarInfo?.course?.name_pt}
-                                        </span>
-                                    </div> */}
-                                    <div>
+                                    <div className='margin-top-base'>
                                         <span>
                                             <Header as="h5">Última alteração:</Header>
                                             {moment(calendarInfo?.calendar_last_update,).format('DD MMMM, YYYY HH:mm')}
+                                        </span>
+                                    </div>
+                                </GridColumn>
+                                <GridColumn>
+                                    <div>
+                                        <span>
+                                            <Header as="h5"><Icon name="warning sign" color="yellow" style={{fontSize: '1em', lineHeight: '0.8'}} />Revisão:</Header>
+                                            <ul>
+                                                <li>Existem 5 elementos de avaliação por submeter.</li>
+                                                <li>Existem 5 UCs com <a href={ "/unidade-curricular?curso="+calendarInfo?.course?.id} target="_blank">métodos <Icon name="external alternate" /></a> por preencher.</li>
+                                            </ul>
                                         </span>
                                     </div>
                                 </GridColumn>

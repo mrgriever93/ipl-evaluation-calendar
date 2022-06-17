@@ -11,13 +11,13 @@
 - [ ] Otimizar load de permissões
 
 **Detalhe calendário**
-- [ ] Quando abrimos um popup de edição e alteramos a data, ele limpa as informações dos outros campos
 - [ ] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
 - [ ] Quando se marca dois métodos no mesmo dia está a substituir ?!
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
-- [ ] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
+- [1/3] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
 - [ ] Adicionar validações que faltam preencher UC's no calendário.
-- [ ] Adicionar aviso visual que falta marcar Uc's
+- [X] Adicionar aviso visual que falta marcar Uc's
+  - [ ] Fica a faltar o backend e o caso de sucesso em que está tudo preenchido
 - [ ] Ao alterar uma data de uma avaliação, obriga a fazer refresh. Falta atualizar os dados no calendário (já sabíamos)
 - [ ] Melhorar diferença visual das épocas
 - [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
@@ -195,7 +195,7 @@
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - [ ] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
 - [ ] Adicionar validações que faltam preencher UC's no calendário.
-- [ ] Adicionar aviso visual que falta marcar Uc's
+- [X] Adicionar aviso visual que falta marcar Uc's
 
 - [X] atualizar campos da escola no detalhe
 
