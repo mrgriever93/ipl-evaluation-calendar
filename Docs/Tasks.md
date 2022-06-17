@@ -6,8 +6,8 @@
         - obrigatório data de lançamento dos enunciados
 
 **Criação do calendário**
-- [ ] Dia seguinte na validação das datas na criação do calendário
-- [ ] Voltar a colocar inputs de start e end date em vez dos Range Picker
+- [X] Dia seguinte na validação das datas na criação do calendário
+- [X] Voltar a colocar inputs de start e end date em vez dos Range Picker
 - [ ] Otimizar load de permissões
 
 **Detalhe calendário**
@@ -184,8 +184,8 @@
 - [X] "Elemento de avaliação" em vez de "método"
 
 **Criação do calendário**
-- [ ] Dia seguinte na validação das datas na criação do calendário
-- [ ] Voltar a colocar inputs de start e end date em vez dos Range Picker
+- [X] Dia seguinte na validação das datas na criação do calendário
+- [X] Voltar a colocar inputs de start e end date em vez dos Range Picker
 - [X] Adicionar “voltar” na criação do calendario
 
 **Detalhe calendário**
