@@ -1,18 +1,6 @@
 import React, {useEffect, useState, createRef} from 'react';
 import {Field, Form as FinalForm} from 'react-final-form';
-import {
-    Button,
-    Form,
-    Header,
-    Icon,
-    Label,
-    Message,
-    Grid,
-    GridColumn,
-    Modal,
-    Sticky,
-    Table
-} from 'semantic-ui-react';
+import { Button, Form, Header, Icon, Label, Message, Grid, GridColumn, Modal, Sticky, Table } from 'semantic-ui-react';
 import axios from "axios";
 import {toast} from "react-toastify";
 import {errorConfig, successConfig} from "../../../utils/toastConfig";
@@ -340,9 +328,35 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                                             if(value == "" || !value) {
                                                                 copy[index].methods[methodIndex].description_pt = "";
                                                                 copy[index].methods[methodIndex].description_en = "";
+                                                                copy[index].methods[methodIndex].name = "";
                                                             } else {
                                                                 copy[index].methods[methodIndex].description_pt = evaluationTypes.filter((x) => x.id === value)[0].name_pt + " " + nextExamIndex;
                                                                 copy[index].methods[methodIndex].description_en = evaluationTypes.filter((x) => x.id === value)[0].name_en + " " + nextExamIndex;
+                                                                copy[index].methods[methodIndex].name = evaluationTypes.filter((x) => x.id === value)[0].name_pt;
+                                                            }
+                                                            // hardcode: add statement release and oral presentation métodos for projects and reports on profs request
+                                                            if(copy[index].methods[methodIndex].name.toLowerCase() === "projeto" || copy[index].methods[methodIndex].name.toLowerCase() == "relatório ou trabalho escrito") {
+                                                                const hasOralPresentation = copy[index].methods.filter((item) => item.evaluation_type_id === 5).length > 0;
+                                                                if (!hasOralPresentation) {
+                                                                    copy[index].methods.push({
+                                                                        weight: 0,
+                                                                        minimum: 9.5,
+                                                                        evaluation_type_id: 11,
+                                                                        name: "Lançamento do enunciado",
+                                                                        description: "",
+                                                                        description_en: "Statement release",
+                                                                        description_pt: "Lançamento do enunciado"
+                                                                    });
+                                                                    copy[index].methods.push({
+                                                                        weight: 0,
+                                                                        minimum: 9.5,
+                                                                        evaluation_type_id: 5,
+                                                                        name: "Apresentação oral pública",
+                                                                        description: "",
+                                                                        description_en: "Public oral presentation",
+                                                                        description_pt: "Apresentação oral pública"
+                                                                    });
+                                                                }
                                                             }
                                                             return copy;
                                                         })

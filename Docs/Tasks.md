@@ -1,8 +1,8 @@
 # TODO
 
 **Metodos**
-- [ ] Falta Acrescente métodos automáticos do projeto
-    - [ ] Projetos e trabalhos
+- [X] Falta Acrescente métodos automáticos do projeto
+    - [X] Projetos e trabalhos
         - obrigatório data de lançamento dos enunciados
 
 **Criação do calendário**
@@ -135,8 +135,8 @@
 - [X] validar datas fora de época selecionada (ao marcar avaliações)
   - [X] Esta a validar do calendario, mas pode ser adicionado validacao por epoca
 - [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
-- [ ] tipos de avaliações
-    - [ ] Projetos e trabalhos
+- [X] tipos de avaliações
+    - [X] Projetos e trabalhos
         - obrigatório data de lançamento dos enunciados
 - [X] ir buscar os dados da sigla e nome inglês do novo webservice - QUANDO FOR CRIADO
 
@@ -177,7 +177,7 @@
 - [X] Definir números dos métodos de acordo com o tipo
 - [X] "Época de origem" e "época de destino" em vez de “de" e "para"
 - [X] No duplicar trocar os dropdowns para checkboxes.
-- [ ] Falta Acrescente métodos automáticos do projeto
+- [X] Falta Acrescente métodos automáticos do projeto
 
 **Detalhe avaliacao - Calendário**
 - [X] Nos métodos não está a funcionar bem. (label na drodpwon não está correta)

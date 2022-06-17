@@ -142,7 +142,8 @@ class PermissionsAndGroupsSeeder extends Seeder
             ["code" => "laboratory_work",           "name_pt" => "Trabalho laboratorial",            "name_en" => "Laboratory work"                  ],
             ["code" => "project",                   "name_pt" => "Projeto",                          "name_en" => "Project"                          ],
             ["code" => "internship",                "name_pt" => "Estágios ou projetos externos",    "name_en" => "Internships or external projects" ],
-            ["code" => "portfolio",                 "name_pt" => "Portfolios",                       "name_en" => "portfolios"                       ],
+            ["code" => "portfolio",                 "name_pt" => "Portfólio",                        "name_en" => "Portfolio"                        ],
+            ["code" => "statement_release",         "name_pt" => "Lançamento do enunciado",          "name_en" => "Statement release"                ],
         ];
 
         foreach ($evaluationTypes as $evaluationType) {
