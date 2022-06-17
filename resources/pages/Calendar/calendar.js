@@ -2,7 +2,7 @@ import axios from 'axios';
 import _ from 'lodash';
 import moment from 'moment';
 import React, {useEffect, useMemo, useState} from 'react';
-import {useParams, useNavigate} from "react-router-dom";
+import {Link, useParams, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {Button, Container, Divider, Grid, Header, Icon, Table} from 'semantic-ui-react';
 import {AnimatePresence} from 'framer-motion';
@@ -557,6 +557,9 @@ const Calendar = () => {
      */
     return (
         <Container>
+            <div className="margin-bottom-s">
+                <Link to="/"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
+            </div>
             <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase}/>
             <AnimatePresence>
                 {isLoading && (<PageLoader animate={pageLoaderAnimate} exit={pageLoaderExit}/>)}

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {Link, useNavigate,} from 'react-router-dom';
 import {Button, Card, Checkbox, Container, Form, Header, Icon, Message, Popup, Step} from 'semantic-ui-react';
 import {Field, Form as FinalForm} from 'react-final-form';
 import axios from 'axios';
@@ -314,6 +314,9 @@ const NewCalendar = () => {
 
     return (
         <Container>
+            <div className="margin-bottom-s">
+                <Link to="/"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
+            </div>
             <FinalForm onSubmit={onSubmit} initialValues={formInitialValues} key={'form_new_calendar'} render={({handleSubmit, values}) => (
                 <div>
 

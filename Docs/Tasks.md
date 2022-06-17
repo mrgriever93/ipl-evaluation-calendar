@@ -8,12 +8,12 @@
 **Criação do calendário**
 - [ ] Dia seguinte na validação das datas na criação do calendário
 - [ ] Voltar a colocar inputs de start e end date em vez dos Range Picker
-- [ ] Adicionar “voltar” na criação do calendario
+- [X] Adicionar “voltar” na criação do calendario
 - [ ] Otimizar load de permissões
 
 **Detalhe calendário**
 - [ ] Quando abrimos um popup de edição e alteramos a data, ele limpa as informações dos outros campos
-- [ ] Adicionar “voltar” no detalhe na calendario
+- [X] Adicionar “voltar” no detalhe na calendario
 - [ ] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
 - [ ] Quando se marca dois métodos no mesmo dia está a substituir ?!
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
@@ -246,3 +246,9 @@
 
 ## TODO Miguel
 - [ ] Limpeza "Requests Folder"
+
+
+
+## Perguntar aos profs
+- UC de projeto não vem no WebService. É suposto? Não é uma UC que tem de vir no calendário?
+  - Deve ser possível configurar todas as épocas no caso de uma UC de projeto?
