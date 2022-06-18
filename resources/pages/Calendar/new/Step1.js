@@ -137,6 +137,7 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
                                                     <DateInput name="datesStart" iconPosition="left" label={ t("Data de Ínicio") } placeholder={ t("Data de Ínicio") }
                                                                value={startDateInput.value} {...startDateInput} closable
                                                                onChange={(evt, {value}) => {startDateInput.onChange(value);}}
+                                                               initialDate={ getMinDate(semesterList[activeSemester].code, epoch?.code, "start_date") }
                                                                minDate={ getMinDate(semesterList[activeSemester].code, epoch?.code, "start_date") }
                                                                maxDate={ getMaxDate(semesterList[activeSemester].code, epoch?.code) } />
                                                 </Form.Field>
@@ -144,7 +145,8 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
                                                     <DateInput name="datesEnd" placeholder={ t("Data de Fim") } iconPosition="left" label={ t("Data de Fim") } closable
                                                                value={endDateInput.value} {...endDateInput}
                                                                onChange={(evt, {value}) => {endDateInput.onChange(value);}}
-                                                               minDate={ getMinDate(semesterList[activeSemester].code, epoch?.code, "end_date") }
+                                                               initialDate={ startDateInput.value || getMinDate(semesterList[activeSemester].code, epoch?.code, "end_date") }
+                                                               minDate={ startDateInput.value || getMinDate(semesterList[activeSemester].code, epoch?.code, "end_date") }
                                                                maxDate={ getMaxDate(semesterList[activeSemester].code, epoch?.code) } />
                                                 </Form.Field>
                                             </Card.Content>

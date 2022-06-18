@@ -16,13 +16,13 @@
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - [1/3] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
 - [ ] Adicionar validações que faltam preencher UC's no calendário.
+- [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
 - [X] Adicionar aviso visual que falta marcar Uc's
   - [ ] Fica a faltar o backend e o caso de sucesso em que está tudo preenchido
-- [ ] Ao alterar uma data de uma avaliação, obriga a fazer refresh. Falta atualizar os dados no calendário (já sabíamos)
-- [ ] Melhorar diferença visual das épocas
-- [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
-- [ ] Quando alteramos alguma coisa, e gravamos, ele não altera no calendário (exemplo datas)
-- [ ] Otimizar load de permissões
+- [X] Ao alterar uma data de uma avaliação, obriga a fazer refresh. Falta atualizar os dados no calendário (já sabíamos)
+- [X] Quando alteramos alguma coisa, e gravamos, ele não altera no calendário (exemplo datas)
+- [X] Melhorar diferença visual das épocas
+- [X] Otimizar load de permissões
 
 **Agrupamentos**
 - [ ] Traduções

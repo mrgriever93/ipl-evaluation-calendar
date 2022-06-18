@@ -134,6 +134,16 @@ const Calendar = () => {
         // console.log(exam);
         setExamList((current) => [...current, exam]);
     }
+    const updateExamInList = (exam) => {
+        setExamList((current) => {
+            const copy = [...current];
+            const oldExamIndex = copy.findIndex((item) => item.id === exam.id);
+            if(oldExamIndex > -1) {
+                copy[oldExamIndex] = exam;
+            }
+            return copy;
+        });
+    }
     const removeExamFromList = (examId) => {
         setExamList((current) => current.filter((item) => item.id !== examId));
     }
@@ -347,17 +357,28 @@ const Calendar = () => {
                                 });
                             }
 
-                            const foundMultipleDaysWithSameInterruption = acc.find(({week}) => week === start_date.isoWeek())
+                            const multiDaysSameInterruption = acc.find(({week}) => week === start_date.isoWeek())
                                 .days.filter((x) => x.interruption?.id === currentInterruption?.id);
 
-                            if (foundMultipleDaysWithSameInterruption?.length) {
-                                foundMultipleDaysWithSameInterruption[0].interruptionDays = foundMultipleDaysWithSameInterruption.length;
+                            if (multiDaysSameInterruption?.length) {
+                                multiDaysSameInterruption[0].interruptionDays = multiDaysSameInterruption.length;
                             }
 
-                            week.epoch = {
-                                name: curr.name,
-                                code: curr.code
-                            };
+                            if(week.epochs){
+                                // prevent duplicated epochs, when passing in all days
+                                const prevEpochs = week.epochs.filter((item) => item.code === curr.code);
+                                if( prevEpochs.length === 0 ) {
+                                    week.epochs.push({
+                                        name: curr.name,
+                                        code: curr.code
+                                    });
+                                }
+                            } else {
+                                week.epochs = [{
+                                    name: curr.name,
+                                    code: curr.code
+                                }];
+                            }
                         }
                         start_date.add(1, 'days');
                     }
@@ -508,7 +529,7 @@ const Calendar = () => {
                 examsComponents = existingExamsAtThisDate.map((exam) => {
                     return (
                         // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
-                        <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )} 
+                        <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )}
                             title={ (exam.in_class ? t('Aula') + " - " : "" ) + exam.course_unit + " - " + (exam.method?.description || exam.method?.name) }
                             color="blue" key={exam.id}
                             onClick={() => openExamDetailHandler(year, exam)} draggable="false" onDragStart={drag} >
@@ -568,8 +589,7 @@ const Calendar = () => {
                 <Grid stackable className='calendar-tables'>
                     <Grid.Row>
                         <Grid.Column width="16">
-                            {epochsList.length > 0 && weekData && weekData.map(({week, year, days, epoch}, tableIndex) => {
-                                //console.log('table week - ' + week);
+                            {epochsList.length > 0 && weekData && weekData.map(({week, year, days, epochs}, tableIndex) => {
                                 interruptionDays = 0;
                                 alreadyAddedColSpan = false;
                                 return (
@@ -599,16 +619,19 @@ const Calendar = () => {
                                                 </Table.Row>
                                             </Table.Header>
                                             <Table.Body>
-                                                {courseYears.map((year, courseIndex) => {
+                                                { courseYears.map((year, courseIndex) => (
+                                                    epochs.map((epoch, epochIndex) => {
                                                         alreadyAddedColSpan = false;
                                                         return (
-                                                            <Table.Row key={courseIndex}>
-                                                                <Table.Cell textAlign="center">{ t("Ano") + " " + year }</Table.Cell>
+                                                            <Table.Row key={courseIndex + "-" + epochIndex} >
+                                                                {epochIndex === 0 && (
+                                                                    <Table.Cell textAlign="center" rowSpan={epochs.length}>{ t("Ano") + " " + year }</Table.Cell>
+                                                                )}
                                                                 {weekDays.map((weekDay, weekDayIndex) => weekDayContentCell(epoch, days, courseIndex, year, weekDay, weekDayIndex))}
                                                             </Table.Row>
                                                         );
-                                                    },
-                                                )}
+                                                    })
+                                                ))}
                                             </Table.Body>
                                         </Table>
                                     </div>
@@ -636,6 +659,7 @@ const Calendar = () => {
                 onClose={closeScheduleExamModal}
                 scheduleInformation={scheduleExamInfo}
                 addedExam={addExamToList}
+                updatedExam={updateExamInList}
                 deletedExam={removeExamFromList}
                 calendarDates={{minDate: calendarStartDate, maxDate: calendarEndDate}}/>
         </Container>
