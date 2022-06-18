@@ -33,12 +33,16 @@
 ### A Rever
 
 **Calendário e marcação de avaliações**
-  - [ ] Rever traduções
   - [ ] Melhorar logs dos cursos, na alteração de métodos
-  - [ ] Adicionar titulo as paginas
+
+
+**Todas as paginas**
+- [ ] Rever traduções
+- [ ] Adicionar titulo as paginas
 
 **Ano Letivo**
-  - [ ] Atualizar os loadings automaticamente
+  - [ ] Atualizar os loadings automaticamente 
+    - **_talvez trabalho futuro?_** Usar Redis e WebSockets
 
 ### TODO Miguel
 - [ ] Limpeza "Requests Folder"
@@ -70,6 +74,13 @@
   - [X] Ano-letivo
       - [X] Botao selected, corrigir o disable
       - [X] Refresh da pagina apos selecionar "selecionado" para atualizar o ano letivo escolhido
+
+
+- **(feito a 17-6-2022)**
+  - **Criação do calendário**
+    - [X] Dia seguinte na validação das datas na criação do calendário
+    - [X] Voltar a colocar inputs de start e end date em vez dos Range Picker
+
 --- 
 
 # Meetings log

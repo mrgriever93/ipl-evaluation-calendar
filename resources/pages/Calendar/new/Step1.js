@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Field, useField, useFormState} from 'react-final-form';
-import { DateInput, DatesRangeInput} from 'semantic-ui-calendar-react-yz';
+import {DateInput} from 'semantic-ui-calendar-react-yz';
 import {Button, Card, Form, Header} from 'semantic-ui-react';
 import axios from "axios";
 import {useTranslation} from "react-i18next";
@@ -31,28 +31,41 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
         });
     }, []);
 
-    const getMinDate = (semester, code) => {
-        //console.log("getMinDate > [semester: " + semester + "] / {code: " + code + "}");
+    const getMinDate = (semester, code, field) => {
+        // console.log("getMinDate > [semester: " + semester + "] / {code: " + code + "} / (Field: " + field + ")");
         let startDate = minDate;
         if(seasonsDates && seasonsDates[semester]) {
             if (code !== "periodic_season") {
                 if (semester === "first_semester" || semester === "second_semester") {
                     if (code === "normal_season" && seasonsDates[semester].periodic_season) {
-                        startDate = seasonsDates[semester].periodic_season.end_date;
-                        if(startDate){
-                            let sixWeeksEarly = moment(startDate, "DD-MM-YYYY").subtract(6, "w").format("DD-MM-YYYY");
-                            let semesterInit = moment(seasonsDates[semester].periodic_season.start_date, "DD-MM-YYYY");
 
-                            if(moment(sixWeeksEarly, "DD-MM-YYYY").isBefore(semesterInit)) {
-                                startDate = semesterInit;
-                            } else {
-                                startDate = sixWeeksEarly;
+                        if(field === "end_date" && seasonsDates[semester][code]){
+                            startDate = seasonsDates[semester][code].start_date;
+                        } else {
+                            startDate = seasonsDates[semester].periodic_season.end_date;
+                        }
+                        if(startDate){
+                            startDate = moment(startDate, "DD-MM-YYYY");
+                            if(field === "start_date"){
+                                let sixWeeksEarly = startDate.subtract(6, "w");
+                                let semesterInit = moment(seasonsDates[semester].periodic_season.start_date, "DD-MM-YYYY");
+                                startDate = (sixWeeksEarly.isBefore(semesterInit) ? semesterInit : sixWeeksEarly);
                             }
+                            startDate = startDate.format("DD-MM-YYYY");
                         }
                     }
                     if (code === "resource_season" && seasonsDates[semester].normal_season) {
                         startDate = moment(seasonsDates[semester].normal_season.end_date, "DD-MM-YYYY").add(1, "d").format("DD-MM-YYYY");
                     }
+                }
+                if(field === "end_date" && (semester === "special" || semester === "very_special")){
+                    if(seasonsDates[semester][code]?.start_date){
+                        startDate = seasonsDates[semester][code].start_date;
+                    }
+                }
+            } else {
+                if(field === "end_date" && seasonsDates[semester]?.periodic_season?.start_date){
+                    startDate = seasonsDates[semester].periodic_season.start_date;
                 }
             }
         }
@@ -109,8 +122,6 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
                                                 <Header as={"h4"}>{epoch.name}</Header>
                                             </Card.Content>
                                             <Card.Content>
-                                                {data}
-                                                <Form.Field>
                                                     {/* <DatesRangeInput name="datesRange" placeholder={ t("Inserir datas") } iconPosition="left" closable
                                                                      value={(startDateInput.value && endDateInput.value ? startDateInput.value + ` ${t("até")} ` + endDateInput.value : "")}
                                                                      onChange={(event, {value}) => {
@@ -122,27 +133,19 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
                                                                      }}
                                                                      minDate={ getMinDate(semesterList[activeSemester].code, epoch?.code) }
                                                                      maxDate={ getMaxDate(semesterList[activeSemester].code, epoch?.code) } /> */}
-                                                                     
-                                                    <DateInput name="datesStart" placeholder={ t("Inserir datas") } label={ t("Data de Início") } closable
-                                                            iconPosition="left"
-                                                            value={startDateInput.value}
-                                                            onChange={(event, {value}) => {
-                                                                startDateInput.onChange(value);
-                                                            }}
-                                                            initialDate={ getMinDate(semesterList[activeSemester].code, epoch?.code) }
-                                                            minDate={ getMinDate(semesterList[activeSemester].code, epoch?.code) }
-                                                            maxDate={ getMaxDate(semesterList[activeSemester].code, epoch?.code) } />
-                                                                     
-                                                                     
-                                                    <DateInput name="datesEnd" placeholder={ t("Inserir datas") } label={ t("Data de Fim") } closable
-                                                            iconPosition="left" 
-                                                            value={endDateInput.value}
-                                                            onChange={(event, {value}) => {
-                                                                endDateInput.onChange(value);
-                                                            }}
-                                                            initialDate={ startDateInput.value || getMinDate(semesterList[activeSemester].code, epoch?.code) }
-                                                            minDate={ startDateInput.value || getMinDate(semesterList[activeSemester].code, epoch?.code) }
-                                                            maxDate={ getMaxDate(semesterList[activeSemester].code, epoch?.code) } />
+                                                <Form.Field>
+                                                    <DateInput name="datesStart" iconPosition="left" label={ t("Data de Ínicio") } placeholder={ t("Data de Ínicio") }
+                                                               value={startDateInput.value} {...startDateInput} closable
+                                                               onChange={(evt, {value}) => {startDateInput.onChange(value);}}
+                                                               minDate={ getMinDate(semesterList[activeSemester].code, epoch?.code, "start_date") }
+                                                               maxDate={ getMaxDate(semesterList[activeSemester].code, epoch?.code) } />
+                                                </Form.Field>
+                                                <Form.Field disabled={!startDateInput.value}>
+                                                    <DateInput name="datesEnd" placeholder={ t("Data de Fim") } iconPosition="left" label={ t("Data de Fim") } closable
+                                                               value={endDateInput.value} {...endDateInput}
+                                                               onChange={(evt, {value}) => {endDateInput.onChange(value);}}
+                                                               minDate={ getMinDate(semesterList[activeSemester].code, epoch?.code, "end_date") }
+                                                               maxDate={ getMaxDate(semesterList[activeSemester].code, epoch?.code) } />
                                                 </Form.Field>
                                             </Card.Content>
                                         </Card>

@@ -335,7 +335,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                                                 copy[index].methods[methodIndex].name = evaluationTypes.filter((x) => x.id === value)[0].name_pt;
                                                             }
                                                             // hardcode: add statement release and oral presentation métodos for projects and reports on profs request
-                                                            if(copy[index].methods[methodIndex].name.toLowerCase() === "projeto" || copy[index].methods[methodIndex].name.toLowerCase() == "relatório ou trabalho escrito") {
+                                                            if(copy[index].methods[methodIndex].code.toLowerCase() === "project" || copy[index].methods[methodIndex].code.toLowerCase() === "report") {
                                                                 const hasOralPresentation = copy[index].methods.filter((item) => item.evaluation_type_id === 5).length > 0;
                                                                 if (!hasOralPresentation) {
                                                                     copy[index].methods.push({
