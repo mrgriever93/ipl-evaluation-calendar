@@ -32,6 +32,9 @@ class EnsureWeSendCookies
         if($selectedAcademicYear){
             Cookie::queue('academic_year', $selectedAcademicYear, 120);
         }
+        if(!$request->hasCookie('academic_year')) {
+            $request->cookies->set('academic_year', $selectedAcademicYear);
+        }
         return $next($request);
     }
 }
