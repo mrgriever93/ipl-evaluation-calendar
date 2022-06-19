@@ -47,14 +47,16 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
             });
 
             setEpochsList(availableEpochs);
+
             if(scheduleInformation.epoch_id > 0 ) {
                 setSelectedEpoch(scheduleInformation.epoch_id);
                 setLoadRemainingCourseUnits(true);
             }
-            else if(availableEpochs.length == 1) {
-                setSelectedEpoch(availableEpochs[0].id);
-                setEpochStartDate(moment(availableEpochs[0].start_date).format("DD-MM-YYYY"));
-                setEpochEndDate(moment(availableEpochs[0].end_date).format("DD-MM-YYYY"));
+            else {
+                let chosenEpoch = availableEpochs.filter((epoch) => epoch.code === scheduleInformation.selected_epoch?.code );
+                setSelectedEpoch(chosenEpoch[0].id);
+                setEpochStartDate(moment(chosenEpoch[0].start_date).format("DD-MM-YYYY"));
+                setEpochEndDate(moment(chosenEpoch[0].end_date).format("DD-MM-YYYY"));
                 setLoadRemainingCourseUnits(true);
             }
         }

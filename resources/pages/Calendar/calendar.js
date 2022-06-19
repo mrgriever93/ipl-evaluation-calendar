@@ -85,7 +85,7 @@ const Calendar = () => {
     /*
      * Create / Edit Exams
      */
-    const scheduleExamHandler = (scholarYear, date, existingExamsAtThisDate) => {
+    const scheduleExamHandler = (scholarYear, epoch, date, existingExamsAtThisDate) => {
         setScheduleExamInfo({
             calendarId: parseInt(calendarId, 10),
             courseId: generalInfo?.course?.id,
@@ -96,11 +96,12 @@ const Calendar = () => {
             in_class: false,
             hasExamsOnDate: existingExamsAtThisDate,
             epochs: epochsList,
+            selected_epoch: epoch,
         });
         setOpenScheduleExamModal(true);
     }
 
-    const editExamHandler = (event, scholarYear, exam) => {
+    const editExamHandler = (event, scholarYear, epoch, exam) => {
         event.stopPropagation();
         setScheduleExamInfo({
             calendarId: parseInt(calendarId, 10),
@@ -108,6 +109,7 @@ const Calendar = () => {
             courseName: generalInfo?.course?.display_name,
             scholarYear: scholarYear,
             epochs: epochsList,
+            selected_epoch: epoch,
             course_unit_id: exam.course_unit_id,
             date_start: exam.date_start,
             date_end: exam.date_end,
@@ -131,7 +133,6 @@ const Calendar = () => {
     };
 
     const addExamToList = (exam) => {
-        // console.log(exam);
         setExamList((current) => [...current, exam]);
     }
     const updateExamInList = (exam) => {
@@ -369,12 +370,14 @@ const Calendar = () => {
                                 const prevEpochs = week.epochs.filter((item) => item.code === curr.code);
                                 if( prevEpochs.length === 0 ) {
                                     week.epochs.push({
+                                        id: curr.id,
                                         name: curr.name,
                                         code: curr.code
                                     });
                                 }
                             } else {
                                 week.epochs = [{
+                                    id: curr.id,
                                     name: curr.name,
                                     code: curr.code
                                 }];
@@ -403,22 +406,16 @@ const Calendar = () => {
 
     const allowDrop = (ev) => {
         ev.preventDefault();
-        //console.log("allowDrop");
-        //console.log(ev);
     }
 
     const drag = (ev) => {
         ev.dataTransfer.setData("text", ev.target.id);
-        //console.log("drag");
-        //console.log(ev);
     }
 
     const drop = (ev) => {
         ev.preventDefault();
         //let data = ev.dataTransfer.getData("text");
         //ev.target.appendChild(document.getElementById(data));
-        //console.log("drop");
-        //console.log(ev);
     }
 
     /*
@@ -444,23 +441,23 @@ const Calendar = () => {
                     {moment(day.date).format('DD-MM-YYYY')}
                     { (!isPublished && existingExamsAtThisDate?.length === 0 && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) && (
                         ( existingExamsAtThisDate.length > 0 ? (
-                                <Button color={"orange"} className='btn-add-interruption' title="Adicionar Interrupção"
+                                <Button color={"orange"} className='btn-add-interruption' title={t('Adicionar Interrupção')}
                                         onClick={() => interruptionForceHandler(day.date)}>
                                     <Icon name="calendar times outline" />
-                                    Adicionar Interrupção
+                                    {t('Adicionar Interrupção')}
                                 </Button>
                             ) : (
                                 !day.interruption ? (
-                                    <Button className='btn-add-interruption' title="Adicionar Interrupção"
+                                    <Button className='btn-add-interruption' title={t('Adicionar Interrupção')}
                                             onClick={() => interruptionHandler(undefined, day.date)}>
                                         <Icon name="calendar times outline" />
-                                        Adicionar Interrupção
+                                        {t('Adicionar Interrupção')}
                                     </Button>
                                 ) : (
-                                    <Button color="yellow" className='btn-add-interruption' title="Editar Interrupção"
+                                    <Button color="yellow" className='btn-add-interruption' title={t('Editar Interrupção')}
                                             onClick={() => interruptionHandler(day.interruption, day.date)}>
                                         <Icon name="calendar times outline" />
-                                        Editar Interrupção
+                                        {t('Editar Interrupção')}
                                     </Button>
                                 )
                             )
@@ -504,9 +501,7 @@ const Calendar = () => {
             }
             // interruption already marked and is for multiple days
             if (!alreadyAddedColSpan || (isInterruption && courseIndex === 0)) {
-                console.log(interruption);
                 if(epochsLength > 1 && alreadyAddedRowSpan) {
-                    console.log('interruption', interruption);
                     return null;
                 }
                 alreadyAddedRowSpan = true;
@@ -532,7 +527,7 @@ const Calendar = () => {
             if (existingExamsAtThisDate?.length) {
                 // show a button per exam in this day
                 examsComponents = existingExamsAtThisDate.map((exam) => {
-                    return (
+                    return exam.epoch_id === epoch.id && (
                         // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
                         <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )}
                             title={ (exam.in_class ? t('Aula') + " - " : "" ) + exam.course_unit + " - " + (exam.method?.description || exam.method?.name) }
@@ -541,7 +536,7 @@ const Calendar = () => {
                             { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
                                 <div className="btn-action-wrapper">
                                     {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
-                                        <div className='btn-action-edit' onClick={(event) => editExamHandler(event, year, exam)}>
+                                        <div className='btn-action-edit' onClick={(event) => editExamHandler(event, year, epoch, exam)}>
                                             <Icon name="edit"/>
                                         </div>
                                     )}
@@ -560,7 +555,7 @@ const Calendar = () => {
                 <Table.Cell key={weekDayIndex} className={ 'calendar-day-' + epoch.code } textAlign="center" onDrop={drop} onDragOver={allowDrop}>
                     {examsComponents}
                     {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.ADD_EXAMS).length > 0 && (
-                        <Button className="btn-schedule-exam" onClick={() => scheduleExamHandler(year, day.date, existingExamsAtThisDate)}>
+                        <Button className="btn-schedule-exam" onClick={() => scheduleExamHandler(year, epoch, day.date, existingExamsAtThisDate)}>
                             { t('Marcar') }
                         </Button>
                     )}
