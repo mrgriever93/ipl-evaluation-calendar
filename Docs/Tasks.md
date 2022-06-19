@@ -11,7 +11,7 @@
 - [ ] Otimizar load de permissões
 
 **Detalhe calendário**
-- [ ] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
+- [X] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
 - [ ] Quando se marca dois métodos no mesmo dia está a substituir ?!
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - [1/3] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
@@ -140,7 +140,7 @@
   - [X] cor diferente se for aula
 - [X] Marcar mais do que uma prova no mesmo dia
 - [X] Descrição da avaliação
-- [ ] Melhorar diferença visual das épocas
+- [X] Melhorar diferença visual das épocas
 - [X] validar datas fora de época selecionada (ao marcar avaliações)
   - [X] Esta a validar do calendario, mas pode ser adicionado validacao por epoca
 - [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
@@ -155,7 +155,7 @@
 - [X] Validação das épocas não está bem:
   - [X] Deu para criar uma época de recurso no meio da época periódica
 - [X] Issue do sticky na tab dos métodos que não renderiza bem até fazer scroll (já sabíamos)
-- [ ] Ao alterar uma data de uma avaliação, obriga a fazer refresh. Falta atualizar os dados no calendário (já sabíamos)
+- [X] Ao alterar uma data de uma avaliação, obriga a fazer refresh. Falta atualizar os dados no calendário (já sabíamos)
 - [X] Devíamos adicionar uma notificação caso alguma avaliação dure mais do que 1 semana.
 
 
@@ -201,7 +201,7 @@
 
 **Detalhe calendário**
 - [X] Adicionar “voltar” no detalhe na calendario
-- [ ] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
+- [X] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
 - [ ] Quando se marca dois métodos no mesmo dia está a substituir ?!
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - [ ] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.

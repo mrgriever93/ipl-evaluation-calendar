@@ -152,17 +152,17 @@ class PermissionsAndGroupsSeeder extends Seeder
         }
 
         $phases = [
-            ["code"=> "edit_gop",            "name_pt" => "Em edição (GOP)",                    "name_en" => "In edit (GOP)"                          ],
-            ["code"=> "edit_cc",             "name_pt" => "Em edição (Coordenador de Curso)",   "name_en" => "In edit (Course coordinator)"           ],
-            ["code"=> "edit_responsible",    "name_pt" => "Em edição (Responsável UC)",         "name_en" => "In edit (UC responsible)"               ],
-            ["code"=> "evaluation_students", "name_pt" => "Em avaliação (Alunos)",              "name_en" => "Under evaluation (Students)"            ],
-            ["code"=> "evaluation_ccp",      "name_pt" => "Em avaliação (CCP)",                 "name_en" => "Under evaluation (CCP)"                 ],
-            ["code"=> "evaluation_gop",      "name_pt" => "Em avaliação (GOP)",                 "name_en" => "Under evaluation (GOP)"                 ],
-            ["code"=> "evaluation_cp",       "name_pt" => "Em avaliação (Conselho Pedagógico)", "name_en" => "Under evaluation (Pedagogical Council)" ],
-            ["code"=> "evaluation_board",    "name_pt" => "Em avaliação (Direção)",             "name_en" => "Under evaluation (Direction)"           ],
-            ["code"=> "published",           "name_pt" => "Publicado",                          "name_en" => "Published"                              ],
-            ["code"=> "system",              "name_pt" => "System",                             "name_en" => "System"                                 ],
-//            ["code"=> "approved",            "name_pt" => "Aprovado",                           "name_en" => "Approved"                               ],
+            ["code"=> "edit_gop",            "name_pt" => "Em edição (GOP)",                    "name_en" => "In edit (GOP)",                          "all_methods_filled" => false  ],
+            ["code"=> "edit_cc",             "name_pt" => "Em edição (Coordenador de Curso)",   "name_en" => "In edit (Course coordinator)",           "all_methods_filled" => false  ],
+            ["code"=> "edit_responsible",    "name_pt" => "Em edição (Responsável UC)",         "name_en" => "In edit (UC responsible)",               "all_methods_filled" => false  ],
+            ["code"=> "evaluation_students", "name_pt" => "Em avaliação (Alunos)",              "name_en" => "Under evaluation (Students)",            "all_methods_filled" => true   ],
+            ["code"=> "evaluation_ccp",      "name_pt" => "Em avaliação (CCP)",                 "name_en" => "Under evaluation (CCP)",                 "all_methods_filled" => true   ],
+            ["code"=> "evaluation_gop",      "name_pt" => "Em avaliação (GOP)",                 "name_en" => "Under evaluation (GOP)",                 "all_methods_filled" => true   ],
+            ["code"=> "evaluation_cp",       "name_pt" => "Em avaliação (Conselho Pedagógico)", "name_en" => "Under evaluation (Pedagogical Council)", "all_methods_filled" => true   ],
+            ["code"=> "evaluation_board",    "name_pt" => "Em avaliação (Direção)",             "name_en" => "Under evaluation (Direction)",           "all_methods_filled" => true   ],
+            ["code"=> "published",           "name_pt" => "Publicado",                          "name_en" => "Published",                              "all_methods_filled" => true   ],
+            ["code"=> "system",              "name_pt" => "System",                             "name_en" => "System",                                 "all_methods_filled" => false  ],
+            // ["code"=> "approved",            "name_pt" => "Aprovado",                           "name_en" => "Approved",                               "all_methods_filled" => true   ],
         ];
 
         foreach ($phases as $phase) {
@@ -171,6 +171,7 @@ class PermissionsAndGroupsSeeder extends Seeder
             $newPhase->name_pt = $phase["name_pt"];
             $newPhase->name_en = $phase["name_en"];
             $newPhase->removable = false;
+            $newPhase->all_methods_filled = $phase["all_methods_filled"];
             $newPhase->save();
         }
 
