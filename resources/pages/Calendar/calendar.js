@@ -476,7 +476,7 @@ const Calendar = () => {
     /*
      * Content of week table
      */
-    const weekDayContentCell = (epoch, days, courseIndex, year, weekDay, weekDayIndex) => {
+    const weekDayContentCell = (epoch, days, courseIndex, year, weekDay, weekDayIndex, epochsLength) => {
         // TODO add exam to the dates (by single cols or colspan)
         const day = days.find((day) => day.weekDay === weekDay);
         const firstDayAvailable = moment(days[0].date);
@@ -484,7 +484,7 @@ const Calendar = () => {
         const {interruption} = day || {};
         const isInterruption = !!interruption;
         // check has interruptions
-        if (isInterruption && courseIndex === 0 && interruption.id !== days.find((day) => day.weekDay === weekDay - 1)?.interruption?.id) {
+        if (!alreadyAddedRowSpan && isInterruption && courseIndex === 0 && interruption.id !== days.find((day) => day.weekDay === weekDay - 1)?.interruption?.id) {
             interruptionDays = 0;
             alreadyAddedRowSpan = false;
         }
@@ -504,10 +504,15 @@ const Calendar = () => {
             }
             // interruption already marked and is for multiple days
             if (!alreadyAddedColSpan || (isInterruption && courseIndex === 0)) {
+                console.log(interruption);
+                if(epochsLength > 1 && alreadyAddedRowSpan) {
+                    console.log('interruption', interruption);
+                    return null;
+                }
                 alreadyAddedRowSpan = true;
                 return (
                     <Table.Cell key={weekDayIndex} textAlign="center" className={isInterruption ? "calendar-day-interruption" : null  }
-                                rowSpan={courseYears.length} colSpan={isInterruption ? day?.interruptionDays : null} >
+                                rowSpan={courseYears.length * epochsLength} colSpan={isInterruption ? day?.interruptionDays : null} >
                         <div>
                             {isInterruption ? interruption.description : null}
                         </div>
@@ -556,7 +561,7 @@ const Calendar = () => {
                     {examsComponents}
                     {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.ADD_EXAMS).length > 0 && (
                         <Button className="btn-schedule-exam" onClick={() => scheduleExamHandler(year, day.date, existingExamsAtThisDate)}>
-                            Marcar
+                            { t('Marcar') }
                         </Button>
                     )}
                 </Table.Cell>
@@ -605,7 +610,7 @@ const Calendar = () => {
                                         <Table celled>
                                             <Table.Header>
                                                 <Table.Row textAlign="center">
-                                                    <Table.HeaderCell width="2">Week #{week}</Table.HeaderCell>
+                                                    <Table.HeaderCell width="2">#{week}</Table.HeaderCell>
                                                     <Table.HeaderCell width="2">{t('calendar.2ª Feira')}</Table.HeaderCell>
                                                     <Table.HeaderCell width="2">{t('calendar.3ª Feira')}</Table.HeaderCell>
                                                     <Table.HeaderCell width="2">{t('calendar.4ª Feira')}</Table.HeaderCell>
@@ -619,19 +624,19 @@ const Calendar = () => {
                                                 </Table.Row>
                                             </Table.Header>
                                             <Table.Body>
-                                                { courseYears.map((year, courseIndex) => (
-                                                    epochs.map((epoch, epochIndex) => {
-                                                        alreadyAddedColSpan = false;
-                                                        return (
-                                                            <Table.Row key={courseIndex + "-" + epochIndex} >
-                                                                {epochIndex === 0 && (
-                                                                    <Table.Cell textAlign="center" rowSpan={epochs.length}>{ t("Ano") + " " + year }</Table.Cell>
-                                                                )}
-                                                                {weekDays.map((weekDay, weekDayIndex) => weekDayContentCell(epoch, days, courseIndex, year, weekDay, weekDayIndex))}
-                                                            </Table.Row>
-                                                        );
-                                                    })
-                                                ))}
+                                                { courseYears.map((year, courseIndex) => {                                                    
+                                                    alreadyAddedColSpan = false;
+                                                    alreadyAddedRowSpan = false;
+                                                    
+                                                    return epochs.map((epoch, epochIndex) => (
+                                                        <Table.Row key={courseIndex + "-" + epochIndex} >
+                                                            {epochIndex === 0 && (
+                                                                <Table.Cell textAlign="center" rowSpan={epochs.length}>{ t("Ano") + " " + year }</Table.Cell>
+                                                            )}
+                                                            {weekDays.map((weekDay, weekDayIndex) => weekDayContentCell(epoch, days, courseIndex, year, weekDay, weekDayIndex, epochs.length))}
+                                                        </Table.Row>
+                                                    ));
+                                                })}
                                             </Table.Body>
                                         </Table>
                                     </div>
