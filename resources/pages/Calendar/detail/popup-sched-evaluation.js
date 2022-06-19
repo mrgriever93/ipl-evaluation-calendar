@@ -43,7 +43,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
         console.log(scheduleInformation);
         if(!!scheduleInformation.epochs) {
             let availableEpochs = scheduleInformation.epochs.filter((epoch) => {
-                return moment(scheduleInformation.date_start).isBetween(moment(epoch.start_date), moment(epoch.end_date), undefined, '[]' );
+                return moment(scheduleInformation.date_start).isBetween(moment(epoch.start_date), moment(epoch.end_date), 'day', '[]' );
             });
 
             setEpochsList(availableEpochs);
@@ -244,28 +244,30 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                 </GridColumn>
                                 <GridColumn>
                                     <div>
-                                        <b>Data: </b>
                                         { changeData ?
                                             (
                                                 <Form.Group widths='equal'>
-                                                    <DateInput placeholder={ t("Inserir data Inicio") } iconPosition="left" dateFormat={"DD-MM-YYYY"}
-                                                               initialDate={ moment(scheduleInformation?.date_start, 'DD MMMM YYYY') }
+                                                    <DateInput placeholder={ t("Inserir data inicial") } label={ t("Data inicial") } 
+                                                               iconPosition="left" dateFormat={"DD-MM-YYYY"}
+                                                               initialDate={ moment(scheduleInformation?.date_start, 'YYYY-MM-DD').format('DD-MM-YYYY') }
                                                                minDate={ moment(epochStartDate || calendarDates.minDate, 'DD-MM-YYYY') }
                                                                maxDate={ moment(epochEndDate || calendarDates.maxDate, 'DD-MM-YYYY') }
-                                                               value={moment(scheduleInformation?.date_start, 'DD MMMM YYYY').format('DD MMMM YYYY')}
+                                                               value={ moment(scheduleInformation?.date_start, 'YYYY-MM-DD').format('DD-MM-YYYY') }
                                                                onChange={(evt, {value}) => {
-                                                                   scheduleInformation.date_start = moment(value, 'DD-MM-YYYY');
-                                                                   setChangeData(false);
+                                                                    scheduleInformation.date_start = moment(value, 'DD-MM-YYYY').format('YYYY-MM-DD');
+                                                                    scheduleInformation.date_end = moment(value, 'DD-MM-YYYY').format('YYYY-MM-DD');
+                                                                    setChangeData(false);
                                                                }}
                                                     />
-                                                    <DateInput placeholder={ t("Inserir data Inicio") } iconPosition="left" dateFormat={"DD-MM-YYYY"}
-                                                               initialDate={ moment(scheduleInformation?.date_start, 'DD MMMM YYYY') }
+                                                    <DateInput placeholder={ t("Inserir data final") } label={ t("Data final") } 
+                                                               iconPosition="left" dateFormat={"DD-MM-YYYY"}
+                                                               initialDate={ moment(scheduleInformation?.date_end, 'YYYY-MM-DD').format('DD-MM-YYYY') }
                                                                minDate={ moment(epochStartDate || calendarDates.minDate, 'DD-MM-YYYY') }
                                                                maxDate={ moment(epochEndDate || calendarDates.maxDate, 'DD-MM-YYYY') }
-                                                               value={moment(scheduleInformation?.date_end, 'DD MMMM YYYY').format('DD MMMM YYYY')}
+                                                               value={ moment(scheduleInformation?.date_end, 'YYYY-MM-DD').format('DD-MM-YYYY') }
                                                                onChange={(evt, {value}) => {
-                                                                   scheduleInformation.date_end = moment(value, 'DD-MM-YYYY');
-                                                                   setChangeData(false);
+                                                                    scheduleInformation.date_end = moment(value, 'DD-MM-YYYY').format('YYYY-MM-DD');
+                                                                    setChangeData(false);
                                                                }}
                                                     />
                                                 </Form.Group>
