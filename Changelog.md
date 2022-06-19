@@ -1,4 +1,41 @@
 # Changelog
+
+## Versão 0.8 - ****************************** 21/06/2022 ?
+Novas features: 
+- Adicionar possibilidade de gestão dos novos campos do webservice no detalhe da escola
+- Adicionar forma de automaticamente incluir o lançamento de enunciados e apresentação oral, se for selecionado projeto como método de avaliação
+- Adicionar link para voltar para a lista de calendários quando estamos no detalhe ou criação de calendário
+- Adicionar aviso visual para ser fácil identificar que faltam marcar avaliações para algumas UC's
+  - Ainda em falta criar um serviço para que os valores sejam dinâmicos
+- Criação de forma de ver quando existem épocas em datas sobrepostas
+  - Revisão visual do calendário
+  - Revisão do popup de marcação de avaliações para receber a epoca selecionada por defeito quando é escolhido através do calendário
+  - Revisão de issue em relação às interrupções, em que criava duas vezes a mesma interrupção por ter mais do que uma época na mesma data
+- Adicionada uma flag na BD, nas fases de calendário, para poder dinamicamente escolher quais as fases que têm de ter todos os elementos de avaliação de todas as UC's marcados antes de poderem ser selecionadas/ativadas
+
+Issues corrigidos: 
+- Correções de algumas labels / textos a pedido dos professores
+- Correção da descrição dos métodos que não estava a ser enviada para a dropdown de selecção do elemento de avaliação
+- Atualização para incluir texto de forma a mostrar quando uma avaliação é realizada em Aula
+- Voltar a colocar Data de Inicio e de Fim em inputs separados, em vez do RangePicker para ser mais intuitivo para os utilizadores
+- Rever validações das datas na criação do calendário, de forma a melhor a interação dos date pickers entre si
+- Criação de método para atualizar o calendário novamente quando uma UC é atualizada
+- Correções e otimizações do load das permissões no calendário para melhor performance
+
+
+
+## Versão 0.7 - 14/06/2022
+Novas features: 
+- Criada nova API para expor os dados das avaliações marcadas na plataforma para outras aplicações consumirem (apenas para calendários publicados)
+- Update da sincronização do webservice - agora traz a informação completa (em PT e EN) dos cursos e UC's
+- Adicionar aviso visual caso uma avaliação esteja a ser marcada para mais de 1 semana
+
+Issues corrigidos: 
+- Fix do issue visual componente sticky na tabs dos métodos
+- Remoção da possibilidade de duplicar a época periódica (a pedido dos professores)
+- Correções nas validações de datas na criação de um calendário
+
+
 ## Versão 0.6 - 04/06/2022
 Novas features: 
 - Adicionar comentários
