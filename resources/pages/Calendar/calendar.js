@@ -91,6 +91,7 @@ const Calendar = () => {
             courseId: generalInfo?.course?.id,
             courseName: generalInfo?.course?.display_name,
             scholarYear: scholarYear,
+            group_id: undefined,
             date_start: date,
             date_end: date,
             in_class: false,
@@ -111,6 +112,7 @@ const Calendar = () => {
             epochs: epochsList,
             selected_epoch: epoch,
             course_unit_id: exam.course_unit_id,
+            group_id: exam.group_id,
             date_start: exam.date_start,
             date_end: exam.date_end,
             duration_minutes: exam.duration_minutes,
@@ -619,10 +621,10 @@ const Calendar = () => {
                                                 </Table.Row>
                                             </Table.Header>
                                             <Table.Body>
-                                                { courseYears.map((year, courseIndex) => {                                                    
+                                                { courseYears.map((year, courseIndex) => {
                                                     alreadyAddedColSpan = false;
                                                     alreadyAddedRowSpan = false;
-                                                    
+
                                                     return epochs.map((epoch, epochIndex) => (
                                                         <Table.Row key={courseIndex + "-" + epochIndex} >
                                                             {epochIndex === 0 && (

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id')->autoIncrement();
             $table->unsignedBigInteger('epoch_id');
             $table->unsignedBigInteger('method_id');
+            $table->unsignedBigInteger('group_id')->nullable();
             $table->string('room')->nullable();
             $table->timestamp('date_start')->useCurrent();
             $table->timestamp('date_end')->useCurrent();
