@@ -43,7 +43,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
         console.log(scheduleInformation);
         if(!!scheduleInformation.epochs) {
             let availableEpochs = scheduleInformation.epochs.filter((epoch) => {
-                return moment(scheduleInformation.date_start).isBetween(moment(epoch.start_date), moment(epoch.end_date), 'day', '[]' );
+                return moment(scheduleInformation.date_start, 'YYYY-MM-DD').isBetween(moment(epoch.start_date), moment(epoch.end_date), 'day', '[]' );
             });
 
             setEpochsList(availableEpochs);
@@ -134,15 +134,16 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
 
     const onSubmitExam = (values) => {
         setSavingExam(true);
-        const dateStart = moment(values.date_start).format('YYYY-MM-DD');
-        const dateEnd = values.date_end ? moment(values.date_end).format('YYYY-MM-DD') : undefined;
+        const dateStart = moment(values.date_start, 'DD-MM-YYYY').format('YYYY-MM-DD');
+        const dateEnd = values.date_end ? moment(values.date_end, 'DD-MM-YYYY').format('YYYY-MM-DD') : dateStart;
 
         const examScheduleObj = {
             calendar_id: parseInt(calendarId, 10),
             course_id: parseInt(scheduleInformation?.courseId),
             course_unit_id: values.courseUnit,
+            group_id: values.group_id,
             date_start: dateStart,
-            date_end: (dateEnd ? dateEnd : dateStart),
+            date_end: dateEnd,
             duration_minutes: values.durationMinutes || undefined,
             epoch_id: selectedEpoch,
             in_class: values.inClass || false,
@@ -212,8 +213,8 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
         <FinalForm onSubmit={onSubmitExam}
             initialValues={{
                 exam_id:         scheduleInformation?.exam_id ? scheduleInformation?.exam_id           : null,
-                date_start:      moment(scheduleInformation?.date_start).format('DD MMMM YYYY'),
-                date_end:        moment(scheduleInformation?.date_end).format('DD MMMM YYYY'),
+                date_start:      moment(scheduleInformation?.date_start, "YYYY-MM-DD").format('DD-MM-YYYY'),
+                date_end:        moment(scheduleInformation?.date_end, "YYYY-MM-DD").format('DD-MM-YYYY'),
                 durationMinutes: scheduleInformation?.exam_id ? scheduleInformation?.duration_minutes  : null,
                 observationsPT:  scheduleInformation?.exam_id ? scheduleInformation?.observations_pt   : null,
                 observationsEN:  scheduleInformation?.exam_id ? scheduleInformation?.observations_en   : null,
@@ -222,6 +223,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                 room:            scheduleInformation?.exam_id ? scheduleInformation?.room              : null,
                 courseUnit:      scheduleInformation?.exam_id ? scheduleInformation?.course_unit_id    : -1,
                 method:          scheduleInformation?.exam_id ? scheduleInformation?.method_id         : -1,
+                group_id:        scheduleInformation?.exam_id ? scheduleInformation?.group_id          : null
             }}
             render={({handleSubmit}) => (
                 <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
@@ -244,42 +246,51 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                 </GridColumn>
                                 <GridColumn>
                                     <div>
-                                        { changeData ?
-                                            (
-                                                <Form.Group widths='equal'>
-                                                    <DateInput placeholder={ t("Inserir data inicial") } label={ t("Data inicial") } 
-                                                               iconPosition="left" dateFormat={"DD-MM-YYYY"}
-                                                               initialDate={ moment(scheduleInformation?.date_start, 'YYYY-MM-DD').format('DD-MM-YYYY') }
-                                                               minDate={ moment(epochStartDate || calendarDates.minDate, 'DD-MM-YYYY') }
-                                                               maxDate={ moment(epochEndDate || calendarDates.maxDate, 'DD-MM-YYYY') }
-                                                               value={ moment(scheduleInformation?.date_start, 'YYYY-MM-DD').format('DD-MM-YYYY') }
-                                                               onChange={(evt, {value}) => {
-                                                                    scheduleInformation.date_start = moment(value, 'DD-MM-YYYY').format('YYYY-MM-DD');
-                                                                    scheduleInformation.date_end = moment(value, 'DD-MM-YYYY').format('YYYY-MM-DD');
-                                                                    setChangeData(false);
-                                                               }}
-                                                    />
-                                                    <DateInput placeholder={ t("Inserir data final") } label={ t("Data final") } 
-                                                               iconPosition="left" dateFormat={"DD-MM-YYYY"}
-                                                               initialDate={ moment(scheduleInformation?.date_end, 'YYYY-MM-DD').format('DD-MM-YYYY') }
-                                                               minDate={ moment(epochStartDate || calendarDates.minDate, 'DD-MM-YYYY') }
-                                                               maxDate={ moment(epochEndDate || calendarDates.maxDate, 'DD-MM-YYYY') }
-                                                               value={ moment(scheduleInformation?.date_end, 'YYYY-MM-DD').format('DD-MM-YYYY') }
-                                                               onChange={(evt, {value}) => {
-                                                                    scheduleInformation.date_end = moment(value, 'DD-MM-YYYY').format('YYYY-MM-DD');
-                                                                    setChangeData(false);
-                                                               }}
-                                                    />
-                                                </Form.Group>
-                                            ) : (
-                                                <div>
-                                                    { moment(scheduleInformation?.date_start).isSame(moment(scheduleInformation?.date_end)) ?
-                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') :
-                                                            moment(scheduleInformation?.date_start).format('DD MMMM YYYY') + ` ${t("até")} ` + moment(scheduleInformation?.date_end).format('DD MMMM YYYY')
-                                                    }
-                                                </div>
-                                            )
-                                        }
+                                        <Field name="date_start">
+                                            {({input: dateStartInput}) => (
+                                                <Field name="date_end">
+                                                    {({input: dateEndInput}) => {
+                                                        if(changeData){
+                                                            return (
+                                                                <Form.Group widths='equal'>
+                                                                    <DateInput placeholder={ t("Inserir data inicial") } label={ t("Data inicial") }
+                                                                               iconPosition="left" dateFormat={"DD-MM-YYYY"}
+                                                                               initialDate={ moment(scheduleInformation?.date_start, 'DD-MM-YYYY').format('DD-MM-YYYY') }
+                                                                               minDate={ moment(epochStartDate || calendarDates.minDate, 'DD-MM-YYYY') }
+                                                                               maxDate={ moment(epochEndDate || calendarDates.maxDate, 'DD-MM-YYYY') }
+                                                                               {...dateStartInput}
+                                                                               onChange={(evt, {value}) => {
+                                                                                   dateStartInput.onChange( value );
+                                                                                   dateEndInput.onChange( value );
+                                                                                   scheduleInformation.date_start = value;
+                                                                                   scheduleInformation.date_end = value;
+                                                                               }}
+                                                                    />
+                                                                    <DateInput placeholder={ t("Inserir data final") } label={ t("Data final") }
+                                                                               iconPosition="left" dateFormat={"DD-MM-YYYY"}
+                                                                               initialDate={ moment(scheduleInformation?.date_end, 'DD-MM-YYYY').format('DD-MM-YYYY') }
+                                                                               minDate={ moment(epochStartDate || calendarDates.minDate, 'DD-MM-YYYY') }
+                                                                               maxDate={ moment(epochEndDate || calendarDates.maxDate, 'DD-MM-YYYY') }
+                                                                               value={ moment(scheduleInformation?.date_end).format('DD-MM-YYYY') }
+                                                                               {...dateEndInput}
+                                                                               onChange={(evt, {value}) => {
+                                                                                   dateEndInput.onChange( value );
+                                                                                   scheduleInformation.date_end = value;
+                                                                               }}
+                                                                    />
+                                                                </Form.Group>
+                                                            )
+                                                        } else {
+                                                            return (
+                                                                <div>
+                                                                    { dateStartInput.value === dateEndInput.value ? dateStartInput.value : dateStartInput.value + ` ${t("até")} ` + dateEndInput.value }
+                                                                </div>
+                                                            )
+                                                        }
+                                                    }}
+                                                </Field>
+                                            )}
+                                        </Field>
                                     </div>
                                     <p className="margin-top-s">
                                         <Button color={ !changeData ? 'yellow' : undefined } icon labelPosition="left" onClick={() => setChangeData((old) => !old)}>
@@ -287,7 +298,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                             { !changeData ? t("Alterar data") : t("Cancelar edição") }
                                         </Button>
                                     </p>
-                                    { moment(scheduleInformation?.date_end).diff(moment(scheduleInformation?.date_start), "days") > 5  && (
+                                    { moment(scheduleInformation?.date_end, 'DD-MM-YYYY').diff(moment(scheduleInformation?.date_start, 'DD-MM-YYYY'), "d") > 5  && (
                                         <Message size='tiny' warning={true}>
                                             <div>{ t("Esta avaliação dura mais do que 5 dias")}.</div>
                                         </Message>

@@ -115,6 +115,10 @@ body {
     justify-content: flex-end;
 }
 
+.ui.dropdown .menu > .disabled.item > .description {
+    color: rgba(0,0,0,.65);
+}
+
 /* Cursos readonly */
 .ui.form .field.input-readonly.disabled,
 .ui.form .field.input-readonly.disabled > label,
