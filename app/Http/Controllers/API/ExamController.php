@@ -117,11 +117,12 @@ class ExamController extends Controller
             $exam->epoch_id        = $request->epoch_id;
             $exam->method_id       = $request->method_id;
 
-            $exam->room = $request->room;
-            $exam->date_start = $request->date_start;
-            $exam->date_end = $request->date_end;
-            $exam->hour = $request->hour;
-            $exam->in_class = $request->in_class;
+            $exam->room         = $request->room;
+            $exam->group_id     = $request->group_id;
+            $exam->date_start   = $request->date_start;
+            $exam->date_end     = $request->date_end;
+            $exam->hour         = $request->hour;
+            $exam->in_class     = $request->in_class;
             $exam->duration_minutes = $request->duration_minutes;
             $exam->observations_pt = $request->observations_pt;
             $exam->observations_en = $request->observations_en;

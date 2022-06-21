@@ -14,6 +14,7 @@ class Exam extends Model
         "epoch_id",
         "method_id",
         "room",
+        "group_id",
         "date_start",
         "date_end",
         "in_class",

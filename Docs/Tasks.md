@@ -1,5 +1,11 @@
 # TODO
 
+API
+- [ ] UC com algum metodo definido, mas nao todos
+  - [ ] quantos/quais faltam
+- [ ] resumo de metodos/UCs definidas/marcados
+
+
 **Metodos**
 - [X] Falta Acrescente métodos automáticos do projeto
     - [X] Projetos e trabalhos
@@ -267,3 +273,9 @@
 
 
 # !!! Não esquecer atualizar BD no servidor !!
+
+- exams group
+    ```
+    ALTER TABLE `calendar_v2`.`exams`
+    ADD COLUMN `group_id` BIGINT NULL DEFAULT NULL AFTER `method_id`;
+    ```

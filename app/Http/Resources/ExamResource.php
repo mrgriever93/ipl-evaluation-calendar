@@ -18,6 +18,7 @@ class ExamResource extends JsonResource
             'epoch_id'          => $this->epoch_id,
             'method_id'         => $this->method_id,
             'room'              => $this->room,
+            'group_id'          => $this->group_id,
             'date_start'        => $this->date_start,
             'date_end'          => $this->date_end,
             'in_class'          => $this->in_class,
