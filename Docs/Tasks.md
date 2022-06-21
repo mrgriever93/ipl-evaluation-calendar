@@ -1,29 +1,27 @@
 # TODO
 
-**Metodos**
-- [X] Falta Acrescente métodos automáticos do projeto
-    - [X] Projetos e trabalhos
-        - obrigatório data de lançamento dos enunciados
-
-
 **Detalhe calendário**
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
-- [1/3] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
-- [ ] Adicionar validações que faltam preencher UC's no calendário.
+- [2/3] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
 - [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
+  - [X] Campo na BD criado (group_id) > rever melhor mais tarde
 
 
 **Agrupamentos**
+- [ ] Ver lista (tem erro)
 - [ ] Traduções
 - [ ] Métodos
-- [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UC's dos seus cursos (ex: EI PL e D)
+- [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
 
 
 ### A Rever
 
 **Calendário e marcação de avaliações**
-  - [ ] Melhorar logs dos cursos, na alteração de métodos
+  - [ ] Melhorar logs dos cursos, na alteração de métodos 
 
+
+**Detalhe Calendário**
+- [ ] Publicar calendario (nao funciona?)
 
 **Todas as paginas**
 - [ ] Rever traduções
@@ -87,7 +85,7 @@
 
 ---
 ## 2022-05-16
-- [X] Nos cursos, UC's que não estão em tronco comum não aparecem (falta confirmar se foram carregadas na BD)
+- [X] Nos cursos, UCs que não estão em tronco comum não aparecem (falta confirmar se foram carregadas na BD)
 ---
 ## 2022-05-29
 - [X] Rever sync/refresh ano letivo
@@ -122,7 +120,7 @@
     - [X] Adicionar icone (check) nos métodos que já estão marcados
     - [X] Adicionar start e end date para avaliações (que se prolongam durante a semana, por exemplo)
     - [X] Retirar outras validações que limitem a plataforma
-- [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UC's dos seus cursos (ex: EI PL e D)
+- [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
 
 ---
 ## Reunião 2022-05-31
@@ -166,7 +164,7 @@
 
 **Notas Távora**
 - não testou.
-- [X] WebService já foi atualizado com Siglas das UC's e deve estar quase a ter também as UC's traduzidas
+- [X] WebService já foi atualizado com Siglas das UCs e deve estar quase a ter também as UCs traduzidas
 - [X] Não deve ser possível copiar da época periódica para as outras épocas (querem mesmo limitar pq agr qdo há as fichas das FUC tb têm de introduzir pelo menos duas épocas)
     - Feito mas esta "hardcoded"
 - [ ] Deve permitir desfasar os anos. Eventualmente com uma checkbox quando criamos um calendário
@@ -205,7 +203,7 @@
 - [X] Quando se marca dois métodos no mesmo dia está a substituir ?!
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - [X] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
-- [X] Adicionar validações que faltam preencher UC's no calendário.
+- [X] Adicionar validações que faltam preencher UCs no calendário.
 - [X] Adicionar aviso visual que falta marcar Uc's
 
 - [X] atualizar campos da escola no detalhe
