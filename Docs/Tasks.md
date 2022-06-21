@@ -1,34 +1,17 @@
 # TODO
 
-API
-- [ ] UC com algum metodo definido, mas nao todos
-  - [ ] quantos/quais faltam
-- [ ] resumo de metodos/UCs definidas/marcados
-
-
 **Metodos**
 - [X] Falta Acrescente métodos automáticos do projeto
     - [X] Projetos e trabalhos
         - obrigatório data de lançamento dos enunciados
 
-**Criação do calendário**
-- [X] Dia seguinte na validação das datas na criação do calendário
-- [X] Voltar a colocar inputs de start e end date em vez dos Range Picker
-- [ ] Otimizar load de permissões
 
 **Detalhe calendário**
-- [X] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
-- [ ] Quando se marca dois métodos no mesmo dia está a substituir ?!
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - [1/3] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
 - [ ] Adicionar validações que faltam preencher UC's no calendário.
 - [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
-- [X] Adicionar aviso visual que falta marcar Uc's
-  - [ ] Fica a faltar o backend e o caso de sucesso em que está tudo preenchido
-- [X] Ao alterar uma data de uma avaliação, obriga a fazer refresh. Falta atualizar os dados no calendário (já sabíamos)
-- [X] Quando alteramos alguma coisa, e gravamos, ele não altera no calendário (exemplo datas)
-- [X] Melhorar diferença visual das épocas
-- [X] Otimizar load de permissões
+
 
 **Agrupamentos**
 - [ ] Traduções
@@ -49,6 +32,17 @@ API
 **Ano Letivo**
   - [ ] Atualizar os loadings automaticamente 
     - **_talvez trabalho futuro?_** Usar Redis e WebSockets
+
+## Issues
+**Role: "Administracao"**
+
+- [ ] detalhe de exame fica com espaco vazio
+- [ ] listagem de calendarios fica com campos a menos
+
+**Lista de calendarios**
+- [ ] Meus calendarios/todos -> tem de se atualizar o filtro para ter as permissoes
+  - [ ] Botao com role mais especifica? (sendo a direcao ou gop) ou grupo com flag? (tipo user generico)
+
 
 ### TODO Miguel
 - [ ] Limpeza "Requests Folder"
@@ -208,10 +202,10 @@ API
 **Detalhe calendário**
 - [X] Adicionar “voltar” no detalhe na calendario
 - [X] Adicionar flag para fases de calendários que precisam de ter os métodos todos marcados.
-- [ ] Quando se marca dois métodos no mesmo dia está a substituir ?!
+- [X] Quando se marca dois métodos no mesmo dia está a substituir ?!
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
-- [ ] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
-- [ ] Adicionar validações que faltam preencher UC's no calendário.
+- [X] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
+- [X] Adicionar validações que faltam preencher UC's no calendário.
 - [X] Adicionar aviso visual que falta marcar Uc's
 
 - [X] atualizar campos da escola no detalhe
@@ -268,7 +262,7 @@ API
 - UC de projeto não vem no WebService. É suposto? Não é uma UC que tem de vir no calendário?
   - Deve ser possível configurar todas as épocas no caso de uma UC de projeto?
 
-
+- O calendario e temporario a partir de que altura/fase?
 
 
 
@@ -278,4 +272,9 @@ API
     ```
     ALTER TABLE `calendar_v2`.`exams`
     ADD COLUMN `group_id` BIGINT NULL DEFAULT NULL AFTER `method_id`;
+    ```
+- update CalendarPhase flag
+    ```
+    ALTER TABLE `calendar_v2`.`calendar_phases` 
+    ADD COLUMN `all_methods_filled` TINYINT(1) NULL DEFAULT '0' AFTER `name_en`;
     ```

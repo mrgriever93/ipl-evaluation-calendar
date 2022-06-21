@@ -82,6 +82,7 @@ Route::middleware('auth:api')->group(function () {
         Route::patch('/calendar/{calendar}',                'update'           );
         Route::delete('/calendar/{calendar}',               'destroy'          );
 
+        Route::get('/calendar/{calendar}/warnings',         'getCalendarWarnings');
         /* Previous Methods */
         Route::get('/available-methods/{calendar}',         'getAvailableMethods'  );
         Route::get('/semesters',                            'listSemesters'        );

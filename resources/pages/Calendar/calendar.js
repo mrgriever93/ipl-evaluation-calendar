@@ -57,6 +57,8 @@ const Calendar = () => {
     const [openInterruptionModal, setOpenInterruptionModal] = useState(false);
     const [interruptionModalInfo, setInterruptionModalInfo] = useState({});
 
+    const [calendarWarnings, setCalendarWarnings] = useState([]);
+
 
     useEffect(() => {
         // check if URL params are just numbers or else redirects to previous page
@@ -132,6 +134,7 @@ const Calendar = () => {
     const closeScheduleExamModal = () => {
         setOpenScheduleExamModal(false);
         setScheduleExamInfo({});
+        getWarnings();
     };
 
     const addExamToList = (exam) => {
@@ -394,7 +397,16 @@ const Calendar = () => {
 
     useEffect(() => {
         loadCalendar(calendarId);
+        getWarnings();
     }, [calendarId]);
+
+    const getWarnings = () => {
+        axios.get(`/calendar/${calendarId}/warnings`).then((response) => {
+            if (response.status === 200) {
+                setCalendarWarnings(response.data.data);
+            }
+        });
+    }
 
     function range(start, end) {
         return Array(end - start + 1).fill().map((_, idx) => start + idx);
@@ -583,7 +595,7 @@ const Calendar = () => {
             <div className="margin-bottom-s">
                 <Link to="/"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
-            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase}/>
+            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings}/>
             <AnimatePresence>
                 {isLoading && (<PageLoader animate={pageLoaderAnimate} exit={pageLoaderExit}/>)}
             </AnimatePresence>

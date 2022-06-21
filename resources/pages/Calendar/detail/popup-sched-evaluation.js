@@ -262,8 +262,9 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                                                onChange={(evt, {value}) => {
                                                                                    dateStartInput.onChange( value );
                                                                                    dateEndInput.onChange( value );
-                                                                                   scheduleInformation.date_start = value;
-                                                                                   scheduleInformation.date_end = value;
+                                                                                   // save this dates to validate number of days for message
+                                                                                   scheduleInformation.date_start = moment(value, 'DD-MM-YYYY').format("YYYY-MM-DD");
+                                                                                   scheduleInformation.date_end = moment(value, 'DD-MM-YYYY').format("YYYY-MM-DD");
                                                                                }}
                                                                     />
                                                                     <DateInput placeholder={ t("Inserir data final") } label={ t("Data final") }
@@ -275,7 +276,8 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                                                {...dateEndInput}
                                                                                onChange={(evt, {value}) => {
                                                                                    dateEndInput.onChange( value );
-                                                                                   scheduleInformation.date_end = value;
+                                                                                   // save this dates to validate number of days for message
+                                                                                   scheduleInformation.date_end = moment(value, 'DD-MM-YYYY').format("YYYY-MM-DD");
                                                                                }}
                                                                     />
                                                                 </Form.Group>
@@ -298,7 +300,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                             { !changeData ? t("Alterar data") : t("Cancelar edição") }
                                         </Button>
                                     </p>
-                                    { moment(scheduleInformation?.date_end, 'DD-MM-YYYY').diff(moment(scheduleInformation?.date_start, 'DD-MM-YYYY'), "d") > 5  && (
+                                    { moment(scheduleInformation?.date_end, "YYYY-MM-DD").diff(moment(scheduleInformation?.date_start, "YYYY-MM-DD"), "d") > 5  && (
                                         <Message size='tiny' warning={true}>
                                             <div>{ t("Esta avaliação dura mais do que 5 dias")}.</div>
                                         </Message>
@@ -316,7 +318,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                         options={epochsList.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name }))}
                                                         value={selectedEpoch || -1}
                                                         selection search
-                                                        label={ t("Época")}
+                                                        label={ t("Época") }
                                                         onChange={(e, {value}) => epochDropdownOnChange(e, value)}
                                                     />
                                                 )}
@@ -325,7 +327,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                 {({input: courseUnitInput}) => (
                                                     <Form.Dropdown
                                                         options={courseUnits}
-                                                        label={ t("Unidade Curricular")}
+                                                        label={ t("Unidade Curricular") }
                                                         {...courseUnitInput}
                                                         selection search
                                                         disabled={!courseUnits?.length}

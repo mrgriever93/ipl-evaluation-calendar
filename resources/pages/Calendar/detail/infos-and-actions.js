@@ -13,10 +13,11 @@ import SCOPES from '../../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
 import PopupSubmitCalendar from './popup-submit';
+import PopupRevisionDetail from "./popup-revision";
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const InfosAndActions = ( {epochs, calendarInfo}) => {
+const InfosAndActions = ( {epochs, calendarInfo, warnings}) => {
     // const history = useNavigate();
     const { t } = useTranslation();
     // get URL params
@@ -31,12 +32,28 @@ const InfosAndActions = ( {epochs, calendarInfo}) => {
     // const [isLoading, setIsLoading] = useState(true);
     // const [examList, setExamList] = useState([]);
     // const [publishLoading, setPublishLoading] = useState(false);
+    const [openRevisionModal, setOpenRevisionModal] = useState(false);
 
     const [isTemporary, setIsTemporary] = useState(true);
     const [isPublished, setIsPublished] = useState(false);
     const [calendarPhase, setCalendarPhase] = useState(true);
     // const [updatingCalendarPhase, setUpdatingCalendarPhase] = useState(false);
     // const [previousFromDefinitive, setPreviousFromDefinitive] = useState(false);
+
+    const [methodsMissingCount, setMethodsMissingCount] = useState(0);
+    const [methodsIncompleteCount, setMethodsIncompleteCount] = useState(0);
+
+    useEffect(() => {
+        const missing = warnings.filter((item) => !item.has_methods);
+        setMethodsMissingCount(missing.length);
+
+        let countIncomplete = 0;
+        const incomplete = warnings.filter((item) => item.has_methods && !item.is_complete);
+        incomplete.map((item) => {
+            countIncomplete = countIncomplete + item.methods.filter((method) => !method.is_done).length;
+        });
+        setMethodsIncompleteCount(countIncomplete);
+    }, [warnings]);
 
     // const patchCalendar = (fieldToUpdate, value) => axios.patch(`/calendar/${calendarId}`, {
     //     [fieldToUpdate]: value,
@@ -105,6 +122,15 @@ const InfosAndActions = ( {epochs, calendarInfo}) => {
     //         }
     //     });
     // };
+
+    const openRevisionModalHandler = () => {
+        // setViewExamId(exam.id);
+        setOpenRevisionModal(true);
+    }
+    const closeRevisionModalHandler = () => {
+        // setViewExamId(exam.id);
+        setOpenRevisionModal(false);
+    }
 
     const openSubmitModalHandler = () => {
         // setViewExamId(exam.id);
@@ -267,17 +293,37 @@ const InfosAndActions = ( {epochs, calendarInfo}) => {
                                         </span>
                                     </div>
                                 </GridColumn>
-                                <GridColumn>
-                                    <div>
-                                        <span>
-                                            <Header as="h5"><Icon name="warning sign" color="yellow" style={{fontSize: '1em', lineHeight: '0.8'}} />Revisão:</Header>
+                                <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS, SCOPES.ADD_EXAMS]}>
+                                    <GridColumn>
+                                        { (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? (
+                                        <div>
+                                            <Header as="h5">
+                                                <Icon name="warning sign" color="yellow" style={{fontSize: '1em', lineHeight: '0.8'}} />
+                                                { t("Revisão") }:
+                                            </Header>
                                             <ul>
-                                                <li>Existem 5 elementos de avaliação por submeter.</li>
-                                                <li>Existem 5 UCs com <a href={ "/unidade-curricular?curso="+calendarInfo?.course?.id} target="_blank">métodos <Icon name="external alternate" /></a> por preencher.</li>
+                                                <li>Existem {methodsIncompleteCount} elementos de avaliação por submeter.</li>
+                                                <li>Existem {methodsMissingCount} UCs com <a href={ "/unidade-curricular?curso="+calendarInfo?.course?.id} target="_blank">métodos <Icon name="external alternate" /></a> por preencher.</li>
                                             </ul>
-                                        </span>
-                                    </div>
-                                </GridColumn>
+                                        </div>
+                                        ) : (
+                                            <div>
+                                                <Header as="h5">
+                                                    { t("Revisão") }:
+                                                </Header>
+                                                <div className={"text-center"}>
+                                                    <div><Icon size={"big"} name={"check circle outline"} color={"green"}/></div>
+                                                    <div className={"margin-y-s"}>
+                                                        <Header as={"h4"} className={"display-inline"}>{ t("Todas as avaliações marcadas!") }</Header>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) }
+                                        <div className={"text-center"}>
+                                            <a href="#" onClick={openRevisionModalHandler} >ver detalhe</a>
+                                        </div>
+                                    </GridColumn>
+                                </ShowComponentIfAuthorized>
                             </Grid>
                         </Card.Content>
                     </Card>
@@ -288,6 +334,9 @@ const InfosAndActions = ( {epochs, calendarInfo}) => {
                 <PopupSubmitCalendar isOpen={openSubmitModal} onClose={closeSubmitModalHandler} calendarId={calendarId} currentPhaseId={calendarInfo?.phase?.id} updatePhase={updatePhaseHandler}/>
             </ShowComponentIfAuthorized>
 
+            <ShowComponentIfAuthorized permission={[SCOPES.ADD_EXAMS, SCOPES.EDIT_EXAMS, SCOPES.REMOVE_EXAMS, SCOPES.EDIT_COURSE_UNITS]}>
+                <PopupRevisionDetail isOpen={openRevisionModal} onClose={closeRevisionModalHandler} warnings={warnings}/>
+            </ShowComponentIfAuthorized>
         </>
     );
 };

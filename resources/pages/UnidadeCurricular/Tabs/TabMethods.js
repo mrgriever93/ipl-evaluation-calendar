@@ -329,10 +329,12 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                                                 copy[index].methods[methodIndex].description_pt = "";
                                                                 copy[index].methods[methodIndex].description_en = "";
                                                                 copy[index].methods[methodIndex].name = "";
+                                                                copy[index].methods[methodIndex].code = "";
                                                             } else {
                                                                 copy[index].methods[methodIndex].description_pt = evaluationTypes.filter((x) => x.id === value)[0].name_pt + " " + nextExamIndex;
                                                                 copy[index].methods[methodIndex].description_en = evaluationTypes.filter((x) => x.id === value)[0].name_en + " " + nextExamIndex;
                                                                 copy[index].methods[methodIndex].name = evaluationTypes.filter((x) => x.id === value)[0].name_pt;
+                                                                copy[index].methods[methodIndex].code = evaluationTypes.filter((x) => x.id === value)[0].code;
                                                             }
                                                             // hardcode: add statement release and oral presentation métodos for projects and reports on profs request
                                                             if(copy[index].methods[methodIndex].code.toLowerCase() === "project" || copy[index].methods[methodIndex].code.toLowerCase() === "report") {
