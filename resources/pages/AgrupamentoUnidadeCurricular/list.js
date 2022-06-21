@@ -166,7 +166,7 @@ const List = () => {
                                             </Link>
                                         </ShowComponentIfAuthorized>
                                         <ShowComponentIfAuthorized permission={[SCOPES.DELETE_COURSE_UNITS]}>
-                                            <Button onClick={() => remove({id}) } color="red" icon loading={removingCourseUnitGroup === id}>
+                                            <Button onClick={() => remove(id) } color="red" icon loading={removingCourseUnitGroup === id}>
                                                 <Icon name="trash"/>
                                             </Button>
                                         </ShowComponentIfAuthorized>

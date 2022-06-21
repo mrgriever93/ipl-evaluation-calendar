@@ -115,6 +115,10 @@ body {
     justify-content: flex-end;
 }
 
+.ui.dropdown .menu > .disabled.item > .description {
+    color: rgba(0,0,0,.65);
+}
+
 /* Cursos readonly */
 .ui.form .field.input-readonly.disabled,
 .ui.form .field.input-readonly.disabled > label,
@@ -138,6 +142,9 @@ body {
     pointer-events: none;
 }
 
+.text-center {
+    text-align: center;
+}
 /*
  * Margin values
  */
@@ -270,6 +277,10 @@ body {
 .padding-left-l    { padding-left: var(--space-l);    }
 .padding-left-xl   { padding-left: var(--space-xl);   }
 .padding-left-xxl  { padding-left: var(--space-xxl);  }
+
+.text-bold{
+    font-weight: bold;
+}
 
 /* Custom Component > Section */
 .section {
@@ -601,7 +612,6 @@ div.inline{
  /*
   * Space Invaders
   */
-.center{text-align:center}
 #space-invaders {
     width: 100%;
     margin: 0 auto;

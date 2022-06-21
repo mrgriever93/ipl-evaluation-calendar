@@ -49,26 +49,27 @@ class CourseUnitGroupController extends Controller
             $newCourseUnitGroup = new CourseUnitGroup();
             $newCourseUnitGroup->description_pt = $request->get('description_pt');
             $newCourseUnitGroup->description_en = $request->get('description_en');
+            $newCourseUnitGroup->academic_year_id = $request->cookie('academic_year');
             $newCourseUnitGroup->save();
 
-            foreach ($request->get('course_units') as $courseUnit) {
-                $courseUnitEntity = CourseUnit::find($courseUnit);
+            //foreach ($request->get('course_units') as $courseUnit) {
+            //    $courseUnitEntity = CourseUnit::find($courseUnit);
 
-                $courseUnitEntity->methods()->syncWithoutDetaching($existingMethods);
+            //    $courseUnitEntity->methods()->syncWithoutDetaching($existingMethods);
 
-                foreach ($courseUnitEntity->methods as $method) {
-                    $existingEpochToCopy = $method->epochs()->first();
-                    $existingEpochToSync =
-                        Epoch::where('epoch_type_id', $existingEpochToCopy->epoch_type_id)
-                        ->whereIn('calendar_id', Calendar::where('course_id', $courseUnitEntity->course_id)->get()->pluck('id'))
-                        ->get();
-                    if (!is_null($existingEpochToSync)) {
-                        $method->epochs()->syncWithoutDetaching($existingEpochToSync->pluck('id'));
-                    }
+            //    foreach ($courseUnitEntity->methods as $method) {
+            //        $existingEpochToCopy = $method->epochs()->first();
+            //        $existingEpochToSync =
+            //            Epoch::where('epoch_type_id', $existingEpochToCopy->epoch_type_id)
+            //            ->whereIn('calendar_id', Calendar::where('course_id', $courseUnitEntity->course_id)->get()->pluck('id'))
+            //            ->get();
+            //        if (!is_null($existingEpochToSync)) {
+            //            $method->epochs()->syncWithoutDetaching($existingEpochToSync->pluck('id'));
+            //        }
 
-                }
+            //    }
 
-            }
+            //}
 
             CourseUnit::where('course_unit_group_id', null)->whereIn('id', $request->get('course_units'))->update(['course_unit_group_id' => $newCourseUnitGroup->id]);
 

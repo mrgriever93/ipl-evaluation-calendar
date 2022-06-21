@@ -15,7 +15,7 @@ class SchoolController extends Controller
         return SchoolResource::collection(School::all());
     }
 
-    public function list()
+    public function listDropdown()
     {
         return SchoolListResource::collection(School::all());
     }

@@ -150,7 +150,7 @@
         "Descrição EN": "Descrição EN",
 
         "Por Página": "Por Página",
-        "Grau de ensino": "Graus de ensino",
+        "Tipo de curso": "Tipo de curso",
         "Todas as Escolas": "Todas as Escolas",
         "Grupo de Utilizador": "Grupo de Utilizador",
 
@@ -194,6 +194,8 @@
         "Métodos": "Métodos",
         "Remover Unidade Curricular": "Remover Unidade Curricular",
         "Tem a certeza que deseja remover a Unidade Curricular": "Tem a certeza que deseja remover a Unidade Curricular",
+        "Época de origem": "Época de origem",
+        "Época de destino": "Época de destino",
 
         "Utilizador atualizado com sucesso": "Utilizador atualizado com sucesso",
         "Editar Utilizador": "Editar Utilizador",
@@ -210,7 +212,6 @@
 
         "Unidade de Ensino": "Unidade de Ensino",
         "Sigla": "Sigla",
-        "Grau de Ensino": "Grau de Ensino",
         "Numero de Anos": "Numero de Anos",
         "Atenção!": "Atenção!",
         "Ao eliminar o curso, todos os calendários, avaliações e métodos serão também eliminados.": "Ao eliminar o curso, todos os calendários, avaliações e métodos serão também eliminados.",
@@ -316,6 +317,8 @@
         "Peso da avaliação": "Peso da avaliação",
         "Total pesos avaliacao:": "Total pesos avaliacao:",
         "Adicionar novo método": "Adicionar novo método",
+        "Falta adicionar os métodos desta unidade curricular": "Falta adicionar os métodos desta unidade curricular",
+        "Falta selecionar o responsável da unidade curricular": "Falta selecionar o responsável da unidade curricular",
 
         "Ínicio": "Ínicio",
         "Fim": "Fim",

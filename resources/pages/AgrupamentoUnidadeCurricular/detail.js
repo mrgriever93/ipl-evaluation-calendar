@@ -141,15 +141,17 @@ const New = () => {
                                 {isEditMode ? 'Guardar' : 'Criar'}
                             </Button>
                         </Card.Content>
-                        <Card.Content>
-                            <ShowComponentIfAuthorized permission={[SCOPES.MANAGE_EVALUATION_METHODS]}>
-                                <Link to={`/agrupamento-unidade-curricular/${course_units[0]?.id}/metodos`}>
-                                    <Button color="olive" icon labelPosition="left">
-                                        <Icon name="file alternate"/> Métodos
-                                    </Button>
-                                </Link>
-                            </ShowComponentIfAuthorized>
-                        </Card.Content>
+                        { isEditMode && (
+                            <Card.Content>
+                                <ShowComponentIfAuthorized permission={[SCOPES.MANAGE_EVALUATION_METHODS]}>
+                                    <Link to={`/agrupamento-unidade-curricular/${courseUnitGroupDetail.id}/metodos`}>
+                                        <Button color="olive" icon labelPosition="left">
+                                            <Icon name="file alternate"/> Métodos
+                                        </Button>
+                                    </Link>
+                                </ShowComponentIfAuthorized>
+                            </Card.Content>
+                        )}
                     </Card>
                 </Form>
             )} />

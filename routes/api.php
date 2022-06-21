@@ -82,6 +82,7 @@ Route::middleware('auth:api')->group(function () {
         Route::patch('/calendar/{calendar}',                'update'           );
         Route::delete('/calendar/{calendar}',               'destroy'          );
 
+        Route::get('/calendar/{calendar}/warnings',         'getCalendarWarnings');
         /* Previous Methods */
         Route::get('/available-methods/{calendar}',         'getAvailableMethods'  );
         Route::get('/semesters',                            'listSemesters'        );
@@ -167,7 +168,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::controller(SchoolController::class)->group(function () {
         Route::get('/schools',                  'index' );
-        Route::get('/schools-list',             'list' );
+        Route::get('/schools-list',             'listDropdown' );
         Route::post('/schools',                 'store' );
         Route::get('/schools/{school}',         'show'  );
         Route::patch('/schools/{school}',       'update');

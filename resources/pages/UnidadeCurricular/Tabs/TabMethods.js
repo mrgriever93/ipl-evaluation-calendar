@@ -1,18 +1,6 @@
 import React, {useEffect, useState, createRef} from 'react';
 import {Field, Form as FinalForm} from 'react-final-form';
-import {
-    Button,
-    Form,
-    Header,
-    Icon,
-    Label,
-    Message,
-    Grid,
-    GridColumn,
-    Modal,
-    Sticky,
-    Table
-} from 'semantic-ui-react';
+import { Button, Form, Header, Icon, Label, Message, Grid, GridColumn, Modal, Sticky, Table } from 'semantic-ui-react';
 import axios from "axios";
 import {toast} from "react-toastify";
 import {errorConfig, successConfig} from "../../../utils/toastConfig";
@@ -189,9 +177,11 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
             if (!copy[index].methods?.length) {
                 copy[index].methods = [];
             }
+            let newWeight = 100 - copy[index].methods.reduce((a, b) => a + (b?.weight || 0), 0,);
+            newWeight = (newWeight >= 0 ? newWeight : 0);
             copy[index].methods.push({
                 epoch_type_id: epoch_id,
-                weight: 100 - copy[index].methods.reduce((a, b) => a + (b?.weight || 0), 0,),
+                weight: newWeight,
                 minimum: 9.5,
                 evaluation_type_id: undefined,
                 description_pt: '',
@@ -246,8 +236,15 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
         setSelectedEpochFrom(value);
     };
 
-    const epochToDropdownOnChange = (event, value) => {
-        setSelectedEpochTo(value);
+    const epochToDropdownOnChange = (epochId, isChecked) => {
+        setSelectedEpochTo((current) => {
+            const copy = [...current];
+            if(isChecked){
+                copy.push(epochId);
+                return copy;
+            }
+            return copy.filter((item) => item !== epochId);
+        });
     };
 
     const closeModal = () => {
@@ -312,7 +309,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                 </Table.Header>
                                 <Table.Body>
                                     {item.methods?.map((method, methodIndex) => (
-                                        <Table.Row key={methodIndex}>
+                                        <Table.Row key={methodIndex} error={!epochs[index].methods[methodIndex].evaluation_type_id}>
                                             <Table.Cell width={3}>
                                                 <Form.Dropdown placeholder={t("Selecionar Tipo de avaliação")} fluid value={method.evaluation_type_id} selection search
                                                     options={evaluationTypes.map(({id, name, enabled}) => (enabled ? ({
@@ -322,19 +319,57 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                                     }) : undefined))}
                                                     onChange={
                                                         (ev, {value}) => setEpochs((current) => {
+                                                            console.log("te");
                                                             const copy = [...current];
+                                                            // set number for descricion. Needs to be before the next line because its
+                                                            // when we set the current adding of the item
+                                                            const nextExamIndex = copy[index].methods.filter((item) => item.evaluation_type_id === value).length + 1;
                                                             copy[index].methods[methodIndex].evaluation_type_id = value;
                                                             if(value == "" || !value) {
                                                                 copy[index].methods[methodIndex].description_pt = "";
                                                                 copy[index].methods[methodIndex].description_en = "";
+                                                                copy[index].methods[methodIndex].name = "";
+                                                                copy[index].methods[methodIndex].code = "";
                                                             } else {
-                                                                copy[index].methods[methodIndex].description_pt = evaluationTypes.filter((x) => x.id === value)[0].name_pt+" "+(methodIndex+1);
-                                                                copy[index].methods[methodIndex].description_en = evaluationTypes.filter((x) => x.id === value)[0].name_en+" "+(methodIndex+1);
+                                                                copy[index].methods[methodIndex].description_pt = evaluationTypes.filter((x) => x.id === value)[0].name_pt + " " + nextExamIndex;
+                                                                copy[index].methods[methodIndex].description_en = evaluationTypes.filter((x) => x.id === value)[0].name_en + " " + nextExamIndex;
+                                                                copy[index].methods[methodIndex].name = evaluationTypes.filter((x) => x.id === value)[0].name_pt;
+                                                                copy[index].methods[methodIndex].code = evaluationTypes.filter((x) => x.id === value)[0].code;
+                                                            }
+                                                            // hardcode: add statement release and oral presentation métodos for projects and reports on profs request
+                                                            if(copy[index].methods[methodIndex].code.toLowerCase() === "project" || copy[index].methods[methodIndex].code.toLowerCase() === "report") {
+                                                                const hasOralPresentation = copy[index].methods.filter((item) => item.evaluation_type_id === 5).length > 0;
+                                                                if (!hasOralPresentation) {
+                                                                    copy[index].methods.push({
+                                                                        weight: 0,
+                                                                        minimum: 9.5,
+                                                                        evaluation_type_id: 11,
+                                                                        name: "Lançamento do enunciado",
+                                                                        description: "",
+                                                                        description_en: "Statement release",
+                                                                        description_pt: "Lançamento do enunciado"
+                                                                    });
+                                                                    copy[index].methods.push({
+                                                                        weight: 0,
+                                                                        minimum: 9.5,
+                                                                        evaluation_type_id: 5,
+                                                                        name: "Apresentação oral pública",
+                                                                        description: "",
+                                                                        description_en: "Public oral presentation",
+                                                                        description_pt: "Apresentação oral pública"
+                                                                    });
+                                                                }
                                                             }
                                                             return copy;
                                                         })
                                                     }
                                                 />
+                                                {!epochs[index].methods[methodIndex].evaluation_type_id && (
+                                                    <div>
+                                                        <Icon color='orange' name="warning sign" />
+                                                        { t("Falta selecionar o tipo de avaliacao") }
+                                                    </div>
+                                                )}
                                             </Table.Cell>
                                             <Table.Cell width={3}>
                                                 <Form.Input placeholder={t("Descrição PT")} fluid value={method.description_pt}
@@ -400,23 +435,25 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                         <Field name="epoch">
                                             {({input: epochFromInput}) => (
                                                 <Form.Dropdown
-                                                    options={epochs.filter((item) => item.id != 1).map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name, disabled: selectedEpochTo.includes(epoch.id) || epoch.methods.length === 0 }))}
-                                                    value={selectedEpochFrom || -1} placeholder={t("Época a copiar")} selectOnBlur={false} selection search label={ t("De") }
+                                                    options={epochs.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name, disabled: selectedEpochTo.includes(epoch.id) || epoch.methods.length === 0 }))}
+                                                    value={selectedEpochFrom || -1} placeholder={t("Época a copiar")} selectOnBlur={false} selection search label={ t("Época de origem") }
                                                     onChange={(e, {value}) => epochFromDropdownOnChange(e, value)}
                                                 />
                                             )}
                                         </Field>
                                     </GridColumn>
                                     <GridColumn>
-                                        <Field name="epoch">
-                                            {({input: epochToInput}) => (
-                                                <Form.Dropdown
-                                                    options={epochs.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name, disabled: epoch.id === selectedEpochFrom}))}
-                                                    value={selectedEpochTo || []} selectOnBlur={false} placeholder={t("Épocas a receber")} multiple selection search label={ t("Para") }
-                                                    onChange={(e, {value}) => epochToDropdownOnChange(e, value)}
-                                                />
-                                            )}
-                                        </Field>
+                                        <label className={"display-block text-bold margin-bottom-s"}>{ t("Época de destino") }</label>
+                                        { epochs.filter((epoch) => epoch.id != selectedEpochFrom).map((epoch, index) => (
+                                            <Field name="epoch" key={index}>
+                                                {({input: epochToInput}) => (
+                                                    <Form.Checkbox checked={selectedEpochTo.includes(epoch.id)} label={ epoch.name } disabled={selectedEpochFrom == -1}
+                                                                   onChange={(e, {checked}) => epochToDropdownOnChange(epoch.id, checked)}
+                                                    />
+                                                )}
+                                            </Field>
+                                        )
+                                        )}
                                     </GridColumn>
                                 </Grid>
                             </Form>

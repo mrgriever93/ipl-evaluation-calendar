@@ -18,6 +18,7 @@ use App\Http\Resources\CalendarResource;
 use App\Http\Resources\Generic\Calendar_SemesterResource;
 use App\Http\Resources\Generic\EpochTypesResource;
 use App\Http\Resources\Generic\SemestersSearchResource;
+use App\Http\Resources\WarningCalendarResource;
 use App\Models\AcademicYear;
 use App\Models\Calendar;
 use App\Models\CalendarPhase;
@@ -291,6 +292,80 @@ class CalendarController extends Controller
             }
         } while ($yearOfFirstDay++ < $yearOfLastDay);
         return response()->json($holidays, Response::HTTP_OK);
+    }
+
+    public function getCalendarWarnings(Request $request, Calendar $calendar) {
+
+        $epoch_types = Epoch::where("calendar_id", $calendar->id)->pluck("epoch_type_id")->toArray();
+        //dd($epoch_types);
+        $availableMethods = CourseUnit::where('semester_id', $calendar->semester_id)
+                                      ->where('course_id', $calendar->course_id);
+
+        //return AvailableCourseUnitsResource::collection($availableMethods);
+        $includedCUs = [];
+        if (Auth::user()->groups()->isTeacher()->exists()
+            && (
+                Auth::user()->groups()->coordinator()->exists() && Auth::user()->groups()->board()->exists()
+                && Auth::user()->groups()->superAdmin()->exists() && Auth::user()->groups()->admin()->exists()
+                && Auth::user()->groups()->pedagogic()->exists() && Auth::user()->groups()->responsiblePedagogic()->exists()
+                && Auth::user()->groups()->gop()->exists()
+            )
+        ) {
+            // where Teachers have those CUs [CourseUnit.id in (....)]
+            $includedCUs = Auth::user()->courseUnits->pluck('id');
+        }
+
+        if (Auth::user()->groups()->responsible()->exists()) {
+            // include CUs that the user is responsible for
+            array_push($includedCUs, CourseUnit::where('responsible_user_id', Auth::user()->id)->get()->pluck('id'));
+        }
+        if(!empty($includedCUs)) {
+            $availableMethods->whereIn('course_units.id', $includedCUs);
+        }
+
+        $eachCourseUnit = $availableMethods->distinct()->get();
+        $response = collect();
+
+        foreach ($eachCourseUnit as $courseUnit) {
+            $response->push($courseUnit);
+        }
+
+        //$availableMethods = $availableMethods->join("evaluation_types", function($join){
+        //    $join->on("evaluation_types.id", "methods.evaluation_type_id");
+        //});
+
+        foreach($response->toArray() as $key => $courseUnit) {
+            $isComplete = true;
+            $epochMethods = [];
+            foreach($epoch_types as $epoch) {
+                $method = Method::whereHas('epochType', function (Builder $query) use ($epoch) {
+                    $query->where('epoch_type_id', $epoch);
+                })->whereRelation('courseUnits', 'course_unit_id', $courseUnit['id'])
+                    ->with('evaluationType')
+                    ->with('epochType')
+                    ->get()->toArray();
+
+                if(!empty($method)){
+                    $epochMethods = array_merge($epochMethods, $method);
+                }
+                $is_complete = Method::whereHas('epochType', function (Builder $query) use ($epoch) {
+                    $query->where('epoch_type_id', $epoch);
+                })->whereRelation('courseUnits', 'course_unit_id', $courseUnit['id'])
+                    ->doesntHave('exams')
+                    ->exists();
+                // if any epoch is not complete, it will stay false
+                if($is_complete){
+                    $isComplete = false;
+                }
+            }
+            $response[$key]->methods = collect($epochMethods);
+            if( $response[$key]->id == 570 ){
+                //dd($response[$key]->methods);
+            }
+            $response[$key]->is_complete = $isComplete;
+        }
+
+        return WarningCalendarResource::collection($response);
     }
 
 }

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('name_en');
             $table->boolean('enabled')->default(true);
             $table->boolean('removable')->default(true);
+            $table->boolean('all_methods_filled')->default(false);
 
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();

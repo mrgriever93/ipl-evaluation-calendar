@@ -1,4 +1,43 @@
 # Changelog
+
+## Versão 0.8 - ****************************** 21/06/2022 ?
+Novas features: 
+- Adicionar possibilidade de gestão dos novos campos do webservice no detalhe da escola
+- Adicionar forma de automaticamente incluir o lançamento de enunciados e apresentação oral, se for selecionado projeto como método de avaliação
+- Adicionar link para voltar para a lista de calendários quando estamos no detalhe ou criação de calendário
+- Adicionar aviso visual para ser fácil identificar que faltam marcar avaliações para algumas UCs
+  - Criação de novo endpoint na API para mostrar o estado das avaliações marcadas e das UCs
+  - Adicionado Popup para listar quando métodos estão em falta de cada UC e qual o estado de cada elemento de avaliação.
+- Criação de forma de ver quando existem épocas em datas sobrepostas
+  - Revisão visual do calendário
+  - Revisão do popup de marcação de avaliações para receber a epoca selecionada por defeito quando é escolhido através do calendário
+  - Revisão de issue em relação às interrupções, em que criava duas vezes a mesma interrupção por ter mais do que uma época na mesma data
+- Adicionada uma flag na BD, nas fases de calendário, para poder dinamicamente escolher quais as fases que têm de ter todos os elementos de avaliação de todas as UCs marcados antes de poderem ser selecionadas/ativadas
+
+
+Issues corrigidos: 
+- Correções de algumas labels / textos a pedido dos professores
+- Correção da descrição dos métodos que não estava a ser enviada para a dropdown de selecção do elemento de avaliação
+- Atualização para incluir texto de forma a mostrar quando uma avaliação é realizada em Aula
+- Voltar a colocar Data de Início e de Fim em inputs separados, em vez do RangePicker para ser mais intuitivo para os utilizadores
+- Rever validações das datas na criação do calendário, de forma a melhor a interação dos date pickers entre si
+- Criação de método para atualizar o calendário novamente quando uma UC é atualizada
+- Correções e otimizações do load das permissões no calendário para melhor performance
+
+
+
+## Versão 0.7 - 14/06/2022
+Novas features: 
+- Criada nova API para expor os dados das avaliações marcadas na plataforma para outras aplicações consumirem (apenas para calendários publicados)
+- Update da sincronização do webservice - agora traz a informação completa (em PT e EN) dos cursos e UCs
+- Adicionar aviso visual caso uma avaliação esteja a ser marcada para mais de 1 semana
+
+Issues corrigidos: 
+- Fix do issue visual componente sticky na tabs dos métodos
+- Remoção da possibilidade de duplicar a época periódica (a pedido dos professores)
+- Correções nas validações de datas na criação de um calendário
+
+
 ## Versão 0.6 - 04/06/2022
 Novas features: 
 - Adicionar comentários
@@ -20,10 +59,10 @@ Issues corrigidos:
 - Foi melhorada a marcação de avaliações
     - Adicionadas opções para avaliações que precisem de mais do que 1 dia (start e end date)
     - Adicionada opção para selecionar quando a avaliação é realizada na aula
-    - Foi melhorado a seleção de UC's e métodos de avaliação ao marcar o exame: 
+    - Foi melhorado a seleção de UCs e métodos de avaliação ao marcar o exame: 
         - Agora é possível ver todas as UCs do curso e do semestre a que estamos a marcar
         - Caso não tenha métodos aparece o aviso e não pode selecionar
-        - Caso existam métodos por marcar, aparce um aviso com um atalho para a lista de UC's do curso, onde podem adicionar os métodos
+        - Caso existam métodos por marcar, aparce um aviso com um atalho para a lista de UCs do curso, onde podem adicionar os métodos
     - Foram retiradas outras validações que tinham sido colocadas pelo antigo grupo, como apenas poder ter uma avaliação por dia, ou ser obrigatório colocar a hora.
 - Foi melhorada a página de detalhe de calendário
     - Foi criada uma distinção visual para avaliações em aula e avaliações não em aula (quando visualizamos o calendário)
@@ -40,14 +79,14 @@ Features/issues ainda pendentes:
 - Melhorar diferença visual das épocas
 - Ao adicionar uma interrupção numa avaliação contínua, só deve apagar o dia a escolhido e não todos os dias da avaliação
 - Automatizar melhor o processo de projetos e trabalhos (obrigatório calendarizar data de lançamento dos enunciados, entrega do projeto e apresentação/defesa)
-- Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UC's dos seus cursos (ex: EI PL e D)
+- Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
 - Rever todas as funcionalidades para cada grupo de permissões e validar que está tudo a funcionar como definido no fluxo inicial.
 
 
 ## Versão 0.5 - 24/05/2022
 
 Novas features: 
-- No detalhe das UC's:
+- No detalhe das UCs:
     - Adicionar uma opção para duplicação dos métodos de avaliação entre épocas
     - Remoção da obrigatoriedade de preencher todos os métodos de uma vez para poder guardar.
 - Na listagem de calendários:
@@ -84,7 +123,7 @@ Issues corrigidos:
 - Detalhe das Unidades Curriculares
     - Refatorização da UI para melhor aproveitamento do espaço
     - Atualização das tabelas
-- Separação dos Agrupamentos de UC's das UC's
+- Separação dos Agrupamentos de UCs das UCs
     - Atualização e criação das permissões em separado
     - Update da UI do menu para mostrar os menus conforme as novas permissões
 - Adicionar campo "obrigatório" para tipos de interrupções, para a criação de um calendário
@@ -103,14 +142,14 @@ Issues corrigidos:
 - Pequenos problemas do servidor e sync de ambos os semestres numa tarefa de cron
 - Updates ao layout base, header e navegação
 - Traduções de mais algumas paginas
-- Rework das páginas de detalhe das UC's & criação do mecanismo de Logs
+- Rework das páginas de detalhe das UCs & criação do mecanismo de Logs
 - Update do código da conexão ao LDAP para melhor performance
 - Adicionar popup para confirmar que quer eliminar uma UC
 - Adicionar algumas informações dos cursos e UCs aos seeders (porque não era possível sincronizar normalmente)
 - Melhorar o flow de criação de calendário, e remover o 4º step (extras) que não estava a ser bem aplicado
 - Pequenas correções na página do calendário para ser possível abrir
 - Criação do mapeamento das iniciais do curso ao fazer a sincronização (porque não existe essa informação no WebService)
-- Refatorização do processo de configuração dos métodos das UC's
+- Refatorização do processo de configuração dos métodos das UCs
     - Adicionar os sliders nos métodos
 - Adicionar warnings nas tabelas em que identificamos que faltam informações (UCs e Cursos)
 
