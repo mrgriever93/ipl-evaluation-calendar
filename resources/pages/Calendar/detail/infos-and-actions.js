@@ -294,7 +294,7 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings}) => {
                                     </div>
                                 </GridColumn>
                                 <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS, SCOPES.ADD_EXAMS]}>
-                                    <GridColumn>
+                                    <GridColumn color={( (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? "yellow" : undefined) }>
                                         { (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? (
                                         <div>
                                             <Header as="h5">
