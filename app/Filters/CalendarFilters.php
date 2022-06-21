@@ -43,11 +43,11 @@ class CalendarFilters extends QueryFilters
             if ($search === "true") {
                 return $this->builder->published()
                             ->whereIn('course_id', Auth::user()->courses->pluck('id'))
-                            ->orWhere('calendar_phase_id', CalendarPhase::where('name', 'evaluation_students')->first()->id);
+                            ->orWhere('calendar_phase_id', CalendarPhase::phaseEvaluationStudents());
             }
 
             return $this->builder->published()
-                        ->orWhere('calendar_phase_id', CalendarPhase::where('name', 'evaluation_students')->first()->id)
+                        ->orWhere('calendar_phase_id', CalendarPhase::phaseEvaluationStudents())
                         ->whereIn('course_id', Auth::user()->courses->pluck('id'));
         }
 

@@ -35,4 +35,9 @@ class CalendarPhase extends Model
         //return $this->where('code', 'published')->first()->id;
         return 9;
     }
+    public static function phaseEvaluationStudents()
+    {
+        //return $this->where('code', 'evaluation_students')->first()->id;
+        return 4;
+    }
 }
