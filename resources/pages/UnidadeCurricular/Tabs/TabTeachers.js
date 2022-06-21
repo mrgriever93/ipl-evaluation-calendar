@@ -9,7 +9,7 @@ import Teachers from "../../../components/Filters/Teachers";
 import {useTranslation} from "react-i18next";
 import EmptyTable from "../../../components/EmptyTable";
 
-const UnitTabTeacher = ({ unitId, isLoading }) => {
+const UnitTabTeacher = ({ unitId, isLoading, warningsHandler }) => {
     const { t } = useTranslation();
     const [loading, setLoading] = useState(true);
     const [contentLoading, setContentLoading] = useState(true);
@@ -77,6 +77,11 @@ const UnitTabTeacher = ({ unitId, isLoading }) => {
     useEffect(() => {
         loadCourseUnitTeachers();
     }, [unitId]);
+
+    useEffect(() => {
+        const hasResponable = courseUnitTeachers.filter((teacher) => teacher.is_responsible).length > 0;
+        warningsHandler(!hasResponable);
+    }, [courseUnitTeachers]);
 
     return (
         <div>

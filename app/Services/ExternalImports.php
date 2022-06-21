@@ -54,6 +54,16 @@ class ExternalImports
         set_time_limit(0);
         ini_set('max_execution_time', 0);
 
+        // update/created counters
+        $coursesCount = [
+            "created" => 0,
+            "updated" => 0,
+        ];
+        $courseUnitCount = [
+            "created" => 0,
+            "updated" => 0,
+        ];
+
         $isServer = env('APP_SERVER', false);
         Log::channel('courses_sync')->info('Start "importCoursesFromWebService" sync for Year code (' . $academicYearCode . ') and semester (' . $semester . ')');
         try{
@@ -92,7 +102,6 @@ class ExternalImports
                 'version' => 3,
             ]);
             $LdapConnection = $connection->query()->setDn('OU=Funcionarios,dc=ipleiria,dc=pt');
-
             // Loop for each saved school
             foreach ($schools as $school) {
                 $courseUnits = [];
@@ -151,6 +160,33 @@ class ExternalImports
                                 "degree" => DegreesUtil::getDegreeId($info[$school->index_course_name_pt])
                             ]
                         );
+                        // check for updates and then update the different value
+                        // user just created in the database; it didn't exist before.
+                        if( !$course->wasRecentlyCreated ) {
+                            $hasUpdate = false;
+                            if($course->initials != $info[$school->index_course_initials]) {
+                                $hasUpdate = true;
+                                $course->initials = $info[$school->index_course_initials];
+                            }
+                            if($course->name_pt != $info[$school->index_course_name_pt]) {
+                                $hasUpdate = true;
+                                $course->name_pt = $info[$school->index_course_name_pt];
+                            }
+                            if($course->name_en != $info[$school->index_course_name_en]) {
+                                $hasUpdate = true;
+                                $course->name_en = $info[$school->index_course_name_en];
+                            }
+                            if($course->degree != DegreesUtil::getDegreeId($info[$school->index_course_name_pt])) {
+                                $hasUpdate = true;
+                                $course->degree = DegreesUtil::getDegreeId($info[$school->index_course_name_pt]);
+                            }
+                            if($hasUpdate){
+                                $course->save();
+                                $coursesCount["updated"]++;
+                            }
+                        } else {
+                            $coursesCount["created"]++;
+                        }
                         // https://laravel.com/docs/9.x/eloquent-relationships#syncing-associations
                         //$course->academicYears()->syncWithoutDetaching($academicYearId); // -> Old logic, it had a pivot table [academic_year_course]
                         // Retrieve Branch by course_id or create it if it doesn't exist...
@@ -179,6 +215,35 @@ class ExternalImports
                                 "name_en" => $info[$school->index_course_unit_name_en] // this will duplicate the value as default, to prevent empty states
                             ]
                         );
+                        // TODO Check branch (ramo)
+
+                        // check for updates and then update the different value
+                        // user just created in the database; it didn't exist before.
+                        if( !$newestCourseUnit->wasRecentlyCreated ) {
+                            $hasUpdate = false;
+                            if($newestCourseUnit->curricular_year != $info[$school->index_course_unit_curricular_year]) {
+                                $hasUpdate = true;
+                                $newestCourseUnit->curricular_year = $info[$school->index_course_unit_curricular_year];
+                            }
+                            if($newestCourseUnit->initials != $info[$school->index_course_unit_initials]) {
+                                $hasUpdate = true;
+                                $newestCourseUnit->initials = $info[$school->index_course_unit_initials];
+                            }
+                            if($newestCourseUnit->name_pt != $info[$school->index_course_unit_name_pt]) {
+                                $hasUpdate = true;
+                                $newestCourseUnit->name_pt = $info[$school->index_course_unit_name_pt];
+                            }
+                            if($newestCourseUnit->name_en != $info[$school->index_course_unit_name_en]) {
+                                $hasUpdate = true;
+                                $newestCourseUnit->name_en = $info[$school->index_course_unit_name_en];
+                            }
+                            if($hasUpdate){
+                                $newestCourseUnit->save();
+                                $courseUnitCount["updated"]++;
+                            }
+                        } else {
+                            $courseUnitCount["created"]++;
+                        }
                         // https://laravel.com/docs/9.x/eloquent-relationships#syncing-associations
                         //$newestCourseUnit->academicYears()->syncWithoutDetaching($academicYearId); // -> Old logic, it had a pivot table [academic_year_course_unit]
                         // split teaches from request
@@ -246,6 +311,8 @@ class ExternalImports
             }
             $academicYear->save();
         }
+        Log::channel('courses_sync')->info("Count Courses:\r\n   - Created: " . $coursesCount["created"] . "\r\n   - Updated: " . $coursesCount["updated"]);
+        Log::channel('courses_sync')->info("Count Courses Units:\r\n   - Created: " . $courseUnitCount["created"] . "\r\n   - Updated: " . $courseUnitCount["updated"]);
         Log::channel('courses_sync')->info('End "importCoursesFromWebService" sync for Year code (' . $academicYearCode . ') and semester (' . $semester . ')');
     }
 }

@@ -2,7 +2,7 @@ import axios from 'axios';
 import _ from 'lodash';
 import moment from 'moment';
 import React, {useEffect, useMemo, useState} from 'react';
-import {useParams, useNavigate} from "react-router-dom";
+import {Link, useParams, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {Button, Container, Divider, Grid, Header, Icon, Table} from 'semantic-ui-react';
 import {AnimatePresence} from 'framer-motion';
@@ -36,6 +36,8 @@ const Calendar = () => {
     const [generalInfo, setGeneralInfo] = useState();
     const [differences, setDifferences] = useState();
     const [isLoading, setIsLoading] = useState(true);
+    const [isCalendarInfoLoading, setIsCalendarInfoLoading] = useState(true);
+
     const [openScheduleExamModal, setOpenScheduleExamModal] = useState(false);
     const [openExamDetailModal, setOpenExamDetailModal] = useState(false);
     const [viewExamId, setViewExamId] = useState(undefined);
@@ -54,6 +56,8 @@ const Calendar = () => {
 
     const [openInterruptionModal, setOpenInterruptionModal] = useState(false);
     const [interruptionModalInfo, setInterruptionModalInfo] = useState({});
+
+    const [calendarWarnings, setCalendarWarnings] = useState([]);
 
 
     useEffect(() => {
@@ -83,22 +87,24 @@ const Calendar = () => {
     /*
      * Create / Edit Exams
      */
-    const scheduleExamHandler = (scholarYear, date, existingExamsAtThisDate) => {
+    const scheduleExamHandler = (scholarYear, epoch, date, existingExamsAtThisDate) => {
         setScheduleExamInfo({
             calendarId: parseInt(calendarId, 10),
             courseId: generalInfo?.course?.id,
             courseName: generalInfo?.course?.display_name,
             scholarYear: scholarYear,
+            group_id: undefined,
             date_start: date,
             date_end: date,
             in_class: false,
             hasExamsOnDate: existingExamsAtThisDate,
             epochs: epochsList,
+            selected_epoch: epoch,
         });
         setOpenScheduleExamModal(true);
     }
 
-    const editExamHandler = (event, scholarYear, exam) => {
+    const editExamHandler = (event, scholarYear, epoch, exam) => {
         event.stopPropagation();
         setScheduleExamInfo({
             calendarId: parseInt(calendarId, 10),
@@ -106,7 +112,9 @@ const Calendar = () => {
             courseName: generalInfo?.course?.display_name,
             scholarYear: scholarYear,
             epochs: epochsList,
+            selected_epoch: epoch,
             course_unit_id: exam.course_unit_id,
+            group_id: exam.group_id,
             date_start: exam.date_start,
             date_end: exam.date_end,
             duration_minutes: exam.duration_minutes,
@@ -126,11 +134,21 @@ const Calendar = () => {
     const closeScheduleExamModal = () => {
         setOpenScheduleExamModal(false);
         setScheduleExamInfo({});
+        getWarnings();
     };
 
     const addExamToList = (exam) => {
-        // console.log(exam);
         setExamList((current) => [...current, exam]);
+    }
+    const updateExamInList = (exam) => {
+        setExamList((current) => {
+            const copy = [...current];
+            const oldExamIndex = copy.findIndex((item) => item.id === exam.id);
+            if(oldExamIndex > -1) {
+                copy[oldExamIndex] = exam;
+            }
+            return copy;
+        });
     }
     const removeExamFromList = (examId) => {
         setExamList((current) => current.filter((item) => item.id !== examId));
@@ -250,6 +268,7 @@ const Calendar = () => {
 
     const loadCalendar = (calId) => {
         setIsLoading(true);
+        setIsCalendarInfoLoading(true);
         setExamList([]);
         console.log('loadCalendar');
 
@@ -297,6 +316,8 @@ const Calendar = () => {
                     setIsLoading(false);
                     setPreviousFromDefinitive(previous_from_definitive);
                     setWeekTen(moment(week_ten).week());
+
+                    setIsCalendarInfoLoading(false);
                 } else {
                     history('/calendario');
                 }
@@ -304,65 +325,88 @@ const Calendar = () => {
     };
 
     const weekData = useMemo(() => {
-        console.log('weekData');
-        return _.orderBy(
-            epochsList.reduce((acc, curr) => {
-                const start_date = moment(curr.start_date);
-                const end_date = moment(curr.end_date);
-                while (start_date <= end_date) {
-                    if (start_date.day() !== 0) {
-                        if (!acc.filter(({week}) => week === start_date.isoWeek()).length) {
-                            acc.push({
-                                week: start_date.isoWeek(),
-                                year: start_date.year(),
-                                days: [],
-                            });
+        if(epochsList.length > 0 && !isCalendarInfoLoading) {
+            console.log('weekData');
+            return _.orderBy(
+                epochsList.reduce((acc, curr) => {
+                    const start_date = moment(curr.start_date);
+                    const end_date = moment(curr.end_date);
+                    while (start_date <= end_date) {
+                        if (start_date.day() !== 0) {
+                            if (!acc.filter(({week}) => week === start_date.isoWeek()).length) {
+                                acc.push({
+                                    week: start_date.isoWeek(),
+                                    year: start_date.year(),
+                                    days: [],
+                                });
+                            }
+
+                            const currentInterruption = interruptionsList.find(
+                                (interruption) => {
+                                    const interruptionStartDate = moment(interruption.start_date, 'YYYY-MM-DD');
+                                    const interruptionEndDate = moment(interruption.end_date, 'YYYY-MM-DD');
+                                    return (
+                                        (start_date.isAfter(interruptionStartDate) && start_date.isBefore(interruptionEndDate))
+                                        || start_date.isSame(interruptionStartDate, 'day')
+                                        || start_date.isSame(interruptionEndDate, 'day')
+                                    );
+                                },
+                            );
+
+                            const week = acc.find(({week}) => week === start_date.isoWeek());
+                            if (!week.days.find((day) => day.weekDay === start_date.day())) {
+                                week.days.push({
+                                    weekDay: start_date.day(),
+                                    date: start_date.format(),
+                                    interruption: currentInterruption,
+                                    interruptionDays: 1,
+                                });
+                            }
+
+                            const multiDaysSameInterruption = acc.find(({week}) => week === start_date.isoWeek())
+                                .days.filter((x) => x.interruption?.id === currentInterruption?.id);
+
+                            if (multiDaysSameInterruption?.length) {
+                                multiDaysSameInterruption[0].interruptionDays = multiDaysSameInterruption.length;
+                            }
+
+                            if(week.epochs){
+                                // prevent duplicated epochs, when passing in all days
+                                const prevEpochs = week.epochs.filter((item) => item.code === curr.code);
+                                if( prevEpochs.length === 0 ) {
+                                    week.epochs.push({
+                                        id: curr.id,
+                                        name: curr.name,
+                                        code: curr.code
+                                    });
+                                }
+                            } else {
+                                week.epochs = [{
+                                    id: curr.id,
+                                    name: curr.name,
+                                    code: curr.code
+                                }];
+                            }
                         }
-
-                        const currentInterruption = interruptionsList.find(
-                            (interruption) => {
-                                const interruptionStartDate = moment(interruption.start_date, 'YYYY-MM-DD');
-                                const interruptionEndDate = moment(interruption.end_date, 'YYYY-MM-DD');
-                                return (
-                                    (start_date.isAfter(interruptionStartDate) && start_date.isBefore(interruptionEndDate))
-                                    || start_date.isSame(interruptionStartDate, 'day')
-                                    || start_date.isSame(interruptionEndDate, 'day')
-                                );
-                            },
-                        );
-
-                        const week = acc.find(({week}) => week === start_date.isoWeek());
-                        if (!week.days.find((day) => day.weekDay === start_date.day())) {
-                            week.days.push({
-                                weekDay: start_date.day(),
-                                date: start_date.format(),
-                                interruption: currentInterruption,
-                                interruptionDays: 1,
-                            });
-                        }
-
-                        const foundMultipleDaysWithSameInterruption = acc.find(({week}) => week === start_date.isoWeek())
-                            .days.filter((x) => x.interruption?.id === currentInterruption?.id);
-
-                        if (foundMultipleDaysWithSameInterruption?.length) {
-                            foundMultipleDaysWithSameInterruption[0].interruptionDays = foundMultipleDaysWithSameInterruption.length;
-                        }
-
-                        week.epoch = {
-                            name: curr.name,
-                            code: curr.code
-                        };
+                        start_date.add(1, 'days');
                     }
-                    start_date.add(1, 'days');
-                }
-                return acc;
-            }, []),
-            ['year', 'week'],
-        )}, [epochsList, interruptionsList]);
+                    return acc;
+                }, []), ['year', 'week']);
+        }
+    }, [epochsList, interruptionsList, isCalendarInfoLoading]);
 
     useEffect(() => {
         loadCalendar(calendarId);
+        getWarnings();
     }, [calendarId]);
+
+    const getWarnings = () => {
+        axios.get(`/calendar/${calendarId}/warnings`).then((response) => {
+            if (response.status === 200) {
+                setCalendarWarnings(response.data.data);
+            }
+        });
+    }
 
     function range(start, end) {
         return Array(end - start + 1).fill().map((_, idx) => start + idx);
@@ -376,22 +420,16 @@ const Calendar = () => {
 
     const allowDrop = (ev) => {
         ev.preventDefault();
-        //console.log("allowDrop");
-        //console.log(ev);
     }
 
     const drag = (ev) => {
         ev.dataTransfer.setData("text", ev.target.id);
-        //console.log("drag");
-        //console.log(ev);
     }
 
     const drop = (ev) => {
         ev.preventDefault();
         //let data = ev.dataTransfer.getData("text");
         //ev.target.appendChild(document.getElementById(data));
-        //console.log("drop");
-        //console.log(ev);
     }
 
     /*
@@ -417,23 +455,23 @@ const Calendar = () => {
                     {moment(day.date).format('DD-MM-YYYY')}
                     { (!isPublished && existingExamsAtThisDate?.length === 0 && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) && (
                         ( existingExamsAtThisDate.length > 0 ? (
-                                <Button color={"orange"} className='btn-add-interruption' title="Adicionar Interrupção"
+                                <Button color={"orange"} className='btn-add-interruption' title={t('Adicionar Interrupção')}
                                         onClick={() => interruptionForceHandler(day.date)}>
                                     <Icon name="calendar times outline" />
-                                    Adicionar Interrupção
+                                    {t('Adicionar Interrupção')}
                                 </Button>
                             ) : (
                                 !day.interruption ? (
-                                    <Button className='btn-add-interruption' title="Adicionar Interrupção"
+                                    <Button className='btn-add-interruption' title={t('Adicionar Interrupção')}
                                             onClick={() => interruptionHandler(undefined, day.date)}>
                                         <Icon name="calendar times outline" />
-                                        Adicionar Interrupção
+                                        {t('Adicionar Interrupção')}
                                     </Button>
                                 ) : (
-                                    <Button color="yellow" className='btn-add-interruption' title="Editar Interrupção"
+                                    <Button color="yellow" className='btn-add-interruption' title={t('Editar Interrupção')}
                                             onClick={() => interruptionHandler(day.interruption, day.date)}>
                                         <Icon name="calendar times outline" />
-                                        Editar Interrupção
+                                        {t('Editar Interrupção')}
                                     </Button>
                                 )
                             )
@@ -449,21 +487,25 @@ const Calendar = () => {
     /*
      * Content of week table
      */
-    const weekDayContentCell = (epoch, days, courseIndex, year, weekDay, weekDayIndex) => {
+    const weekDayContentCell = (epoch, days, courseIndex, year, weekDay, weekDayIndex, epochsLength) => {
         // TODO add exam to the dates (by single cols or colspan)
         const day = days.find((day) => day.weekDay === weekDay);
         const firstDayAvailable = moment(days[0].date);
         const lastDayAvailable = moment(days[days.length - 1].date);
         const {interruption} = day || {};
         const isInterruption = !!interruption;
-        if (isInterruption && courseIndex === 0 && interruption.id !== days.find((day) => day.weekDay === weekDay - 1)?.interruption?.id) {
+        // check has interruptions
+        if (!alreadyAddedRowSpan && isInterruption && courseIndex === 0 && interruption.id !== days.find((day) => day.weekDay === weekDay - 1)?.interruption?.id) {
             interruptionDays = 0;
             alreadyAddedRowSpan = false;
         }
+        // check interruption already marked
         if ((isInterruption && alreadyAddedRowSpan && courseIndex > 0) || (isInterruption && interruptionDays++ >= day?.interruptionDays)) {
             return null;
         }
+        // check if is 1 year and not a date OR if is an interruption
         if ((year === 1 && !day?.date) || isInterruption) {
+            // is an interruption and for multiple days
             if (!isInterruption && (weekDay === 1 || (lastDayAvailable.day() < 6 && !alreadyAddedColSpan))) {
                 alreadyAddedColSpan = true;
                 return (<Table.Cell
@@ -471,55 +513,64 @@ const Calendar = () => {
                     colSpan={isInterruption && lastDayAvailable.day() < 6 ? 6 - lastDayAvailable.day() : firstDayAvailable.day() - 1}
                     rowSpan={courseYears.length}/>);
             }
+            // interruption already marked and is for multiple days
             if (!alreadyAddedColSpan || (isInterruption && courseIndex === 0)) {
+                if(epochsLength > 1 && alreadyAddedRowSpan) {
+                    return null;
+                }
                 alreadyAddedRowSpan = true;
                 return (
                     <Table.Cell key={weekDayIndex} textAlign="center" className={isInterruption ? "calendar-day-interruption" : null  }
-                                rowSpan={courseYears.length}
-                                colSpan={isInterruption ? day?.interruptionDays : null} >
+                                rowSpan={courseYears.length * epochsLength} colSpan={isInterruption ? day?.interruptionDays : null} >
                         <div>
                             {isInterruption ? interruption.description : null}
                         </div>
                     </Table.Cell>
                 );
             }
+        // check if is a day
         } else if (day?.date) {
             const currentDate = moment(day.date);
+            // get exams for this date
             const existingExamsAtThisDate = examList.filter((exam) => {
                 return  exam.academic_year === year &&
                         currentDate.isBetween(exam.date_start, exam.date_end, 'date','[]');
             });
             let examsComponents = null;
+            // this date has any exams?
             if (existingExamsAtThisDate?.length) {
+                // show a button per exam in this day
                 examsComponents = existingExamsAtThisDate.map((exam) => {
-                    return (
+                    return exam.epoch_id === epoch.id && (
                         // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
-                        <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )} title={ exam.course_unit + " - " + (exam.method?.description || exam.method?.name) }
+                        <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )}
+                            title={ (exam.in_class ? t('Aula') + " - " : "" ) + exam.course_unit + " - " + (exam.method?.description || exam.method?.name) }
                             color="blue" key={exam.id}
                             onClick={() => openExamDetailHandler(year, exam)} draggable="false" onDragStart={drag} >
                             { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
                                 <div className="btn-action-wrapper">
                                     {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
-                                        <div className='btn-action-edit' onClick={(event) => editExamHandler(event, year, exam)}>
+                                        <div className='btn-action-edit' onClick={(event) => editExamHandler(event, year, epoch, exam)}>
                                             <Icon name="edit"/>
                                         </div>
                                     )}
                                 </div>
                             )}
                             <div className="btn-exam-content">
-                                <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : '') + (exam.course_unit_initials || exam.course_unit) }</div>
+                                <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : (exam.in_class ? t('Aula') + " - " : "" ) ) + (exam.course_unit_initials || exam.course_unit) }</div>
                                 <div className="btn-exam-type">{ (exam.method?.description || exam.method?.name) }</div>
                             </div>
                         </Button>
                     );
                 });
             }
+            // create a button to add exams for this date
             return (
                 <Table.Cell key={weekDayIndex} className={ 'calendar-day-' + epoch.code } textAlign="center" onDrop={drop} onDragOver={allowDrop}>
                     {examsComponents}
                     {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.ADD_EXAMS).length > 0 && (
-                        <Button className="btn-schedule-exam" onClick={() => scheduleExamHandler(year, day.date, existingExamsAtThisDate)}>
-                            Marcar
+                        <Button className="btn-schedule-exam" onClick={() => scheduleExamHandler(year, epoch, day.date, existingExamsAtThisDate)}>
+                            { t('Marcar') }
                         </Button>
                     )}
                 </Table.Cell>
@@ -528,32 +579,31 @@ const Calendar = () => {
         return null;
     }
 
+    const pageLoaderAnimate = {
+        opacity: 1,
+        transition: { duration: 0.5, ease: [0.4, 0.0, 0.2, 1] }
+    };
+    const pageLoaderExit = {
+        opacity: 0,
+        transition: { duration: 0.5, ease: [0.4, 0.0, 0.2, 1] }
+    };
     /*
      * Calendar
      */
     return (
         <Container>
-            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase}/>
+            <div className="margin-bottom-s">
+                <Link to="/"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
+            </div>
+            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings}/>
             <AnimatePresence>
-                {isLoading && (
-                    <PageLoader
-                        animate={{
-                            opacity: 1,
-                            transition: { duration: 0.5, ease: [0.4, 0.0, 0.2, 1] },
-                        }}
-                        exit={{
-                            opacity: 0,
-                            transition: { duration: 0.5, ease: [0.4, 0.0, 0.2, 1] },
-                        }}
-                    />
-                )}
+                {isLoading && (<PageLoader animate={pageLoaderAnimate} exit={pageLoaderExit}/>)}
             </AnimatePresence>
             <div className='margin-top-l'>
                 <Grid stackable className='calendar-tables'>
                     <Grid.Row>
                         <Grid.Column width="16">
-                            {epochsList.length > 0 && weekData.map(({week, year, days, epoch}, tableIndex) => {
-                                //console.log('table week - ' + week);
+                            {epochsList.length > 0 && weekData && weekData.map(({week, year, days, epochs}, tableIndex) => {
                                 interruptionDays = 0;
                                 alreadyAddedColSpan = false;
                                 return (
@@ -569,7 +619,7 @@ const Calendar = () => {
                                         <Table celled>
                                             <Table.Header>
                                                 <Table.Row textAlign="center">
-                                                    <Table.HeaderCell width="2">Week #{week}</Table.HeaderCell>
+                                                    <Table.HeaderCell width="2">#{week}</Table.HeaderCell>
                                                     <Table.HeaderCell width="2">{t('calendar.2ª Feira')}</Table.HeaderCell>
                                                     <Table.HeaderCell width="2">{t('calendar.3ª Feira')}</Table.HeaderCell>
                                                     <Table.HeaderCell width="2">{t('calendar.4ª Feira')}</Table.HeaderCell>
@@ -578,23 +628,24 @@ const Calendar = () => {
                                                     <Table.HeaderCell width="2">{t('calendar.Sábado')}</Table.HeaderCell>
                                                 </Table.Row>
                                                 <Table.Row>
-                                                    <Table.HeaderCell textAlign="center">
-                                                        {year}
-                                                    </Table.HeaderCell>
+                                                    <Table.HeaderCell textAlign="center">{year}</Table.HeaderCell>
                                                     {weekDays.map((weekDay, index) => weekDayHeaderCell(days, weekDay, index) )}
                                                 </Table.Row>
                                             </Table.Header>
                                             <Table.Body>
-                                                {courseYears.map((year, courseIndex) => {
-                                                        alreadyAddedColSpan = false;
-                                                        return (
-                                                            <Table.Row key={courseIndex}>
-                                                                <Table.Cell textAlign="center">{ t("Ano") + " " + year }</Table.Cell>
-                                                                {weekDays.map((weekDay, weekDayIndex) => weekDayContentCell(epoch, days, courseIndex, year, weekDay, weekDayIndex))}
-                                                            </Table.Row>
-                                                        );
-                                                    },
-                                                )}
+                                                { courseYears.map((year, courseIndex) => {
+                                                    alreadyAddedColSpan = false;
+                                                    alreadyAddedRowSpan = false;
+
+                                                    return epochs.map((epoch, epochIndex) => (
+                                                        <Table.Row key={courseIndex + "-" + epochIndex} >
+                                                            {epochIndex === 0 && (
+                                                                <Table.Cell textAlign="center" rowSpan={epochs.length}>{ t("Ano") + " " + year }</Table.Cell>
+                                                            )}
+                                                            {weekDays.map((weekDay, weekDayIndex) => weekDayContentCell(epoch, days, courseIndex, year, weekDay, weekDayIndex, epochs.length))}
+                                                        </Table.Row>
+                                                    ));
+                                                })}
                                             </Table.Body>
                                         </Table>
                                     </div>
@@ -622,6 +673,7 @@ const Calendar = () => {
                 onClose={closeScheduleExamModal}
                 scheduleInformation={scheduleExamInfo}
                 addedExam={addExamToList}
+                updatedExam={updateExamInList}
                 deletedExam={removeExamFromList}
                 calendarDates={{minDate: calendarStartDate, maxDate: calendarEndDate}}/>
         </Container>

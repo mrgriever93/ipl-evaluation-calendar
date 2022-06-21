@@ -14,7 +14,7 @@ const FilterOptionDegree = ({widthSize, eventHandler, disabled, value, className
         axios.get('/courses/degrees').then((response) => {
             if (response.status >= 200 && response.status < 300) {
                 if (isSearch){
-                    response.data.unshift({value: '', text: t("Grau de ensino")});
+                    response.data.unshift({value: '', text: t("Tipo de curso")});
                 }
                 setDegreeOptions(response.data);
                 setLoading(false);
@@ -32,7 +32,7 @@ const FilterOptionDegree = ({widthSize, eventHandler, disabled, value, className
     };
 
     return (
-        <Form.Dropdown className={className} selectOnBlur={false} width={widthSize} clearable disabled={disabled} selection value={degree} options={degreeOptions} label={t("Grau de ensino")} placeholder={t("Grau de ensino")} loading={loading} onChange={filterByDegree}/>
+        <Form.Dropdown className={className} selectOnBlur={false} width={widthSize} clearable disabled={disabled} selection value={degree} options={degreeOptions} label={t("Tipo de curso")} placeholder={t("Tipo de curso")} loading={loading} onChange={filterByDegree}/>
     );
 };
 

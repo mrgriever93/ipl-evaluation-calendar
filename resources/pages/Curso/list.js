@@ -40,7 +40,7 @@ const CoursesList = () => {
         {name: t('Código'), style: {width: '10%'} },
         {name: t('Nome')},
         //{name: 'Sigla'},
-        {name: t('Grau de Ensino'), style: {width: '15%'}},
+        {name: t('Tipo de Curso'), style: {width: '15%'}},
         //{name: 'Numero de Anos'},
         {name: t('Ações'),  align: 'center', style: {width: '10%'} },
     ];
@@ -113,7 +113,7 @@ const CoursesList = () => {
                     <div className='card-header-alignment'>
                         <Header as="span">{ t("Cursos") }</Header>
                         <ShowComponentIfAuthorized permission={[SCOPES.CREATE_COURSES]} >
-                            <Button onClick={() => setWithoutDegree(current => !current)} color="blue" loading={contentLoading}>Mostrar os sem Grau de Ensino</Button>
+                            <Button onClick={() => setWithoutDegree(current => !current)} color="blue" loading={contentLoading}>Mostrar os sem Tipo de Curso</Button>
                         </ShowComponentIfAuthorized>
                     </div>
                 </Card.Content>

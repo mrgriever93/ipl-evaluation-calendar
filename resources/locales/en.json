@@ -150,7 +150,7 @@
         "Descrição EN": "Description EN",
 
         "Por Página": "Per Page",
-        "Grau de ensino": "Degrees",
+        "Tipo de curso": "Course Type",
         "Todas as Escolas": "All Schools",
         "Grupo de Utilizador": "User Groups",
 
@@ -194,6 +194,8 @@
         "Métodos": "Methods",
         "Remover Unidade Curricular": "Delete Curricular Unit",
         "Tem a certeza que deseja remover a Unidade Curricular": "Are you sure you want to delete this Curricular Unit",
+        "Época de origem": "Original Epoch",
+        "Época de destino": "Destiny Epoch",
 
         "Utilizador atualizado com sucesso": "User updated with success",
         "Editar Utilizador": "Edit user",
@@ -210,7 +212,6 @@
 
         "Unidade de Ensino": "Teaching Unit",
         "Sigla": "Initials",
-        "Grau de Ensino": "Teaching Degree",
         "Numero de Anos": "Number of years",
         "Atenção!": "Attention!",
         "Ao eliminar o curso, todos os calendários, avaliações e métodos serão também eliminados.": "When you delete the course, all calendars, assessments and methods will also be deleted.",
@@ -316,6 +317,8 @@
         "Peso da avaliação": "Evaluation weight",
         "Total pesos avaliacao:": "Total evaluation weights:",
         "Adicionar novo método": "Add new method",
+        "Falta adicionar os métodos desta unidade curricular": "This UC does not have any saved methods",
+        "Falta selecionar o responsável da unidade curricular": "This UC does not have a responsible assigned",
 
         "Ínicio": "Start",
         "Fim": "End",
