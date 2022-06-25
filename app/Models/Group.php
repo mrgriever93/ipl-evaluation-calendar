@@ -47,6 +47,12 @@ class Group extends Model
         return $this->belongsToMany( Permission::class, 'group_permissions')->withPivot(['phase_id', 'enabled']);
     }
 
+    public function permissionsCalendar()
+    {
+        $categoryId = PermissionCategory::categoryCalendar();
+        return $this->permissions()->where('category_id', $categoryId);
+    }
+
     public function associatedPermissions()
     {
         return $this->hasMany(GroupPermission::class);
@@ -106,7 +112,7 @@ class Group extends Model
     {
         $clone = $this->replicate();
         $clone->code = $this->code . '_copy';
-        $clone->name_pt =  'Cópia de ' . $this->name_pt;
+        $clone->name_pt = 'Cópia de ' . $this->name_pt;
         $clone->name_en = 'Copy of ' . $this->name_en;
         $clone->removable = true;
         $clone->push();

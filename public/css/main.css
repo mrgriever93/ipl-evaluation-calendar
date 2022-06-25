@@ -773,10 +773,14 @@ div.inline{
     box-shadow: 0 0 3px 1px rgba(0, 0, 0, .1);
 }
 
+.selected-phase,
 .active-phase{
     position: absolute;
-    right: var(--space-s);
+    right: var(--space-xs);
     top: var(--space-s);
+}
+.selected-phase{
+    right: var(--space-l);
 }
 
 .ui.stuck-container.bound-container > .ui.bound.bottom.sticky{

@@ -10,34 +10,33 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\NewCalendarRequest;
 use App\Http\Requests\PublishCalendarRequest;
 use App\Http\Requests\UpdateCalendarRequest;
+use App\Http\Resources\Admin\CalendarPhaseResource;
 use App\Http\Resources\AvailableCourseUnitsResource;
 use App\Http\Resources\Generic\CalendarDetailResource;
-use App\Http\Resources\Generic\CalendarInfoResource;
 use App\Http\Resources\Generic\CalendarListResource;
-use App\Http\Resources\CalendarResource;
 use App\Http\Resources\Generic\Calendar_SemesterResource;
-use App\Http\Resources\Generic\EpochTypesResource;
 use App\Http\Resources\Generic\SemestersSearchResource;
+use App\Http\Resources\Generic\GroupsPhaseResource;
 use App\Http\Resources\WarningCalendarResource;
-use App\Models\AcademicYear;
 use App\Models\Calendar;
 use App\Models\CalendarPhase;
 use App\Models\Course;
 use App\Models\CourseUnit;
 use App\Models\Epoch;
 use App\Models\EpochType;
+use App\Models\Group;
 use App\Models\Interruption;
 use App\Models\InterruptionType;
 use App\Models\InterruptionTypesEnum;
 use App\Models\Method;
+use App\Models\Permission;
+use App\Models\PermissionCategory;
 use App\Models\Semester;
 use App\Services\ExternalImports;
 use App\Utils\Utils;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 
 class CalendarController extends Controller
@@ -125,6 +124,9 @@ class CalendarController extends Controller
     public function update(UpdateCalendarRequest $request, Calendar $calendar)
     {
         $calendar->fill($request->all())->save();
+
+        dd($request->input("groups"));
+
         CalendarChanged::dispatch($calendar);
     }
 
@@ -368,4 +370,14 @@ class CalendarController extends Controller
         return WarningCalendarResource::collection($response);
     }
 
+
+    public function phases(Request $request)
+    {
+        $groupsQuery = Group::all();//with('permissions')->get();
+        $response = [
+            "phases" => CalendarPhaseResource::collection(CalendarPhase::all()),
+            "groups" => GroupsPhaseResource::collection($groupsQuery)
+        ];
+        return response()->json($response, Response::HTTP_OK);
+    }
 }

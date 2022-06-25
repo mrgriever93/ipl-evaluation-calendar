@@ -201,7 +201,7 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
                 <div className='main-content-title'>
                     <Header as="h3">
                         Calendário de Avaliação
-                        <span className='heading-description'>{ calendarInfo?.course?.name_pt ? " (" + calendarInfo.course.name_pt + ")": '' }</span>
+                        <div className='heading-description'>{ calendarInfo?.course?.name_pt ? " (" + calendarInfo.course.name_pt + ")": '' }</div>
                     </Header>
                 </div>
                 <div className='main-content-actions'>

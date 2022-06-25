@@ -15,4 +15,17 @@ class PermissionCategory extends Model
     {
         return $this->hasMany(Permission::class, 'category_id');
     }
+
+    /*
+     * "Hardcoded" phases
+     * easier to maintain and change
+     */
+    public static function categoryGeneral()
+    {
+        return PermissionCategory::where('code', 'general')->first()->id;
+    }
+    public static function categoryCalendar()
+    {
+        return PermissionCategory::where('code', 'calendar')->first()->id;
+    }
 }

@@ -12,56 +12,67 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
     const { t } = useTranslation();
 
     const [calendarPhases, setCalendarPhases] = useState([]);
-    const [calendarPhase, setCalendarPhase] = useState(true);
+    const [calendarGroups, setCalendarGroups] = useState([]);
+    const [calendarPhase, setCalendarPhase] = useState(currentPhaseId);
     const [isLoading, setIsLoading] = useState(true);
     const [isPublished, setIsPublished] = useState(false);
     const [isTemporary, setIsTemporary] = useState(false);
 
     useEffect(() => {
-        axios.get('/calendar-phases').then((response) => {
+        setIsLoading(true);
+        axios.get('/calendar-phases-full').then((response) => {
             if (response.status === 200) {
                 setCalendarPhases(
-                    response.data.data?.map(({id, description, name}) => ({
+                    response.data?.phases.map(({id, description, name}) => ({
                         key: id,
                         value: id,
                         text: description,
                         name,
                     })),
                 );
+                setCalendarGroups(response.data?.groups);
+                setIsLoading(false);
             }
         });
     }, []);
 
-    const updateCalendarPhase = (newCalendarPhase) => {
+    const onSave = () => {
+        const viewGroups = calendarGroups.filter((item) => item.selected).map((item) => item.id);
+        console.log(viewGroups);
         // setUpdatingCalendarPhase(true);
-        axios.patch(`/calendar/${calendarId}`, { 'calendar_phase_id': newCalendarPhase }).then((response) => {
-                // setUpdatingCalendarPhase(false);
-                if (response.status === 200) {
-                    setCalendarPhase(newCalendarPhase);
-                    toast(t('calendar.Fase do calendário atualizada!'), successConfig);
-                }
+        axios.patch(`/calendar/${calendarId}`, {
+            'calendar_phase_id': calendarPhase,
+            'temporary': isTemporary,
+            'published': isPublished,
+            'groups': viewGroups
+        }).then((response) => {
+            if (response.status === 200) {
+                toast(t('calendar.Fase do calendário atualizada!'), successConfig);
+            }
         });
-        updatePhase(newCalendarPhase);
-        onClose();
-    };
-
+        //updatePhase(calendarPhase);
+        //onClose();
+    }
 
     return (
         <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
             <Modal.Header>
                 <Icon name={"list ul"} size={"small"} color={"grey"}/>
-                Submeter calendário para a próxima fase
+                { t("Submeter calendário para a próxima fase") }
             </Modal.Header>
             <Modal.Content>
-                <div>Selecionar próxima fase:</div>
+                <div>{ t("Selecionar próxima fase:") }</div>
                 <div className='margin-y-base'>
                     <Card.Group itemsPerRow={3} >
                         {calendarPhases.filter((x) => x.name !== 'system').map((phase) => {
                                 return (
-                                    <Card color='green' key={phase.key} onClick={(e) => updateCalendarPhase(phase.value) } >
+                                    <Card color='green' key={phase.key} onClick={(e) => setCalendarPhase(phase.value) } >
                                         <Card.Content textAlign='center'>
                                             { phase.value == currentPhaseId && (
-                                                <Icon className={"active-phase"} color="green" size={"large"} name="check circle outline" />
+                                                <Icon className={"active-phase"} color="green" size={"large"} name="check circle" />
+                                            )}
+                                            { phase.value == calendarPhase && (
+                                                <Icon className={"selected-phase"} color="yellow" size={"large"} name="check circle outline" />
                                             )}
                                             <div>
                                                 { phase.text.includes('Em edição') ? (
@@ -95,12 +106,11 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                 <Divider />
                 <Header as={"h3"}>
                     <Icon name={"cog"} size={"big"} color={"grey"}/>
-                    Definicoes do Calendario
+                    { t("Definicoes do Calendario") }
                 </Header>
                 <Form>
                     <Form.Field>
-                        <Checkbox toggle label='Provisorio' name='checkboxRadioGroup'
-                                  checked={isTemporary}
+                        <Checkbox toggle label={ t("Provisorio") } checked={isTemporary}
                                   onChange={(e, {checked}) => {
                                       if(checked) {
                                           setIsPublished(false);
@@ -110,8 +120,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                         />
                     </Form.Field>
                     <Form.Field>
-                        <Checkbox toggle label='Definitivo' name='checkboxRadioGroup' value='that'
-                            checked={isPublished}
+                        <Checkbox toggle label={ t("Definitivo") } checked={isPublished}
                             onChange={(e, {checked}) => {
                                 if(checked){
                                     setIsTemporary(false);
@@ -121,20 +130,33 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                         />
                     </Form.Field>
                     <Form.Group grouped>
-                        <label>Grupos que podem visualizar o calendario</label>
-                        <Form.Field label='Gop' control='input' type='checkbox' />
-                        <Form.Field label='That one' control='input' type='checkbox' />
-                        <Form.Field label='This one' control='input' type='checkbox' />
-                        <Form.Field label='That one' control='input' type='checkbox' />
-                        <Form.Field label='This one' control='input' type='checkbox' />
-                        <Form.Field label='That one' control='input' type='checkbox' />
-                        <Form.Field label='This one' control='input' type='checkbox' />
-                        <Form.Field label='That one' control='input' type='checkbox' />
+                        <Header as={"h4"} className={"margin-top-l"}>
+                            <Icon name={"users"} size={"big"} color={"grey"}/>
+                            { t("Grupos que podem visualizar o calendario") }
+                        </Header>
+                        { isPublished ? (
+                            <div>{ t("Todos os grupos vao ver este calendario") }</div>
+                        ) : (
+                            <>
+                                { calendarGroups && calendarGroups.map((item, indexGroup) => (
+                                    <Form.Field key={indexGroup}>
+                                        <Checkbox label={item.name}
+                                            onChange={(e, {checked}) => {
+                                                setCalendarGroups((current) => {
+                                                    current[indexGroup].selected = checked;
+                                                    return current;
+                                                });
+                                            }}/>
+                                    </Form.Field>
+                                ))}
+                            </>
+                        )}
                     </Form.Group>
                 </Form>
             </Modal.Content>
             <Modal.Actions>
                 <Button onClick={onClose}>{t('Fechar')}</Button>
+                <Button onClick={onSave} color={"green"}>{t('Guardar')}</Button>
             </Modal.Actions>
         </Modal>
     );
