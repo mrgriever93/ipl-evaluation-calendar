@@ -17,7 +17,7 @@ import PopupRevisionDetail from "./popup-revision";
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const InfosAndActions = ( {epochs, calendarInfo, warnings}) => {
+const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) => {
     // const history = useNavigate();
     const { t } = useTranslation();
     // get URL params
@@ -42,6 +42,7 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings}) => {
 
     const [methodsMissingCount, setMethodsMissingCount] = useState(0);
     const [methodsIncompleteCount, setMethodsIncompleteCount] = useState(0);
+    const [activeEpochs, setActiveEpochs] = useState([]);
 
     useEffect(() => {
         const missing = warnings.filter((item) => !item.has_methods);
@@ -173,6 +174,26 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings}) => {
         calendarInfo.phase.id =  newPhase;
     }
 
+    useEffect(() => {
+        let initialEpochs = [];
+        epochs.forEach((epoch) => {
+            initialEpochs.push(epoch.id);
+        });
+        //set epochs showing
+        setActiveEpochs(initialEpochs);
+    }, [epochs]);
+
+    const showingEpochsHandle = (epochId) => {
+        if(activeEpochs.includes(epochId)) {
+            setActiveEpochs(prev => prev.filter(item => item !== epochId));
+        } else {
+            setActiveEpochs(prev => [...prev, epochId])
+        }
+    }
+
+    useEffect(() => {
+        epochsViewHandler(activeEpochs);
+    }, [activeEpochs]);
 
     return (
         <>
@@ -213,6 +234,9 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings}) => {
                                     <List divided relaxed>
                                         {epochs.map((epoch, index) => (
                                             <div className='legend-list-item' key={index}>
+                                                <span className={"margin-right-s"}>
+                                                    <Icon name={(activeEpochs.includes(epoch.id) ? "eye" : "eye slash")} onClick={() => showingEpochsHandle(epoch.id)} />
+                                                </span>
                                                 <div className={'legend-list-item-square calendar-day-' + epoch.code}></div>
                                                 <Popup trigger={
                                                     <div className='legend-list-item-content'>

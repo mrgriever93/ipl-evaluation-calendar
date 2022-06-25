@@ -58,6 +58,7 @@ const Calendar = () => {
     const [interruptionModalInfo, setInterruptionModalInfo] = useState({});
 
     const [calendarWarnings, setCalendarWarnings] = useState([]);
+    const [showingEpochs, setShowingEpochs] = useState([]);
 
 
     useEffect(() => {
@@ -298,6 +299,7 @@ const Calendar = () => {
 
                     let startDate = epochs.length > 0 ? epochs[0].start_date : undefined;
                     let endDate = epochs.length > 0 ? epochs[0].end_date : undefined;
+                    let initialEpochs = [];
                     epochs.forEach((epoch) => {
                         if(startDate > moment(epoch.start_date)){
                             startDate = moment(epoch.start_date);
@@ -306,7 +308,10 @@ const Calendar = () => {
                             endDate = moment(epoch.end_date);
                         }
                         setExamList((current) => [...current, ...epoch.exams]);
+                        initialEpochs.push(epoch.id);
                     });
+                    //set epochs showing
+                    setShowingEpochs(initialEpochs);
                     // set calendar start and end dates
                     setCalendarStartDate(moment(startDate).format("DD-MM-YYYY"));
                     setCalendarEndDate(moment(endDate).format("DD-MM-YYYY"));
@@ -328,7 +333,7 @@ const Calendar = () => {
         if(epochsList.length > 0 && !isCalendarInfoLoading) {
             console.log('weekData');
             return _.orderBy(
-                epochsList.reduce((acc, curr) => {
+                epochsList.filter((item) => showingEpochs.includes(item.id)).reduce((acc, curr) => {
                     const start_date = moment(curr.start_date);
                     const end_date = moment(curr.end_date);
                     while (start_date <= end_date) {
@@ -393,7 +398,7 @@ const Calendar = () => {
                     return acc;
                 }, []), ['year', 'week']);
         }
-    }, [epochsList, interruptionsList, isCalendarInfoLoading]);
+    }, [epochsList, interruptionsList, isCalendarInfoLoading, showingEpochs]);
 
     useEffect(() => {
         loadCalendar(calendarId);
@@ -595,7 +600,7 @@ const Calendar = () => {
             <div className="margin-bottom-s">
                 <Link to="/"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
-            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings}/>
+            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings} showingEpochs={showingEpochs} epochsViewHandler={setShowingEpochs}/>
             <AnimatePresence>
                 {isLoading && (<PageLoader animate={pageLoaderAnimate} exit={pageLoaderExit}/>)}
             </AnimatePresence>

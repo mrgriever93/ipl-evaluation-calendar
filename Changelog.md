@@ -1,6 +1,14 @@
 # Changelog
 
-## Versão 0.8 - ****************************** 21/06/2022 ?
+## Versão 0.9 - ****************************** 27/06/2022
+Novas features:
+- Escolher que epoca mostra no calendario
+- 
+
+Issues corrigidos:
+- s
+
+## Versão 0.8 - ****************************** 21/06/2022
 Novas features: 
 - Adicionar possibilidade de gestão dos novos campos do webservice no detalhe da escola
 - Adicionar forma de automaticamente incluir o lançamento de enunciados e apresentação oral, se for selecionado projeto como método de avaliação

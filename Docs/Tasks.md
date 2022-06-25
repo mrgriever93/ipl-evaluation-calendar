@@ -209,6 +209,9 @@
 - [X] atualizar campos da escola no detalhe
 
 ---
+## Reunião 21/06/2022
+
+---
 #### Extra stuff
 - [ ] Calendário e marcação de avaliações:
     - [ ] Rever traduções
