@@ -10,6 +10,8 @@ class CalendarViewers extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         "calendar_id",
         "group_id",
