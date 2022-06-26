@@ -2,7 +2,7 @@ import axios from 'axios';
 import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
-import {Button, Modal, Header, Dropdown, Card, Icon, Divider, Checkbox, Form} from 'semantic-ui-react';
+import {Button, Modal, Header, Dropdown, Card, Icon, Divider, Checkbox, Form, Loader, Dimmer} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
@@ -17,10 +17,12 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
     const [isLoading, setIsLoading] = useState(true);
     const [isPublished, setIsPublished] = useState(false);
     const [isTemporary, setIsTemporary] = useState(false);
+    const [groupViewersLoading, setGroupViewersLoading] = useState(false);
 
     useEffect(() => {
         setIsLoading(true);
-        axios.get('/calendar-phases-full').then((response) => {
+        setGroupViewersLoading(true);
+        axios.get('/calendar-phases-full?phase-id=' + currentPhaseId).then((response) => {
             if (response.status === 200) {
                 setCalendarPhases(
                     response.data?.phases.map(({id, description, name}) => ({
@@ -31,10 +33,24 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                     })),
                 );
                 setCalendarGroups(response.data?.groups);
+                setGroupViewersLoading(false);
                 setIsLoading(false);
             }
         });
     }, []);
+
+    useEffect(() => {
+        if(!isLoading) {
+            setGroupViewersLoading(true);
+            axios.get('/calendar-phases-full/groups?phase-id=' + calendarPhase).then((response) => {
+                if (response.status === 200) {
+                    setCalendarGroups(response.data?.data);
+                    setGroupViewersLoading(false);
+                }
+            });
+        }
+    }, [calendarPhase]);
+
 
     const onSave = () => {
         const viewGroups = calendarGroups.filter((item) => item.selected).map((item) => item.id);
@@ -50,10 +66,17 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                 toast(t('calendar.Fase do calendário atualizada!'), successConfig);
             }
         });
-        //updatePhase(calendarPhase);
-        //onClose();
+        updatePhase(calendarPhase);
+        onClose();
     }
 
+    const handleGroupChange = (groupId, checked) => {
+        setCalendarGroups((current) => {
+            const oldList = [...current];
+            oldList.forEach((item) => item.selected = (item.id === groupId ? checked : item.selected));
+            return oldList;
+        });
+    }
     return (
         <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
             <Modal.Header>
@@ -121,35 +144,37 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                     </Form.Field>
                     <Form.Field>
                         <Checkbox toggle label={ t("Definitivo") } checked={isPublished}
-                            onChange={(e, {checked}) => {
-                                if(checked){
-                                    setIsTemporary(false);
-                                }
-                                setIsPublished(checked);
-                            }}
+                                  onChange={(e, {checked}) => {
+                                      if(checked){
+                                          setIsTemporary(false);
+                                      }
+                                      setIsPublished(checked);
+                                  }}
                         />
                     </Form.Field>
+                </Form>
+                <Header as={"h4"}>
+                    <Icon name={"users"} size={"big"} color={"grey"}/>
+                    { t("Grupos que podem visualizar o calendario") }
+                </Header>
+                <Form>
                     <Form.Group grouped>
-                        <Header as={"h4"} className={"margin-top-l"}>
-                            <Icon name={"users"} size={"big"} color={"grey"}/>
-                            { t("Grupos que podem visualizar o calendario") }
-                        </Header>
                         { isPublished ? (
                             <div>{ t("Todos os grupos vao ver este calendario") }</div>
                         ) : (
                             <>
                                 { calendarGroups && calendarGroups.map((item, indexGroup) => (
                                     <Form.Field key={indexGroup}>
-                                        <Checkbox label={item.name}
-                                            onChange={(e, {checked}) => {
-                                                setCalendarGroups((current) => {
-                                                    current[indexGroup].selected = checked;
-                                                    return current;
-                                                });
-                                            }}/>
+                                        <Checkbox label={item.name} checked={item.selected}
+                                                  onChange={(e, {checked}) => handleGroupChange(item.id, checked)} />
                                     </Form.Field>
                                 ))}
                             </>
+                        )}
+                        { groupViewersLoading && (
+                            <Dimmer active inverted>
+                                <Loader indeterminate>{t('A carregar grupos')}</Loader>
+                            </Dimmer>
                         )}
                     </Form.Group>
                 </Form>

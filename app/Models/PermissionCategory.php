@@ -17,13 +17,14 @@ class PermissionCategory extends Model
     }
 
     /*
-     * "Hardcoded" phases
+     * "Hardcoded" permission Categories
      * easier to maintain and change
      */
     public static function categoryGeneral()
     {
         return PermissionCategory::where('code', 'general')->first()->id;
     }
+
     public static function categoryCalendar()
     {
         return PermissionCategory::where('code', 'calendar')->first()->id;

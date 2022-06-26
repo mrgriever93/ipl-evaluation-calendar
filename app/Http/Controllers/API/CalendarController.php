@@ -373,11 +373,48 @@ class CalendarController extends Controller
 
     public function phases(Request $request)
     {
-        $groupsQuery = Group::all();//with('permissions')->get();
+        //$groupsQuery = Group::all();
+
+        /*
+         *
+            SELECT `groups`.`name_pt`,
+                    EXISTS (
+                        Select *
+                        From  `group_permissions`
+                        where
+                            `group_permissions`.`group_id`  = `groups`.`id` and
+                            `group_permissions`.`permission_id` = (select permissions.id from permissions where permissions.code = "view_calendar") and
+                            `group_permissions`.`phase_id` = 9
+                    ) as `has_permission`
+            FROM `groups`;
+         * */
+        $permissionId = Permission::permissionViewCalendar();
+        $phaseId = $request->get("phase-id", 9);
+
+        $groupsQuery = Group::withExists([
+            'permissions as has_permission' => function ($query) use($permissionId, $phaseId) {
+                return $query->where('permission_id', $permissionId)->where('phase_id', $phaseId);
+            }
+        ])->get();
+
         $response = [
             "phases" => CalendarPhaseResource::collection(CalendarPhase::all()),
             "groups" => GroupsPhaseResource::collection($groupsQuery)
         ];
         return response()->json($response, Response::HTTP_OK);
+    }
+
+
+    public function phasesGroups(Request $request)
+    {
+        $permissionId = Permission::permissionViewCalendar();
+        $phaseId = $request->get("phase-id", 9);
+
+        $groupsQuery = Group::withExists([
+            'permissions as has_permission' => function ($query) use($permissionId, $phaseId) {
+                return $query->where('permission_id', $permissionId)->where('phase_id', $phaseId);
+            }
+        ])->get();
+        return GroupsPhaseResource::collection($groupsQuery);
     }
 }

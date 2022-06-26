@@ -12,7 +12,7 @@ class GroupsPhaseResource extends JsonResource
             'id'            => $this->id,
             'code'          => $this->code,
             'name'          => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
-            'selected'      => false,//$this->permissions()->canViewCalendar()
+            'selected'      => $this->has_permission
         ];
     }
 }
