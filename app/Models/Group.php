@@ -58,6 +58,12 @@ class Group extends Model
         return $this->hasMany(GroupPermission::class);
     }
 
+
+    public function viewers()
+    {
+        return $this->hasMany(CalendarViewers::class);
+    }
+
     public function scopeCoordinator($query)
     {
         return $query->where('code', InitialGroups::COORDINATOR);

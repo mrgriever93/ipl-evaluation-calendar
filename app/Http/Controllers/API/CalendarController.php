@@ -20,6 +20,7 @@ use App\Http\Resources\Generic\GroupsPhaseResource;
 use App\Http\Resources\WarningCalendarResource;
 use App\Models\Calendar;
 use App\Models\CalendarPhase;
+use App\Models\CalendarViewers;
 use App\Models\Course;
 use App\Models\CourseUnit;
 use App\Models\Epoch;
@@ -30,7 +31,6 @@ use App\Models\InterruptionType;
 use App\Models\InterruptionTypesEnum;
 use App\Models\Method;
 use App\Models\Permission;
-use App\Models\PermissionCategory;
 use App\Models\Semester;
 use App\Services\ExternalImports;
 use App\Utils\Utils;
@@ -125,7 +125,16 @@ class CalendarController extends Controller
     {
         $calendar->fill($request->all())->save();
 
-        dd($request->input("groups"));
+        // delete old viewers
+        CalendarViewers::where("calendar_id", $calendar->id)->delete();
+
+        $groups = $request->input("groups");
+        $viewers = [];
+        foreach ($groups as $group) {
+            $viewers[] = ["group_id" => $group, "calendar_id" => $calendar->id];
+        }
+        // insert all new viewers groups
+        CalendarViewers::insert($viewers);
 
         CalendarChanged::dispatch($calendar);
     }

@@ -102,6 +102,13 @@ class Calendar extends Model
         return $this->hasManyThrough(Exam::class, Epoch::class);
     }
 
+    public function viewers()
+    {
+        return $this->hasMany(CalendarViewers::class);
+    }
+
+
+
     public function firstDayOfSchool()
     {
         return $this->epochs()->min('start_date');

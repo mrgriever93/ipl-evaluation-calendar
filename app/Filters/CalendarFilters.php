@@ -2,9 +2,7 @@
 
 namespace App\Filters;
 
-use App\Models\Calendar;
 use App\Models\Course;
-use App\Models\Epoch;
 use App\Models\InitialGroups;
 use App\Models\CalendarPhase;
 use App\Models\Semester;
@@ -31,14 +29,26 @@ class CalendarFilters extends QueryFilters
 
 
         $user = Auth::user();
+
         // if any of this groups, then exit
-        if (
-            $user->groups->contains('code', InitialGroups::ADMIN) || $user->groups->contains('code', InitialGroups::SUPER_ADMIN) ||
-            $user->groups->contains('code', InitialGroups::GOP) || $user->groups->contains('code', InitialGroups::BOARD) ||
-            $user->groups->contains('code', InitialGroups::PEDAGOGIC) || $user->groups->contains('code', InitialGroups::RESPONSIBLE_PEDAGOGIC)
-        ) {
-            return;
+        //if (
+        //    $user->groups->contains('code', InitialGroups::ADMIN) || $user->groups->contains('code', InitialGroups::SUPER_ADMIN) ||
+        //    $user->groups->contains('code', InitialGroups::GOP) || $user->groups->contains('code', InitialGroups::BOARD) ||
+        //    $user->groups->contains('code', InitialGroups::PEDAGOGIC) || $user->groups->contains('code', InitialGroups::RESPONSIBLE_PEDAGOGIC)
+        //) {
+        //    return;
+        //}
+
+        // TODO validate if this is the best option
+        $user_groups = [];
+        foreach ($user->groups->toArray() as $group){
+            $user_groups[] = $group["id"];
         }
+        $this->builder->whereHas('viewers', function (Builder $query) use($user_groups) {
+            $query->whereIn('group_id', $user_groups);
+        });
+        // TODO END
+
         if (count($user->groups) === 1 && $user->groups->contains('code', InitialGroups::STUDENT)) {
             if ($search === "true") {
                 return $this->builder->published()
