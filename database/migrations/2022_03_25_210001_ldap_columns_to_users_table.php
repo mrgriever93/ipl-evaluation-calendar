@@ -11,6 +11,9 @@ return new class extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('users')) {
+            return false;
+        }
         Schema::table('users', function (Blueprint $table) {
             $table->string('guid')->unique()->nullable();
             $table->string('domain')->nullable();

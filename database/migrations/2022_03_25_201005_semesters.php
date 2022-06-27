@@ -13,6 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('semesters')) {
+            return false;
+        }
         Schema::create('semesters', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
             $table->integer('number');

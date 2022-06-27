@@ -13,6 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('calendar_viewers')) {
+            return false;
+        }
         Schema::create('calendar_viewers', function (Blueprint $table) {
             $table->unsignedBigInteger('calendar_id');
             $table->unsignedBigInteger('group_id');

@@ -13,6 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('epoch_type_method')) {
+            return false;
+        }
         Schema::create('epoch_type_method', function (Blueprint $table) {
             $table->unsignedBigInteger('method_id');
             $table->unsignedBigInteger('epoch_type_id');

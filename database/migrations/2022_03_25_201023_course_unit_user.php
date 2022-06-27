@@ -13,6 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('course_unit_user')) {
+            return false;
+        }
         Schema::create('course_unit_user', function (Blueprint $table) {
             $table->unsignedBigInteger('course_unit_id');
             $table->unsignedBigInteger('user_id');
