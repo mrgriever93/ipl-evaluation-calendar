@@ -211,6 +211,12 @@
 ---
 ## Reunião 21/06/2022
 
+- [ ] Calendário provisório
+- [X] Cada utilizador pode ter vários roles
+- [ ] Guardar histórico dos calendários
+- [ ] Só GOP / Direção / Coordenador podem publicar calendários
+- [X] Destacar mais a revisão
+
 ---
 #### Extra stuff
 - [ ] Calendário e marcação de avaliações:
