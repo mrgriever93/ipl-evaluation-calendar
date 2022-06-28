@@ -11,13 +11,14 @@ class CalendarListResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'display_id' => $this->previous_calendar_id ? "{$this->previous_calendar_id}.{$this->id}" : $this->id,
-            'course'  => "(" . $this->course->code . ") " . ($request->header("lang") == "en" ? $this->course->name_en : $this->course->name_pt),
-            'phase' => new PhaseResource($this->phase),
-            'published' => $this->published,
-            'temporary' => $this->temporary,
-            'differences' => $this->difference_from_previous_calendar,
+            'id'            => $this->id,
+            'display_id'    => $this->previous_calendar_id ? "{$this->previous_calendar_id}.{$this->id}" : $this->id,
+            'course'        => "(" . $this->course->code . ") " . ($request->header("lang") == "en" ? $this->course->name_en : $this->course->name_pt),
+            'semester'      => $this->semester->number == 0 ? ($request->header("lang") == "en" ? $this->semester->name_en : $this->semester->name_pt) : $this->semester->number,
+            'phase'         => new PhaseResource($this->phase),
+            'published'     => $this->published,
+            'temporary'     => $this->temporary,
+            'has_differences' => !empty($this->difference_from_previous_calendar)
         ];
     }
 

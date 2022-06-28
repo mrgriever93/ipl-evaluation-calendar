@@ -30,6 +30,8 @@ const MessageFading = styled(Message)`
     animation: flickerAnimation 1s infinite;
 `;
 
+let filterDebounce = null;
+
 const CalendarList = () => {
     const { t } = useTranslation();
     const [calendars, setCalendars] = useState([]);
@@ -85,7 +87,7 @@ const CalendarList = () => {
     };
 
     useEffect(() => {
-        if (calendars.filter((x) => JSON.parse(x.differences)?.length)?.length > 0) {
+        if (calendars.filter((x) => x.has_differences)?.length > 0) {
             setMessageVisible(true);
         }
     }, [calendars]);
@@ -115,11 +117,16 @@ const CalendarList = () => {
     };
 
     useEffect(() => {
-        loadCalendars();
+        clearTimeout(filterDebounce);
+        filterDebounce = setTimeout(() => {
+            loadCalendars();
+            clearTimeout(filterDebounce);
+        }, 400);
     }, [semesterFilter, courseFilter, phaseFilter, currentPage, myCourseOnly]);
 
 
     const filterByCourse = (course) => {
+        setCurrentPage(1);
         setCourseFilter(course);
     };
 
@@ -132,12 +139,14 @@ const CalendarList = () => {
     };
 
     const filterBySemester = (value) => {
+        setCurrentPage(1);
         setSemesterFilter(value);
     };
 
     const columns = [
         {name: t('ID'),            align: 'center', style: {width: '5%' } },
-        {name: t('Curso'),         align: 'center', style: {width: '40%' } },
+        {name: t('Curso'),         align: 'center', style: {width: '33%' } },
+        {name: t('Semestre'),      align: 'center', style: {width: '7%' } },
         {
             name: t('Fase'),
             align: 'center',
@@ -231,10 +240,11 @@ const CalendarList = () => {
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
-                                    {calendars.map(({id, display_id, course, temporary, phase, published}) => (
+                                    {calendars.map(({id, display_id, course, semester, temporary, phase, published}) => (
                                             <Table.Row key={id}>
                                                 <Table.Cell textAlign="center">{display_id}</Table.Cell>
                                                 <Table.Cell>{course}</Table.Cell>
+                                                <Table.Cell textAlign="center">{semester}</Table.Cell>
                                                 <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
                                                     <Table.Cell>
                                                         {phase.description}

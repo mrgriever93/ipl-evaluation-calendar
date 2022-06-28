@@ -111,14 +111,14 @@ class CalendarController extends Controller
                     $newInterruption->save();
                 }
             }
+            // TODO make the create of calendar more dynamic with DB records
+            CalendarViewers::create(
+                ["calendar_id" => $newCalendar->id, "group_id" => 1],   // "super_admin"
+                ["calendar_id" => $newCalendar->id, "group_id" => 2],   // "admin"
+                ["calendar_id" => $newCalendar->id, "group_id" => 8],   // "gop"
+                ["calendar_id" => $newCalendar->id, "group_id" => 13]   // "gop_estg"
+            );
         }
-        // TODO make the create of calendar more dynamic with DB records
-        CalendarViewers::create(
-            ["calendar_id" => $newCalendar->id, "group_id" => 1],   // "super_admin"
-            ["calendar_id" => $newCalendar->id, "group_id" => 2],   // "admin"
-            ["calendar_id" => $newCalendar->id, "group_id" => 8],   // "gop"
-            ["calendar_id" => $newCalendar->id, "group_id" => 13]   // "gop_estg"
-        );
 
         return response()->json("Created", Response::HTTP_CREATED);
     }

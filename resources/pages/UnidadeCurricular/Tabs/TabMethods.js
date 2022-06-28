@@ -63,7 +63,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                     if (!method.evaluation_type_id) {
                         hasMissingTypes = true;
                     }
-                    if (!method.weight) {
+                    if (!method.weight && methodWeight < 100) {
                         hasEmptyWeight = true;
                     }
                     if (!(method.weight && method.evaluation_type_id && method.minimum >= 0 && method.minimum <= 20)) {

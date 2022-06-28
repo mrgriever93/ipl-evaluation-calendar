@@ -1,12 +1,14 @@
 import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
 import {Button, Container, Dimmer, Form, Grid, Icon, Label, Loader, Table} from 'semantic-ui-react';
-import {Field, useField} from 'react-final-form';
+import {useField} from 'react-final-form';
 import axios from "axios";
 import PaginationDetail from "../../../components/Pagination";
 import FilterOptionPerPage from "../../../components/Filters/PerPage";
 import {useTranslation} from "react-i18next";
 import FilterOptionDegree from "../../../components/Filters/Degree";
+
+let filterDebounce = null;
 
 const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loading, setLoading}) => {
     const { t } = useTranslation();
@@ -21,7 +23,6 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
 
     useEffect(() => {
         coursesFieldInput.onChange(courses);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [courses]);
 
     const searchCourse = (evt, {value}) => {
@@ -30,8 +31,16 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
 
     useEffect(() => {
         fetchCourses();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [courseSearch, currentPage, perPage, degree]);
+    }, [currentPage]);
+
+
+    useEffect(() => {
+        if(currentPage === 1){
+            fetchCourses();
+        } else {
+            setCurrentPage(1);
+        }
+    }, [courseSearch, perPage, degree]);
 
     const fetchCourses = () => {
         setLoading(true);
