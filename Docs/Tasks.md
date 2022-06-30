@@ -285,3 +285,17 @@
     ALTER TABLE `calendar_v2`.`calendar_phases` 
     ADD COLUMN `all_methods_filled` TINYINT(1) NULL DEFAULT '0' AFTER `name_en`;
     ```
+
+
+## Reunião 28/06/2022
+
+- assim que publicado, ja nao pode alterar
+  - alterar toggles para "publicado"
+  - e provisorio enquanto esta a "mexer-se" entre as fases
+  - so e definitivo assim que for publicado
+
+- quem criar a copia, validar:
+  - Se ainda nao estiver publicado, vai para a mesma fase em que esta
+  - se estiver publicado vai para o GOP ou Coordenador de Curso conforme quem faz a copia 
+
+- Publicado nao esta a funcionar bem
