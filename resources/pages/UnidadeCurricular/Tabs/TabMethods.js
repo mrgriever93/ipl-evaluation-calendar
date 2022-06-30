@@ -59,11 +59,11 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                     isValid = false;
                 }
                 //check if the existing methods have all fields filled
-                item.methods?.forEach((method) => {
+                item.methods?.filter((item) => !item.is_blocked).forEach((method) => {
                     if (!method.evaluation_type_id) {
                         hasMissingTypes = true;
                     }
-                    if (!method.weight && methodWeight < 100) {
+                    if (!method.weight) {
                         hasEmptyWeight = true;
                     }
                     if (!(method.weight && method.evaluation_type_id && method.minimum >= 0 && method.minimum <= 20)) {
@@ -135,7 +135,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                         minimum: method.minimum,
                         weight: method.weight,
                         description_pt: method.description_pt,
-                        description_en: method.description_en,
+                        description_en: method.description_en
                     })
                 });
             });
@@ -160,6 +160,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
     //Remove method from epoch type record
     const removeMethod = (epochIndex, methodIndex) => {
         const removedId = epochs[epochIndex].methods[methodIndex]?.id;
+        // TODO delete grouped elements based on grouped_id
         if (removedId) {
             setRemovedMethods((current) => [...current, removedId]);
         }
@@ -186,6 +187,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                 evaluation_type_id: undefined,
                 description_pt: '',
                 description_en: '',
+                is_blocked: false
             });
             return copy;
         });
@@ -311,7 +313,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                     {item.methods?.map((method, methodIndex) => (
                                         <Table.Row key={methodIndex} error={!epochs[index].methods[methodIndex].evaluation_type_id}>
                                             <Table.Cell width={3}>
-                                                <Form.Dropdown placeholder={t("Selecionar Tipo de avaliação")} fluid value={method.evaluation_type_id} selection search
+                                                <Form.Dropdown placeholder={t("Selecionar Tipo de avaliação")} disabled={method.is_blocked} fluid value={method.evaluation_type_id} selection search
                                                     options={evaluationTypes.map(({id, name, enabled}) => (enabled ? ({
                                                         key: id,
                                                         value: id,
@@ -319,7 +321,6 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                                     }) : undefined))}
                                                     onChange={
                                                         (ev, {value}) => setEpochs((current) => {
-                                                            console.log("te");
                                                             const copy = [...current];
                                                             // set number for descricion. Needs to be before the next line because its
                                                             // when we set the current adding of the item
@@ -330,11 +331,13 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                                                 copy[index].methods[methodIndex].description_en = "";
                                                                 copy[index].methods[methodIndex].name = "";
                                                                 copy[index].methods[methodIndex].code = "";
+                                                                copy[index].methods[methodIndex].grouped_id = Math.floor(Math.random() * 1000);
                                                             } else {
                                                                 copy[index].methods[methodIndex].description_pt = evaluationTypes.filter((x) => x.id === value)[0].name_pt + " " + nextExamIndex;
                                                                 copy[index].methods[methodIndex].description_en = evaluationTypes.filter((x) => x.id === value)[0].name_en + " " + nextExamIndex;
                                                                 copy[index].methods[methodIndex].name = evaluationTypes.filter((x) => x.id === value)[0].name_pt;
                                                                 copy[index].methods[methodIndex].code = evaluationTypes.filter((x) => x.id === value)[0].code;
+                                                                copy[index].methods[methodIndex].grouped_id = Math.floor(Math.random() * 1000);
                                                             }
                                                             // hardcode: add statement release and oral presentation métodos for projects and reports on profs request
                                                             if(copy[index].methods[methodIndex].code.toLowerCase() === "project" || copy[index].methods[methodIndex].code.toLowerCase() === "report") {
@@ -347,7 +350,9 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                                                         name: "Lançamento do enunciado",
                                                                         description: "",
                                                                         description_en: "Statement release",
-                                                                        description_pt: "Lançamento do enunciado"
+                                                                        description_pt: "Lançamento do enunciado",
+                                                                        is_blocked: true,
+                                                                        grouped_id: copy[index].methods[methodIndex].grouped_id
                                                                     });
                                                                     copy[index].methods.push({
                                                                         weight: 0,
@@ -356,7 +361,9 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                                                         name: "Apresentação oral pública",
                                                                         description: "",
                                                                         description_en: "Public oral presentation",
-                                                                        description_pt: "Apresentação oral pública"
+                                                                        description_pt: "Apresentação oral pública",
+                                                                        is_blocked: true,
+                                                                        grouped_id: copy[index].methods[methodIndex].grouped_id
                                                                     });
                                                                 }
                                                             }
@@ -371,7 +378,7 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                                     </div>
                                                 )}
                                             </Table.Cell>
-                                            <Table.Cell width={3}>
+                                            <Table.Cell width={3} colSpan={method.is_blocked ? 3 : 0}>
                                                 <Form.Input placeholder={t("Descrição PT")} fluid value={method.description_pt}
                                                     onChange={
                                                         (ev, {value}) => setEpochs((current) => {
@@ -390,12 +397,16 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                                                         })
                                                     } />
                                             </Table.Cell>
-                                            <Table.Cell width={5}>
-                                                <Slider step="0.5" min="0" max="20" value={method.minimum} inputSide={"left"} eventHandler={(value) => updateMethodMinimum(index, methodIndex, value)} />
-                                            </Table.Cell>
-                                            <Table.Cell width={5}>
-                                                <Slider step="5" min="0" max="100" value={method.weight} inputSide={"left"} valuePrefix={"%"} eventHandler={(value) => updateMethodWeight(index, methodIndex, value)}/>
-                                            </Table.Cell>
+                                            { !method.is_blocked && (
+                                                <Table.Cell width={5}>
+                                                    <Slider step="0.5" min="0" max="20" value={method.minimum} inputSide={"left"} eventHandler={(value) => updateMethodMinimum(index, methodIndex, value)} />
+                                                </Table.Cell>
+                                            )}
+                                            { !method.is_blocked && (
+                                                <Table.Cell width={5}>
+                                                    <Slider step="5" min="0" max="100" value={method.weight} inputSide={"left"} valuePrefix={"%"} eventHandler={(value) => updateMethodWeight(index, methodIndex, value)}/>
+                                                </Table.Cell>
+                                            )}
                                             <Table.Cell collapsing width={1}>
                                                 <Icon name={"trash"} onClick={() => removeMethod(index, methodIndex)}/>
                                             </Table.Cell>
