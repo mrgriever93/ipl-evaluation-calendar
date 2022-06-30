@@ -217,25 +217,21 @@
 - [ ] Só GOP / Direção / Coordenador podem publicar calendários
 - [X] Destacar mais a revisão
 
----
-#### Extra stuff
-- [ ] Calendário e marcação de avaliações:
-    - [ ] Rever traduções
+## Reunião 28/06/2022
+Melhorias:
+- [ ] Filtrar lista de calendários por provisório/definitivo;
+- [ ] Melhorar apresentação dos métodos associados a Projeto
+  - [ ] Remover Peso e Minimos do Lançamento de Enunciado e Apresentação Oral
+  - [ ] Bloquear a dropdown para não poder ser alterada
+  - [ ] Deixar submeter caso algum metodo esteja a 0
+- [ ] Publicar um calendário
+  - [ ] Só CC, GOP ou Direção é que pode publicar
+    - [ ] Se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar e receber feedback
+    - [ ] Se for o GOP Publica como definitivo e não cria copia
+  - [ ] A direção e o Conselho Pedagógico deve ver apenas botões para Aprovar ou Rejeitar
+    - [ ] Se rejeitarem devem poder adicionar um comentário/parecer
+    - [ ] 
 
-- [ ] Submeter calendário para próximas fases
-    - [ ] Criar popup para apresentar possibilidades
-        - [ ] Colocar calendário em Edição
-            - [ ] GOP
-            - [ ] Coordenador de Curso
-            - [ ] Responsável de UC (selecionar quais UCs)
-        - [ ] Colocar calendário em Avaliação
-            - [ ] Estudantes
-            - [ ] CCP
-            - [ ] GOP
-            - [ ] Conselho Pedagócio
-            - [ ] Direção
-        - [ ] Publicar calendário
-            - [ ] Se for GOP, CC ou Direção
 
 
 ## TRABALHO FUTURO:
@@ -260,42 +256,8 @@
   - [ ] Provisório - até 1º dia de aulas
   - [ ] Definitivo - até 5a semana de aulas
 
-## TODO Miguel
-- [ ] Limpeza "Requests Folder"
-
-
 
 ## Perguntar aos profs
-- UC de projeto não vem no WebService. É suposto? Não é uma UC que tem de vir no calendário?
-  - Deve ser possível configurar todas as épocas no caso de uma UC de projeto?
-
-- O calendario e temporario a partir de que altura/fase?
-
-
-
-# !!! Não esquecer atualizar BD no servidor !!
-
-- exams group
-    ```
-    ALTER TABLE `calendar_v2`.`exams`
-    ADD COLUMN `group_id` BIGINT NULL DEFAULT NULL AFTER `method_id`;
-    ```
-- update CalendarPhase flag
-    ```
-    ALTER TABLE `calendar_v2`.`calendar_phases` 
-    ADD COLUMN `all_methods_filled` TINYINT(1) NULL DEFAULT '0' AFTER `name_en`;
-    ```
-
-
-## Reunião 28/06/2022
-
-- assim que publicado, ja nao pode alterar
-  - alterar toggles para "publicado"
-  - e provisorio enquanto esta a "mexer-se" entre as fases
-  - so e definitivo assim que for publicado
-
-- quem criar a copia, validar:
-  - Se ainda nao estiver publicado, vai para a mesma fase em que esta
-  - se estiver publicado vai para o GOP ou Coordenador de Curso conforme quem faz a copia 
-
-- Publicado nao esta a funcionar bem
+- Como é em relação ao Poster A3 e a esta entrega dia 11 de Julho? Não era dia 14?
+- Perguntar como funciona em relação ao Parecer?
+- Quando fazemos uma cópia... copiamos exames e interrupções. E os comentários? Também é para copiar?
