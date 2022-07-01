@@ -2,7 +2,20 @@ import axios from 'axios';
 import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
-import {Button, Modal, Header, Dropdown, Card, Icon, Divider, Checkbox, Form, Loader, Dimmer} from 'semantic-ui-react';
+import {
+    Button,
+    Modal,
+    Header,
+    Dropdown,
+    Card,
+    Icon,
+    Divider,
+    Checkbox,
+    Form,
+    Loader,
+    Dimmer,
+    Grid
+} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
@@ -53,6 +66,11 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
         }
     }, [calendarPhase]);
 
+    const onSavePublish = () => {
+        setIsPublished(true);
+        setIsTemporary(true);
+        onSave();
+    }
 
     const onSave = () => {
         const viewGroups = calendarGroups.filter((item) => item.selected).map((item) => item.id);
@@ -80,38 +98,6 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
         });
     }
 
-    const [creatingCopy, setCreatingCopy] = useState(false);
-
-    const createCopy = () => {
-        SweetAlertComponent.fire({
-            title: 'Atenção!',
-            html: 'Ao criar uma cópia deste calendário, irá eliminar todas as cópias criadas anteriormente deste mesmo calendário!<br/><br/><strong>Tem a certeza que deseja criar uma cópia do calendário?</strong>',
-            denyButtonText: 'Não',
-            confirmButtonText: 'Sim',
-            showConfirmButton: true,
-            showDenyButton: true,
-            confirmButtonColor: '#21ba45',
-            denyButtonColor: '#db2828',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                setCreatingCopy(true);
-                axios.post(`/calendar/${calendarId}/publish`, {
-                    createCopy: true,
-                }).then((res) => {
-                    setCreatingCopy(false);
-                    if (res.status === 200) {
-                        toast('Cópia do calendário criada com sucesso!', successConfig);
-                    } else {
-                        toast('Ocorreu um erro ao tentar criar uma cópia do calendário!', errorConfig);
-                    }
-                });
-            }
-        });
-    };
-    const onCopy = () => {
-
-    }
-
     return (
         <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
             <Modal.Header>
@@ -119,6 +105,9 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                 { t("Submeter calendário para a próxima fase") }
             </Modal.Header>
             <Modal.Content>
+                <div>{ t("Fase atual:") }</div>
+                <b>{ t("Em edicao (adsasddas)") }</b>
+
                 <div>{ t("Selecionar próxima fase:") }</div>
                 <div className='margin-y-base'>
                     <Card.Group itemsPerRow={3} >
@@ -162,78 +151,65 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                     value={calendarPhase}
                 /> */}
                 <Divider />
-                <Header as={"h3"}>
-                    <Icon name={"cog"} size={"big"} color={"grey"}/>
-                    { t("Definicoes do Calendario") }
-                </Header>
                 <Form>
-                    <Form.Field>
-                        <Checkbox toggle label={ t("Provisorio") } checked={isTemporary}
-                                  onChange={(e, {checked}) => {
-                                      if(checked) {
-                                          setIsPublished(false);
-                                      }
-                                      setIsTemporary(checked);
-                                  }}
-                        />
-                    </Form.Field>
-                    <Form.Field>
-                        <Checkbox toggle label={ t("Definitivo") } checked={isPublished}
-                                  onChange={(e, {checked}) => {
-                                      if(checked){
-                                          setIsTemporary(false);
-                                      }
-                                      setIsPublished(checked);
-                                  }}
-                        />
-                    </Form.Field>
-                </Form>
-                <Header as={"h4"}>
-                    <Icon name={"users"} size={"big"} color={"grey"}/>
-                    { t("Grupos que podem visualizar o calendario") }
-                </Header>
-                <Form>
-                    <Form.Group grouped>
-                        { isPublished ? (
-                            <div>{ t("Todos os grupos vao ver este calendario") }</div>
-                        ) : (
-                            <>
-                                { calendarGroups && calendarGroups.map((item, indexGroup) => (
-                                    <Form.Field key={indexGroup}>
-                                        <Checkbox label={item.name} checked={item.selected}
-                                                  onChange={(e, {checked}) => handleGroupChange(item.id, checked)} />
-                                    </Form.Field>
-                                ))}
-                            </>
-                        )}
-                        { groupViewersLoading && (
-                            <Dimmer active inverted>
-                                <Loader indeterminate>{t('A carregar grupos')}</Loader>
-                            </Dimmer>
-                        )}
-                    </Form.Group>
+                    <Grid columns={2} divided>
+                        <Grid.Row>
+                            <Grid.Column>
+                                <Header as={"h4"}>
+                                    <Icon name={"users"} size={"big"} color={"grey"}/>
+                                    { t("Grupos que podem visualizar o calendario") }
+                                </Header>
+                                <Form.Group grouped>
+                                    { isPublished ? (
+                                        <div>{ t("Todos os grupos vao ver este calendario") }</div>
+                                    ) : (
+                                        <>
+                                            { calendarGroups && calendarGroups.map((item, indexGroup) => (
+                                                <Form.Field key={indexGroup}>
+                                                    <Checkbox label={item.name} checked={item.selected}
+                                                              onChange={(e, {checked}) => handleGroupChange(item.id, checked)} />
+                                                </Form.Field>
+                                            ))}
+                                        </>
+                                    )}
+                                    { groupViewersLoading && (
+                                        <Dimmer active inverted>
+                                            <Loader indeterminate>{t('A carregar grupos')}</Loader>
+                                        </Dimmer>
+                                    )}
+                                </Form.Group>
+                            </Grid.Column>
+                            <Grid.Column>
+                                <Header as={"h4"}>
+                                    <Icon name={"users"} size={"big"} color={"grey"}/>
+                                    { t("UCs a serem preenchidas") }
+                                </Header>
+                                <Form.Group grouped>
+                                    { isPublished ? (
+                                        <div>{ t("Todos os grupos vao ver este calendario") }</div>
+                                    ) : (
+                                        <>
+                                            { calendarGroups && calendarGroups.map((item, indexGroup) => (
+                                                <Form.Field key={indexGroup}>
+                                                    <Checkbox label={item.name} checked={item.selected}
+                                                              onChange={(e, {checked}) => handleGroupChange(item.id, checked)} />
+                                                </Form.Field>
+                                            ))}
+                                        </>
+                                    )}
+                                    { groupViewersLoading && (
+                                        <Dimmer active inverted>
+                                            <Loader indeterminate>{t('A carregar grupos')}</Loader>
+                                        </Dimmer>
+                                    )}
+                                </Form.Group>
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
                 </Form>
             </Modal.Content>
             <Modal.Actions>
-                <div className='main-content-actions'>
-                    {!isPublished ? (
-                        <>
-                            {/* <ShowComponentIfAuthorized permission={[SCOPES.PUBLISH_CALENDAR]}>
-                                <Button color="teal" onClick={publishCalendar}>Publicar esta versão</Button>
-                            </ShowComponentIfAuthorized> */}
-                            { (SCOPES.PUBLISH_CALENDAR || calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0) && (
-                                <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE]}>
-                                    <Button color="teal" onClick={openSubmitModalHandler}>Submeter</Button>
-                                </ShowComponentIfAuthorized>
-                            )
-                            }
-                        </>
-                    ) : (
-                        <ShowComponentIfAuthorized permission={[SCOPES.CREATE_COPY]}>
-                            <Button color="teal" loading={creatingCopy} onClick={createCopy} floated={"left"}>Criar um cópia desta versão</Button>
-                        </ShowComponentIfAuthorized>
-                    )}
-                </div>
+                <Button onClick={onSavePublish} color={"blue"} floated={"left"} icon labelPosition={"right"}>{t('Publicar esta versão do calendário')} <Icon name={"calendar check outline"}/></Button>
                 <Button onClick={onClose}>{t('Fechar')}</Button>
                 <Button onClick={onSave} color={"green"}>{t('Guardar')}</Button>
             </Modal.Actions>

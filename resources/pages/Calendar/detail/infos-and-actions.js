@@ -43,6 +43,36 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
     const [methodsIncompleteCount, setMethodsIncompleteCount] = useState(0);
     const [activeEpochs, setActiveEpochs] = useState([]);
 
+    const [creatingCopy, setCreatingCopy] = useState(false);
+
+    const createCopy = () => {
+        SweetAlertComponent.fire({
+            title: 'Atenção!',
+            html: 'Ao criar uma cópia deste calendário, irá eliminar todas as cópias criadas anteriormente deste mesmo calendário!<br/><br/><strong>Tem a certeza que deseja criar uma cópia do calendário?</strong>',
+            denyButtonText: 'Não',
+            confirmButtonText: 'Sim',
+            showConfirmButton: true,
+            showDenyButton: true,
+            confirmButtonColor: '#21ba45',
+            denyButtonColor: '#db2828',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setCreatingCopy(true);
+                axios.post(`/calendar/${calendarId}/publish`, {
+                    createCopy: true,
+                }).then((res) => {
+                    setCreatingCopy(false);
+                    if (res.status === 200) {
+                        toast('Cópia do calendário criada com sucesso!', successConfig);
+                    } else {
+                        toast('Ocorreu um erro ao tentar criar uma cópia do calendário!', errorConfig);
+                    }
+                });
+            }
+        });
+    };
+
+
     useEffect(() => {
         const missing = warnings.filter((item) => !item.has_methods);
         setMethodsMissingCount(missing.length);
@@ -177,6 +207,25 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
                         Calendário de Avaliação
                         <div className='heading-description'>{ calendarInfo?.course?.name_pt ? " (" + calendarInfo.course.name_pt + ")": '' }</div>
                     </Header>
+                </div>
+                <div className='main-content-actions'>
+                    {!isPublished ? (
+                        <>
+                            {/* <ShowComponentIfAuthorized permission={[SCOPES.PUBLISH_CALENDAR]}>
+                                <Button color="teal" onClick={publishCalendar}>Publicar esta versão</Button>
+                            </ShowComponentIfAuthorized> */}
+                            { (SCOPES.PUBLISH_CALENDAR || calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0) && (
+                                <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE]}>
+                                    <Button color="teal" onClick={openSubmitModalHandler}>Submeter</Button>
+                                </ShowComponentIfAuthorized>
+                            )
+                            }
+                        </>
+                    ) : (
+                        <ShowComponentIfAuthorized permission={[SCOPES.CREATE_COPY]}>
+                            <Button color="teal" loading={creatingCopy} onClick={createCopy}>Criar um cópia desta versão</Button>
+                        </ShowComponentIfAuthorized>
+                    )}
                 </div>
             </div>
             <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
