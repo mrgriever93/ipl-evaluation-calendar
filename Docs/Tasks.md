@@ -220,17 +220,17 @@
 ## Reunião 28/06/2022
 Melhorias:
 - [ ] Filtrar lista de calendários por provisório/definitivo;
-- [ ] Melhorar apresentação dos métodos associados a Projeto
-  - [ ] Remover Peso e Minimos do Lançamento de Enunciado e Apresentação Oral
-  - [ ] Bloquear a dropdown para não poder ser alterada
-  - [ ] Deixar submeter caso algum metodo esteja a 0
+- [X] Melhorar apresentação dos métodos associados a Projeto
+  - [X] Remover Peso e Minimos do Lançamento de Enunciado e Apresentação Oral
+  - [X] Bloquear a dropdown para não poder ser alterada
+  - [X] Deixar submeter caso algum metodo esteja a 0
 - [ ] Publicar um calendário
   - [ ] Só CC, GOP ou Direção é que pode publicar
     - [ ] Se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar e receber feedback
     - [ ] Se for o GOP Publica como definitivo e não cria copia
   - [ ] A direção e o Conselho Pedagógico deve ver apenas botões para Aprovar ou Rejeitar
     - [ ] Se rejeitarem devem poder adicionar um comentário/parecer
-    - [ ] 
+  - [ ] Alterar popup de submissao
 
 
 

@@ -6,6 +6,8 @@ import {Button, Modal, Header, Dropdown, Card, Icon, Divider, Checkbox, Form, Lo
 import {toast} from 'react-toastify';
 
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
+import SCOPES from "../../../utils/scopesConstants";
+import ShowComponentIfAuthorized from "../../../components/ShowComponentIfAuthorized";
 
 const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, updatePhase} ) => {
     // const history = useNavigate();
@@ -77,6 +79,39 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
             return oldList;
         });
     }
+
+    const [creatingCopy, setCreatingCopy] = useState(false);
+
+    const createCopy = () => {
+        SweetAlertComponent.fire({
+            title: 'Atenção!',
+            html: 'Ao criar uma cópia deste calendário, irá eliminar todas as cópias criadas anteriormente deste mesmo calendário!<br/><br/><strong>Tem a certeza que deseja criar uma cópia do calendário?</strong>',
+            denyButtonText: 'Não',
+            confirmButtonText: 'Sim',
+            showConfirmButton: true,
+            showDenyButton: true,
+            confirmButtonColor: '#21ba45',
+            denyButtonColor: '#db2828',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setCreatingCopy(true);
+                axios.post(`/calendar/${calendarId}/publish`, {
+                    createCopy: true,
+                }).then((res) => {
+                    setCreatingCopy(false);
+                    if (res.status === 200) {
+                        toast('Cópia do calendário criada com sucesso!', successConfig);
+                    } else {
+                        toast('Ocorreu um erro ao tentar criar uma cópia do calendário!', errorConfig);
+                    }
+                });
+            }
+        });
+    };
+    const onCopy = () => {
+
+    }
+
     return (
         <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
             <Modal.Header>
@@ -180,6 +215,25 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                 </Form>
             </Modal.Content>
             <Modal.Actions>
+                <div className='main-content-actions'>
+                    {!isPublished ? (
+                        <>
+                            {/* <ShowComponentIfAuthorized permission={[SCOPES.PUBLISH_CALENDAR]}>
+                                <Button color="teal" onClick={publishCalendar}>Publicar esta versão</Button>
+                            </ShowComponentIfAuthorized> */}
+                            { (SCOPES.PUBLISH_CALENDAR || calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0) && (
+                                <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE]}>
+                                    <Button color="teal" onClick={openSubmitModalHandler}>Submeter</Button>
+                                </ShowComponentIfAuthorized>
+                            )
+                            }
+                        </>
+                    ) : (
+                        <ShowComponentIfAuthorized permission={[SCOPES.CREATE_COPY]}>
+                            <Button color="teal" loading={creatingCopy} onClick={createCopy} floated={"left"}>Criar um cópia desta versão</Button>
+                        </ShowComponentIfAuthorized>
+                    )}
+                </div>
                 <Button onClick={onClose}>{t('Fechar')}</Button>
                 <Button onClick={onSave} color={"green"}>{t('Guardar')}</Button>
             </Modal.Actions>

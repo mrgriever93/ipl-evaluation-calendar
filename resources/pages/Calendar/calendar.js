@@ -423,6 +423,10 @@ const Calendar = () => {
     let alreadyAddedRowSpan = false;
     let interruptionDays = 0;
 
+    /*
+     * Option to drag and drop exams bewteen days
+     * TODO - maybe future work
+     */
     const allowDrop = (ev) => {
         ev.preventDefault();
     }
@@ -548,10 +552,12 @@ const Calendar = () => {
                 examsComponents = existingExamsAtThisDate.map((exam) => {
                     return exam.epoch_id === epoch.id && (
                         // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
+                        // For the Future (drag and drop
+                        // draggable="false" onDragStart={drag}
                         <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )}
                             title={ (exam.in_class ? t('Aula') + " - " : "" ) + exam.course_unit + " - " + (exam.method?.description || exam.method?.name) }
                             color="blue" key={exam.id}
-                            onClick={() => openExamDetailHandler(year, exam)} draggable="false" onDragStart={drag} >
+                            onClick={() => openExamDetailHandler(year, exam)}>
                             { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
                                 <div className="btn-action-wrapper">
                                     {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
@@ -570,8 +576,10 @@ const Calendar = () => {
                 });
             }
             // create a button to add exams for this date
+            // For the Future (drag and drop
+            // onDrop={drop} onDragOver={allowDrop}
             return (
-                <Table.Cell key={weekDayIndex} className={ 'calendar-day-' + epoch.code } textAlign="center" onDrop={drop} onDragOver={allowDrop}>
+                <Table.Cell key={weekDayIndex} className={ 'calendar-day-' + epoch.code } textAlign="center">
                     {examsComponents}
                     {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.ADD_EXAMS).length > 0 && (
                         <Button className="btn-schedule-exam" onClick={() => scheduleExamHandler(year, epoch, day.date, existingExamsAtThisDate)}>
