@@ -41,6 +41,49 @@
 - [ ] Meus calendarios/todos -> tem de se atualizar o filtro para ter as permissoes
   - [ ] Botao com role mais especifica? (sendo a direcao ou gop) ou grupo com flag? (tipo user generico)
 
+# miguel
+- [ ] Filtrar lista de calendários por provisório/definitivo;
+  - 
+- [ ] Publicar um calendário
+    - [ ] Só CC, GOP ou Direção é que pode publicar
+        - [ ] Se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar e receber feedback
+        - [ ] Se for o GOP Publica como definitivo e não cria copia
+    - [ ] A direção e o Conselho Pedagógico deve ver apenas botões para Aprovar ou Rejeitar
+        - [ ] Se rejeitarem devem poder adicionar um comentário/parecer
+    - [ ] Alterar popup de submissao
+
+# Logica de Calendario
+- [ ] Versao do calendario
+  - comeca em **"0.0"** e quando e publicado incrementa _**"0.1"**_
+  - se o calendario passar a definitivo, entao fica **"1.0"**
+  - caso exista alguma alteracao apos o estado definitivo, entao incrementa _**"1.0"**_ por cada vez que e publicado outro estado definitivo
+
+
+- [ ] Publicar o calendario
+    - apenas o Coordenador de curso (CC) ou GOP/Direcao e que podem publicar
+    - Sempre que o CC publicar:
+      - a **_flag_** "**temporary**" passa a "1", e a **_flag_** "**published [9]**" a "0"
+        - Comment > para garantir que o calendario fica com as flags corretas 
+      - o campo _calendar_phase_id_ passa a "**published [9]**"
+      - apos "publicado" cria uma copia automaticamente, devolvendo o novo "id" e fazendo redirect no browser
+        - o campo _calendar_phase_id_ passa a "**published [9]**"
+    - Sempre que o GOP?/Direcao publicar, a **_flag_** "**temporary**" passa a "0", e a **_flag_** "**published [9]**" a "1" e o campo _calendar_phase_id_ passa a "**published [9]**"
+    
+
+- [ ] Clone/copia do calendario
+  - apenas o Coordenador de curso (CC) ou GOP e que podem criar uma copia
+  - Quando a copia e criada, as **_flags_** "**temporary**" e "**published [9]**" a "0", e o campo _calendar_phase_id_ passa a:
+    - "**In Edit (Course Coordinator) [2]**" caso seja o CC
+    - "**In Edit (GOP) [1]**" caso seja o GOP
+  - Sera criado um clone de:
+    - Calendario
+    - Exames
+    - Interrupcoes
+    - _Comentarios_
+      - sera preciso copiar? Se sim, todos ou apenas os que nao estao escondidos?
+  - adicionar no campo **_versao_** mais **"0.1"** caso ainda nao esteja definitivo ou **"1.0"** caso esteja
+
+
 
 ### TODO Miguel
 - [ ] Limpeza "Requests Folder"
