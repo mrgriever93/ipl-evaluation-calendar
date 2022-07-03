@@ -63,10 +63,10 @@ const UnitTabMethods = ({ unitId, warningsHandler }) => {
                     if (!method.evaluation_type_id) {
                         hasMissingTypes = true;
                     }
-                    if (!method.weight) {
-                        hasEmptyWeight = true;
-                    }
-                    if (!(method.weight && method.evaluation_type_id && method.minimum >= 0 && method.minimum <= 20)) {
+                    //if (!method.weight) {
+                    //    hasEmptyWeight = true;
+                    //}
+                    if (!(method.evaluation_type_id && method.minimum >= 0 && method.minimum <= 20)) { //method.weight &&
                         isValid = false;
                     }
                 });
