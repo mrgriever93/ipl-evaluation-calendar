@@ -6,7 +6,7 @@
 - [ ] Quando um calendário ainda não tem dados nenhuns, a coluna da revisão não está a dar a informação correta. 
   - [ ] Diz que está tudo preenchido.
   - [ ] E o Popup aparece vazio
-- [ ] Ao criar métodos, deve permitir guardar metodos com peso de 0%, uma vez que podemos querer marcar a data mas não ser um momento de avaliação
+- [X] Ao criar métodos, deve permitir guardar metodos com peso de 0%, uma vez que podemos querer marcar a data mas não ser um momento de avaliação
 - [ ] Na criação dos calendários, é necessário adicionar espaços entre as colunas
 
 **Detalhe calendário**
@@ -50,9 +50,9 @@
 - [ ] Meus calendarios/todos -> tem de se atualizar o filtro para ter as permissoes
   - [ ] Botao com role mais especifica? (sendo a direcao ou gop) ou grupo com flag? (tipo user generico)
 
-# miguel
-- [ ] Filtrar lista de calendários por provisório/definitivo;
-  - 
+# Miguel
+- [X] Filtrar lista de calendários por provisório/definitivo;
+
 - [ ] Publicar um calendário
     - [ ] Só CC, GOP ou Direção é que pode publicar
         - [ ] Se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar e receber feedback
