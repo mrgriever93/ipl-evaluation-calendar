@@ -40,4 +40,14 @@ class CalendarPhase extends Model
         //return $this->where('code', 'evaluation_students')->first()->id;
         return 4;
     }
+    public static function phaseEditGop()
+    {
+        //return $this->where('code', 'evaluation_students')->first()->id;
+        return 1;
+    }
+    public static function phaseEditCC()
+    {
+        //return $this->where('code', 'evaluation_students')->first()->id;
+        return 2;
+    }
 }

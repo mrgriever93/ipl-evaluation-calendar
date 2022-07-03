@@ -20,6 +20,8 @@ return new class extends Migration
             $table->unsignedBigInteger('id')->autoIncrement();
             $table->unsignedBigInteger('previous_calendar_id')->nullable();
 
+            $table->decimal('version', $precision = 8, $scale = 2)->default(0.0);
+
             $table->unsignedBigInteger('course_id');
             $table->foreign('course_id')->references('id')->on('courses');
             $table->unsignedBigInteger('calendar_phase_id');
@@ -34,8 +36,8 @@ return new class extends Migration
 
             $table->string('observations_pt')->nullable();
             $table->string('observations_en')->nullable();
-            $table->boolean('temporary')->default(true);
-            $table->boolean('published')->default(false);
+            $table->boolean('is_temporary')->default(false);
+            $table->boolean('is_published')->default(false);
             $table->json('difference_from_previous_calendar')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by');

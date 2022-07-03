@@ -57,6 +57,9 @@
   - comeca em **"0.0"** e quando e publicado incrementa _**"0.1"**_
   - se o calendario passar a definitivo, entao fica **"1.0"**
   - caso exista alguma alteracao apos o estado definitivo, entao incrementa _**"1.0"**_ por cada vez que e publicado outro estado definitivo
+  - [X] Logica Server
+  - [ ] Logica Client
+  - [ ] Testar
 
 
 - [ ] Publicar o calendario
@@ -68,7 +71,10 @@
       - apos "publicado" cria uma copia automaticamente, devolvendo o novo "id" e fazendo redirect no browser
         - o campo _calendar_phase_id_ passa a "**published [9]**"
     - Sempre que o GOP?/Direcao publicar, a **_flag_** "**temporary**" passa a "0", e a **_flag_** "**published [9]**" a "1" e o campo _calendar_phase_id_ passa a "**published [9]**"
-    
+  - [X] Logica Server
+  - [ ] Logica Client
+  - [ ] Testar
+
 
 - [ ] Clone/copia do calendario
   - apenas o Coordenador de curso (CC) ou GOP e que podem criar uma copia
@@ -82,7 +88,9 @@
     - _Comentarios_
       - sera preciso copiar? Se sim, todos ou apenas os que nao estao escondidos?
   - adicionar no campo **_versao_** mais **"0.1"** caso ainda nao esteja definitivo ou **"1.0"** caso esteja
-
+  - [X] Logica Server
+  - [ ] Logica Client
+  - [ ] Testar
 
 
 ### TODO Miguel
@@ -304,3 +312,19 @@ Melhorias:
 - Como é em relação ao Poster A3 e a esta entrega dia 11 de Julho? Não era dia 14?
 - Perguntar como funciona em relação ao Parecer?
 - Quando fazemos uma cópia... copiamos exames e interrupções. E os comentários? Também é para copiar?
+
+
+
+## Alterar na BD
+
+```
+ALTER TABLE `calendar_v2`.`calendar_changes`
+CHANGE COLUMN `temporary` `is_temporary` TINYINT(1) NOT NULL ;
+```
+
+```
+ALTER TABLE `calendar_v2`.`calendars` 
+ADD COLUMN `version` DECIMAL(8,3) NULL DEFAULT 0.0 AFTER `id`,
+CHANGE COLUMN `temporary` `is_temporary` TINYINT(1) NOT NULL DEFAULT '0' ,
+CHANGE COLUMN `published` `is_published` TINYINT(1) NOT NULL DEFAULT '0' ;
+```

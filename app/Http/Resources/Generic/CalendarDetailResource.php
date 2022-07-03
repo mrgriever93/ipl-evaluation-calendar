@@ -15,11 +15,12 @@ class CalendarDetailResource extends JsonResource
         return [
             'id'            => $this->id,
             'week_ten'      => $this->week_ten,
-            'display_id'    => $this->previous_calendar_id ? "{$this->previous_calendar_id}.{$this->id}" : $this->id,
+            'version'       => $this->version,
+            //'display_id' => $this->previous_calendar_id ? "{$this->previous_calendar_id}.{$this->id}" : $this->id,
             'course'        => new CourseResource($this->course),
             'phase'         => new PhaseResource($this->phase),
-            'published'     => $this->published,
-            'temporary'     => $this->temporary,
+            'published'     => $this->is_published,
+            'temporary'     => $this->is_temporary,
             'semester'      => $this->semester->special ? "Especial" : $this->semester->number,
             'epochs'        => EpochCalendarResource::collection($this->whenLoaded('epochs', $this->epochs()->with(['exams', 'exams.comments'])->get())),
             'interruptions' => InterruptionResource::collection($this->whenLoaded('interruptions')),
@@ -29,7 +30,7 @@ class CalendarDetailResource extends JsonResource
                 "course"        => $this->course
             ]),
             'differences'   => $this->difference_from_previous_calendar,
-            'previous_from_definitive' => $this->previousCalendar ? !$this->previousCalendar->temporary : false,
+            'previous_from_definitive' => $this->previousCalendar ? !$this->previousCalendar->is_temporary : false,
         ];
     }
 

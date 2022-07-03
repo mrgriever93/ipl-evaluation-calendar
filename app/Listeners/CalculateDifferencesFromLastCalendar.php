@@ -2,7 +2,6 @@
 
 namespace App\Listeners;
 
-use App\Models\Course;
 use App\Models\Epoch;
 use App\Models\Exam;
 use App\Models\Calendar;

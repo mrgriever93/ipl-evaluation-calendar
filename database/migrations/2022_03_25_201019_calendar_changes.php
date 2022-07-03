@@ -22,7 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('calendar_phase_id');
             $table->string('observations_pt')->nullable();
             $table->string('observations_en')->nullable();
-            $table->boolean('temporary');
+            $table->boolean('is_temporary');
 
             $table->foreign('calendar_id')->references('id')->on('calendars');
             $table->foreign('calendar_phase_id')->references('id')->on('calendar_phases');

@@ -78,6 +78,19 @@ class CalendarFilters extends QueryFilters
         return $this->builder->where('semester_id',  Semester::find($semester)->id);
     }
 
+
+    public function isTemporary($status) {
+        return $this->builder->where('is_temporary',  $status);
+    }
+    public function isPublished($status) {
+        return $this->builder->where('is_published',  $status);
+    }
+
+    public function phase($phase) {
+        return $this->builder->where('calendar_phase_id',  $phase);
+    }
+
+
     public function course($course)
     {
         $user = Auth::user();

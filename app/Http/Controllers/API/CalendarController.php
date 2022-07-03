@@ -60,6 +60,11 @@ class CalendarController extends Controller
 
         foreach ($courses as $key => $course) {
             $newCalendar = new Calendar($request->all());
+            $newCalendar->version = 0.0;
+            // To make sure that the calendar starts with the right flags
+            $newCalendar->is_temporary = 0;
+            $newCalendar->is_published = 0;
+
             $newCalendar->academic_year_id = $request->cookie('academic_year');
             $newCalendar->semester_id = Semester::where('code', $request->semester)->firstOrFail()->id;
             $newCalendar->course_id = $course["id"] ?? $course;
@@ -143,7 +148,21 @@ class CalendarController extends Controller
         // insert all new viewers groups
         CalendarViewers::insert($viewers);
 
-        CalendarChanged::dispatch($calendar);
+        // TODO check user for this action
+        if($calendar->calendar_phase_id == CalendarPhase::phasePublished()) {
+            if(Auth::user()->groups()->Gop()){
+                $calendar->is_temporary = false;
+                $calendar->is_published = true;
+                $calendar->save();
+            } else if(Auth::user()->groups()->Coordinator()){
+                $calendar->is_temporary = true;
+                $calendar->is_published = false;
+                $calendar->save();
+            }
+            CalendarPublished::dispatch($calendar);
+        } else {
+            CalendarChanged::dispatch($calendar);
+        }
     }
 
     public function destroy(Calendar $calendar)
@@ -159,37 +178,54 @@ class CalendarController extends Controller
             ->where('semester', $calendar->semester)
             ->delete();
         if ($request->exists('createCopy') && $request->createCopy) {
+            // clone new calendar
             $clone = $calendar->replicate();
             $clone->previous_calendar_id = $calendar->id;
+            // validate if we want to add 0.1 or 1.0
+            $clone->version = ($calendar->is_published ? floor($calendar->version) + 1 : ($calendar->is_temporary ? $calendar->version + 0.1 : $calendar->version));
+            // make sure the flags are correct
+            $clone->is_published = false;
+            $clone->is_temporary = false;
+            // set the correct phase, having in account the user that created the copy
+            if(Auth::user()->groups()->Gop()){
+                $clone->calendar_phase_id = CalendarPhase::phaseEditGop();
+            } else if(Auth::user()->groups()->Coordinator()){
+                $clone->calendar_phase_id = CalendarPhase::phaseEditCC();
+            }
             $clone->push();
             $calendar->load(['epochs.methods.courseUnits', 'epochs.exams']);
 
+            // clone the interruptions
             foreach ($calendar->interruptions as $interruption) {
                 $clone->interruptions()->create($interruption->toArray());
             }
 
+            // clone the epochs
+            // TODO miguel.cerejo
             foreach ($calendar->epochs as $epoch) {
                 $newEpoch = $clone->epochs()->create($epoch->toArray());
-
+                // clone the exams
                 foreach ($epoch->exams as $exam) {
                     $copyOfExam = $exam->replicate();
                     $copyOfExam->epoch_id = $newEpoch->id;
                     $copyOfExam->save();
                 }
+                // clone the commentaries?
+                // -----
 
+                // TODO change this old logic
                 foreach ($epoch->methods as $method) {
                     $method->epochs()->attach($newEpoch);
 
                 }
 
             }
-            $clone->published = false;
-            $clone->calendar_phase_id = 1;
+
             $clone->save();
         }
-        if (!$calendar->published) {
+        if (!$calendar->is_published) {
             $calendar->calendar_phase_id = CalendarPhase::phasePublished();
-            $calendar->published = true;
+            $calendar->is_published = true;
             $calendar->save();
             CalendarPublished::dispatch($calendar);
         }

@@ -13,7 +13,7 @@ class CalendarChange extends Model
     protected $fillable = [
         "calendar_id",
         "calendar_phase_id",
-        "temporary",
+        "is_temporary",
         "observations_pt",
         "observations_en",
     ];

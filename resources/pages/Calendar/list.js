@@ -144,7 +144,7 @@ const CalendarList = () => {
     };
 
     const columns = [
-        {name: t('ID'),            align: 'center', style: {width: '5%' } },
+        {name: t('Versão'),        align: 'center', style: {width: '5%' } },
         {name: t('Curso'),         align: 'center', style: {width: '33%' } },
         {name: t('Semestre'),      align: 'center', style: {width: '7%' } },
         {
@@ -240,9 +240,9 @@ const CalendarList = () => {
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
-                                    {calendars.map(({id, display_id, course, semester, temporary, phase, published}) => (
+                                    {calendars.map(({id, version, course, semester, temporary, phase, published}) => (
                                             <Table.Row key={id}>
-                                                <Table.Cell textAlign="center">{display_id}</Table.Cell>
+                                                <Table.Cell textAlign="center">{version}</Table.Cell>
                                                 <Table.Cell>{course}</Table.Cell>
                                                 <Table.Cell textAlign="center">{semester}</Table.Cell>
                                                 <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>

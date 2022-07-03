@@ -11,7 +11,7 @@ class CalendarGeneralInfoResource extends JsonResource
     {
         return [
             'phase' => new PhaseResource($this['phase']),
-            'temporary' => $this['calendar']->temporary,
+            'temporary' => $this['calendar']->is_temporary,
             'course' => new CourseResource($this['course']),
             'calendar_last_update' => $this['calendar']->updated_at
         ];
