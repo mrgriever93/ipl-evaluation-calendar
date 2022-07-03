@@ -2,7 +2,7 @@ import axios from 'axios';
 import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
-import { Button, Modal, Header, Card, Icon, Divider, Checkbox, Form, Loader, Dimmer, Grid } from 'semantic-ui-react';
+import { Button, Modal, Header, Card, Icon, Divider, Checkbox, Form, Label, Loader, Dimmer, Grid, GridColumn } from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
@@ -21,8 +21,8 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
     const [isTemporary, setIsTemporary] = useState(false);
     const [groupViewersLoading, setGroupViewersLoading] = useState(false);
     const [isEditing, setIsEditing] = useState(true);
-    const [isEditingPhase, setIsEditingPhase] = useState('edit_gop');
-    const [isEvaluationPhase, setIsEvaluationPhase] = useState('evaluation_students');
+    const [isEditingPhase, setIsEditingPhase] = useState(1);
+    const [isEvaluationPhase, setIsEvaluationPhase] = useState(4);
 
     useEffect(() => {
         setIsLoading(true);
@@ -50,10 +50,10 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
 
             if( currentPhase.text.indexOf('Em edição')  === 0) {
                 setIsEditing(true);
-                setIsEditingPhase(currentPhase.name);
+                setIsEditingPhase(currentPhase.value);
             } else {
                 setIsEditing(false);
-                setIsEvaluationPhase(currentPhase.name);
+                setIsEvaluationPhase(currentPhase.value);
             }
         }
     }, [currentPhaseId]);
@@ -108,16 +108,26 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
         <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
             <Modal.Header>{ t("Submeter calendário para a próxima fase") }</Modal.Header>
             <Modal.Content>
-                <div>{ t("Fase atual:") }</div>
-                <b>{ calendarPhases.filter((phase) => phase.value === currentPhaseId)[0]?.text }</b>
+                <Grid>
+                    <GridColumn width={2}>
+                        <div>{ t("Fase atual:") }</div>
+                    </GridColumn>
+                    <GridColumn width={14}>
+                        <Label color="blue">{ calendarPhases.filter((phase) => phase.value === currentPhaseId)[0]?.text }</Label>
+                    </GridColumn>
+                </Grid>
                 
                 <div className='margin-top-base'>
                     { t("Selecionar próxima fase:") }
                 </div>
                 <div className='margin-top-s'>                    
                     <Button.Group>
-                        <Button positive={isEditing} onClick={(e) => setIsEditing(true)}>{ t("Em edição") }</Button>
-                        <Button positive={!isEditing} onClick={(e) => setIsEditing(false)}>{ t("Em avaliação:") }</Button>
+                        <Button positive={isEditing} onClick={(e) => setIsEditing(true)}>
+                            <Icon name="edit" />{ t("Em edição") }
+                        </Button>
+                        <Button positive={!isEditing} onClick={(e) => setIsEditing(false)}>
+                            <Icon name="eye" />{ t("Em avaliação") }
+                        </Button>
                     </Button.Group>
                 </div>
 
@@ -127,7 +137,10 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                             <Button.Group>
                                 {calendarPhases.filter((x) => x.text.indexOf('Em edição')  === 0)?.map((phase) => {
                                     return (
-                                        <Button positive={isEditingPhase === phase.name} onClick={(e) => setIsEditingPhase(phase.name)} key={phase.value}>
+                                        <Button positive={isEditingPhase === phase.value} onClick={(e) => {
+                                                setIsEditingPhase(phase.value);
+                                                setCalendarPhase(phase.value);
+                                            }} key={phase.value}>
                                             { phase.text.substr(phase.text.indexOf('(')+1, phase.text.length).replace(')', '') }
                                         </Button>
                                     );
@@ -141,8 +154,11 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                             <Button.Group>
                                 {calendarPhases.filter((x) => x.text.indexOf('Em avaliação')  === 0)?.map((phase) => {
                                     return (
-                                        <Button positive={isEvaluationPhase === phase.name} onClick={(e) => setIsEvaluationPhase(phase.name)} key={phase.value}>
-                                            { phase.text.substr(phase.text.indexOf('(')+1, phase.text.length).replace(')', '') }
+                                        <Button positive={isEvaluationPhase === phase.value} onClick={(e) => {
+                                                setIsEvaluationPhase(phase.value);
+                                                setCalendarPhase(phase.value);
+                                            }} key={phase.value}>
+                                            { phase.text.substring(phase.text.indexOf('(')+1, phase.text.length).replace(')', '') }
                                         </Button>
                                     );
                                 })}
