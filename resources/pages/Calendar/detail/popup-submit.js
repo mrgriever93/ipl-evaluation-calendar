@@ -2,20 +2,7 @@ import axios from 'axios';
 import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
-import {
-    Button,
-    Modal,
-    Header,
-    Dropdown,
-    Card,
-    Icon,
-    Divider,
-    Checkbox,
-    Form,
-    Loader,
-    Dimmer,
-    Grid
-} from 'semantic-ui-react';
+import { Button, Modal, Header, Card, Icon, Divider, Checkbox, Form, Loader, Dimmer, Grid } from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
@@ -33,6 +20,9 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
     const [isPublished, setIsPublished] = useState(false);
     const [isTemporary, setIsTemporary] = useState(false);
     const [groupViewersLoading, setGroupViewersLoading] = useState(false);
+    const [isEditing, setIsEditing] = useState(true);
+    const [isEditingPhase, setIsEditingPhase] = useState('edit_gop');
+    const [isEvaluationPhase, setIsEvaluationPhase] = useState('evaluation_students');
 
     useEffect(() => {
         setIsLoading(true);
@@ -53,6 +43,22 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
             }
         });
     }, []);
+
+    useEffect(() => {
+        if(!isLoading) {
+            let currentPhase = calendarPhases.filter((phase) => phase.value === currentPhaseId)[0];
+
+            if( currentPhase.text.indexOf('Em edição')  === 0) {
+                setIsEditing(true);
+                setIsEditingPhase(currentPhase.name);
+            } else {
+                setIsEditing(false);
+                setIsEvaluationPhase(currentPhase.name);
+            }
+        }
+    }, [currentPhaseId]);
+
+    
 
     useEffect(() => {
         if(!isLoading) {
@@ -100,16 +106,51 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
 
     return (
         <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
-            <Modal.Header>
-                <Icon name={"list ul"} size={"small"} color={"grey"}/>
-                { t("Submeter calendário para a próxima fase") }
-            </Modal.Header>
+            <Modal.Header>{ t("Submeter calendário para a próxima fase") }</Modal.Header>
             <Modal.Content>
                 <div>{ t("Fase atual:") }</div>
-                <b>{ t("Em edicao (adsasddas)") }</b>
+                <b>{ calendarPhases.filter((phase) => phase.value === currentPhaseId)[0]?.text }</b>
+                
+                <div className='margin-top-base'>
+                    { t("Selecionar próxima fase:") }
+                </div>
+                <div className='margin-top-s'>                    
+                    <Button.Group>
+                        <Button positive={isEditing} onClick={(e) => setIsEditing(true)}>{ t("Em edição") }</Button>
+                        <Button positive={!isEditing} onClick={(e) => setIsEditing(false)}>{ t("Em avaliação:") }</Button>
+                    </Button.Group>
+                </div>
 
-                <div>{ t("Selecionar próxima fase:") }</div>
-                <div className='margin-y-base'>
+                { isEditing ? (
+                    <>
+                        <div className='margin-top-m'>                    
+                            <Button.Group>
+                                {calendarPhases.filter((x) => x.text.indexOf('Em edição')  === 0)?.map((phase) => {
+                                    return (
+                                        <Button positive={isEditingPhase === phase.name} onClick={(e) => setIsEditingPhase(phase.name)} key={phase.value}>
+                                            { phase.text.substr(phase.text.indexOf('(')+1, phase.text.length).replace(')', '') }
+                                        </Button>
+                                    );
+                                })}
+                            </Button.Group>
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <div className='margin-top-m'>                    
+                            <Button.Group>
+                                {calendarPhases.filter((x) => x.text.indexOf('Em avaliação')  === 0)?.map((phase) => {
+                                    return (
+                                        <Button positive={isEvaluationPhase === phase.name} onClick={(e) => setIsEvaluationPhase(phase.name)} key={phase.value}>
+                                            { phase.text.substr(phase.text.indexOf('(')+1, phase.text.length).replace(')', '') }
+                                        </Button>
+                                    );
+                                })}
+                            </Button.Group>
+                        </div>
+                    </>
+                ) }
+                {/* <div className='margin-y-base'>
                     <Card.Group itemsPerRow={3} >
                         {calendarPhases.filter((x) => x.name !== 'system').map((phase) => {
                                 return (
@@ -141,7 +182,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                             },
                         )}
                     </Card.Group>
-                </div>
+                </div> */}
                 {/* <Dropdown
                     options={calendarPhases.filter((x) => x.name !== 'system' && x.name !== 'published')}
                     selection fluid
