@@ -1,5 +1,14 @@
 # TODO
 
+**Issues encontrados:**
+- [ ] Rever textos de ajuda na sincronização dos anos letivos
+- [ ] Quando se cria 2 calendários em simultâneo, ele criou na BD, mas na lista não está a mostrar os 2 calendários.
+- [ ] Quando um calendário ainda não tem dados nenhuns, a coluna da revisão não está a dar a informação correta. 
+  - [ ] Diz que está tudo preenchido.
+  - [ ] E o Popup aparece vazio
+- [ ] Ao criar métodos, deve permitir guardar metodos com peso de 0%, uma vez que podemos querer marcar a data mas não ser um momento de avaliação
+- [ ] Na criação dos calendários, é necessário adicionar espaços entre as colunas
+
 **Detalhe calendário**
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - [2/3] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
@@ -290,7 +299,6 @@ Melhorias:
 - [ ] Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;
 - [ ] Users com mais do que um role (validar o que deve ser feito)
 - [ ] Log dos métodos: registar o que foi alterado e quem alterou;
-- [ ] Rever "voltar a lista" para navegar entre paginas de detalhe e listas (ex: curso e detalhe de unidades curriculares)
 - [ ] Notificacoes de quando muda de fase ou adicionam  comentarios no calendario
     - [ ] Notificacoes Web
     - [ ] Notificacoes Email
