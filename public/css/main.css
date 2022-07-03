@@ -426,6 +426,10 @@ body {
     background: #ecfff0;
 }
 
+.revision-column-wrapper.revision-loading {
+    background: #ecf4ff;
+}
+
 .revision-column-wrapper > div > div {
     position: relative;
     z-index: 10;
@@ -443,6 +447,10 @@ body {
 
 .revision-column-icon i.icon {
     line-height: 1;
+}
+
+.revision-column-icon i.blue.icon {
+    color: #5fc9e1 !important;
 }
 
 .revision-column-icon i.yellow.icon {

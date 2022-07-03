@@ -3,9 +3,9 @@
 **Issues encontrados:**
 - [ ] Rever textos de ajuda na sincronização dos anos letivos
 - [ ] Quando se cria 2 calendários em simultâneo, ele criou na BD, mas na lista não está a mostrar os 2 calendários.
-- [ ] Quando um calendário ainda não tem dados nenhuns, a coluna da revisão não está a dar a informação correta. 
-  - [ ] Diz que está tudo preenchido.
-  - [ ] E o Popup aparece vazio
+- [X] Quando um calendário ainda não tem dados nenhuns, a coluna da revisão não está a dar a informação correta. 
+  - [X] Diz que está tudo preenchido.
+  - [X] E o Popup aparece vazio
 - [X] Ao criar métodos, deve permitir guardar metodos com peso de 0%, uma vez que podemos querer marcar a data mas não ser um momento de avaliação
 - [ ] Na criação dos calendários, é necessário adicionar espaços entre as colunas
 
