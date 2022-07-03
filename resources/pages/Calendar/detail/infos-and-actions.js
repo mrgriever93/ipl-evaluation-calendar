@@ -252,8 +252,8 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
                                                     </Popup.Content>
                                                 </Popup>
                                                 <div className="legend-list-item-actions">
-                                                    <Button icon size='mini' onClick={() => showingEpochsHandle(epoch.id)}>
-                                                        <Icon name={(activeEpochs.includes(epoch.id) ? "eye" : "eye slash")} />
+                                                    <Button icon size='mini' onClick={() => showingEpochsHandle(epoch.id)} title={ (activeEpochs.includes(epoch.id) ? t("Ocultar epoca") : t("Mostrar epoca") ) }>
+                                                        <Icon name={(activeEpochs.includes(epoch.id) ? "eye slash" : "eye")} />
                                                     </Button>
                                                 </div>
                                             </div>
