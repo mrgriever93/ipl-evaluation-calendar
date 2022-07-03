@@ -79,11 +79,16 @@ class CalendarFilters extends QueryFilters
     }
 
 
-    public function isTemporary($status) {
-        return $this->builder->where('is_temporary',  $status);
-    }
-    public function isPublished($status) {
-        return $this->builder->where('is_published',  $status);
+    public function status($status) {
+        if($status == 1) {
+            return $this->builder->where('is_temporary', 0)->where('is_published', 0);
+        }
+        if($status == 2) {
+            return $this->builder->where('is_temporary', 1)->where('is_published', 0);
+        }
+        if($status == 3) {
+            return $this->builder->where('is_temporary', 0)->where('is_published', 1);
+        }
     }
 
     public function phase($phase) {

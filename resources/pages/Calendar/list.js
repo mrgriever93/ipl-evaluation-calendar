@@ -14,6 +14,7 @@ import FilterOptionPerPage from "../../components/Filters/PerPage";
 import EmptyTable from "../../components/EmptyTable";
 import PaginationDetail from "../../components/Pagination";
 import SemestersLocal from "../../components/Filters/SemestersLocal";
+import CalendarStatus from "../../components/Filters/CalendarStatus";
 
 const MessageFading = styled(Message)`
     @keyframes flickerAnimation {
@@ -46,6 +47,7 @@ const CalendarList = () => {
     const [courseFilter, setCourseFilter] = useState();
     const [semesterFilter, setSemesterFilter] = useState();
     const [phaseFilter, setPhaseFilter] = useState();
+    const [statusFilter, setStatusFilter] = useState();
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [paginationInfo, setPaginationInfo] = useState({});
@@ -74,6 +76,7 @@ const CalendarList = () => {
         link += (semesterFilter ? '&semester='      + semesterFilter    : '');
         link += (courseFilter   ? '&course='        + courseFilter      : '');
         link += (phaseFilter    ? '&phase='         + phaseFilter       : '');
+        link += (statusFilter   ? '&status='        + statusFilter      : '');
         link += '&per_page=' + perPage;
 
         axios.get(link).then((response) => {
@@ -122,7 +125,7 @@ const CalendarList = () => {
             loadCalendars();
             clearTimeout(filterDebounce);
         }, 400);
-    }, [semesterFilter, courseFilter, phaseFilter, currentPage, myCourseOnly]);
+    }, [semesterFilter, courseFilter, phaseFilter, currentPage, myCourseOnly, statusFilter]);
 
 
     const filterByCourse = (course) => {
@@ -142,6 +145,12 @@ const CalendarList = () => {
         setCurrentPage(1);
         setSemesterFilter(value);
     };
+
+    const searchByStatus = (value) => {
+        setCurrentPage(1);
+        setStatusFilter(value);
+    };
+
 
     const columns = [
         {name: t('Versão'),        align: 'center', style: {width: '5%' } },
@@ -206,7 +215,8 @@ const CalendarList = () => {
                                         <Courses widthSize={5} eventHandler={filterByCourse} />
                                     </ShowComponentIfAuthorized>
                                 )}
-                                { paginationInfo.last_page > 1 && (
+                                <CalendarStatus eventHandler={searchByStatus} widthSize={4} />
+                                { (paginationInfo.last_page > 1 || paginationInfo.total > 10) && (
                                     <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                                 )}
                             </Form.Group>
@@ -251,16 +261,10 @@ const CalendarList = () => {
                                                     </Table.Cell>
                                                 </ShowComponentIfAuthorized>
                                                 <Table.Cell textAlign="center">
-                                                    { !published ? (
-                                                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
-                                                            <Label color={"blue"}>{ t("Nao Publicado") }</Label>
-                                                        </ShowComponentIfAuthorized>
+                                                    { !published && !temporary ? (
+                                                        <Label color={"blue"}>{ t("Nao Publicado") }</Label>
                                                     ) : (
-                                                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]} renderIfNotAllowed={() => (
-                                                                <>{published ? <Label color={temporary ? undefined : 'blue' }>{temporary ? t('Provisório') : t('Definitivo')}</Label> : phase.description}</>
-                                                            )}>
-                                                            <Label color={temporary ? undefined : 'blue' }>{temporary ? t('Provisório') : t('Definitivo')}</Label>
-                                                        </ShowComponentIfAuthorized>
+                                                        <Label color={temporary ? 'grey' : 'green' }>{temporary ? t('Provisório') : t('Definitivo')}</Label>
                                                     )}
                                                 </Table.Cell>
                                                 <Table.Cell textAlign="center">
