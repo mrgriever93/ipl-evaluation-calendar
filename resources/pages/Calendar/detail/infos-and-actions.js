@@ -17,7 +17,7 @@ import PopupRevisionDetail from "./popup-revision";
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) => {
+const InfosAndActions = ( {epochs, calendarInfo, warnings, isPublished, epochsViewHandler}) => {
     const { t } = useTranslation();
     // get URL params
     let { id } = useParams();
@@ -33,7 +33,6 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
     const [openRevisionModal, setOpenRevisionModal] = useState(false);
 
     const [isTemporary, setIsTemporary] = useState(true);
-    const [isPublished, setIsPublished] = useState(false);
     const [calendarPhase, setCalendarPhase] = useState(true);
     // const [updatingCalendarPhase, setUpdatingCalendarPhase] = useState(false);
     // const [previousFromDefinitive, setPreviousFromDefinitive] = useState(false);
@@ -143,19 +142,6 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
         });
     }, []);
 
-    // const publishCalendar = () => {
-    //     setPublishLoading(true);
-    //     axios.post(`/calendar/${calendarId}/publish`).then((res) => {
-    //         setPublishLoading(false);
-    //         loadCalendar(calendarId);
-    //         if (res.status === 200) {
-    //             toast('Calendário publicado com sucesso!', successConfig);
-    //         } else {
-    //             toast('Ocorreu um erro ao tentar publicar o calendário!', errorConfig);
-    //         }
-    //     });
-    // };
-
     const openRevisionModalHandler = () => {
         // setViewExamId(exam.id);
         setOpenRevisionModal(true);
@@ -173,8 +159,6 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
     const closeSubmitModalHandler = () => {
         setOpenSubmitModal(false);
     }
-
-
 
     const updatePhaseHandler = (newPhase) => {
         setCalendarPhase(newPhase);
@@ -214,9 +198,6 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
                 <div className='main-content-actions'>
                     {!isPublished ? (
                         <>
-                            {/* <ShowComponentIfAuthorized permission={[SCOPES.PUBLISH_CALENDAR]}>
-                                <Button color="teal" onClick={publishCalendar}>Publicar esta versão</Button>
-                            </ShowComponentIfAuthorized> */}
                             { (SCOPES.PUBLISH_CALENDAR || calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0) && (
                                 <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE]}>
                                     <Button color="teal" onClick={openSubmitModalHandler}>Submeter</Button>
@@ -226,7 +207,7 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
                         </>
                     ) : (
                         <ShowComponentIfAuthorized permission={[SCOPES.CREATE_COPY]}>
-                            <Button color="teal" loading={creatingCopy} onClick={createCopy}>Criar um cópia desta versão</Button>
+                            <Button color="orange" loading={creatingCopy} onClick={createCopy} labelPosition={"right"} icon>Criar um cópia desta versão <Icon name={"copy outline"} /></Button>
                         </ShowComponentIfAuthorized>
                     )}
                 </div>
@@ -255,8 +236,8 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
                                                     </Popup.Content>
                                                 </Popup>
                                                 <div className="legend-list-item-actions">
-                                                    <Button icon size='mini' 
-                                                        onClick={() => showingEpochsHandle(epoch.id)} 
+                                                    <Button icon size='mini'
+                                                        onClick={() => showingEpochsHandle(epoch.id)}
                                                         title={ (activeEpochs.includes(epoch.id) ? t("Ocultar época") : t("Mostrar época") ) }>
                                                         <Icon name={(activeEpochs.includes(epoch.id) ? "eye slash" : "eye")} />
                                                     </Button>

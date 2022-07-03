@@ -39,16 +39,6 @@ class CalendarFilters extends QueryFilters
         //    return;
         //}
 
-        // TODO validate if this is the best option
-        $user_groups = [];
-        foreach ($user->groups->toArray() as $group){
-            $user_groups[] = $group["id"];
-        }
-        $this->builder->whereHas('viewers', function (Builder $query) use($user_groups) {
-            $query->whereIn('group_id', $user_groups);
-        });
-        // TODO END
-
         if (count($user->groups) === 1 && $user->groups->contains('code', InitialGroups::STUDENT)) {
             if ($search === "true") {
                 return $this->builder->published()
@@ -71,6 +61,16 @@ class CalendarFilters extends QueryFilters
             }
             return $this->builder->whereIn('course_id', Auth::user()->courseUnits->pluck('course_id'))->orPublished();
         }
+
+        // TODO validate if this is the best option
+        $user_groups = [];
+        foreach ($user->groups->toArray() as $group){
+            $user_groups[] = $group["id"];
+        }
+        $this->builder->whereHas('viewers', function (Builder $query) use($user_groups) {
+            $query->whereIn('group_id', $user_groups);
+        });
+        // TODO END
     }
 
 
@@ -116,9 +116,8 @@ class CalendarFilters extends QueryFilters
         }
 
         if ($user->groups->contains('code', InitialGroups::TEACHER)) {
-
             return $this->builder->whereIn('course_id', Auth::user()->courseUnits->pluck('course_id'))
-                                ->where('course_id', $course);;
+                                ->where('course_id', $course);
         }
     }
 }

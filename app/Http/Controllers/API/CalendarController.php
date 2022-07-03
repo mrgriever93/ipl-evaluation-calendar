@@ -178,25 +178,25 @@ class CalendarController extends Controller
     {
         Calendar::where('id', '!=', $calendar->id)
             ->where('course_id', $calendar->course_id)
-            ->where('semester', $calendar->semester)
+            ->where('semester_id', $calendar->semester_id)
             ->delete();
         if ($request->exists('createCopy') && $request->createCopy) {
             // clone new calendar
             $clone = $calendar->replicate();
             $clone->previous_calendar_id = $calendar->id;
             // validate if we want to add 0.1 or 1.0
-            $clone->version = ($calendar->is_published ? floor($calendar->version) + 1 : ($calendar->is_temporary ? $calendar->version + 0.1 : $calendar->version));
+            $clone->version = floatval(intval(explode('.', $calendar->version)[0])  . "." .intval(explode('.', $calendar->version)[1]) + 1);
             // make sure the flags are correct
             $clone->is_published = false;
             $clone->is_temporary = false;
             // set the correct phase, having in account the user that created the copy
-            if(Auth::user()->groups()->Gop()){
+            if(Auth::user()->groups()->gop()){
                 $clone->calendar_phase_id = CalendarPhase::phaseEditGop();
-            } else if(Auth::user()->groups()->Coordinator()){
+            } else if(Auth::user()->groups()->coordinator()){
                 $clone->calendar_phase_id = CalendarPhase::phaseEditCC();
             }
             $clone->push();
-            $calendar->load(['epochs.methods.courseUnits', 'epochs.exams']);
+            //$calendar->load(['epochs.epochType.methods', 'epochs.exams']);
 
             // clone the interruptions
             foreach ($calendar->interruptions as $interruption) {
@@ -215,21 +215,35 @@ class CalendarController extends Controller
                 }
                 // clone the commentaries?
                 // -----
-
-                // TODO change this old logic
-                foreach ($epoch->methods as $method) {
-                    $method->epochs()->attach($newEpoch);
-
-                }
-
             }
 
             $clone->save();
+            // TODO add to the right user
+            CalendarViewers::create(
+                ["calendar_id" => $clone->id, "group_id" => 1],   // "super_admin"
+                ["calendar_id" => $clone->id, "group_id" => 2],   // "admin"
+                ["calendar_id" => $clone->id, "group_id" => 8],   // "gop"
+                ["calendar_id" => $clone->id, "group_id" => 13]   // "gop_estg"
+            );
         }
         if (!$calendar->is_published) {
             $calendar->calendar_phase_id = CalendarPhase::phasePublished();
+            $calendar->version = intval($calendar->version) + 1;
             $calendar->is_published = true;
             $calendar->save();
+
+
+            // delete old viewers
+            CalendarViewers::where("calendar_id", $calendar->id)->delete();
+
+            $groups = Group::where('enabled', true)->pluck('id')->toArray();
+            $viewers = [];
+            foreach ($groups as $group) {
+                $viewers[] = ["group_id" => $group, "calendar_id" => $calendar->id];
+            }
+            // insert all new viewers groups
+            CalendarViewers::insert($viewers);
+
             CalendarPublished::dispatch($calendar);
         }
     }

@@ -609,7 +609,7 @@ const Calendar = () => {
             <div className="margin-bottom-s">
                 <Link to="/"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
-            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings} showingEpochs={showingEpochs} epochsViewHandler={setShowingEpochs}/>
+            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings} isPublished={isPublished} showingEpochs={showingEpochs} epochsViewHandler={setShowingEpochs}/>
             <AnimatePresence>
                 {isLoading && (<PageLoader animate={pageLoaderAnimate} exit={pageLoaderExit}/>)}
             </AnimatePresence>
@@ -654,7 +654,7 @@ const Calendar = () => {
                                                     { courseYears.map((year, courseIndex) => {
                                                         alreadyAddedColSpan = false;
                                                         alreadyAddedRowSpan = false;
-    
+
                                                         return epochs.map((epoch, epochIndex) => (
                                                             <Table.Row key={courseIndex + "-" + epochIndex} >
                                                                 {epochIndex === 0 && (

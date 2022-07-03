@@ -1,8 +1,7 @@
 import axios from 'axios';
-import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
-import { Button, Modal, Header, Card, Icon, Divider, Checkbox, Form, Label, Loader, Dimmer, Grid, GridColumn } from 'semantic-ui-react';
+import { Button, Modal, Header, Icon, Divider, Checkbox, Form, Label, Loader, Dimmer, Grid, GridColumn } from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
@@ -58,7 +57,6 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
         }
     }, [currentPhaseId]);
 
-    
 
     useEffect(() => {
         if(!isLoading) {
@@ -72,15 +70,22 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
         }
     }, [calendarPhase]);
 
-    const onSavePublish = () => {
-        setIsPublished(true);
-        setIsTemporary(true);
-        onSave();
-    }
+    const publishCalendar = () => {
+        //setIsPublished(true);
+        //setIsTemporary(true);
+        //onSave();
+        axios.post(`/calendar/${calendarId}/publish`).then((res) => {
+            if (res.status === 200) {
+                toast('Calendário publicado com sucesso!', successConfig);
+                document.location.reload();
+            } else {
+                toast('Ocorreu um erro ao tentar publicar o calendário!', errorConfig);
+            }
+        });
+    };
 
     const onSave = () => {
         const viewGroups = calendarGroups.filter((item) => item.selected).map((item) => item.id);
-        console.log(viewGroups);
         // setUpdatingCalendarPhase(true);
         axios.patch(`/calendar/${calendarId}`, {
             'calendar_phase_id': calendarPhase,
@@ -116,11 +121,11 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                         <Label color="blue">{ calendarPhases.filter((phase) => phase.value === currentPhaseId)[0]?.text }</Label>
                     </GridColumn>
                 </Grid>
-                
+
                 <div className='margin-top-base'>
                     { t("Selecionar próxima fase:") }
                 </div>
-                <div className='margin-top-s'>                    
+                <div className='margin-top-s'>
                     <Button.Group>
                         <Button positive={isEditing} onClick={(e) => setIsEditing(true)}>
                             <Icon name="edit" />{ t("Em edição") }
@@ -133,7 +138,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
 
                 { isEditing ? (
                     <>
-                        <div className='margin-top-m'>                    
+                        <div className='margin-top-m'>
                             <Button.Group>
                                 {calendarPhases.filter((x) => x.text.indexOf('Em edição')  === 0)?.map((phase) => {
                                     return (
@@ -150,7 +155,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                     </>
                 ) : (
                     <>
-                        <div className='margin-top-m'>                    
+                        <div className='margin-top-m'>
                             <Button.Group>
                                 {calendarPhases.filter((x) => x.text.indexOf('Em avaliação')  === 0)?.map((phase) => {
                                     return (
@@ -166,47 +171,6 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                         </div>
                     </>
                 ) }
-                {/* <div className='margin-y-base'>
-                    <Card.Group itemsPerRow={3} >
-                        {calendarPhases.filter((x) => x.name !== 'system').map((phase) => {
-                                return (
-                                    <Card color='green' key={phase.key} onClick={(e) => setCalendarPhase(phase.value) } >
-                                        <Card.Content textAlign='center'>
-                                            { phase.value == currentPhaseId && (
-                                                <Icon className={"active-phase"} color="green" size={"large"} name="check circle" />
-                                            )}
-                                            { phase.value == calendarPhase && (
-                                                <Icon className={"selected-phase"} color="yellow" size={"large"} name="check circle outline" />
-                                            )}
-                                            <div>
-                                                { phase.text.includes('Em edição') ? (
-                                                    <Icon color="grey" size="big" name="edit" />
-                                                ) : (
-                                                    phase.text.includes('Em avaliação') ? (
-                                                        <Icon color="grey" size="big" name="eye" />
-                                                    ) : (
-                                                        phase.text.includes('Publicado') ? (
-                                                            <Icon color="grey" size="big" name="check circle outline" />
-                                                        ) : ""
-                                                    )
-                                                )}
-                                            </div>
-                                            <Header as="h5" style={{marginTop: 'var(--space-s)' }}>{phase.text}</Header>
-                                        </Card.Content>
-                                    </Card>
-                                );
-                            },
-                        )}
-                    </Card.Group>
-                </div> */}
-                {/* <Dropdown
-                    options={calendarPhases.filter((x) => x.name !== 'system' && x.name !== 'published')}
-                    selection fluid
-                    label="Fase do Calendário"
-                    loading={!calendarPhases.length}
-                    onChange={(e, {value}) => {updateCalendarPhase(value);}}
-                    value={calendarPhase}
-                /> */}
                 <Divider />
                 <Form>
                     <Grid columns={2} divided>
@@ -266,7 +230,9 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                 </Form>
             </Modal.Content>
             <Modal.Actions>
-                <Button onClick={onSavePublish} color={"blue"} floated={"left"} icon labelPosition={"right"}>{t('Publicar esta versão do calendário')} <Icon name={"calendar check outline"}/></Button>
+                <ShowComponentIfAuthorized permission={[SCOPES.PUBLISH_CALENDAR]}>
+                    <Button onClick={publishCalendar} color={"blue"} floated={"left"} icon labelPosition={"right"}>{t('Publicar esta versão do calendário')} <Icon name={"calendar check outline"}/></Button>
+                </ShowComponentIfAuthorized>
                 <Button onClick={onClose}>{t('Fechar')}</Button>
                 <Button onClick={onSave} color={"green"}>{t('Guardar')}</Button>
             </Modal.Actions>
