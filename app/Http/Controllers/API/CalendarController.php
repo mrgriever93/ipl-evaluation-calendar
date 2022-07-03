@@ -167,6 +167,9 @@ class CalendarController extends Controller
 
     public function destroy(Calendar $calendar)
     {
+        if($calendar->is_published){
+            return response()->json("Calendario ja publicado, nao sera possivel apagar este calendario", Response::HTTP_CONFLICT);
+        }
         $calendar->delete();
         CalendarDeleted::dispatch($calendar);
     }

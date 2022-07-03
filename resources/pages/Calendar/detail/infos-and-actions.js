@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
-import { useParams, useNavigate} from "react-router-dom";
+import { useParams} from "react-router-dom";
 import { useTranslation} from "react-i18next";
 import {Card, Button, Sticky, Grid, Header, List, GridColumn, Icon, Popup, Label} from 'semantic-ui-react';
 import { toast} from 'react-toastify';
@@ -18,7 +18,6 @@ import PopupRevisionDetail from "./popup-revision";
 const SweetAlertComponent = withReactContent(Swal);
 
 const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) => {
-    // const history = useNavigate();
     const { t } = useTranslation();
     // get URL params
     let { id } = useParams();
@@ -41,6 +40,7 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
 
     const [methodsMissingCount, setMethodsMissingCount] = useState(0);
     const [methodsIncompleteCount, setMethodsIncompleteCount] = useState(0);
+    const [methodsLoaded, setMethodsLoaded] = useState(false);
     const [activeEpochs, setActiveEpochs] = useState([]);
 
     const [creatingCopy, setCreatingCopy] = useState(false);
@@ -74,6 +74,7 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
 
 
     useEffect(() => {
+        setMethodsLoaded(false);
         const missing = warnings.filter((item) => !item.has_methods);
         setMethodsMissingCount(missing.length);
 
@@ -83,6 +84,7 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
             countIncomplete = countIncomplete + item.methods.filter((method) => !method.is_done).length;
         });
         setMethodsIncompleteCount(countIncomplete);
+        setMethodsLoaded(true);
     }, [warnings]);
 
     // const patchCalendar = (fieldToUpdate, value) => axios.patch(`/calendar/${calendarId}`, {
@@ -126,6 +128,7 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
     // };
 
     useEffect(() => {
+        setMethodsLoaded(false);
         axios.get('/calendar-phases').then((response) => {
             if (response.status === 200) {
                 setCalendarPhases(
@@ -311,13 +314,13 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
                                     </div>
                                 </GridColumn>
                                 <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS, SCOPES.ADD_EXAMS]}>
-                                    <GridColumn width={5} className={ 'revision-column-wrapper' + ( (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? " revision-warning" : " revision-success") }>
+                                    <GridColumn width={5} className={ 'revision-column-wrapper' + (methodsLoaded ? ( (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? " revision-warning" : " revision-success") : " revision-loading") }>
 
                                         <div>
                                             <Header as="h5">
                                                 { t("Revisão") }:
                                             </Header>
-                                            { (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? (
+                                            { methodsLoaded ? ( (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? (
                                                 <>
                                                     <div className="revision-column-icon">
                                                         <Icon name="warning sign" color="yellow"/>
@@ -343,7 +346,18 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
                                                         </div>
                                                     </div>
                                                 </>
-                                            ) }
+                                            ) ) : (
+                                                <>
+                                                    <div className="revision-column-icon">
+                                                        <Icon name={"download"} color={"blue"}/>
+                                                    </div>
+                                                    <div className="revision-column-content">
+                                                        <div className="margin-top-l">
+                                                            <div >{ t("A carregar detalhes!") }</div>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
                                     </GridColumn>
                                 </ShowComponentIfAuthorized>
