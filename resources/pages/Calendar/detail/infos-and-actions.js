@@ -57,9 +57,7 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, isPublished, epochsVi
         }).then((result) => {
             if (result.isConfirmed) {
                 setCreatingCopy(true);
-                axios.post(`/calendar/${calendarId}/publish`, {
-                    createCopy: true,
-                }).then((res) => {
+                axios.post(`/calendar/${calendarId}/copy`).then((res) => {
                     setCreatingCopy(false);
                     if (res.status === 200) {
                         toast('Cópia do calendário criada com sucesso!', successConfig);

@@ -174,58 +174,13 @@ class CalendarController extends Controller
         CalendarDeleted::dispatch($calendar);
     }
 
-    public function publish(PublishCalendarRequest $request, Calendar $calendar)
+    public function publish(Request $request, Calendar $calendar)
     {
         Calendar::where('id', '!=', $calendar->id)
             ->where('course_id', $calendar->course_id)
             ->where('semester_id', $calendar->semester_id)
             ->delete();
-        if ($request->exists('createCopy') && $request->createCopy) {
-            // clone new calendar
-            $clone = $calendar->replicate();
-            $clone->previous_calendar_id = $calendar->id;
-            // validate if we want to add 0.1 or 1.0
-            $clone->version = floatval(intval(explode('.', $calendar->version)[0])  . "." .intval(explode('.', $calendar->version)[1]) + 1);
-            // make sure the flags are correct
-            $clone->is_published = false;
-            $clone->is_temporary = false;
-            // set the correct phase, having in account the user that created the copy
-            if(Auth::user()->groups()->gop()){
-                $clone->calendar_phase_id = CalendarPhase::phaseEditGop();
-            } else if(Auth::user()->groups()->coordinator()){
-                $clone->calendar_phase_id = CalendarPhase::phaseEditCC();
-            }
-            $clone->push();
-            //$calendar->load(['epochs.epochType.methods', 'epochs.exams']);
 
-            // clone the interruptions
-            foreach ($calendar->interruptions as $interruption) {
-                $clone->interruptions()->create($interruption->toArray());
-            }
-
-            // clone the epochs
-            // TODO miguel.cerejo
-            foreach ($calendar->epochs as $epoch) {
-                $newEpoch = $clone->epochs()->create($epoch->toArray());
-                // clone the exams
-                foreach ($epoch->exams as $exam) {
-                    $copyOfExam = $exam->replicate();
-                    $copyOfExam->epoch_id = $newEpoch->id;
-                    $copyOfExam->save();
-                }
-                // clone the commentaries?
-                // -----
-            }
-
-            $clone->save();
-            // TODO add to the right user
-            CalendarViewers::create(
-                ["calendar_id" => $clone->id, "group_id" => 1],   // "super_admin"
-                ["calendar_id" => $clone->id, "group_id" => 2],   // "admin"
-                ["calendar_id" => $clone->id, "group_id" => 8],   // "gop"
-                ["calendar_id" => $clone->id, "group_id" => 13]   // "gop_estg"
-            );
-        }
         if (!$calendar->is_published) {
             $calendar->calendar_phase_id = CalendarPhase::phasePublished();
             $calendar->version = intval($calendar->version) + 1;
@@ -248,6 +203,57 @@ class CalendarController extends Controller
         }
     }
 
+    public function copyCalendar(Request $request, Calendar $calendar)
+    {
+        Calendar::where('id', '!=', $calendar->id)
+            ->where('course_id', $calendar->course_id)
+            ->where('semester_id', $calendar->semester_id)
+            ->delete();
+        // clone new calendar
+        $clone = $calendar->replicate();
+        $clone->previous_calendar_id = $calendar->id;
+        // validate if we want to add 0.1 or 1.0
+        $clone->version = floatval(intval(explode('.', $calendar->version)[0])  . "." .intval(explode('.', $calendar->version)[1]) + 1);
+        // make sure the flags are correct
+        $clone->is_published = false;
+        $clone->is_temporary = false;
+        // set the correct phase, having in account the user that created the copy
+        if(Auth::user()->groups()->gop()){
+            $clone->calendar_phase_id = CalendarPhase::phaseEditGop();
+        } else if(Auth::user()->groups()->coordinator()){
+            $clone->calendar_phase_id = CalendarPhase::phaseEditCC();
+        }
+        $clone->push();
+        //$calendar->load(['epochs.epochType.methods', 'epochs.exams']);
+
+        // clone the interruptions
+        foreach ($calendar->interruptions as $interruption) {
+            $clone->interruptions()->create($interruption->toArray());
+        }
+
+        // clone the epochs
+        // TODO miguel.cerejo
+        foreach ($calendar->epochs as $epoch) {
+            $newEpoch = $clone->epochs()->create($epoch->toArray());
+            // clone the exams
+            foreach ($epoch->exams as $exam) {
+                $copyOfExam = $exam->replicate();
+                $copyOfExam->epoch_id = $newEpoch->id;
+                $copyOfExam->save();
+            }
+            // clone the commentaries?
+            // -----
+        }
+
+        $clone->save();
+        // TODO add to the right user
+        CalendarViewers::create(
+            ["calendar_id" => $clone->id, "group_id" => 1],   // "super_admin"
+            ["calendar_id" => $clone->id, "group_id" => 2],   // "admin"
+            ["calendar_id" => $clone->id, "group_id" => 8],   // "gop"
+            ["calendar_id" => $clone->id, "group_id" => 13]   // "gop_estg"
+        );
+    }
 
     public function info(Request $request)
     {
