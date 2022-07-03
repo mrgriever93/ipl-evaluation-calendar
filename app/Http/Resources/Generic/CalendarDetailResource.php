@@ -15,7 +15,7 @@ class CalendarDetailResource extends JsonResource
         return [
             'id'            => $this->id,
             'week_ten'      => $this->week_ten,
-            'version'       => $this->version,
+            'version'       => preg_replace('/(\.[0-9]+?)0*$/', '$1', $this->version),
             //'display_id' => $this->previous_calendar_id ? "{$this->previous_calendar_id}.{$this->id}" : $this->id,
             'course'        => new CourseResource($this->course),
             'phase'         => new PhaseResource($this->phase),
@@ -27,7 +27,8 @@ class CalendarDetailResource extends JsonResource
             'general_info'  => new CalendarGeneralInfoResource([
                 "phase"         => $this->phase,
                 "calendar"      => $this,
-                "course"        => $this->course
+                "course"        => $this->course,
+                'version'       => preg_replace('/(\.[0-9]+?)0*$/', '$1', $this->version),
             ]),
             'differences'   => $this->difference_from_previous_calendar,
             'previous_from_definitive' => $this->previousCalendar ? !$this->previousCalendar->is_temporary : false,

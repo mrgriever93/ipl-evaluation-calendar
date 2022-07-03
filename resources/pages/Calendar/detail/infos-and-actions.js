@@ -254,7 +254,7 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
                                                 <div className="legend-list-item-actions">
                                                     <Button icon size='mini' onClick={() => showingEpochsHandle(epoch.id)}>
                                                         <Icon name={(activeEpochs.includes(epoch.id) ? "eye" : "eye slash")} />
-                                                    </Button>                                                    
+                                                    </Button>
                                                 </div>
                                             </div>
                                         ))}
@@ -304,13 +304,13 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
                                             <Header as="h5">Versão:</Header>
                                         </span>
                                         <div className='margin-top-xs'>
-                                            { 'Versão 1.0' }
+                                            { 'Versão ' + (calendarInfo?.version ? calendarInfo.version : '') }
                                         </div>
                                     </div>
                                 </GridColumn>
                                 <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS, SCOPES.ADD_EXAMS]}>
                                     <GridColumn width={5} className={ 'revision-column-wrapper' + ( (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? " revision-warning" : " revision-success") }>
-                                        
+
                                         <div>
                                             <Header as="h5">
                                                 { t("Revisão") }:
@@ -325,7 +325,7 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, epochsViewHandler}) =
                                                             <li>Existem {methodsIncompleteCount} elementos de avaliação por submeter.</li>
                                                             <li>Existem {methodsMissingCount} UCs com <a href={ "/unidade-curricular?curso="+calendarInfo?.course?.id} target="_blank">métodos <Icon name="external alternate" /></a> por preencher.</li>
                                                         </ul>
-                                                    </div>                                       
+                                                    </div>
                                                     <div className={"text-center"}>
                                                         <a href="#" onClick={openRevisionModalHandler} >ver detalhe</a>
                                                     </div>

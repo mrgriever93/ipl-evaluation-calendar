@@ -11,7 +11,7 @@ class CalendarResource extends JsonResource
     {
         return [
             'id'        => $this->id,
-            'version'   => $this->version,
+            'version'   => preg_replace('/(\.[0-9]+?)0*$/', '$1', $this->version),
             //'display_id' => $this->previous_calendar_id ? "{$this->previous_calendar_id}.{$this->id}" : $this->id,
             'course'    => new CourseResource($this->course),
             'phase'     => new PhaseResource($this->phase),

@@ -12,7 +12,7 @@ class CalendarListResource extends JsonResource
     {
         return [
             'id'            => $this->id,
-            'version'       => $this->version,
+            'version'       => preg_replace('/(\.[0-9]+?)0*$/', '$1', $this->version),
             //'display_id' => $this->previous_calendar_id ? "{$this->previous_calendar_id}.{$this->id}" : $this->id,
             'course'        => "(" . $this->course->code . ") " . ($request->header("lang") == "en" ? $this->course->name_en : $this->course->name_pt),
             'semester'      => $this->semester->number == 0 ? ($request->header("lang") == "en" ? $this->semester->name_en : $this->semester->name_pt) : $this->semester->number,
