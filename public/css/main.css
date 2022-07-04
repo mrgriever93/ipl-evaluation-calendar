@@ -382,21 +382,87 @@ body {
 
 .legend-list-item:not(:first-child) {
     margin-top: var(--space-s);
-    /* border-top: 1px solid #eee;
-    padding-top: var(--space-s); */
 }
 
 .legend-list-item-square {
     border: 1px solid #ccc;
-    vertical-align: middle;
-    width: 18px;
     height: 18px;
     margin: var(--space-none) var(--space-s) var(--space-none) var(--space-none);
+    vertical-align: middle;
+    width: 18px;
 }
 
 .legend-list-item-content {
-    position: relative;
+    flex: 2;
     font-size: 12px;
+    position: relative;
+}
+
+.legend-list-item-actions .ui.button {
+    background: transparent;
+    border: 1px solid #e0e1e2;
+    padding: var(--space-xs);
+}
+
+.legend-list-item-actions .ui.button:hover {
+    background: #cacbcd;
+}
+
+.legend-list-item-actions .ui.button:focus {
+    box-shadow: 0 0 2px 1px #03a9f4;
+}
+
+/* Revision Column Styles */
+.revision-column-wrapper {
+    overflow: hidden;
+    position: relative;
+}
+
+.revision-column-wrapper.revision-warning {
+    background: #fef9e7;
+}
+
+.revision-column-wrapper.revision-success {
+    background: #ecfff0;
+}
+
+.revision-column-wrapper.revision-loading {
+    background: #ecf4ff;
+}
+
+.revision-column-wrapper > div > div {
+    position: relative;
+    z-index: 10;
+}
+
+.revision-column-icon,
+.revision-column-wrapper .revision-column-icon {
+    bottom: var(--space-base);
+    font-size: 120px;
+    position: absolute;
+    right: -42px;
+    top: var(--space-base);
+    z-index: 1;
+}
+
+.revision-column-icon i.icon {
+    line-height: 1;
+}
+
+.revision-column-icon i.blue.icon {
+    color: #5fc9e1 !important;
+}
+
+.revision-column-icon i.yellow.icon {
+    color: #ffeca9 !important;
+}
+
+.revision-column-icon i.green.icon {
+    color: #a3d8b2!important;
+}
+
+.revision-column-content ul {
+    padding-left: 20px;
 }
 
 /* Calendar epoch colors */
@@ -773,10 +839,14 @@ div.inline{
     box-shadow: 0 0 3px 1px rgba(0, 0, 0, .1);
 }
 
+.selected-phase,
 .active-phase{
     position: absolute;
-    right: var(--space-s);
+    right: var(--space-xs);
     top: var(--space-s);
+}
+.selected-phase{
+    right: var(--space-l);
 }
 
 .ui.stuck-container.bound-container > .ui.bound.bottom.sticky{

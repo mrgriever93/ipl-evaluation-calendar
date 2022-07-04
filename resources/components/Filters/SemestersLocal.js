@@ -25,7 +25,7 @@ const FilterOptionSemesterLocal = ({semestersList, widthSize, eventHandler, valu
     return (
         <Form.Dropdown className={className} disabled={disabled} selectOnBlur={false} width={widthSize} selection search={isSearch} value={semester}
                        options={semestersOptions} label={t("Semestre")} placeholder={ t((isSearch ? "Todas os Semestres" : "Semestre")) }
-                       loading={loading} onChange={filterBySemester}/>
+                       clearable loading={loading} onChange={filterBySemester}/>
     );
 };
 

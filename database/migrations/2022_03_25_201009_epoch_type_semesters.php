@@ -13,6 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('epoch_type_semester')) {
+            return false;
+        }
         Schema::create('epoch_type_semester', function (Blueprint $table) {
             $table->unsignedBigInteger('epoch_type_id');
             $table->unsignedBigInteger('semester_id');

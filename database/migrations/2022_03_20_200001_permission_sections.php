@@ -13,6 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('permission_sections')) {
+            return false;
+        }
         Schema::create('permission_sections', function (Blueprint $table) {
             $table->id();
             $table->string('code');

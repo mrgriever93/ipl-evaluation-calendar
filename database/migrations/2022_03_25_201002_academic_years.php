@@ -13,7 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-
+        if (Schema::hasTable('academic_years')) {
+            return false;
+        }
         Schema::create('academic_years', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
             $table->string('code')->unique();

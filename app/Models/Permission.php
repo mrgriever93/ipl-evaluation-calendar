@@ -32,4 +32,13 @@ class Permission extends Model
     {
         return $this->belongsToMany(CalendarPhase::class, 'group_permissions','phase_id', 'phase_id');
     }
+
+    /*
+     * "Hardcoded" permission for "view_calendar"
+     * easier to maintain and change
+     */
+    public static function permissionViewCalendar()
+    {
+        return Permission::where('code', 'view_calendar')->first()->id;
+    }
 }

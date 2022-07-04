@@ -93,7 +93,7 @@ class ExternalImports
 
             $academicYearId = $academicYear->id;
             // get list of schools that have "base_link" data
-            $schools = School::whereNotNull('base_link')->get();
+            $schools = School::whereNotNull('base_link')->where('base_link', '<>', '')->get();
             // connect to LDAP server
             $connection = new Connection([
                 'hosts'    => [env('LDAP_HOST')],

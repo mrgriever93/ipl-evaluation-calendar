@@ -2,9 +2,7 @@
 
 namespace App\Filters;
 
-use App\Models\Calendar;
 use App\Models\Course;
-use App\Models\Epoch;
 use App\Models\InitialGroups;
 use App\Models\CalendarPhase;
 use App\Models\Semester;
@@ -31,23 +29,25 @@ class CalendarFilters extends QueryFilters
 
 
         $user = Auth::user();
+
         // if any of this groups, then exit
-        if (
-            $user->groups->contains('code', InitialGroups::ADMIN) || $user->groups->contains('code', InitialGroups::SUPER_ADMIN) ||
-            $user->groups->contains('code', InitialGroups::GOP) || $user->groups->contains('code', InitialGroups::BOARD) ||
-            $user->groups->contains('code', InitialGroups::PEDAGOGIC) || $user->groups->contains('code', InitialGroups::RESPONSIBLE_PEDAGOGIC)
-        ) {
-            return;
-        }
+        //if (
+        //    $user->groups->contains('code', InitialGroups::ADMIN) || $user->groups->contains('code', InitialGroups::SUPER_ADMIN) ||
+        //    $user->groups->contains('code', InitialGroups::GOP) || $user->groups->contains('code', InitialGroups::BOARD) ||
+        //    $user->groups->contains('code', InitialGroups::PEDAGOGIC) || $user->groups->contains('code', InitialGroups::RESPONSIBLE_PEDAGOGIC)
+        //) {
+        //    return;
+        //}
+
         if (count($user->groups) === 1 && $user->groups->contains('code', InitialGroups::STUDENT)) {
             if ($search === "true") {
                 return $this->builder->published()
                             ->whereIn('course_id', Auth::user()->courses->pluck('id'))
-                            ->orWhere('calendar_phase_id', CalendarPhase::where('name', 'evaluation_students')->first()->id);
+                            ->orWhere('calendar_phase_id', CalendarPhase::phaseEvaluationStudents());
             }
 
             return $this->builder->published()
-                        ->orWhere('calendar_phase_id', CalendarPhase::where('name', 'evaluation_students')->first()->id)
+                        ->orWhere('calendar_phase_id', CalendarPhase::phaseEvaluationStudents())
                         ->whereIn('course_id', Auth::user()->courses->pluck('id'));
         }
 
@@ -61,12 +61,40 @@ class CalendarFilters extends QueryFilters
             }
             return $this->builder->whereIn('course_id', Auth::user()->courseUnits->pluck('course_id'))->orPublished();
         }
+
+        // TODO validate if this is the best option
+        $user_groups = [];
+        foreach ($user->groups->toArray() as $group){
+            $user_groups[] = $group["id"];
+        }
+        $this->builder->whereHas('viewers', function (Builder $query) use($user_groups) {
+            $query->whereIn('group_id', $user_groups);
+        });
+        // TODO END
     }
 
 
     public function semester($semester) {
         return $this->builder->where('semester_id',  Semester::find($semester)->id);
     }
+
+
+    public function status($status) {
+        if($status == 1) {
+            return $this->builder->where('is_temporary', 0)->where('is_published', 0);
+        }
+        if($status == 2) {
+            return $this->builder->where('is_temporary', 1)->where('is_published', 0);
+        }
+        if($status == 3) {
+            return $this->builder->where('is_temporary', 0)->where('is_published', 1);
+        }
+    }
+
+    public function phase($phase) {
+        return $this->builder->where('calendar_phase_id',  $phase);
+    }
+
 
     public function course($course)
     {
@@ -88,9 +116,8 @@ class CalendarFilters extends QueryFilters
         }
 
         if ($user->groups->contains('code', InitialGroups::TEACHER)) {
-
             return $this->builder->whereIn('course_id', Auth::user()->courseUnits->pluck('course_id'))
-                                ->where('course_id', $course);;
+                                ->where('course_id', $course);
         }
     }
 }

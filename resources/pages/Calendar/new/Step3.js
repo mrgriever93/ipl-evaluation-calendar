@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
-import {Button, Container, Dimmer, Form, Grid, Icon, Label, Loader, Table} from 'semantic-ui-react';
-import {Field, useField} from 'react-final-form';
+import {Button, Container, Header, Dimmer, Form, Grid, Divider, Icon, Card, Label, Loader, Table} from 'semantic-ui-react';
+import {useField} from 'react-final-form';
 import axios from "axios";
 import PaginationDetail from "../../../components/Pagination";
 import FilterOptionPerPage from "../../../components/Filters/PerPage";
@@ -21,7 +21,6 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
 
     useEffect(() => {
         coursesFieldInput.onChange(courses);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [courses]);
 
     const searchCourse = (evt, {value}) => {
@@ -30,8 +29,16 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
 
     useEffect(() => {
         fetchCourses();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [courseSearch, currentPage, perPage, degree]);
+    }, [currentPage]);
+
+
+    useEffect(() => {
+        if(currentPage === 1){
+            fetchCourses();
+        } else {
+            setCurrentPage(1);
+        }
+    }, [courseSearch, perPage, degree]);
 
     const fetchCourses = () => {
         setLoading(true);
@@ -58,51 +65,35 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
 
     return (
         <Container>
-            <Grid padded>
-                {/*
-                    <Grid.Row>
-                        <Container>
-                            <Field name="step3.allCourses">
-                                {({input: allCoursesInput}) => (
-                                    <Button.Group>
-                                        <Button positive={allCourses}
-                                            onClick={() => {
-                                                setAllCourses(true);
-                                                allCoursesInput.onChange(true);
-                                            }}>
-                                            Todos os Cursos
-                                        </Button>
-                                        <Button.Or/>
-                                        <Button positive={!allCourses}
-                                            onClick={() => {
-                                                setAllCourses(false);
-                                                allCoursesInput.onChange(false);
-                                            }}>
-                                            Selecionar Cursos
-                                        </Button>
-                                    </Button.Group>
-                                )}
-                            </Field>
-                        </Container>
-                    </Grid.Row>
-                */}
-                {!allCourses && (
-                    <>
-                        {courses.length ? (
-                            <Grid.Row>
-                                {courses.map((course, index) => (
-                                    <Label key={index} size={"large"} className={"margin-bottom-s"}>
-                                        {course.code + ' - ' + course.name}
-                                        <Icon name='delete' color={"red"} onClick={() => removeCourse(course.id)} />
-                                    </Label>
-                                ))}
-                            </Grid.Row>
-                        ) : null}
-                        <Grid.Row className={"justify_space_between"}>
-                            <Form.Input width={6} label={t("Pesquisar curso (Código, Sigla ou Nome)")} placeholder={ t("Pesquisar...") } fluid onChange={_.debounce(searchCourse, 900)}/>
-                            <FilterOptionDegree widthSize={5} eventHandler={(value) => setDegree(value)}/>
-                            <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
+            <Card.Content>
+                <Form>
+                    <Form.Group>
+                        <Form.Input width={6} label={t("Pesquisar curso (Código, Sigla ou Nome)")} placeholder={ t("Pesquisar...") } fluid onChange={_.debounce(searchCourse, 900)}/>
+                        <FilterOptionDegree widthSize={5} eventHandler={(value) => setDegree(value)}/>
+                        <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
+                    </Form.Group>
+                </Form>
+            </Card.Content>
+            <div className='margin-top-m margin-bottom-base'><Divider fitted /></div>
+            <Card.Content>
+                {courses.length ? (
+                    <div>
+                        <Header as="h5">{ t("Cursos selecionados") }</Header>
+                        <Grid.Row>
+                            {courses.map((course, index) => (
+                                <Label key={index} size={"large"} className={"margin-bottom-s"}>
+                                    {course.code + ' - ' + course.name}
+                                    <Icon name='delete' color={"red"} onClick={() => removeCourse(course.id)} />
+                                </Label>
+                            ))}
                         </Grid.Row>
+                        <div className='margin-top-base margin-bottom-m'><Divider fitted /></div>
+                    </div>
+                ) : null}
+            </Card.Content>
+            <Card.Content>
+            {!allCourses && (
+                    <>
                         <Grid.Row>
                             <Table color="green">
                                 <Table.Header>
@@ -141,7 +132,7 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
                         )}
                     </>
                 )}
-            </Grid>
+            </Card.Content>
         </Container>
     );
 };

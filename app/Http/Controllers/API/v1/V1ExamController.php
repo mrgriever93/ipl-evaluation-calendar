@@ -29,7 +29,7 @@ class V1ExamController extends Controller
         })->whereHas('course', function ($query) use($ids) {
             $query->where('school_id', $ids['schoolId']);                   // get exams for the requested school
         })->whereHas('calendar', function ($query) use($ids) {
-            $query->where('published', true)//->where("temporary", false)
+            $query->where('is_published', true)//->where("is_temporary", false)
             ->where("calendar_phase_id", CalendarPhase::phasePublished())
                 ->when($ids['semesterId'], function ($q_s) use($ids) {      // will only filter by semester if requested
                     $q_s->where('semester_id', $ids['semesterId']);         // get exams for the requested semester
@@ -52,7 +52,7 @@ class V1ExamController extends Controller
         })->whereHas('course', function ($query) use($ids) {
             $query->where("courses.id", $ids['courseId'])->where('school_id', $ids['schoolId']);    // get exams for the requested course and school
         })->whereHas('calendar', function ($query) use($ids) {
-            $query->where('published', true)//->where("temporary", false)
+            $query->where('is_published', true)//->where("is_temporary", false)
                 ->where("calendar_phase_id", CalendarPhase::phasePublished())
                 ->when($ids['semesterId'], function ($q_s) use($ids) {                              // will only filter by semester if requested
                     $q_s->where('semester_id', $ids['semesterId']);                                 // get exams for the requested semester
@@ -77,7 +77,7 @@ class V1ExamController extends Controller
         })->whereHas('courseUnit', function ($query) use($ids) {
             $query->where("course_units.id", $ids['courseUnitId']);         // get exams for the requested curricular unit
         })->whereHas('calendar', function ($query) use($ids) {
-            $query->where('published', true)//->where("temporary", false)
+            $query->where('is_published', true)//->where("is_temporary", false)
             ->where("calendar_phase_id", CalendarPhase::phasePublished())
                 ->when($ids['semesterId'], function ($q_s) use($ids) {      // will only filter by semester if requested
                     $q_s->where('semester_id', $ids['semesterId']);         // get exams for the requested semester

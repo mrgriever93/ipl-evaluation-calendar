@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
-import { useParams, useNavigate} from "react-router-dom";
+import { useParams} from "react-router-dom";
 import { useTranslation} from "react-i18next";
 import {Card, Button, Sticky, Grid, Header, List, GridColumn, Icon, Popup, Label} from 'semantic-ui-react';
 import { toast} from 'react-toastify';
@@ -17,8 +17,7 @@ import PopupRevisionDetail from "./popup-revision";
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const InfosAndActions = ( {epochs, calendarInfo, warnings}) => {
-    // const history = useNavigate();
+const InfosAndActions = ( {epochs, calendarInfo, warnings, isPublished, isTemporary, epochsViewHandler}) => {
     const { t } = useTranslation();
     // get URL params
     let { id } = useParams();
@@ -27,23 +26,51 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings}) => {
     const [calendarPermissions, setCalendarPermissions] = useState(JSON.parse(localStorage.getItem('calendarPermissions')) || []);
     const [openSubmitModal, setOpenSubmitModal] = useState(false);
     const [calendarPhases, setCalendarPhases] = useState([]);
-    const [creatingCopy, setCreatingCopy] = useState(false);
     const [differences, setDifferences] = useState();
     // const [isLoading, setIsLoading] = useState(true);
     // const [examList, setExamList] = useState([]);
     // const [publishLoading, setPublishLoading] = useState(false);
     const [openRevisionModal, setOpenRevisionModal] = useState(false);
 
-    const [isTemporary, setIsTemporary] = useState(true);
-    const [isPublished, setIsPublished] = useState(false);
     const [calendarPhase, setCalendarPhase] = useState(true);
     // const [updatingCalendarPhase, setUpdatingCalendarPhase] = useState(false);
     // const [previousFromDefinitive, setPreviousFromDefinitive] = useState(false);
 
     const [methodsMissingCount, setMethodsMissingCount] = useState(0);
     const [methodsIncompleteCount, setMethodsIncompleteCount] = useState(0);
+    const [methodsLoaded, setMethodsLoaded] = useState(false);
+    const [activeEpochs, setActiveEpochs] = useState([]);
+
+    const [creatingCopy, setCreatingCopy] = useState(false);
+
+    const createCopy = () => {
+        SweetAlertComponent.fire({
+            title: 'Atenção!',
+            html: 'Ao criar uma cópia deste calendário, irá eliminar todas as cópias criadas anteriormente deste mesmo calendário!<br/><br/><strong>Tem a certeza que deseja criar uma cópia do calendário?</strong>',
+            denyButtonText: 'Não',
+            confirmButtonText: 'Sim',
+            showConfirmButton: true,
+            showDenyButton: true,
+            confirmButtonColor: '#21ba45',
+            denyButtonColor: '#db2828',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setCreatingCopy(true);
+                axios.post(`/calendar/${calendarId}/copy`).then((res) => {
+                    setCreatingCopy(false);
+                    if (res.status === 200) {
+                        toast('Cópia do calendário criada com sucesso!', successConfig);
+                    } else {
+                        toast('Ocorreu um erro ao tentar criar uma cópia do calendário!', errorConfig);
+                    }
+                });
+            }
+        });
+    };
+
 
     useEffect(() => {
+        setMethodsLoaded(false);
         const missing = warnings.filter((item) => !item.has_methods);
         setMethodsMissingCount(missing.length);
 
@@ -53,6 +80,7 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings}) => {
             countIncomplete = countIncomplete + item.methods.filter((method) => !method.is_done).length;
         });
         setMethodsIncompleteCount(countIncomplete);
+        setMethodsLoaded(true);
     }, [warnings]);
 
     // const patchCalendar = (fieldToUpdate, value) => axios.patch(`/calendar/${calendarId}`, {
@@ -96,6 +124,7 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings}) => {
     // };
 
     useEffect(() => {
+        setMethodsLoaded(false);
         axios.get('/calendar-phases').then((response) => {
             if (response.status === 200) {
                 setCalendarPhases(
@@ -109,19 +138,6 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings}) => {
             }
         });
     }, []);
-
-    // const publishCalendar = () => {
-    //     setPublishLoading(true);
-    //     axios.post(`/calendar/${calendarId}/publish`).then((res) => {
-    //         setPublishLoading(false);
-    //         loadCalendar(calendarId);
-    //         if (res.status === 200) {
-    //             toast('Calendário publicado com sucesso!', successConfig);
-    //         } else {
-    //             toast('Ocorreu um erro ao tentar publicar o calendário!', errorConfig);
-    //         }
-    //     });
-    // };
 
     const openRevisionModalHandler = () => {
         // setViewExamId(exam.id);
@@ -141,38 +157,31 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings}) => {
         setOpenSubmitModal(false);
     }
 
-    const createCopy = () => {
-        SweetAlertComponent.fire({
-            title: 'Atenção!',
-            html: 'Ao criar uma cópia deste calendário, irá eliminar todas as cópias criadas anteriormente deste mesmo calendário!<br/><br/><strong>Tem a certeza que deseja criar uma cópia do calendário?</strong>',
-            denyButtonText: 'Não',
-            confirmButtonText: 'Sim',
-            showConfirmButton: true,
-            showDenyButton: true,
-            confirmButtonColor: '#21ba45',
-            denyButtonColor: '#db2828',
-        }).then((result) => {
-                if (result.isConfirmed) {
-                    setCreatingCopy(true);
-                    axios.post(`/calendar/${calendarId}/publish`, {
-                        createCopy: true,
-                    }).then((res) => {
-                        setCreatingCopy(false);
-                        if (res.status === 200) {
-                            toast('Cópia do calendário criada com sucesso!', successConfig);
-                        } else {
-                            toast('Ocorreu um erro ao tentar criar uma cópia do calendário!', errorConfig);
-                        }
-                    });
-                }
-            });
-    };
-
     const updatePhaseHandler = (newPhase) => {
         setCalendarPhase(newPhase);
         calendarInfo.phase.id =  newPhase;
     }
 
+    useEffect(() => {
+        let initialEpochs = [];
+        epochs.forEach((epoch) => {
+            initialEpochs.push(epoch.id);
+        });
+        //set epochs showing
+        setActiveEpochs(initialEpochs);
+    }, [epochs]);
+
+    const showingEpochsHandle = (epochId) => {
+        if(activeEpochs.includes(epochId)) {
+            setActiveEpochs(prev => prev.filter(item => item !== epochId));
+        } else {
+            setActiveEpochs(prev => [...prev, epochId])
+        }
+    }
+
+    useEffect(() => {
+        epochsViewHandler(activeEpochs);
+    }, [activeEpochs]);
 
     return (
         <>
@@ -180,155 +189,160 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings}) => {
                 <div className='main-content-title'>
                     <Header as="h3">
                         Calendário de Avaliação
-                        <span className='heading-description'>{ calendarInfo?.course?.name_pt ? " (" + calendarInfo.course.name_pt + ")": '' }</span>
+                        <div className='heading-description'>{ calendarInfo?.course?.name_pt ? " (" + calendarInfo.course.name_pt + ")": '' }</div>
                     </Header>
                 </div>
                 <div className='main-content-actions'>
                     {!isPublished ? (
                         <>
-                            {/* <ShowComponentIfAuthorized permission={[SCOPES.PUBLISH_CALENDAR]}>
-                                <Button color="teal" onClick={publishCalendar}>Publicar esta versão</Button>
-                            </ShowComponentIfAuthorized> */}
                             { (SCOPES.PUBLISH_CALENDAR || calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0) && (
-                                    <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE]}>
-                                        <Button color="teal" onClick={openSubmitModalHandler}>Submeter</Button>
-                                    </ShowComponentIfAuthorized>
-                                )
+                                <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE]}>
+                                    <Button color="teal" onClick={openSubmitModalHandler}>Submeter</Button>
+                                </ShowComponentIfAuthorized>
+                            )
                             }
                         </>
                     ) : (
                         <ShowComponentIfAuthorized permission={[SCOPES.CREATE_COPY]}>
-                            <Button color="teal" loading={creatingCopy} onClick={createCopy}>Criar um cópia desta versão</Button>
+                            <Button color="orange" loading={creatingCopy} onClick={createCopy} labelPosition={"right"} icon>Criar um cópia desta versão <Icon name={"copy outline"} /></Button>
                         </ShowComponentIfAuthorized>
                     )}
+
                 </div>
             </div>
-            <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
-                <Sticky offset={24} >
-                    <Card fluid >
-                        <Card.Content>
-                            <Grid columns={4} divided>
-                                <GridColumn>
-                                    <Header as="h4">Legenda</Header>
-                                    <List divided relaxed>
-                                        {epochs.map((epoch, index) => (
-                                            <div className='legend-list-item' key={index}>
-                                                <div className={'legend-list-item-square calendar-day-' + epoch.code}></div>
-                                                <Popup trigger={
-                                                    <div className='legend-list-item-content'>
-                                                        <Icon name="calendar alternate outline" />
-                                                        <span className={"padding-left-xs"}>{epoch.name}</span>
-                                                    </div>
-                                                } position='bottom center'>
-                                                    <Popup.Content>
-                                                        <b>{t("Ínicio")}:</b>{' '}{moment(epoch.start_date).format('DD MMMM, YYYY')}
-                                                        <br/>
-                                                        <b>{t("Fim")}:</b>{' '}{moment(epoch.end_date).format('DD MMMM, YYYY')}
-                                                    </Popup.Content>
-                                                </Popup>
-                                            </div>
-                                        ))}
-                                    </List>
-                                </GridColumn>
-                                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
-                                    <GridColumn>
-                                        {/* {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0 ?
-                                            (
-                                                <div>
-                                                    <span>
-                                                        <Header as="h5">Fase:</Header>
-                                                        <Dropdown
-                                                            options={calendarPhases.filter((x) => x.name !== 'system' && x.name !== 'published')}
-                                                            selection
-                                                            search
-                                                            label="Fase do Calendário"
-                                                            loading={!calendarPhases.length || updatingCalendarPhase}
-                                                            onChange={(e, {value}) => {updateCalendarPhase(value);}}
-                                                            value={calendarPhase}
-                                                        />
-                                                    </span>
+            <Sticky offset={24} >
+                <Card fluid >
+                    <Card.Content>
+                        <Grid columns={'equal'} divided>
+                            <GridColumn>
+                                <Header as="h4">Legenda</Header>
+                                <List divided relaxed>
+                                    {epochs.map((epoch, index) => (
+                                        <div className='legend-list-item' key={index}>
+                                            <div className={'legend-list-item-square calendar-day-' + epoch.code}></div>
+                                            <Popup trigger={
+                                                <div className='legend-list-item-content'>
+                                                    <Icon name="calendar alternate outline" />
+                                                    <span className={"padding-left-xs"}>{epoch.name}</span>
                                                 </div>
-                                            ) : (
-                                                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
-                                                    <Header as="h5">Fase:</Header>
-                                                    <span>{calendarPhases.find((x) => x.key === calendarPhase)?.text || calendarInfo?.phase?.description}</span>
-                                                </ShowComponentIfAuthorized>
-                                            )
-                                        } */}
-                                        <Header as="h5">Fase:</Header>
-                                        <span>{calendarPhases.find((x) => x.key === calendarPhase)?.text || calendarInfo?.phase?.description}</span>
-                                    </GridColumn>
-                                </ShowComponentIfAuthorized>
+                                            } position='bottom center'>
+                                                <Popup.Content>
+                                                    <b>{t("Ínicio")}:</b>{' '}{moment(epoch.start_date).format('DD MMMM, YYYY')}
+                                                    <br/>
+                                                    <b>{t("Fim")}:</b>{' '}{moment(epoch.end_date).format('DD MMMM, YYYY')}
+                                                </Popup.Content>
+                                            </Popup>
+                                            <div className="legend-list-item-actions">
+                                                <Button icon size='mini'
+                                                    onClick={() => showingEpochsHandle(epoch.id)}
+                                                    title={ (activeEpochs.includes(epoch.id) ? t("Ocultar época") : t("Mostrar época") ) }>
+                                                    <Icon name={(activeEpochs.includes(epoch.id) ? "eye slash" : "eye")} />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </List>
+                            </GridColumn>
+                            <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
                                 <GridColumn>
-                                    <div>
-                                        <span>
-                                            <Header as="h5">Estado:</Header>
-                                            {/*
-                                            <Button.Group>
-                                                <Button compact onClick={() => updateCalendarStatus(true)} positive={isTemporary} disabled={isPublished || previousFromDefinitive}>
-                                                    Temporário
-                                                </Button>
-                                                <Button compact onClick={() => updateCalendarStatus(false)} positive={!isTemporary} disabled={isPublished || previousFromDefinitive}>
-                                                    Definitivo
-                                                </Button>
-                                            </Button.Group>
-                                            */}
-                                            { !isPublished ? (
-                                                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
-                                                    <Label color={"blue"}>Nao Publicado</Label>
-                                                </ShowComponentIfAuthorized>
-                                            ) : (
-                                                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]} renderIfNotAllowed={() => (
-                                                    <>{isPublished ? <Label color={isTemporary ? undefined : 'blue' }>{isTemporary ? 'Provisório' : 'Definitivo'}</Label> : undefined}</>
-                                                )}>
-                                                    <Label color={isTemporary ? undefined : 'blue' }>{isTemporary ? 'Provisório' : 'Definitivo'}</Label>
-                                                </ShowComponentIfAuthorized>
-                                            )}
-                                        </span>
-                                    </div>
-                                    <div className='margin-top-base'>
-                                        <span>
-                                            <Header as="h5">Última alteração:</Header>
-                                            {moment(calendarInfo?.calendar_last_update,).format('DD MMMM, YYYY HH:mm')}
-                                        </span>
-                                    </div>
+                                    <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
+                                        <div>
+                                            <span>
+                                                <Header as="h5">Fase:</Header>
+                                            </span>
+                                            <div className='margin-top-xs'>
+                                                {calendarPhases.find((x) => x.key === calendarPhase)?.text || calendarInfo?.phase?.description}
+                                            </div>
+                                        </div>
+                                    </ShowComponentIfAuthorized>
+                                    <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
+                                        <div className='margin-top-base'>
+                                            <span>
+                                                <Header as="h5">Estado:</Header>
+                                            </span>
+                                            <div className='margin-top-xs'>
+                                                { !isPublished && !isTemporary ? (
+                                                    <Label color={"blue"}>{ t("Nao Publicado") }</Label>
+                                                ) : (
+                                                    <Label color={isTemporary ? 'grey' : 'green' }>{isTemporary ? t('Provisório') : t('Definitivo')}</Label>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </ShowComponentIfAuthorized>
                                 </GridColumn>
+                            </ShowComponentIfAuthorized>
+                            <GridColumn>
+                                <div>
+                                    <span>
+                                        <Header as="h5">Última alteração:</Header>
+                                    </span>
+                                    <div className='margin-top-xs'>
+                                        {moment(calendarInfo?.calendar_last_update,).format('DD MMMM, YYYY HH:mm')}
+                                    </div>
+                                </div>
+
+                                <div className='margin-top-base'>
+                                    <span>
+                                        <Header as="h5">Versão:</Header>
+                                    </span>
+                                    <div className='margin-top-xs'>
+                                        { 'Versão ' + (calendarInfo?.version ? calendarInfo.version : '') }
+                                    </div>
+                                </div>
+                            </GridColumn>
+                            { (!isPublished && !isTemporary) && (
                                 <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS, SCOPES.ADD_EXAMS]}>
-                                    <GridColumn>
-                                        { (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? (
+                                    <GridColumn width={5} className={ 'revision-column-wrapper' + (methodsLoaded ? ( (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? " revision-warning" : " revision-success") : " revision-loading") }>
                                         <div>
                                             <Header as="h5">
-                                                <Icon name="warning sign" color="yellow" style={{fontSize: '1em', lineHeight: '0.8'}} />
                                                 { t("Revisão") }:
                                             </Header>
-                                            <ul>
-                                                <li>Existem {methodsIncompleteCount} elementos de avaliação por submeter.</li>
-                                                <li>Existem {methodsMissingCount} UCs com <a href={ "/unidade-curricular?curso="+calendarInfo?.course?.id} target="_blank">métodos <Icon name="external alternate" /></a> por preencher.</li>
-                                            </ul>
-                                        </div>
-                                        ) : (
-                                            <div>
-                                                <Header as="h5">
-                                                    { t("Revisão") }:
-                                                </Header>
-                                                <div className={"text-center"}>
-                                                    <div><Icon size={"big"} name={"check circle outline"} color={"green"}/></div>
-                                                    <div className={"margin-y-s"}>
-                                                        <Header as={"h4"} className={"display-inline"}>{ t("Todas as avaliações marcadas!") }</Header>
+                                            { methodsLoaded ? ( (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? (
+                                                <>
+                                                    <div className="revision-column-icon">
+                                                        <Icon name="warning sign" color="yellow"/>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        ) }
-                                        <div className={"text-center"}>
-                                            <a href="#" onClick={openRevisionModalHandler} >ver detalhe</a>
+                                                    <div className="revision-column-content">
+                                                        <ul className="margin-top-base">
+                                                            <li>Existem {methodsIncompleteCount} elementos de avaliação por submeter.</li>
+                                                            <li>Existem {methodsMissingCount} UCs com <a href={ "/unidade-curricular?curso="+calendarInfo?.course?.id} target="_blank">métodos <Icon name="external alternate" /></a> por preencher.</li>
+                                                        </ul>
+                                                    </div>
+                                                    <div className={"text-center"}>
+                                                        <a href="#" onClick={openRevisionModalHandler} >ver detalhe</a>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className="revision-column-icon">
+                                                        <Icon name={"check circle outline"} color={"green"}/>
+                                                    </div>
+                                                    <div className="revision-column-content">
+                                                        <div className="margin-top-l">
+                                                            <div >{ t("Todas as avaliações marcadas!") }</div>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            ) ) : (
+                                                <>
+                                                    <div className="revision-column-icon">
+                                                        <Icon name={"download"} color={"blue"}/>
+                                                    </div>
+                                                    <div className="revision-column-content">
+                                                        <div className="margin-top-l">
+                                                            <div >{ t("A carregar detalhes!") }</div>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
                                     </GridColumn>
                                 </ShowComponentIfAuthorized>
-                            </Grid>
-                        </Card.Content>
-                    </Card>
-                </Sticky>
-            </ShowComponentIfAuthorized>
+                            )}
+                        </Grid>
+                    </Card.Content>
+                </Card>
+            </Sticky>
 
             <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE, SCOPES.PUBLISH_CALENDAR]}>
                 <PopupSubmitCalendar isOpen={openSubmitModal} onClose={closeSubmitModalHandler} calendarId={calendarId} currentPhaseId={calendarInfo?.phase?.id} updatePhase={updatePhaseHandler}/>

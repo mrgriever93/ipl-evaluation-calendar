@@ -14,6 +14,7 @@ import FilterOptionPerPage from "../../components/Filters/PerPage";
 import EmptyTable from "../../components/EmptyTable";
 import PaginationDetail from "../../components/Pagination";
 import SemestersLocal from "../../components/Filters/SemestersLocal";
+import CalendarStatus from "../../components/Filters/CalendarStatus";
 
 const MessageFading = styled(Message)`
     @keyframes flickerAnimation {
@@ -30,6 +31,8 @@ const MessageFading = styled(Message)`
     animation: flickerAnimation 1s infinite;
 `;
 
+let filterDebounce = null;
+
 const CalendarList = () => {
     const { t } = useTranslation();
     const [calendars, setCalendars] = useState([]);
@@ -44,6 +47,7 @@ const CalendarList = () => {
     const [courseFilter, setCourseFilter] = useState();
     const [semesterFilter, setSemesterFilter] = useState();
     const [phaseFilter, setPhaseFilter] = useState();
+    const [statusFilter, setStatusFilter] = useState();
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [paginationInfo, setPaginationInfo] = useState({});
@@ -72,6 +76,7 @@ const CalendarList = () => {
         link += (semesterFilter ? '&semester='      + semesterFilter    : '');
         link += (courseFilter   ? '&course='        + courseFilter      : '');
         link += (phaseFilter    ? '&phase='         + phaseFilter       : '');
+        link += (statusFilter   ? '&status='        + statusFilter      : '');
         link += '&per_page=' + perPage;
 
         axios.get(link).then((response) => {
@@ -85,7 +90,7 @@ const CalendarList = () => {
     };
 
     useEffect(() => {
-        if (calendars.filter((x) => JSON.parse(x.differences)?.length)?.length > 0) {
+        if (calendars.filter((x) => x.has_differences)?.length > 0) {
             setMessageVisible(true);
         }
     }, [calendars]);
@@ -115,11 +120,16 @@ const CalendarList = () => {
     };
 
     useEffect(() => {
-        loadCalendars();
-    }, [semesterFilter, courseFilter, phaseFilter, currentPage, myCourseOnly]);
+        clearTimeout(filterDebounce);
+        filterDebounce = setTimeout(() => {
+            loadCalendars();
+            clearTimeout(filterDebounce);
+        }, 400);
+    }, [semesterFilter, courseFilter, phaseFilter, currentPage, myCourseOnly, statusFilter]);
 
 
     const filterByCourse = (course) => {
+        setCurrentPage(1);
         setCourseFilter(course);
     };
 
@@ -132,12 +142,20 @@ const CalendarList = () => {
     };
 
     const filterBySemester = (value) => {
+        setCurrentPage(1);
         setSemesterFilter(value);
     };
 
+    const searchByStatus = (value) => {
+        setCurrentPage(1);
+        setStatusFilter(value);
+    };
+
+
     const columns = [
-        {name: t('ID'),            align: 'center', style: {width: '5%' } },
-        {name: t('Curso'),         align: 'center', style: {width: '40%' } },
+        {name: t('Versão'),        align: 'center', style: {width: '5%' } },
+        {name: t('Curso'),         align: 'center', style: {width: '33%' } },
+        {name: t('Semestre'),      align: 'center', style: {width: '7%' } },
         {
             name: t('Fase'),
             align: 'center',
@@ -197,7 +215,8 @@ const CalendarList = () => {
                                         <Courses widthSize={5} eventHandler={filterByCourse} />
                                     </ShowComponentIfAuthorized>
                                 )}
-                                { paginationInfo.last_page > 1 && (
+                                <CalendarStatus eventHandler={searchByStatus} widthSize={4} />
+                                { (paginationInfo.last_page > 1 || paginationInfo.total > 10) && (
                                     <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                                 )}
                             </Form.Group>
@@ -231,28 +250,25 @@ const CalendarList = () => {
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
-                                    {calendars.map(({id, display_id, course, temporary, phase, published}) => (
+                                    {calendars.map(({id, version, course, semester, temporary, phase, published}) => (
                                             <Table.Row key={id}>
-                                                <Table.Cell textAlign="center">{display_id}</Table.Cell>
+                                                <Table.Cell textAlign="center">{version}</Table.Cell>
                                                 <Table.Cell>{course}</Table.Cell>
+                                                <Table.Cell textAlign="center">{semester}</Table.Cell>
                                                 <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
                                                     <Table.Cell>
                                                         {phase.description}
                                                     </Table.Cell>
                                                 </ShowComponentIfAuthorized>
-                                                <Table.Cell textAlign="center">
-                                                    { !published ? (
-                                                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
+                                                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
+                                                    <Table.Cell textAlign="center">
+                                                        { !published && !temporary ? (
                                                             <Label color={"blue"}>{ t("Nao Publicado") }</Label>
-                                                        </ShowComponentIfAuthorized>
-                                                    ) : (
-                                                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]} renderIfNotAllowed={() => (
-                                                                <>{published ? <Label color={temporary ? undefined : 'blue' }>{temporary ? t('Provisório') : t('Definitivo')}</Label> : phase.description}</>
-                                                            )}>
-                                                            <Label color={temporary ? undefined : 'blue' }>{temporary ? t('Provisório') : t('Definitivo')}</Label>
-                                                        </ShowComponentIfAuthorized>
-                                                    )}
-                                                </Table.Cell>
+                                                        ) : (
+                                                            <Label color={temporary ? 'grey' : 'green' }>{temporary ? t('Provisório') : t('Definitivo')}</Label>
+                                                        )}
+                                                    </Table.Cell>
+                                                </ShowComponentIfAuthorized>
                                                 <Table.Cell textAlign="center">
                                                     <Link to={`/calendario/${id}`}>
                                                         <Button color="green" icon>

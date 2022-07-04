@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\EvaluationType;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class MethodResource extends JsonResource
@@ -17,6 +18,8 @@ class MethodResource extends JsonResource
             'description'           => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
             'description_pt'        => $this->description_pt,
             'description_en'        => $this->description_en,
+            'is_blocked'            => $this->evaluation_type_id == EvaluationType::typeStatementRelease() || $this->evaluation_type_id == EvaluationType::typePublicOralPresentation(),
+            'grouped_id'            => ''//TODO group by id of "parent" (like projet has those above in "blocked"
             //'epoch' => EpochResource::collection($this->epochs),
         ];
     }
