@@ -15,4 +15,16 @@ class EvaluationType extends Model
     {
         return $this->belongsToMany(Exam::class);
     }
+
+    public static function typePublicOralPresentation()
+    {
+        //return $this->where('code', 'public_oral_presentation')->first()->id;
+        return 5;
+    }
+
+    public static function typeStatementRelease()
+    {
+        //return $this->where('code', 'statement_release')->first()->id;
+        return 11;
+    }
 }

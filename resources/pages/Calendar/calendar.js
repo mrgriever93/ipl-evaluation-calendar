@@ -13,6 +13,7 @@ import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorize
 import SCOPES from '../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../utils/toastConfig';
 
+import EmptyTable from "../../components/EmptyTable";
 import InfosAndActions from './detail/infos-and-actions';
 import PopupScheduleInterruption from './detail/popup-sched-interruption';
 import PopupScheduleEvaluation from './detail/popup-sched-evaluation';
@@ -58,6 +59,7 @@ const Calendar = () => {
     const [interruptionModalInfo, setInterruptionModalInfo] = useState({});
 
     const [calendarWarnings, setCalendarWarnings] = useState([]);
+    const [showingEpochs, setShowingEpochs] = useState([]);
 
 
     useEffect(() => {
@@ -298,6 +300,7 @@ const Calendar = () => {
 
                     let startDate = epochs.length > 0 ? epochs[0].start_date : undefined;
                     let endDate = epochs.length > 0 ? epochs[0].end_date : undefined;
+                    let initialEpochs = [];
                     epochs.forEach((epoch) => {
                         if(startDate > moment(epoch.start_date)){
                             startDate = moment(epoch.start_date);
@@ -306,7 +309,10 @@ const Calendar = () => {
                             endDate = moment(epoch.end_date);
                         }
                         setExamList((current) => [...current, ...epoch.exams]);
+                        initialEpochs.push(epoch.id);
                     });
+                    //set epochs showing
+                    setShowingEpochs(initialEpochs);
                     // set calendar start and end dates
                     setCalendarStartDate(moment(startDate).format("DD-MM-YYYY"));
                     setCalendarEndDate(moment(endDate).format("DD-MM-YYYY"));
@@ -328,7 +334,7 @@ const Calendar = () => {
         if(epochsList.length > 0 && !isCalendarInfoLoading) {
             console.log('weekData');
             return _.orderBy(
-                epochsList.reduce((acc, curr) => {
+                epochsList.filter((item) => showingEpochs.includes(item.id)).reduce((acc, curr) => {
                     const start_date = moment(curr.start_date);
                     const end_date = moment(curr.end_date);
                     while (start_date <= end_date) {
@@ -393,7 +399,7 @@ const Calendar = () => {
                     return acc;
                 }, []), ['year', 'week']);
         }
-    }, [epochsList, interruptionsList, isCalendarInfoLoading]);
+    }, [epochsList, interruptionsList, isCalendarInfoLoading, showingEpochs]);
 
     useEffect(() => {
         loadCalendar(calendarId);
@@ -418,6 +424,10 @@ const Calendar = () => {
     let alreadyAddedRowSpan = false;
     let interruptionDays = 0;
 
+    /*
+     * Option to drag and drop exams bewteen days
+     * TODO - maybe future work
+     */
     const allowDrop = (ev) => {
         ev.preventDefault();
     }
@@ -543,10 +553,12 @@ const Calendar = () => {
                 examsComponents = existingExamsAtThisDate.map((exam) => {
                     return exam.epoch_id === epoch.id && (
                         // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
+                        // For the Future (drag and drop
+                        // draggable="false" onDragStart={drag}
                         <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )}
                             title={ (exam.in_class ? t('Aula') + " - " : "" ) + exam.course_unit + " - " + (exam.method?.description || exam.method?.name) }
                             color="blue" key={exam.id}
-                            onClick={() => openExamDetailHandler(year, exam)} draggable="false" onDragStart={drag} >
+                            onClick={() => openExamDetailHandler(year, exam)}>
                             { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
                                 <div className="btn-action-wrapper">
                                     {calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0 && (
@@ -565,8 +577,10 @@ const Calendar = () => {
                 });
             }
             // create a button to add exams for this date
+            // For the Future (drag and drop
+            // onDrop={drop} onDragOver={allowDrop}
             return (
-                <Table.Cell key={weekDayIndex} className={ 'calendar-day-' + epoch.code } textAlign="center" onDrop={drop} onDragOver={allowDrop}>
+                <Table.Cell key={weekDayIndex} className={ 'calendar-day-' + epoch.code } textAlign="center">
                     {examsComponents}
                     {!isPublished && calendarPermissions.filter((x) => x.name === SCOPES.ADD_EXAMS).length > 0 && (
                         <Button className="btn-schedule-exam" onClick={() => scheduleExamHandler(year, epoch, day.date, existingExamsAtThisDate)}>
@@ -595,65 +609,71 @@ const Calendar = () => {
             <div className="margin-bottom-s">
                 <Link to="/"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
-            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings}/>
+            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings}
+                             isPublished={isPublished} isTemporary={isTemporary} showingEpochs={showingEpochs} epochsViewHandler={setShowingEpochs} />
             <AnimatePresence>
                 {isLoading && (<PageLoader animate={pageLoaderAnimate} exit={pageLoaderExit}/>)}
             </AnimatePresence>
             <div className='margin-top-l'>
-                <Grid stackable className='calendar-tables'>
-                    <Grid.Row>
-                        <Grid.Column width="16">
-                            {epochsList.length > 0 && weekData && weekData.map(({week, year, days, epochs}, tableIndex) => {
-                                interruptionDays = 0;
-                                alreadyAddedColSpan = false;
-                                return (
-                                    <div key={tableIndex} className={"table-week"}>
-                                        {weekTen === week && (
-                                            <Divider horizontal style={{marginTop: "var(--space-l)"}}>
-                                                <Header as='h4' style={{textTransform: "uppercase"}}>
-                                                    <Icon name='calendar alternate outline' />
-                                                    { t("10ª semana") }
-                                                </Header>
-                                            </Divider>
-                                        )}
-                                        <Table celled>
-                                            <Table.Header>
-                                                <Table.Row textAlign="center">
-                                                    <Table.HeaderCell width="2">#{week}</Table.HeaderCell>
-                                                    <Table.HeaderCell width="2">{t('calendar.2ª Feira')}</Table.HeaderCell>
-                                                    <Table.HeaderCell width="2">{t('calendar.3ª Feira')}</Table.HeaderCell>
-                                                    <Table.HeaderCell width="2">{t('calendar.4ª Feira')}</Table.HeaderCell>
-                                                    <Table.HeaderCell width="2">{t('calendar.5ª Feira')}</Table.HeaderCell>
-                                                    <Table.HeaderCell width="2">{t('calendar.6ª Feira')}</Table.HeaderCell>
-                                                    <Table.HeaderCell width="2">{t('calendar.Sábado')}</Table.HeaderCell>
-                                                </Table.Row>
-                                                <Table.Row>
-                                                    <Table.HeaderCell textAlign="center">{year}</Table.HeaderCell>
-                                                    {weekDays.map((weekDay, index) => weekDayHeaderCell(days, weekDay, index) )}
-                                                </Table.Row>
-                                            </Table.Header>
-                                            <Table.Body>
-                                                { courseYears.map((year, courseIndex) => {
-                                                    alreadyAddedColSpan = false;
-                                                    alreadyAddedRowSpan = false;
+                {console.log(showingEpochs) }
+                { showingEpochs.length === 0 ? (
+                    <EmptyTable isLoading={false} label={t('Todas as épocas ficaram escondidas')}/>
+                ) : (
+                    <Grid stackable className='calendar-tables'>
+                        <Grid.Row>
+                            <Grid.Column width="16">
+                                {epochsList.length > 0 && weekData && weekData.map(({week, year, days, epochs}, tableIndex) => {
+                                    interruptionDays = 0;
+                                    alreadyAddedColSpan = false;
+                                    return (
+                                        <div key={tableIndex} className={"table-week"}>
+                                            {weekTen === week && (
+                                                <Divider horizontal style={{marginTop: "var(--space-l)"}}>
+                                                    <Header as='h4' style={{textTransform: "uppercase"}}>
+                                                        <Icon name='calendar alternate outline' />
+                                                        { t("10ª semana") }
+                                                    </Header>
+                                                </Divider>
+                                            )}
+                                            <Table celled>
+                                                <Table.Header>
+                                                    <Table.Row textAlign="center">
+                                                        <Table.HeaderCell width="2">#{week}</Table.HeaderCell>
+                                                        <Table.HeaderCell width="2">{t('calendar.2ª Feira')}</Table.HeaderCell>
+                                                        <Table.HeaderCell width="2">{t('calendar.3ª Feira')}</Table.HeaderCell>
+                                                        <Table.HeaderCell width="2">{t('calendar.4ª Feira')}</Table.HeaderCell>
+                                                        <Table.HeaderCell width="2">{t('calendar.5ª Feira')}</Table.HeaderCell>
+                                                        <Table.HeaderCell width="2">{t('calendar.6ª Feira')}</Table.HeaderCell>
+                                                        <Table.HeaderCell width="2">{t('calendar.Sábado')}</Table.HeaderCell>
+                                                    </Table.Row>
+                                                    <Table.Row>
+                                                        <Table.HeaderCell textAlign="center">{year}</Table.HeaderCell>
+                                                        {weekDays.map((weekDay, index) => weekDayHeaderCell(days, weekDay, index) )}
+                                                    </Table.Row>
+                                                </Table.Header>
+                                                <Table.Body>
+                                                    { courseYears.map((year, courseIndex) => {
+                                                        alreadyAddedColSpan = false;
+                                                        alreadyAddedRowSpan = false;
 
-                                                    return epochs.map((epoch, epochIndex) => (
-                                                        <Table.Row key={courseIndex + "-" + epochIndex} >
-                                                            {epochIndex === 0 && (
-                                                                <Table.Cell textAlign="center" rowSpan={epochs.length}>{ t("Ano") + " " + year }</Table.Cell>
-                                                            )}
-                                                            {weekDays.map((weekDay, weekDayIndex) => weekDayContentCell(epoch, days, courseIndex, year, weekDay, weekDayIndex, epochs.length))}
-                                                        </Table.Row>
-                                                    ));
-                                                })}
-                                            </Table.Body>
-                                        </Table>
-                                    </div>
-                                );
-                            })}
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
+                                                        return epochs.map((epoch, epochIndex) => (
+                                                            <Table.Row key={courseIndex + "-" + epochIndex} >
+                                                                {epochIndex === 0 && (
+                                                                    <Table.Cell textAlign="center" rowSpan={epochs.length}>{ t("Ano") + " " + year }</Table.Cell>
+                                                                )}
+                                                                {weekDays.map((weekDay, weekDayIndex) => weekDayContentCell(epoch, days, courseIndex, year, weekDay, weekDayIndex, epochs.length))}
+                                                            </Table.Row>
+                                                        ));
+                                                    })}
+                                                </Table.Body>
+                                            </Table>
+                                        </div>
+                                    );
+                                })}
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
+                )}
             </div>
             { /* TODO pass min and max dates */ }
             <PopupScheduleInterruption
@@ -664,6 +684,7 @@ const Calendar = () => {
                 info={interruptionModalInfo} />
 
             <PopupEvaluationDetail
+                isPublished={isPublished || isTemporary}
                 isOpen={openExamDetailModal}
                 onClose={closeExamDetailHandler}
                 examId={viewExamId} />

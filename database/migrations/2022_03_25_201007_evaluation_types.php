@@ -13,6 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('evaluation_types')) {
+            return false;
+        }
         Schema::create('evaluation_types', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
             $table->string('code')->unique();

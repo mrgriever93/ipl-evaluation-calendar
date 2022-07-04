@@ -13,6 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('group_permissions')) {
+            return false;
+        }
         Schema::create('group_permissions', function (Blueprint $table) {
             $table->primary(['group_id', 'permission_id', 'phase_id'], 'primary_grouped');
             $table->unsignedBigInteger('group_id');

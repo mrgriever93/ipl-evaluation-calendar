@@ -81,7 +81,7 @@ const HeaderMenu = () => {
                 <ShowComponentIfAuthorized permission={[UC_GROUPS_SCOPES[0]]}>
                     <Menu.Item as={Link} to="/agrupamento-unidade-curricular" disabled={academicYearsList.length === 0}
                                className={ location.pathname.includes('/agrupamento-unidade-curricular') ? 'active' : ''}>
-                        {t('menu.Agrupar UCs')}
+                        {t('menu.UCs Agrupadas')}
                     </Menu.Item>
                 </ShowComponentIfAuthorized>
                 <ShowComponentIfAuthorized permission={[COURSE_SCOPES[0]]}>

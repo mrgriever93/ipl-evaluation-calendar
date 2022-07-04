@@ -46,7 +46,7 @@ class ExamController extends Controller
             foreach (CourseUnitGroup::find($courseUnitGroup)->courseUnits as $courseUnit) {
                 foreach (Method::find($request->method_id)->epochType as $epochType) {
                     $epoch = Epoch::where('epoch_type_id', $epochType->id)->where('calendar_id', $calendarId)->first();
-                    $hasEpoch = $epoch->calendar()->where('calendars.published', false)->exists();
+                    $hasEpoch = $epoch->calendar()->where('calendars.is_published', false)->exists();
                     $hasExams = Exam::where('method_id', $request->method_id)->where('epoch_id', $epoch->id)->count();
                     if ($hasEpoch && $hasExams === 0) {
                         $newExam = new Exam($request->all());
@@ -85,7 +85,7 @@ class ExamController extends Controller
             $courseUnits = $exam->method->courseUnits;
             foreach ($courseUnits as $courseUnit) {
                 $epochId = Epoch::where('epoch_type_id', $exam->epoch->epoch_type_id)
-                   ->where('calendar_id', Calendar::where('course_id', $courseUnit->course_id)->where('published', false)->latest('id')->first()->id)
+                   ->where('calendar_id', Calendar::where('course_id', $courseUnit->course_id)->where('is_published', false)->latest('id')->first()->id)
                    ->first()->id;
                $examToUpdate = $courseUnit->exams->where('epoch_id', $epochId)->last();
 
@@ -142,7 +142,7 @@ class ExamController extends Controller
          */
 
         $epochRecord = Epoch::find($epochId);
-        if ( $epochRecord->calendar->published ) {
+        if ( $epochRecord->calendar->is_published ) {
             return response()->json("Not allowed to book exams on Published Calendars!", Response::HTTP_FORBIDDEN);
         }
         // $checkExam = Exam::where('epoch_id', '=', $epochId)->where('epoch_id', '=', $epochId)->where('method_id', '=', $method_id);
@@ -173,7 +173,7 @@ class ExamController extends Controller
 
     public function destroyByDate(Calendar $calendar, $date)
     {
-        if($calendar->published){
+        if($calendar->is_published){
             return response()->json("Not allowed to delete exams on Published Calendars!", Response::HTTP_FORBIDDEN);
         }
         $exams = $calendar->exams()->where(function ($query) use($date) {
@@ -191,14 +191,14 @@ class ExamController extends Controller
 
     public function destroy(Exam $exam)
     {
-        if($exam->epoch->calendar->published){
+        if($exam->epoch->calendar->is_published){
             return response()->json("Not allowed to delete exams on Published Calendars!", Response::HTTP_FORBIDDEN);
         }
         $belongsToGroup = $exam->courseUnit->group;
         if($belongsToGroup) {
             foreach ($exam->method->courseUnits as $courseUnit) {
                 $epochId = Epoch::where('epoch_type_id', $exam->epoch->epoch_type_id)
-                    ->where('calendar_id', Calendar::where('course_id', $courseUnit->course_id)->where('published', false)->latest('id')->first()->id)
+                    ->where('calendar_id', Calendar::where('course_id', $courseUnit->course_id)->where('is_published', false)->latest('id')->first()->id)
                     ->first()->id;
                 $examToDelete = $courseUnit->exams->where('epoch_id', $epochId)->last();
 

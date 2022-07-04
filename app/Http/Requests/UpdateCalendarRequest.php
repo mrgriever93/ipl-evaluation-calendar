@@ -28,6 +28,8 @@ class UpdateCalendarRequest extends FormRequest
         return [
             'calendar_phase_id' => 'sometimes|exists:calendar_phases,id',
             'temporary'         => 'sometimes|boolean',
+            'published'         => 'sometimes|boolean',
+            'groups'            => 'sometimes|array'
         ];
     }
 }

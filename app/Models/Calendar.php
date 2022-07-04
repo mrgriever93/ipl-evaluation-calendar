@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Observers\CalendarObserver;
 use App\Scopes\PublishedScope;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,13 +14,14 @@ class Calendar extends Model
     use HasFactory, SoftDeletes, Filterable;
 
     protected $fillable = [
+        "version",
         "calendar_phase_id",
         "semester_id",
         "week_ten",
         "observations_pt",
         "observations_en",
-        "temporary",
-        "published",
+        "is_temporary",
+        "is_published",
         "created_by",
         "updated_by",
         "previous_calendar_id",
@@ -51,11 +51,11 @@ class Calendar extends Model
 
     public function scopePublished($query)
     {
-        return $query->where('published', true);
+        return $query->where('is_published', true);
     }
 
     public function scopeOrPublished($query) {
-        return $query->orWhere('published', true);
+        return $query->orWhere('is_published', true);
     }
 
     public function calendarChanges()
@@ -101,6 +101,13 @@ class Calendar extends Model
     {
         return $this->hasManyThrough(Exam::class, Epoch::class);
     }
+
+    public function viewers()
+    {
+        return $this->hasMany(CalendarViewers::class);
+    }
+
+
 
     public function firstDayOfSchool()
     {

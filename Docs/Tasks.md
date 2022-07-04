@@ -1,10 +1,24 @@
 # TODO
 
-**Detalhe calendário**
-- [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
-- [2/3] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
-- [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
-  - [X] Campo na BD criado (group_id) > rever melhor mais tarde
+# Miguel
+- [ ] Adicionar Policies na parte do servidor
+- [ ] Devolver Roles de User e guardar na local storage
+- [ ] Publicar um calendário
+        - [ ] Se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar e receber feedback
+    - [ ] A direção e o Conselho Pedagógico deve ver apenas botões para Aprovar ou Rejeitar
+        - [ ] Se rejeitarem devem poder adicionar um comentário/parecer
+    - [ ] Ao publicar um calendário, confirmar se uma UC que tenha sido iniciada a marcação dos elementos de avaliação, tem todos os métodos preenchidos, 
+    e caso não tenha, dar erro para o utilizador marcar todos os métodos. 
+
+**Testes de roles:**
+- [ ] Ao entrar como CC, e selecionar todos os calendários:
+  - [ ] Consigo ver calendários que não estão publicados nem como temporários nem como definitivos, e não são do "meu" curso. Não devia.
+  - [ ] Ao entrar no detalhe desse calendário consigo ver todas as informações como se pudesse editar na barra de informações superior (mesmo 
+  estando em fase "Em edição (GOP)")
+  - [ ] Se entrar dentro do detalhe de uma avaliação, consigo adicionar e gerir os comentários
+- [ ] Detalhe de exame fica com espaco vazio caso não possa ver os comentários
+- [ ] Meus calendarios/todos -> tem de se atualizar o filtro para ter as permissoes
+  - [ ] Botao com role mais especifica? (sendo a direcao ou gop) ou grupo com flag? (tipo user generico)
 
 
 **Agrupamentos**
@@ -13,33 +27,56 @@
 - [ ] Métodos
 - [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
 
-
-### A Rever
-
-**Calendário e marcação de avaliações**
-  - [ ] Melhorar logs dos cursos, na alteração de métodos 
-
-
-**Detalhe Calendário**
-- [ ] Publicar calendario (nao funciona?)
+**Detalhe calendário**
+- [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
+- [ ] Ao adicionar uma interrupção e eliminar avaliações contínuas, dividir a avaliação em 2 e apaga apenas o dia selecionado para a interrupção
+  - [X] Campo na BD criado (group_id) > rever melhor mais tarde
 
 **Todas as paginas**
 - [ ] Rever traduções
 - [ ] Adicionar titulo as paginas
 
-**Ano Letivo**
-  - [ ] Atualizar os loadings automaticamente 
-    - **_talvez trabalho futuro?_** Usar Redis e WebSockets
-
 ## Issues
-**Role: "Administracao"**
 
-- [ ] detalhe de exame fica com espaco vazio
-- [ ] listagem de calendarios fica com campos a menos
+# Logica de Calendario
+- [ ] Versao do calendario
+  - comeca em **"0.0"** e quando e publicado incrementa _**"0.1"**_
+  - se o calendario passar a definitivo, entao fica **"1.0"**
+  - caso exista alguma alteracao apos o estado definitivo, entao incrementa _**"1.0"**_ por cada vez que e publicado outro estado definitivo
+  - [X] Logica Server
+  - [ ] Logica Client
+  - [ ] Testar
 
-**Lista de calendarios**
-- [ ] Meus calendarios/todos -> tem de se atualizar o filtro para ter as permissoes
-  - [ ] Botao com role mais especifica? (sendo a direcao ou gop) ou grupo com flag? (tipo user generico)
+
+- [ ] Publicar o calendario
+    - apenas o Coordenador de curso (CC) ou GOP/Direcao e que podem publicar
+    - Sempre que o CC publicar:
+      - a **_flag_** "**temporary**" passa a "1", e a **_flag_** "**published [9]**" a "0"
+        - Comment > para garantir que o calendario fica com as flags corretas 
+      - o campo _calendar_phase_id_ passa a "**published [9]**"
+      - apos "publicado" cria uma copia automaticamente, devolvendo o novo "id" e fazendo redirect no browser
+        - o campo _calendar_phase_id_ passa a "**published [9]**"
+    - Sempre que o GOP?/Direcao publicar, a **_flag_** "**temporary**" passa a "0", e a **_flag_** "**published [9]**" a "1" e o campo _calendar_phase_id_ passa a "**published [9]**"
+  - [X] Logica Server
+  - [ ] Logica Client
+  - [ ] Testar
+
+
+- [ ] Clone/copia do calendario
+  - apenas o Coordenador de curso (CC) ou GOP e que podem criar uma copia
+  - Quando a copia e criada, as **_flags_** "**temporary**" e "**published [9]**" a "0", e o campo _calendar_phase_id_ passa a:
+    - "**In Edit (Course Coordinator) [2]**" caso seja o CC
+    - "**In Edit (GOP) [1]**" caso seja o GOP
+  - Sera criado um clone de:
+    - Calendario
+    - Exames
+    - Interrupcoes
+    - _Comentarios_
+      - sera preciso copiar? Se sim, todos ou apenas os que nao estao escondidos?
+  - adicionar no campo **_versao_** mais **"0.1"** caso ainda nao esteja definitivo ou **"1.0"** caso esteja
+  - [X] Logica Server
+  - [ ] Logica Client
+  - [ ] Testar
 
 
 ### TODO Miguel
@@ -78,6 +115,19 @@
   - **Criação do calendário**
     - [X] Dia seguinte na validação das datas na criação do calendário
     - [X] Voltar a colocar inputs de start e end date em vez dos Range Picker
+
+- **(feito a 04-07-2022)**
+- [X] Rever textos de ajuda na sincronização dos anos letivos
+- [X] Quando se cria 2 calendários em simultâneo, ele criou na BD, mas na lista não está a mostrar os 2 calendários.
+- [X] Quando um calendário ainda não tem dados nenhuns, a coluna da revisão não está a dar a informação correta. 
+  - [X] Diz que está tudo preenchido.
+  - [X] E o Popup aparece vazio
+- [X] Ao criar métodos, deve permitir guardar metodos com peso de 0%, uma vez que podemos querer marcar a data mas não ser um momento de avaliação
+- [X] Na criação dos calendários, é necessário adicionar espaços entre as colunas
+- [X] Filtrar lista de calendários por provisório/definitivo;
+- [X] Publicar calendario (nao funciona?)
+
+
 
 --- 
 
@@ -209,24 +259,28 @@
 - [X] atualizar campos da escola no detalhe
 
 ---
-#### Extra stuff
-- [ ] Calendário e marcação de avaliações:
-    - [ ] Rever traduções
+## Reunião 21/06/2022
+- [X] Calendário provisório
+- [X] Cada utilizador pode ter vários roles
+- [ ] Guardar histórico dos calendários
+- [X] Só GOP / Direção / Coordenador podem publicar calendários
+- [X] Destacar mais a revisão
 
-- [ ] Submeter calendário para próximas fases
-    - [ ] Criar popup para apresentar possibilidades
-        - [ ] Colocar calendário em Edição
-            - [ ] GOP
-            - [ ] Coordenador de Curso
-            - [ ] Responsável de UC (selecionar quais UCs)
-        - [ ] Colocar calendário em Avaliação
-            - [ ] Estudantes
-            - [ ] CCP
-            - [ ] GOP
-            - [ ] Conselho Pedagócio
-            - [ ] Direção
-        - [ ] Publicar calendário
-            - [ ] Se for GOP, CC ou Direção
+## Reunião 28/06/2022
+Melhorias:
+- [X] Filtrar lista de calendários por provisório/definitivo;
+- [X] Melhorar apresentação dos métodos associados a Projeto
+  - [X] Remover Peso e Minimos do Lançamento de Enunciado e Apresentação Oral
+  - [X] Bloquear a dropdown para não poder ser alterada
+  - [X] Deixar submeter caso algum metodo esteja a 0
+- [X] Publicar um calendário
+  - [X] Só CC, GOP ou Direção é que pode publicar
+    - [1/2] Se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar e receber feedback
+    - [X] Se for o GOP Publica como definitivo e não cria copia
+  - [ ] A direção e o Conselho Pedagógico deve ver apenas botões para Aprovar ou Rejeitar
+    - [ ] Se rejeitarem devem poder adicionar um comentário/parecer
+  - [X] Alterar popup de submissao
+
 
 
 ## TRABALHO FUTURO:
@@ -234,7 +288,6 @@
 - [ ] Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;
 - [ ] Users com mais do que um role (validar o que deve ser feito)
 - [ ] Log dos métodos: registar o que foi alterado e quem alterou;
-- [ ] Rever "voltar a lista" para navegar entre paginas de detalhe e listas (ex: curso e detalhe de unidades curriculares)
 - [ ] Notificacoes de quando muda de fase ou adicionam  comentarios no calendario
     - [ ] Notificacoes Web
     - [ ] Notificacoes Email
@@ -245,34 +298,31 @@
   - ex: o 1 ano pode comecar numa data diferente da do 2 e/ou 3 ano
   - trabalho futuro
   
+    - **_talvez trabalho futuro?_** Usar Redis e WebSockets
 - [ ] Melhorar accessibilidades pelo site (WCAG checklist) - especialmente cores e navegação com o keyboard
 - [ ] Deve permitir desfasar os anos. Eventualmente com uma checkbox quando criamos um calendário - **(Reunião 2022-06-07)**
 - [ ] Adicionar alertas de sistema para relembrar publicação do calendário provisório e definitivo (Artigo 21) **Ideia Alexandre**
   - [ ] Provisório - até 1º dia de aulas
   - [ ] Definitivo - até 5a semana de aulas
 
-## TODO Miguel
-- [ ] Limpeza "Requests Folder"
-
-
 
 ## Perguntar aos profs
-- UC de projeto não vem no WebService. É suposto? Não é uma UC que tem de vir no calendário?
-  - Deve ser possível configurar todas as épocas no caso de uma UC de projeto?
-
-- O calendario e temporario a partir de que altura/fase?
-
+- Como é em relação ao Poster A3 e a esta entrega dia 11 de Julho? Não era dia 14?
+- Perguntar como funciona em relação ao Parecer?
+- Quando fazemos uma cópia... copiamos exames e interrupções. E os comentários? Também é para copiar?
 
 
-# !!! Não esquecer atualizar BD no servidor !!
 
-- exams group
-    ```
-    ALTER TABLE `calendar_v2`.`exams`
-    ADD COLUMN `group_id` BIGINT NULL DEFAULT NULL AFTER `method_id`;
-    ```
-- update CalendarPhase flag
-    ```
-    ALTER TABLE `calendar_v2`.`calendar_phases` 
-    ADD COLUMN `all_methods_filled` TINYINT(1) NULL DEFAULT '0' AFTER `name_en`;
-    ```
+## Alterar na BD
+
+```
+ALTER TABLE `calendar_v2`.`calendar_changes`
+CHANGE COLUMN `temporary` `is_temporary` TINYINT(1) NOT NULL ;
+```
+
+```
+ALTER TABLE `calendar_v2`.`calendars` 
+ADD COLUMN `version` DECIMAL(8,3) NULL DEFAULT 0.0 AFTER `id`,
+CHANGE COLUMN `temporary` `is_temporary` TINYINT(1) NOT NULL DEFAULT '0' ,
+CHANGE COLUMN `published` `is_published` TINYINT(1) NOT NULL DEFAULT '0' ;
+```

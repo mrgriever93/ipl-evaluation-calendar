@@ -13,7 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-
+        if (Schema::hasTable('schools')) {
+            return false;
+        }
         Schema::create('schools', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
             $table->string('code')->unique();
