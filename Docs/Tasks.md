@@ -1,25 +1,24 @@
 # TODO
 
-**Issues encontrados:**
-- [X] Rever textos de ajuda na sincronização dos anos letivos
-- [X] Quando se cria 2 calendários em simultâneo, ele criou na BD, mas na lista não está a mostrar os 2 calendários.
-- [X] Quando um calendário ainda não tem dados nenhuns, a coluna da revisão não está a dar a informação correta. 
-  - [X] Diz que está tudo preenchido.
-  - [X] E o Popup aparece vazio
-- [X] Ao criar métodos, deve permitir guardar metodos com peso de 0%, uma vez que podemos querer marcar a data mas não ser um momento de avaliação
-- [X] Na criação dos calendários, é necessário adicionar espaços entre as colunas
+# Miguel
+- [ ] Adicionar Policies na parte do servidor
+- [ ] Devolver Roles de User e guardar na local storage
+- [ ] Publicar um calendário
+        - [ ] Se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar e receber feedback
+    - [ ] A direção e o Conselho Pedagógico deve ver apenas botões para Aprovar ou Rejeitar
+        - [ ] Se rejeitarem devem poder adicionar um comentário/parecer
+    - [ ] Ao publicar um calendário, confirmar se uma UC que tenha sido iniciada a marcação dos elementos de avaliação, tem todos os métodos preenchidos, 
+    e caso não tenha, dar erro para o utilizador marcar todos os métodos. 
 
 **Testes de roles:**
 - [ ] Ao entrar como CC, e selecionar todos os calendários:
-  - [ ] Consigo ver calendários que não estão publicados nem como temporários nem como definitivos, e não são do "meu" curso.
-  - [ ] Ao entrar no detalhe desse calendário consigo ver todas as informações como se pudesse editar na barra de informações superior (mesmo estando em fase "Em edição (GOP)")
+  - [ ] Consigo ver calendários que não estão publicados nem como temporários nem como definitivos, e não são do "meu" curso. Não devia.
+  - [ ] Ao entrar no detalhe desse calendário consigo ver todas as informações como se pudesse editar na barra de informações superior (mesmo 
+  estando em fase "Em edição (GOP)")
   - [ ] Se entrar dentro do detalhe de uma avaliação, consigo adicionar e gerir os comentários
-
-**Detalhe calendário**
-- [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
-- [2/3] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
-- [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
-  - [X] Campo na BD criado (group_id) > rever melhor mais tarde
+- [ ] Detalhe de exame fica com espaco vazio caso não possa ver os comentários
+- [ ] Meus calendarios/todos -> tem de se atualizar o filtro para ter as permissoes
+  - [ ] Botao com role mais especifica? (sendo a direcao ou gop) ou grupo com flag? (tipo user generico)
 
 
 **Agrupamentos**
@@ -28,44 +27,16 @@
 - [ ] Métodos
 - [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
 
-
-### A Rever
-
-**Calendário e marcação de avaliações**
-  - [ ] Melhorar logs dos cursos, na alteração de métodos 
-
-
-**Detalhe Calendário**
-- [X] Publicar calendario (nao funciona?)
+**Detalhe calendário**
+- [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
+- [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
+  - [X] Campo na BD criado (group_id) > rever melhor mais tarde
 
 **Todas as paginas**
 - [ ] Rever traduções
 - [ ] Adicionar titulo as paginas
 
-**Ano Letivo**
-  - [ ] Atualizar os loadings automaticamente 
-    - **_talvez trabalho futuro?_** Usar Redis e WebSockets
-
 ## Issues
-**Role: "Administracao"**
-
-- [ ] detalhe de exame fica com espaco vazio
-- [ ] listagem de calendarios fica com campos a menos
-
-**Lista de calendarios**
-- [ ] Meus calendarios/todos -> tem de se atualizar o filtro para ter as permissoes
-  - [ ] Botao com role mais especifica? (sendo a direcao ou gop) ou grupo com flag? (tipo user generico)
-
-# Miguel
-- [X] Filtrar lista de calendários por provisório/definitivo;
-
-- [ ] Publicar um calendário
-    - [ ] Só CC, GOP ou Direção é que pode publicar
-        - [ ] Se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar e receber feedback
-        - [ ] Se for o GOP Publica como definitivo e não cria copia
-    - [ ] A direção e o Conselho Pedagógico deve ver apenas botões para Aprovar ou Rejeitar
-        - [ ] Se rejeitarem devem poder adicionar um comentário/parecer
-    - [ ] Alterar popup de submissao
 
 # Logica de Calendario
 - [ ] Versao do calendario
@@ -144,6 +115,19 @@
   - **Criação do calendário**
     - [X] Dia seguinte na validação das datas na criação do calendário
     - [X] Voltar a colocar inputs de start e end date em vez dos Range Picker
+
+- **(feito a 04-07-2022)**
+- [X] Rever textos de ajuda na sincronização dos anos letivos
+- [X] Quando se cria 2 calendários em simultâneo, ele criou na BD, mas na lista não está a mostrar os 2 calendários.
+- [X] Quando um calendário ainda não tem dados nenhuns, a coluna da revisão não está a dar a informação correta. 
+  - [X] Diz que está tudo preenchido.
+  - [X] E o Popup aparece vazio
+- [X] Ao criar métodos, deve permitir guardar metodos com peso de 0%, uma vez que podemos querer marcar a data mas não ser um momento de avaliação
+- [X] Na criação dos calendários, é necessário adicionar espaços entre as colunas
+- [X] Filtrar lista de calendários por provisório/definitivo;
+- [X] Publicar calendario (nao funciona?)
+
+
 
 --- 
 
@@ -276,27 +260,26 @@
 
 ---
 ## Reunião 21/06/2022
-
-- [ ] Calendário provisório
+- [X] Calendário provisório
 - [X] Cada utilizador pode ter vários roles
 - [ ] Guardar histórico dos calendários
-- [ ] Só GOP / Direção / Coordenador podem publicar calendários
+- [X] Só GOP / Direção / Coordenador podem publicar calendários
 - [X] Destacar mais a revisão
 
 ## Reunião 28/06/2022
 Melhorias:
-- [ ] Filtrar lista de calendários por provisório/definitivo;
+- [X] Filtrar lista de calendários por provisório/definitivo;
 - [X] Melhorar apresentação dos métodos associados a Projeto
   - [X] Remover Peso e Minimos do Lançamento de Enunciado e Apresentação Oral
   - [X] Bloquear a dropdown para não poder ser alterada
   - [X] Deixar submeter caso algum metodo esteja a 0
-- [ ] Publicar um calendário
-  - [ ] Só CC, GOP ou Direção é que pode publicar
-    - [ ] Se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar e receber feedback
-    - [ ] Se for o GOP Publica como definitivo e não cria copia
+- [X] Publicar um calendário
+  - [X] Só CC, GOP ou Direção é que pode publicar
+    - [1/2] Se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar e receber feedback
+    - [X] Se for o GOP Publica como definitivo e não cria copia
   - [ ] A direção e o Conselho Pedagógico deve ver apenas botões para Aprovar ou Rejeitar
     - [ ] Se rejeitarem devem poder adicionar um comentário/parecer
-  - [ ] Alterar popup de submissao
+  - [X] Alterar popup de submissao
 
 
 
@@ -315,6 +298,7 @@ Melhorias:
   - ex: o 1 ano pode comecar numa data diferente da do 2 e/ou 3 ano
   - trabalho futuro
   
+    - **_talvez trabalho futuro?_** Usar Redis e WebSockets
 - [ ] Melhorar accessibilidades pelo site (WCAG checklist) - especialmente cores e navegação com o keyboard
 - [ ] Deve permitir desfasar os anos. Eventualmente com uma checkbox quando criamos um calendário - **(Reunião 2022-06-07)**
 - [ ] Adicionar alertas de sistema para relembrar publicação do calendário provisório e definitivo (Artigo 21) **Ideia Alexandre**
