@@ -9,6 +9,12 @@
 - [X] Ao criar métodos, deve permitir guardar metodos com peso de 0%, uma vez que podemos querer marcar a data mas não ser um momento de avaliação
 - [X] Na criação dos calendários, é necessário adicionar espaços entre as colunas
 
+**Testes de roles:**
+- [ ] Ao entrar como CC, e selecionar todos os calendários:
+  - [ ] Consigo ver calendários que não estão publicados nem como temporários nem como definitivos, e não são do "meu" curso.
+  - [ ] Ao entrar no detalhe desse calendário consigo ver todas as informações como se pudesse editar na barra de informações superior (mesmo estando em fase "Em edição (GOP)")
+  - [ ] Se entrar dentro do detalhe de uma avaliação, consigo adicionar e gerir os comentários
+
 **Detalhe calendário**
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - [2/3] Se tiver uma UC com métodos, validar se todos os métodos da UC estão calendarizados.
