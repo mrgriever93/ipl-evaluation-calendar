@@ -260,13 +260,15 @@ const CalendarList = () => {
                                                         {phase.description}
                                                     </Table.Cell>
                                                 </ShowComponentIfAuthorized>
-                                                <Table.Cell textAlign="center">
-                                                    { !published && !temporary ? (
-                                                        <Label color={"blue"}>{ t("Nao Publicado") }</Label>
-                                                    ) : (
-                                                        <Label color={temporary ? 'grey' : 'green' }>{temporary ? t('Provisório') : t('Definitivo')}</Label>
-                                                    )}
-                                                </Table.Cell>
+                                                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
+                                                    <Table.Cell textAlign="center">
+                                                        { !published && !temporary ? (
+                                                            <Label color={"blue"}>{ t("Nao Publicado") }</Label>
+                                                        ) : (
+                                                            <Label color={temporary ? 'grey' : 'green' }>{temporary ? t('Provisório') : t('Definitivo')}</Label>
+                                                        )}
+                                                    </Table.Cell>
+                                                </ShowComponentIfAuthorized>
                                                 <Table.Cell textAlign="center">
                                                     <Link to={`/calendario/${id}`}>
                                                         <Button color="green" icon>

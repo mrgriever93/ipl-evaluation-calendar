@@ -210,42 +210,42 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, isPublished, isTempor
 
                 </div>
             </div>
-            <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
-                <Sticky offset={24} >
-                    <Card fluid >
-                        <Card.Content>
-                            <Grid columns={'equal'} divided>
-                                <GridColumn>
-                                    <Header as="h4">Legenda</Header>
-                                    <List divided relaxed>
-                                        {epochs.map((epoch, index) => (
-                                            <div className='legend-list-item' key={index}>
-                                                <div className={'legend-list-item-square calendar-day-' + epoch.code}></div>
-                                                <Popup trigger={
-                                                    <div className='legend-list-item-content'>
-                                                        <Icon name="calendar alternate outline" />
-                                                        <span className={"padding-left-xs"}>{epoch.name}</span>
-                                                    </div>
-                                                } position='bottom center'>
-                                                    <Popup.Content>
-                                                        <b>{t("Ínicio")}:</b>{' '}{moment(epoch.start_date).format('DD MMMM, YYYY')}
-                                                        <br/>
-                                                        <b>{t("Fim")}:</b>{' '}{moment(epoch.end_date).format('DD MMMM, YYYY')}
-                                                    </Popup.Content>
-                                                </Popup>
-                                                <div className="legend-list-item-actions">
-                                                    <Button icon size='mini'
-                                                        onClick={() => showingEpochsHandle(epoch.id)}
-                                                        title={ (activeEpochs.includes(epoch.id) ? t("Ocultar época") : t("Mostrar época") ) }>
-                                                        <Icon name={(activeEpochs.includes(epoch.id) ? "eye slash" : "eye")} />
-                                                    </Button>
+            <Sticky offset={24} >
+                <Card fluid >
+                    <Card.Content>
+                        <Grid columns={'equal'} divided>
+                            <GridColumn>
+                                <Header as="h4">Legenda</Header>
+                                <List divided relaxed>
+                                    {epochs.map((epoch, index) => (
+                                        <div className='legend-list-item' key={index}>
+                                            <div className={'legend-list-item-square calendar-day-' + epoch.code}></div>
+                                            <Popup trigger={
+                                                <div className='legend-list-item-content'>
+                                                    <Icon name="calendar alternate outline" />
+                                                    <span className={"padding-left-xs"}>{epoch.name}</span>
                                                 </div>
+                                            } position='bottom center'>
+                                                <Popup.Content>
+                                                    <b>{t("Ínicio")}:</b>{' '}{moment(epoch.start_date).format('DD MMMM, YYYY')}
+                                                    <br/>
+                                                    <b>{t("Fim")}:</b>{' '}{moment(epoch.end_date).format('DD MMMM, YYYY')}
+                                                </Popup.Content>
+                                            </Popup>
+                                            <div className="legend-list-item-actions">
+                                                <Button icon size='mini'
+                                                    onClick={() => showingEpochsHandle(epoch.id)}
+                                                    title={ (activeEpochs.includes(epoch.id) ? t("Ocultar época") : t("Mostrar época") ) }>
+                                                    <Icon name={(activeEpochs.includes(epoch.id) ? "eye slash" : "eye")} />
+                                                </Button>
                                             </div>
-                                        ))}
-                                    </List>
-                                </GridColumn>
-                                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
-                                    <GridColumn>
+                                        </div>
+                                    ))}
+                                </List>
+                            </GridColumn>
+                            <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
+                                <GridColumn>
+                                    <ShowComponentIfAuthorized permission={[SCOPES.VIEW_ACTUAL_PHASE]}>
                                         <div>
                                             <span>
                                                 <Header as="h5">Fase:</Header>
@@ -254,6 +254,8 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, isPublished, isTempor
                                                 {calendarPhases.find((x) => x.key === calendarPhase)?.text || calendarInfo?.phase?.description}
                                             </div>
                                         </div>
+                                    </ShowComponentIfAuthorized>
+                                    <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
                                         <div className='margin-top-base'>
                                             <span>
                                                 <Header as="h5">Estado:</Header>
@@ -266,81 +268,81 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, isPublished, isTempor
                                                 )}
                                             </div>
                                         </div>
+                                    </ShowComponentIfAuthorized>
+                                </GridColumn>
+                            </ShowComponentIfAuthorized>
+                            <GridColumn>
+                                <div>
+                                    <span>
+                                        <Header as="h5">Última alteração:</Header>
+                                    </span>
+                                    <div className='margin-top-xs'>
+                                        {moment(calendarInfo?.calendar_last_update,).format('DD MMMM, YYYY HH:mm')}
+                                    </div>
+                                </div>
+
+                                <div className='margin-top-base'>
+                                    <span>
+                                        <Header as="h5">Versão:</Header>
+                                    </span>
+                                    <div className='margin-top-xs'>
+                                        { 'Versão ' + (calendarInfo?.version ? calendarInfo.version : '') }
+                                    </div>
+                                </div>
+                            </GridColumn>
+                            { (!isPublished && !isTemporary) && (
+                                <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS, SCOPES.ADD_EXAMS]}>
+                                    <GridColumn width={5} className={ 'revision-column-wrapper' + (methodsLoaded ? ( (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? " revision-warning" : " revision-success") : " revision-loading") }>
+                                        <div>
+                                            <Header as="h5">
+                                                { t("Revisão") }:
+                                            </Header>
+                                            { methodsLoaded ? ( (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? (
+                                                <>
+                                                    <div className="revision-column-icon">
+                                                        <Icon name="warning sign" color="yellow"/>
+                                                    </div>
+                                                    <div className="revision-column-content">
+                                                        <ul className="margin-top-base">
+                                                            <li>Existem {methodsIncompleteCount} elementos de avaliação por submeter.</li>
+                                                            <li>Existem {methodsMissingCount} UCs com <a href={ "/unidade-curricular?curso="+calendarInfo?.course?.id} target="_blank">métodos <Icon name="external alternate" /></a> por preencher.</li>
+                                                        </ul>
+                                                    </div>
+                                                    <div className={"text-center"}>
+                                                        <a href="#" onClick={openRevisionModalHandler} >ver detalhe</a>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className="revision-column-icon">
+                                                        <Icon name={"check circle outline"} color={"green"}/>
+                                                    </div>
+                                                    <div className="revision-column-content">
+                                                        <div className="margin-top-l">
+                                                            <div >{ t("Todas as avaliações marcadas!") }</div>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            ) ) : (
+                                                <>
+                                                    <div className="revision-column-icon">
+                                                        <Icon name={"download"} color={"blue"}/>
+                                                    </div>
+                                                    <div className="revision-column-content">
+                                                        <div className="margin-top-l">
+                                                            <div >{ t("A carregar detalhes!") }</div>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
                                     </GridColumn>
                                 </ShowComponentIfAuthorized>
-                                <GridColumn>
-                                    <div>
-                                        <span>
-                                            <Header as="h5">Última alteração:</Header>
-                                        </span>
-                                        <div className='margin-top-xs'>
-                                            {moment(calendarInfo?.calendar_last_update,).format('DD MMMM, YYYY HH:mm')}
-                                        </div>
-                                    </div>
-                                    <div className='margin-top-base'>
-                                        <span>
-                                            <Header as="h5">Versão:</Header>
-                                        </span>
-                                        <div className='margin-top-xs'>
-                                            { 'Versão ' + (calendarInfo?.version ? calendarInfo.version : '') }
-                                        </div>
-                                    </div>
-                                </GridColumn>
-                                { (!isPublished && !isTemporary) && (
-                                    <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS, SCOPES.ADD_EXAMS]}>
-                                        <GridColumn width={5} className={ 'revision-column-wrapper' + (methodsLoaded ? ( (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? " revision-warning" : " revision-success") : " revision-loading") }>
-
-                                            <div>
-                                                <Header as="h5">
-                                                    { t("Revisão") }:
-                                                </Header>
-                                                { methodsLoaded ? ( (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? (
-                                                    <>
-                                                        <div className="revision-column-icon">
-                                                            <Icon name="warning sign" color="yellow"/>
-                                                        </div>
-                                                        <div className="revision-column-content">
-                                                            <ul className="margin-top-base">
-                                                                <li>Existem {methodsIncompleteCount} elementos de avaliação por submeter.</li>
-                                                                <li>Existem {methodsMissingCount} UCs com <a href={ "/unidade-curricular?curso="+calendarInfo?.course?.id} target="_blank">métodos <Icon name="external alternate" /></a> por preencher.</li>
-                                                            </ul>
-                                                        </div>
-                                                        <div className={"text-center"}>
-                                                            <a href="#" onClick={openRevisionModalHandler} >ver detalhe</a>
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <div className="revision-column-icon">
-                                                            <Icon name={"check circle outline"} color={"green"}/>
-                                                        </div>
-                                                        <div className="revision-column-content">
-                                                            <div className="margin-top-l">
-                                                                <div >{ t("Todas as avaliações marcadas!") }</div>
-                                                            </div>
-                                                        </div>
-                                                    </>
-                                                ) ) : (
-                                                    <>
-                                                        <div className="revision-column-icon">
-                                                            <Icon name={"download"} color={"blue"}/>
-                                                        </div>
-                                                        <div className="revision-column-content">
-                                                            <div className="margin-top-l">
-                                                                <div >{ t("A carregar detalhes!") }</div>
-                                                            </div>
-                                                        </div>
-                                                    </>
-                                                )}
-                                            </div>
-                                        </GridColumn>
-                                    </ShowComponentIfAuthorized>
-                                )}
-                            </Grid>
-                        </Card.Content>
-                    </Card>
-                </Sticky>
-            </ShowComponentIfAuthorized>
+                            )}
+                        </Grid>
+                    </Card.Content>
+                </Card>
+            </Sticky>
 
             <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE, SCOPES.PUBLISH_CALENDAR]}>
                 <PopupSubmitCalendar isOpen={openSubmitModal} onClose={closeSubmitModalHandler} calendarId={calendarId} currentPhaseId={calendarInfo?.phase?.id} updatePhase={updatePhaseHandler}/>
