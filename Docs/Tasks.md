@@ -1,7 +1,7 @@
 # TODO
 
 **Issues encontrados:**
-- [ ] Rever textos de ajuda na sincronização dos anos letivos
+- [X] Rever textos de ajuda na sincronização dos anos letivos
 - [X] Quando se cria 2 calendários em simultâneo, ele criou na BD, mas na lista não está a mostrar os 2 calendários.
 - [X] Quando um calendário ainda não tem dados nenhuns, a coluna da revisão não está a dar a informação correta. 
   - [X] Diz que está tudo preenchido.

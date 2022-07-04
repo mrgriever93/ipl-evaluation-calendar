@@ -23,7 +23,7 @@ const AnoLetivo = () => {
     const [loading, setLoading] = useState(true);
 
     const columns = [
-        {name: t('Descrição')},
+        {name: t('Descrição') },
         {name: t('Ativo'),          textAlign: 'center', popup: <Popup trigger={<Icon name="info circle" />} content={t('Anos letivos disponivies para os utilizadores selecionarem.')} position='top center'/>},
         {name: t('Selecionado'),    textAlign: 'center', popup: <Popup trigger={<Icon name="info circle" />} content={t('É o ano que irá estar selecionado automáticamente para o utilizador! Apenas um pode estar selecionado de cada vez.')} position='top center'/>},
         {name: 'S1 Sync',           popup: <Popup trigger={<Icon name="info circle" />} content={t('Quando os 2 semestres estao sincronizados, o ano letivo poderá ser ativado.')} position='top center'/>},
@@ -294,14 +294,12 @@ const AnoLetivo = () => {
                 <p>{ t('ano_letivo.Não. Irá ser iniciada a sincronização quando não houver trabalho para o servidor.') }</p>
                 <br/>
                 <Message.Header>{t('ano_letivo.O que vai sincronizar?')}</Message.Header>
-                <p>{ t('ano_letivo.Irá sincronizar as escolas que já foram preenchidas. Para ver a lista pode seguir por este') }
-                    <a href="/escola" target={"_blank"}> <Icon name={"external"}/>link</a>.</p>
+                <p>{ t('ano_letivo.Ao iniciar o processo de sincronização, todas as UCs já preenchidas serão atualizadas, e novas UCs serão adicionadas.') }</p>
+                <p>{ t('ano_letivo.Para ver a lista de UCs sincronizadas pode clicar neste') }
+                    <a className="margin-left-xs" href="/escola" target={"_blank"}><Icon name={"external"}/>link</a>.</p>
                 <br/>
                 <Message.Header>{ t('ano_letivo.Outras informações') }</Message.Header>
-                <Message.List>
-                    <Message.Item>{ t('ano_letivo.Todos os semestres e ano letivos que estejam ativos e que já tenham sido sincronizados antes, vão ser atualizados todos os dias as 3 da manhã.') }</Message.Item>
-                    <Message.Item>{ t('ano_letivo.Apenas 1 sincronização pode acontecer de cada vez, para prevenir duplicações ou bloqueio do servidor.') }</Message.Item>
-                </Message.List>
+                <p>{ t('ano_letivo.Apenas 1 sincronização pode acontecer de cada vez, para prevenir duplicações ou bloqueio do servidor.') }</p>
             </Message>
             <Modal dimmer="blurring" open={modalOpen} onClose={handleModalClose}>
                 <Modal.Header>{t('ano_letivo.Remover Ano letivo')}</Modal.Header>
