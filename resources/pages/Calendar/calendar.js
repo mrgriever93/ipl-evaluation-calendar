@@ -609,7 +609,8 @@ const Calendar = () => {
             <div className="margin-bottom-s">
                 <Link to="/"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
-            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings} isPublished={isPublished} showingEpochs={showingEpochs} epochsViewHandler={setShowingEpochs}/>
+            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings}
+                             isPublished={isPublished} isTemporary={isTemporary} showingEpochs={showingEpochs} epochsViewHandler={setShowingEpochs} />
             <AnimatePresence>
                 {isLoading && (<PageLoader animate={pageLoaderAnimate} exit={pageLoaderExit}/>)}
             </AnimatePresence>
@@ -683,6 +684,7 @@ const Calendar = () => {
                 info={interruptionModalInfo} />
 
             <PopupEvaluationDetail
+                isPublished={isPublished || isTemporary}
                 isOpen={openExamDetailModal}
                 onClose={closeExamDetailHandler}
                 examId={viewExamId} />

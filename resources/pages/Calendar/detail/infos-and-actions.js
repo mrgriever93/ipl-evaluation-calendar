@@ -17,7 +17,7 @@ import PopupRevisionDetail from "./popup-revision";
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const InfosAndActions = ( {epochs, calendarInfo, warnings, isPublished, epochsViewHandler}) => {
+const InfosAndActions = ( {epochs, calendarInfo, warnings, isPublished, isTemporary, epochsViewHandler}) => {
     const { t } = useTranslation();
     // get URL params
     let { id } = useParams();
@@ -32,7 +32,6 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, isPublished, epochsVi
     // const [publishLoading, setPublishLoading] = useState(false);
     const [openRevisionModal, setOpenRevisionModal] = useState(false);
 
-    const [isTemporary, setIsTemporary] = useState(true);
     const [calendarPhase, setCalendarPhase] = useState(true);
     // const [updatingCalendarPhase, setUpdatingCalendarPhase] = useState(false);
     // const [previousFromDefinitive, setPreviousFromDefinitive] = useState(false);
@@ -208,6 +207,7 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, isPublished, epochsVi
                             <Button color="orange" loading={creatingCopy} onClick={createCopy} labelPosition={"right"} icon>Criar um cópia desta versão <Icon name={"copy outline"} /></Button>
                         </ShowComponentIfAuthorized>
                     )}
+
                 </div>
             </div>
             <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
@@ -259,16 +259,10 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, isPublished, epochsVi
                                                 <Header as="h5">Estado:</Header>
                                             </span>
                                             <div className='margin-top-xs'>
-                                                { !isPublished ? (
-                                                    <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]}>
-                                                        <Label color={"blue"}>Nao Publicado</Label>
-                                                    </ShowComponentIfAuthorized>
+                                                { !isPublished && !isTemporary ? (
+                                                    <Label color={"blue"}>{ t("Nao Publicado") }</Label>
                                                 ) : (
-                                                    <ShowComponentIfAuthorized permission={[SCOPES.VIEW_CALENDAR_INFO]} renderIfNotAllowed={() => (
-                                                        <>{isPublished ? <Label color={isTemporary ? undefined : 'blue' }>{isTemporary ? 'Provisório' : 'Definitivo'}</Label> : undefined}</>
-                                                    )}>
-                                                        <Label color={isTemporary ? undefined : 'blue' }>{isTemporary ? 'Provisório' : 'Definitivo'}</Label>
-                                                    </ShowComponentIfAuthorized>
+                                                    <Label color={isTemporary ? 'grey' : 'green' }>{isTemporary ? t('Provisório') : t('Definitivo')}</Label>
                                                 )}
                                             </div>
                                         </div>
@@ -292,54 +286,56 @@ const InfosAndActions = ( {epochs, calendarInfo, warnings, isPublished, epochsVi
                                         </div>
                                     </div>
                                 </GridColumn>
-                                <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS, SCOPES.ADD_EXAMS]}>
-                                    <GridColumn width={5} className={ 'revision-column-wrapper' + (methodsLoaded ? ( (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? " revision-warning" : " revision-success") : " revision-loading") }>
+                                { (!isPublished && !isTemporary) && (
+                                    <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS, SCOPES.ADD_EXAMS]}>
+                                        <GridColumn width={5} className={ 'revision-column-wrapper' + (methodsLoaded ? ( (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? " revision-warning" : " revision-success") : " revision-loading") }>
 
-                                        <div>
-                                            <Header as="h5">
-                                                { t("Revisão") }:
-                                            </Header>
-                                            { methodsLoaded ? ( (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? (
-                                                <>
-                                                    <div className="revision-column-icon">
-                                                        <Icon name="warning sign" color="yellow"/>
-                                                    </div>
-                                                    <div className="revision-column-content">
-                                                        <ul className="margin-top-base">
-                                                            <li>Existem {methodsIncompleteCount} elementos de avaliação por submeter.</li>
-                                                            <li>Existem {methodsMissingCount} UCs com <a href={ "/unidade-curricular?curso="+calendarInfo?.course?.id} target="_blank">métodos <Icon name="external alternate" /></a> por preencher.</li>
-                                                        </ul>
-                                                    </div>
-                                                    <div className={"text-center"}>
-                                                        <a href="#" onClick={openRevisionModalHandler} >ver detalhe</a>
-                                                    </div>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <div className="revision-column-icon">
-                                                        <Icon name={"check circle outline"} color={"green"}/>
-                                                    </div>
-                                                    <div className="revision-column-content">
-                                                        <div className="margin-top-l">
-                                                            <div >{ t("Todas as avaliações marcadas!") }</div>
+                                            <div>
+                                                <Header as="h5">
+                                                    { t("Revisão") }:
+                                                </Header>
+                                                { methodsLoaded ? ( (methodsIncompleteCount > 0 || methodsMissingCount > 0) ? (
+                                                    <>
+                                                        <div className="revision-column-icon">
+                                                            <Icon name="warning sign" color="yellow"/>
                                                         </div>
-                                                    </div>
-                                                </>
-                                            ) ) : (
-                                                <>
-                                                    <div className="revision-column-icon">
-                                                        <Icon name={"download"} color={"blue"}/>
-                                                    </div>
-                                                    <div className="revision-column-content">
-                                                        <div className="margin-top-l">
-                                                            <div >{ t("A carregar detalhes!") }</div>
+                                                        <div className="revision-column-content">
+                                                            <ul className="margin-top-base">
+                                                                <li>Existem {methodsIncompleteCount} elementos de avaliação por submeter.</li>
+                                                                <li>Existem {methodsMissingCount} UCs com <a href={ "/unidade-curricular?curso="+calendarInfo?.course?.id} target="_blank">métodos <Icon name="external alternate" /></a> por preencher.</li>
+                                                            </ul>
                                                         </div>
-                                                    </div>
-                                                </>
-                                            )}
-                                        </div>
-                                    </GridColumn>
-                                </ShowComponentIfAuthorized>
+                                                        <div className={"text-center"}>
+                                                            <a href="#" onClick={openRevisionModalHandler} >ver detalhe</a>
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div className="revision-column-icon">
+                                                            <Icon name={"check circle outline"} color={"green"}/>
+                                                        </div>
+                                                        <div className="revision-column-content">
+                                                            <div className="margin-top-l">
+                                                                <div >{ t("Todas as avaliações marcadas!") }</div>
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                ) ) : (
+                                                    <>
+                                                        <div className="revision-column-icon">
+                                                            <Icon name={"download"} color={"blue"}/>
+                                                        </div>
+                                                        <div className="revision-column-content">
+                                                            <div className="margin-top-l">
+                                                                <div >{ t("A carregar detalhes!") }</div>
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </GridColumn>
+                                    </ShowComponentIfAuthorized>
+                                )}
                             </Grid>
                         </Card.Content>
                     </Card>

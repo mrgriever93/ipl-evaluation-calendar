@@ -16,14 +16,13 @@ import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
 // const SweetAlertComponent = withReactContent(Swal);
 
-const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
+const PopupEvaluationDetail = ( {isPublished, isOpen, onClose, examId} ) => {
     // const history = useNavigate();
     const { t } = useTranslation();
 
     const [examDetailObject, setExamDetailObject] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
-    const [isPublished, setIsPublished] = useState(false);
     const [showIgnoredComments, setShowIgnoredComments] = useState(false);
     const [commentText, setCommentText] = useState(undefined);
     const [commentsList, setCommentsList] = useState([]);
@@ -118,7 +117,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                 { t('Detalhes da avaliação') }
                 <span className='heading-description'>{ examDetailObject?.method?.description ? " (" + examDetailObject?.method?.description + ")": '' }</span>
             </Modal.Header>
-            <Modal.Content> 
+            <Modal.Content>
                 { isLoading && (
                     <Dimmer active inverted>
                         <Loader indeterminate>
@@ -154,11 +153,11 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                                     <List.Content><b>{ t('Método de avaliação')}: </b></List.Content>
                                     <List.Content floated='right'>{examDetailObject?.method?.name}</List.Content>
                                 </List.Item>
-                                
+
 
                                 <List.Item>
                                     <List.Content><b>{ t('Data')}: </b></List.Content>
-                                    <List.Content floated='right'>{ examDetailObject?.date_start === examDetailObject?.date_end ? 
+                                    <List.Content floated='right'>{ examDetailObject?.date_start === examDetailObject?.date_end ?
                                                     moment(examDetailObject?.date_start).format('DD MMMM, YYYY') : (
                                                         <>
                                                             <div>{moment(examDetailObject?.date_start).format('DD MMMM, YYYY')}</div>
@@ -172,7 +171,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                                         <List.Content floated='right'>{ t('Na aula')}</List.Content>
                                     </List.Item>
                                 ) : (
-                                    <>                           
+                                    <>
                                         {examDetailObject?.hour && (
                                             <List.Item>
                                                 <List.Content><b>{ t('Hora de ínicio')}: </b></List.Content>
@@ -208,11 +207,11 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                                             <div className='exam-detail-content-header-actions'>
                                                 {!isPublished && (
                                                     <ShowComponentIfAuthorized permission={[SCOPES.ADD_COMMENTS]}>
-                                                        <Button 
+                                                        <Button
                                                             content={ t('Adicionar comentário')}
-                                                            labelPosition="right" 
-                                                            icon="send" 
-                                                            primary onClick={() => addComment(examDetailObject?.id)} 
+                                                            labelPosition="right"
+                                                            icon="send"
+                                                            primary onClick={() => addComment(examDetailObject?.id)}
                                                         />
                                                     </ShowComponentIfAuthorized>
                                                 )}
@@ -266,7 +265,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                                             </Comment>
                                         ))}
                                         { (commentsList?.length == 0 || (!showIgnoredComments && (
-                                                    (commentsList?.filter((x) => (x.ignored)).length > 0 && commentsList?.filter((x) => (!x.ignored)).length == 0))) ) && 
+                                                    (commentsList?.filter((x) => (x.ignored)).length > 0 && commentsList?.filter((x) => (!x.ignored)).length == 0))) ) &&
                                         (
                                             <Segment placeholder textAlign="center">
                                                 <Header icon>
@@ -278,7 +277,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                                                 ) }
                                                 { commentsList?.filter((x) => (x.ignored)).length == 1 && (
                                                     <div> { t('Existe') +" " + commentsList?.filter((x) => (x.ignored)).length + " " + t('comentário escondido') }</div>
-                                                ) }                                               
+                                                ) }
                                             </Segment>
                                         )}
                                     </ShowComponentIfAuthorized>
@@ -289,12 +288,14 @@ const PopupEvaluationDetail = ( {isOpen, onClose, examId} ) => {
                 )}
             </Modal.Content>
             <Modal.Actions>
-                <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS]}>
-                    <Button icon floated='left' color={!showIgnoredComments ? 'green' : 'red'} labelPosition="left" onClick={() => setShowIgnoredComments((cur) => !cur)}>
-                        <Icon name={'eye' + (showIgnoredComments ? ' slash' : '') }/>
-                        {!showIgnoredComments ? t('Mostrar escondidos') : t('Ocultar escondidos') }
-                    </Button>
-                </ShowComponentIfAuthorized>
+                { commentsList?.filter((x) => (x.ignored)).length > 0 && (
+                    <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS]}>
+                        <Button icon floated='left' color={!showIgnoredComments ? 'green' : 'red'} labelPosition="left" onClick={() => setShowIgnoredComments((cur) => !cur)}>
+                            <Icon name={'eye' + (showIgnoredComments ? ' slash' : '') }/>
+                            {!showIgnoredComments ? t('Mostrar escondidos') : t('Ocultar escondidos') }
+                        </Button>
+                    </ShowComponentIfAuthorized>
+                )}
                 <Button onClick={closeModalHandler}>{ t('Fechar') }</Button>
             </Modal.Actions>
         </Modal>

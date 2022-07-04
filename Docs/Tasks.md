@@ -30,7 +30,7 @@
 
 
 **Detalhe Calendário**
-- [ ] Publicar calendario (nao funciona?)
+- [X] Publicar calendario (nao funciona?)
 
 **Todas as paginas**
 - [ ] Rever traduções
