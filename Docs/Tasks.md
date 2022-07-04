@@ -29,7 +29,7 @@
 
 **Detalhe calendário**
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
-- [ ] Ao eliminar avaliações contínuas, só apaga o dia a apagar
+- [ ] Ao adicionar uma interrupção e eliminar avaliações contínuas, dividir a avaliação em 2 e apaga apenas o dia selecionado para a interrupção
   - [X] Campo na BD criado (group_id) > rever melhor mais tarde
 
 **Todas as paginas**
