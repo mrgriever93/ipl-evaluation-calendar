@@ -282,6 +282,17 @@ Melhorias:
   - [X] Alterar popup de submissao
 
 
+## Reunião 05/07/2022
+- [ ] Rever date pickers da criação dos calendários:
+  - [ ] Data de inicio da época normal tem de ser no minimo a data de inicio da época periódica
+  - [ ] Data final da época normal tem de ser no minimo a data final da época periódica (ou a data inicial da epoca normal +1)
+  - [ ] Fazer disable/enable dos campos à medida que vamos preenchendo as datas por época
+  - [ ] Garantir que as validações também acontecem do lado do servidor, evitando criações de calendário inválidos
+- [ ] Rever possível bug na dropdown dos anos letivos quando existe mais do que um ano letivo selecionado
+- [ ] Adicionar ação para "selecionar/deselecionar todos" no popup de submissão, para quem pode ver o calendário
+- [ ] Botões de "Aceitar/Aceitar com alterações/Rejeitar" para Conselho Pedagógico ou Direção
+- [ ] Rever o relatório e a ordem dos vários capítulos
+
 
 ## TRABALHO FUTURO:
 - [X] Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos); **(Feito a ~~26/05/2022)**
