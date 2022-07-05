@@ -1,10 +1,10 @@
 # Changelog
 
-## Versão 0.9 - ****************************** 04/07/2022
-Novas features:
+## Versão 0.9 - 04/07/2022
+<ins>Novas features:</ins>
 - Adicionada uma nova funcionalidade que permite esconder épocas, permitindo reduzir o calendário visivel
 - Adicionada uma nova funcionalidade que permite melhorar a gestão de quem pode ver o calendário ao atualizar a fase do calendário
-  - Esta funcionaldie recorre por defeito aos valores das permissões preenchidos nos grupos para cada fase, dando uma maior liberdade para a pessoa que está a fazer a fase de controlar quem pode ver o calendário no momento.
+  - Esta funcionalidade recorre por defeito aos valores das permissões preenchidos nos grupos para cada fase, dando uma maior liberdade para a pessoa que está a fazer a fase de controlar quem pode ver o calendário no momento.
 - Adicionados novos filtros na listagem de calendários
 - Revista e adicionada novamente a funcionalidade de publicar calendários
   - Caso seja um Coordenador de Curso é publicado como provisório
@@ -12,7 +12,7 @@ Novas features:
   - Outros Grupos não deverão ter possibilidade de publicar um calendário
 - Revista e adicionada novamente a funcionalidade de copiar calendários após estarem publicados
 
-Issues corrigidos:
+<ins>Issues corrigidos:</ins>
 - Corrigido erro nas migrations da BD, que não permitia reconfigurar a máquina local, devido às alterações recentes da BD;
 - Corrigidos alguns erros visuais na listagem, criação e detalhe dos calendários, nomeadamente espaçamentos
 - Corrigido erro que não permitia guardar métodos de uma época quando a percentagem do método era 0%;
@@ -23,19 +23,20 @@ Issues corrigidos:
 - Revisão de alguns textos de ajuda nas interações dos utilizadores
 - Revisão das traduções de mais alguns textos nos calendários
 
-Outras Notas:
-- Início dos testes e correções com diferentes utilizadores para garantir a consistência das interações consoante os diferentes roles
-
-Coisas a melhorar/corrigir:
+<ins>Coisas a melhorar/corrigir:</ins>
 - Automatizar a duplicação do calendário quando o CC publica um calendário provisório, e atualização da página para o novo calendário duplicado, para que este possa continuar a trabalhar
 - Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - Ao adicionar uma interrupção e eliminar avaliações contínuas, dividir a avaliação em 2 e apaga apenas o dia selecionado para a interrupção
 - Verificar as permissões, garantindo que o utilizador apenas pode editar os calendários de um curso ao qual pertence, ou que não consegue ver informações a que não deveria ter acesso
 - Rever e corrigir Policies para garantir que do lado do servidor todos os pedidos são validados da forma correta
 - Ao publicar um calendário, confirmar se uma UC que tenha sido iniciada a marcação dos elementos de avaliação, tem todos os métodos preenchidos, e caso não tenha, dar erro para o utilizador marcar todos os métodos. 
-- Detalhe de exame fica com espaco vazio caso não possa ver os comentários
+- Detalhe de exame fica com espaço vazio caso não possa ver os comentários
 - Rever a forma de preenchimento dos métodos em UCs Agrupadas
 - Possibilidade de selecionar quais os responsáveis de UCs ou quais as UC's que devem ter permissões para marcar as datas de avaliações das suas UCs
+
+<ins>Outras Notas:</ins>
+- Início dos testes e correções com diferentes utilizadores para garantir a consistência das interações consoante os diferentes roles
+- Algum trabalho no relatório, e criação de uma pasta com screenshots do projeto inicialmente fornecido, para comparação.
 
 ## Versão 0.8 - 21/06/2022
 Novas features: 
