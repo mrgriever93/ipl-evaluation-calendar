@@ -294,9 +294,12 @@ Melhorias:
 - [ ] Botões de "Aceitar/Aceitar com alterações/Rejeitar" para Conselho Pedagógico ou Direção
 - [X] Rever o relatório e a ordem dos vários capítulos
 
+- [ ] Erro do "includes of undefined" quando abrimos o calendário
+- [ ] Melhorar página de "No permissions"
+- [X] Erro ao gravar um calendário, este não fica visivel na listagem de calendários, porque não estava a associar os grupos que tinham permissão para ver
 - [X] Remover link dos cursos se nao estiver sincronizado ainda
-  - Na pagina dos ano letivos
-  - corrigir texto
+  - [X] Na pagina dos ano letivos
+  - [X] Corrigir texto que estava trocado
 
 
 ## TRABALHO FUTURO:
