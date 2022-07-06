@@ -6,6 +6,7 @@ import gsap from 'gsap';
 import Astronaut from './Astronaut';
 import logoUrl from '../../IPL_black_big.png';
 import HeaderMenu from "../../components/Menu";
+import {useTranslation} from "react-i18next";
 
 const GlobalStyle = createGlobalStyle`
     :root {
@@ -35,6 +36,7 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const NotFoundPage = () => {
+    const { t } = useTranslation();
     useLayoutEffect(() => {
         gsap.to('#headStripe', {
             y: 0.5,
@@ -138,15 +140,10 @@ const NotFoundPage = () => {
                     </Grid.Column>
                     <Grid.Column width="8">
                         <h1>404</h1>
-                        <h2>Página não encontrada</h2>
-                        <h4>A página que tentou aceder, não existe.</h4>
-                        <h5>
-                            Clique no botão para voltar para uma página
-                            conhecida.
-                        </h5>
-                        <Button as={Link} to="/" color="green">
-                            Ínicio
-                        </Button>
+                        <h2>{ t("Página não encontrada") }</h2>
+                        <h4>{ t("A página que tentou aceder, não existe.") }</h4>
+                        <h5>{ t("Clique no botão para voltar para uma página inicial.") }</h5>
+                        <Button as={Link} to="/" color="green">{ t("Ínicio") }</Button>
                     </Grid.Column>
                 </Grid.Row>
             </Grid>

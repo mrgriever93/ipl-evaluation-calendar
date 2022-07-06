@@ -5,6 +5,7 @@ import {createGlobalStyle} from 'styled-components';
 import gsap from 'gsap';
 import Astronaut from './Astronaut';
 import logoUrl from '../../IPL_black_big.png';
+import {useTranslation} from "react-i18next";
 
 const GlobalStyle = createGlobalStyle`
     :root {
@@ -34,6 +35,7 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const NotFoundPage = () => {
+    const { t } = useTranslation();
     useLayoutEffect(() => {
         gsap.to('#headStripe', {
             y: 0.5,
@@ -131,20 +133,13 @@ const NotFoundPage = () => {
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
+                    <Grid.Column width="8"><Astronaut/></Grid.Column>
                     <Grid.Column width="8">
-                        <Astronaut/>
-                    </Grid.Column>
-                    <Grid.Column width="8">
-                        <h1>No Permissions</h1>
-                        <h2>Página não pode ser acedida</h2>
-                        <h4>A página que tentou aceder, não existe.</h4>
-                        <h5>
-                            Clique no botão para voltar para uma página
-                            conhecida.
-                        </h5>
-                        <Button as={Link} to="/" color="green">
-                            Ínicio
-                        </Button>
+                        <h1>{ t("Sem Permissões") }</h1>
+                        <h2>{ t("Página não pode ser acedida") }</h2>
+                        <h4>{ t("A página que tentou aceder, não existe.") }</h4>
+                        <h5>{ t("Clique no botão para voltar para uma página inicial.") }</h5>
+                        <Button as={Link} to="/" color="green">{ t("Ínicio") }</Button>
                     </Grid.Column>
                 </Grid.Row>
             </Grid>

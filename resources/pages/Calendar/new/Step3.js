@@ -66,13 +66,11 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
     return (
         <Container>
             <Card.Content>
-                <Form>
-                    <Form.Group>
-                        <Form.Input width={6} label={t("Pesquisar curso (Código, Sigla ou Nome)")} placeholder={ t("Pesquisar...") } fluid onChange={_.debounce(searchCourse, 900)}/>
-                        <FilterOptionDegree widthSize={5} eventHandler={(value) => setDegree(value)}/>
-                        <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
-                    </Form.Group>
-                </Form>
+                <Form.Group>
+                    <Form.Input width={6} label={t("Pesquisar curso (Código, Sigla ou Nome)")} placeholder={ t("Pesquisar...") } fluid onChange={_.debounce(searchCourse, 900)}/>
+                    <FilterOptionDegree widthSize={5} eventHandler={(value) => setDegree(value)}/>
+                    <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
+                </Form.Group>
             </Card.Content>
             <div className='margin-top-m margin-bottom-base'><Divider fitted /></div>
             <Card.Content>

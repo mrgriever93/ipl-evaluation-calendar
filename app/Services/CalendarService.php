@@ -107,12 +107,12 @@ class CalendarService
                 }
             }
             // TODO make the create of calendar more dynamic with DB records
-            CalendarViewers::create(
+            CalendarViewers::insert([
                 ["calendar_id" => $newCalendar->id, "group_id" => 1],   // "super_admin"
                 ["calendar_id" => $newCalendar->id, "group_id" => 2],   // "admin"
                 ["calendar_id" => $newCalendar->id, "group_id" => 8],   // "gop"
                 ["calendar_id" => $newCalendar->id, "group_id" => 13]   // "gop_estg"
-            );
+            ]);
         }
 
         return "Created";
@@ -223,12 +223,12 @@ class CalendarService
 
         $clone->save();
         // TODO add to the right user
-        CalendarViewers::create(
+        CalendarViewers::insert([
             ["calendar_id" => $clone->id, "group_id" => 1],   // "super_admin"
             ["calendar_id" => $clone->id, "group_id" => 2],   // "admin"
             ["calendar_id" => $clone->id, "group_id" => 8],   // "gop"
             ["calendar_id" => $clone->id, "group_id" => 13]   // "gop_estg"
-        );
+        ]);
     }
 
     public static function info(Request $request)

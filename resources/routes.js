@@ -12,8 +12,6 @@ import MultiPageBase from "./pages/MultiPageBase";
 const CalendarList = lazy(() => import('./pages/Calendar/list'));
 const CalendarNew = lazy(() => import('./pages/Calendar/new'));
 const CalendarDetail = lazy(() => import('./pages/Calendar/calendar'));
-const PhasesNew = lazy(() => import('./pages/CalendarPhases/new'));
-const PhasesList = lazy(() => import('./pages/CalendarPhases/list'));
     // Curso Pages
 const CursoList = lazy(() => import('./pages/Curso/list'));
 const CursoDetail = lazy(() => import('./pages/Curso/detail'));
@@ -29,12 +27,9 @@ const TipoAvaliacaoList = lazy(() => import('./pages/TipoAvaliacao/list'));
     //GrupoUtilizador Pages
 const GrupoUtilizadorNew = lazy(() => import('./pages/GrupoUtilizador/new'));
 const GrupoUtilizadorList = lazy(() => import('./pages/GrupoUtilizador/list'));
-    //Permissoes Pages
-// const Permissoes = lazy(() => import('./pages/Permissoes'));
     //AgrupamentoUnidadeCurricular Pages
 const AgrupamentoUnidadeCurricularList = lazy(() => import('./pages/AgrupamentoUnidadeCurricular/list'));
 const AgrupamentoUnidadeCurricularDetail = lazy(() => import('./pages/AgrupamentoUnidadeCurricular/detail'));
-const AgrupamentoUnidadeCurricularMethods = lazy(() => import('./pages/AgrupamentoUnidadeCurricular/methods'));
     //UnidadeCurricular Pages
 const UnidadeCurricularList = lazy(() => import('./pages/UnidadeCurricular/list'));
 const UnidadeCurricularDetail = lazy(() => import('./pages/UnidadeCurricular/detail'));
@@ -43,6 +38,9 @@ const AnoLetivo = lazy(() => import('./pages/AnoLetivo'));
     //Escola Pages
 const EscolaNew = lazy(() => import('./pages/Escola/new'));
 const EscolaList = lazy(() => import('./pages/Escola/list'));
+    //Calendar Phases
+const PhasesNew = lazy(() => import('./pages/CalendarPhases/new'));
+const PhasesList = lazy(() => import('./pages/CalendarPhases/list'));
 //404 pages
 const SpaceInvaders = lazy(() => import('./pages/404/SpaceInvaders'));
 const StopWatch = lazy(() => import('./pages/404/Stopwatch'));
@@ -140,7 +138,6 @@ const RouterList = (isLoggedIn) => {
                     children: [
                         { path: 'novo', exact: true, element: <AgrupamentoUnidadeCurricularDetail />},
                         { path: 'edit/:id', exact: true, element: <AgrupamentoUnidadeCurricularDetail />},
-                        { path: ':id/metodos', exact: true, element: <AgrupamentoUnidadeCurricularMethods />},
                         { path: '', exact: true, element: <AgrupamentoUnidadeCurricularList /> },
                         { path: '*', element: <NotFoundPage />}
                     ]

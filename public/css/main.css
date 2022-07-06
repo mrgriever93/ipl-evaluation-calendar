@@ -148,6 +148,8 @@ body {
 /*
  * Margin values
  */
+.margin-none-important {margin: 0 !important;}
+
 .margin-none    { margin: var(--space-none); }
 .margin-xs      { margin: var(--space-xs);   }
 .margin-s       { margin: var(--space-s);    }
@@ -853,4 +855,16 @@ div.inline{
     width: 100% !important;
     display: block;
     position: relative;
+}
+
+.ui.circular.empty.label.transparent {
+    background: transparent;
+}
+.ui.menu .ui.dropdown .menu>.item .icon.margin-none-important{
+    margin: 0 !important;
+}
+
+.align-items-center{
+    display: flex;
+    align-items: center;
 }

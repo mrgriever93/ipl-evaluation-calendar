@@ -13,7 +13,7 @@ class UserResource extends JsonResource
             'email'  => $this->email,
             'name'   => $this->name,
             'enabled' => $this->enabled,
-            'groups' => GroupsResource::collection($this->whenLoaded('groups'))
+            'groups' => $this->groups->pluck("code")->toArray()
         ];
     }
 }

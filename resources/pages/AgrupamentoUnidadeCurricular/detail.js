@@ -8,8 +8,7 @@ import axios from 'axios';
 import {toast} from 'react-toastify';
 import {successConfig, errorConfig} from '../../utils/toastConfig';
 import {useTranslation} from "react-i18next";
-import SCOPES from "../../utils/scopesConstants";
-import ShowComponentIfAuthorized from "../../components/ShowComponentIfAuthorized";
+import UnitTabsGroup from "./Tabs";
 
 const New = () => {
     const { t } = useTranslation();
@@ -25,14 +24,24 @@ const New = () => {
     const [errorMessages, setErrorMessages] = useState([]);
     const isEditMode = !_.isEmpty(courseUnitGroupDetail);
 
+
     const loadCourseUnits = (includingIdsString) => {
-        axios.get(`/course-units/search?all=true&withoutGroup=true${includingIdsString ? `&including=[${includingIdsString}]` : ''}`).then((res) => {
-            setCourseUnitsList(res?.data?.data);
-            //setCourseUnitsList(res?.data?.data?.map((x) => ({
-            //    key: x.id,
-            //    value: x.id,
-            //    text: `${x.name} - ${x.course_description}`,
-            //})));
+        let link = '/course-units/search';
+        link += '?all=true';
+        link += '&withoutGroup=true';
+        link += (includingIdsString ? '&including=[' + includingIdsString + ']' : '');
+
+        axios.get(link).then((res) => {
+            if (res.status === 200) {
+                //setCourseUnitsList(res?.data?.data);
+                setCourseUnitsList(res?.data?.data?.map((x) => ({
+                    key: x.key,
+                    value: x.value,
+                    text: x.text,
+                    disabled: x.has_methods,
+                    description: (x.has_methods ? t("Métodos já definidos") : undefined)
+                })));
+            }
         });
     };
 
@@ -134,6 +143,9 @@ const New = () => {
                                     )}
                                 </Field>
                             </Form.Group>
+                            <Message>
+                                <Message.Content>{ t("Se já tiver os métodos definidos, a UC irá estar desativada, não sendo possível agrupá-la.")}</Message.Content>
+                            </Message>
                         </Card.Content>
                         <Card.Content>
                             <Button onClick={handleSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving}>
@@ -141,20 +153,14 @@ const New = () => {
                                 {isEditMode ? 'Guardar' : 'Criar'}
                             </Button>
                         </Card.Content>
-                        { isEditMode && (
-                            <Card.Content>
-                                <ShowComponentIfAuthorized permission={[SCOPES.MANAGE_EVALUATION_METHODS]}>
-                                    <Link to={`/agrupamento-unidade-curricular/${courseUnitGroupDetail.id}/metodos`}>
-                                        <Button color="olive" icon labelPosition="left">
-                                            <Icon name="file alternate"/> Métodos
-                                        </Button>
-                                    </Link>
-                                </ShowComponentIfAuthorized>
-                            </Card.Content>
-                        )}
                     </Card>
                 </Form>
             )} />
+            { isEditMode && (
+            <div className={"margin-top-base"}>
+                { paramsId && <UnitTabsGroup groupId={paramsId}/> }
+            </div>
+            )}
         </Container>
     );
 };

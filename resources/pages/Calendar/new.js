@@ -94,6 +94,8 @@ const NewCalendar = () => {
         // Check for every type of dates and if has start and end
         const hasEpochs = values.hasOwnProperty("seasons") && values.seasons && values.seasons[values.semester] && Object.keys(values.seasons).length > 0;
         let hasAllDates = true;
+        let hasInvalidDates = false;
+        let errorTexts = [];
         if(hasEpochs) {
             const keys = Object.keys(values.seasons[values.semester]);
             let initialDate = 0;
@@ -115,12 +117,19 @@ const NewCalendar = () => {
                     if(finalDate < compEndDate || finalDate === 0) {
                         finalDate = compEndDate;
                     }
+                    if(key === "normal_season" || key === "resource_season"){
+                        let endDate_Previous = (values.seasons[values.semester][(key === "normal_season" ? "periodic_season" : "resource_season")].end_date).split("-");
+                        let compEndDate_Previous = new Date(endDate_Previous[2] + "-" + endDate_Previous[1] + "-" + endDate_Previous[0]);
+                        if(compEndDate_Previous > compEndDate){
+                            hasInvalidDates = true;
+                            errorTexts.push("A data de fim da avaliação da época " + (key === "normal_season" ? "normal" : " de recurso") + " não pode ser inferior á época anterior.");
+                        }
+                    }
                 }
             });
             setInitialDate(initialDate);
             setFinalDate(finalDate);
         }
-        let errorTexts = [];
         if(!hasSemester){
             errorTexts.push("Tem de selecionar pelo menos um semestre!");
         }
@@ -130,7 +139,7 @@ const NewCalendar = () => {
         if(!hasAllDates){
             errorTexts.push("Tem de preencher todas as datas de início e fim dos períodos");
         }
-        isValid = hasSemester && hasEpochs && hasAllDates;
+        isValid = hasSemester && hasEpochs && hasAllDates && !hasInvalidDates && errorTexts.length === 0;
         setErrorMessages(errorTexts);
         if(!isValid){
             // clear next steps because of changes

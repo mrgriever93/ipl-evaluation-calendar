@@ -2,8 +2,6 @@
 
 namespace App\Http\Resources\Generic;
 
-use App\Http\Resources\MethodResource;
-use App\Http\Resources\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseUnitExamResource extends JsonResource

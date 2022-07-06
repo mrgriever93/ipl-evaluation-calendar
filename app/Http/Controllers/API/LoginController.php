@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\Generic\UserResource;
 use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Models\Group;
