@@ -29,6 +29,7 @@ const LoginPage = () => {
                 if (data.accessToken) {
                     localStorage.setItem('userId', data.user.id);
                     localStorage.setItem('username', data.user.name);
+                    localStorage.setItem('groups', data.user.groups);
                     localStorage.setItem('authToken', data.accessToken);
                     localStorage.setItem('academicYear', data.academicYear);
                     const {scopes} = jwtDecode(data.accessToken);

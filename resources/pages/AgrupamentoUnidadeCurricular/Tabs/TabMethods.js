@@ -8,7 +8,7 @@ import Slider from "../../../components/Slider";
 import EmptyTable from "../../../components/EmptyTable";
 import {useTranslation} from "react-i18next";
 
-const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
+const UnitTabMethods = ({ groupId, warningsHandler }) => {
     const { t } = useTranslation();
     const contextRef = createRef();
 
@@ -100,7 +100,7 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
 
     useEffect(() => {
         loadMethods();
-    }, [unitId]);
+    }, [groupId]);
 
     useEffect(() => {
         warningsHandler(hasWarnings);
@@ -113,7 +113,7 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
     const loadMethods = () => {
         setIsLoading(true);
         setEpochs([]);
-        axios.get(`/course-units/${unitId}/methods`).then((res) => {
+        axios.get(`/course-unit-groups/${groupId}/methods`).then((res) => {
             if (res.status === 200) {
                 setEpochs(res.data);
                 setIsLoading(false);
@@ -129,7 +129,7 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
                 item.methods.map((method) => {
                     methods.push({
                         id: method.id || undefined,
-                        course_unit_id: unitId,
+                        course_unit_group_id: groupId,
                         epoch_type_id: item.id,
                         evaluation_type_id: method.evaluation_type_id,
                         minimum: method.minimum,
@@ -140,7 +140,7 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
                 });
             });
             setIsLoading(true);
-            axios.post('/methods', {methods: [...methods], removed: [...removedMethods]}).then((res) => {
+            axios.post('/methods/groups', {methods: [...methods], removed: [...removedMethods]}).then((res) => {
                 setIsSaving(false);
                 loadMethods();
                 if (res.status === 200) {
@@ -216,7 +216,6 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
             toast(t('As épocas selecionadas têm de ser diferentes!'), errorConfig);
             return false;
         }
-
 
         let methodsToClone = JSON.parse(JSON.stringify(epochs.find((epoch) => epoch.id === selectedEpochFrom).methods));
         let copyEpochs = JSON.parse(JSON.stringify(epochs));
@@ -294,26 +293,16 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
                             </Message.List>
                         </Message>
                     )}
-                    { !hasGroup && (
-                        <Sticky offset={50} context={contextRef}>
-                            <div className='sticky-methods-header'>
-                                <Button onClick={() => setOpenClone(true)} icon labelPosition="left" color="yellow">
-                                    <Icon name={"clone outline"}/>{ t("Duplicar metodos") }
-                                </Button>
-                                <Button onClick={onSubmit} color="green" icon labelPosition="left" loading={isSaving} disabled={!formValid}>
-                                    <Icon name="save"/>{ t("Guardar") }
-                                </Button>
-                            </div>
-                        </Sticky>
-                    )}
-                    { hasGroup && (
-                        <div className={"margin-bottom-base"}>
-                            <Message info>
-                                <Message.Header>{ t('Unidade curricular associada a um grupo') }</Message.Header>
-                                <Message.Content>{ t("Os métodos desta unidade curricular são definidos no grupo á qual pertence.")}</Message.Content>
-                            </Message>
+                    <Sticky offset={50} context={contextRef}>
+                        <div className='sticky-methods-header'>
+                            <Button onClick={() => setOpenClone(true)} icon labelPosition="left" color="yellow">
+                                <Icon name={"clone outline"}/>{ t("Duplicar metodos") }
+                            </Button>
+                            <Button onClick={onSubmit} color="green" icon labelPosition="left" loading={isSaving} disabled={!formValid}>
+                                <Icon name="save"/>{ t("Guardar") }
+                            </Button>
                         </div>
-                    )}
+                    </Sticky>
                     {epochs?.map((item, index) => (
                         <div className={ index > 0 ? "margin-top-m" : ""} key={index}>
                             <Header as="span">{item.name}</Header>
@@ -331,7 +320,7 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
                                     {item.methods?.map((method, methodIndex) => (
                                         <Table.Row key={methodIndex} error={!epochs[index].methods[methodIndex].evaluation_type_id}>
                                             <Table.Cell width={3}>
-                                                <Form.Dropdown placeholder={t("Selecionar Tipo de avaliação")} disabled={method.is_blocked || hasGroup} fluid value={method.evaluation_type_id} selection search
+                                                <Form.Dropdown placeholder={t("Selecionar Tipo de avaliação")} disabled={method.is_blocked} fluid value={method.evaluation_type_id} selection search
                                                     options={evaluationTypes.map(({id, name, enabled}) => (enabled ? ({
                                                         key: id,
                                                         value: id,
@@ -397,8 +386,8 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
                                                 )}
                                             </Table.Cell>
                                             <Table.Cell width={3} colSpan={method.is_blocked ? 3 : 0}>
-                                                <Form.Input placeholder={t("Descrição PT")} fluid value={method.description_pt} disabled={hasGroup}
-                                                            onChange={
+                                                <Form.Input placeholder={t("Descrição PT")} fluid value={method.description_pt}
+                                                    onChange={
                                                         (ev, {value}) => setEpochs((current) => {
                                                             const copy = [...current];
                                                             copy[index].methods[methodIndex].description_pt = value;
@@ -406,7 +395,7 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
                                                         })
                                                     } />
 
-                                                <Form.Input placeholder={t("Descrição EN")} fluid value={method.description_en} disabled={hasGroup} className="margin-top-base"
+                                                <Form.Input placeholder={t("Descrição EN")} fluid value={method.description_en} className="margin-top-base"
                                                     onChange={
                                                         (ev, {value}) => setEpochs((current) => {
                                                             const copy = [...current];
@@ -417,16 +406,16 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
                                             </Table.Cell>
                                             { !method.is_blocked && (
                                                 <Table.Cell width={5}>
-                                                    <Slider step="0.5" min="0" max="20" value={method.minimum} inputSide={"left"} disabled={hasGroup} eventHandler={(value) => updateMethodMinimum(index, methodIndex, value)} />
+                                                    <Slider step="0.5" min="0" max="20" value={method.minimum} inputSide={"left"} eventHandler={(value) => updateMethodMinimum(index, methodIndex, value)} />
                                                 </Table.Cell>
                                             )}
                                             { !method.is_blocked && (
                                                 <Table.Cell width={5}>
-                                                    <Slider step="5" min="0" max="100" value={method.weight} inputSide={"left"} disabled={hasGroup} valuePrefix={"%"} eventHandler={(value) => updateMethodWeight(index, methodIndex, value)}/>
+                                                    <Slider step="5" min="0" max="100" value={method.weight} inputSide={"left"} valuePrefix={"%"} eventHandler={(value) => updateMethodWeight(index, methodIndex, value)}/>
                                                 </Table.Cell>
                                             )}
                                             <Table.Cell collapsing width={1}>
-                                                { !hasGroup && ( <Icon disabled={hasGroup} name={"trash"} onClick={() => removeMethod(index, methodIndex)}/> )}
+                                                <Icon name={"trash"} onClick={() => removeMethod(index, methodIndex)}/>
                                             </Table.Cell>
                                         </Table.Row>
                                     ))}
@@ -436,11 +425,9 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
                                     <Table.Row>
                                         <Table.HeaderCell colSpan='8'>
                                             { t("Total pesos avaliacao:") } <Label color={(getEpochValue(index) > 100 ? "red" : (getEpochValue(index) === 100 ? "green" : "yellow"))}>{ (epochs[index].methods || [])?.reduce((a, b) => a + (b?.weight || 0), 0)  }%</Label>
-                                            { !hasGroup && (
-                                                <Button floated='right' icon labelPosition='left' color={"green"} size='small' onClick={() => {addNewMethod(index, item.id);}}>
-                                                    <Icon name='plus' /> { t("Adicionar novo método") }
-                                                </Button>
-                                            )}
+                                            <Button floated='right' icon labelPosition='left' color={"green"} size='small' onClick={() => {addNewMethod(index, item.id);}}>
+                                                <Icon name='plus' /> { t("Adicionar novo método") }
+                                            </Button>
                                         </Table.HeaderCell>
                                     </Table.Row>
                                 </Table.Footer>
@@ -499,5 +486,4 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
         </div>
     )
 };
-//<!-- disabled={!((methods[index] || [])?.reduce((a, b) => a + (b?.weight || 0), 0) < 100)} -->
 export default UnitTabMethods;

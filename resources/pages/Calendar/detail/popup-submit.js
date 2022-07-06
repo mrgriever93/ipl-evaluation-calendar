@@ -172,65 +172,69 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                     </>
                 ) }
                 <Divider />
-                <Form>
-                    <Grid columns={2} divided>
-                        <Grid.Row>
-                            <Grid.Column>
-                                <Header as={"h4"}>
-                                    <Icon name={"users"} size={"big"} color={"grey"}/>
-                                    { t("Grupos que podem visualizar o calendario") }
-                                </Header>
-                                <Form.Group grouped>
-                                    { isPublished ? (
-                                        <div>{ t("Todos os grupos vao ver este calendario") }</div>
-                                    ) : (
-                                        <>
-                                            { calendarGroups && calendarGroups.map((item, indexGroup) => (
-                                                <Form.Field key={indexGroup}>
-                                                    <Checkbox label={item.name} checked={item.selected}
-                                                              onChange={(e, {checked}) => handleGroupChange(item.id, checked)} />
-                                                </Form.Field>
-                                            ))}
-                                        </>
-                                    )}
-                                    { groupViewersLoading && (
-                                        <Dimmer active inverted>
-                                            <Loader indeterminate>{t('A carregar grupos')}</Loader>
-                                        </Dimmer>
-                                    )}
-                                </Form.Group>
-                            </Grid.Column>
-                            <Grid.Column>
-                                <Header as={"h4"}>
-                                    <Icon name={"users"} size={"big"} color={"grey"}/>
-                                    { t("UCs a serem preenchidas") }
-                                </Header>
-                                <Form.Group grouped>
-                                    { isPublished ? (
-                                        <div>{ t("Todos os grupos vao ver este calendario") }</div>
-                                    ) : (
-                                        <>
-                                            { calendarGroups && calendarGroups.map((item, indexGroup) => (
-                                                <Form.Field key={indexGroup}>
-                                                    <Checkbox label={item.name} checked={item.selected}
-                                                              onChange={(e, {checked}) => handleGroupChange(item.id, checked)} />
-                                                </Form.Field>
-                                            ))}
-                                        </>
-                                    )}
-                                    { groupViewersLoading && (
-                                        <Dimmer active inverted>
-                                            <Loader indeterminate>{t('A carregar grupos')}</Loader>
-                                        </Dimmer>
-                                    )}
-                                </Form.Group>
-                            </Grid.Column>
-                        </Grid.Row>
-                    </Grid>
-                </Form>
+                <ShowComponentIfAuthorized permission={SCOPES.CHANGE_CALENDAR_PHASE}>
+                    <Form>
+                        <Grid columns={2} divided={false}>
+                            <Grid.Row>
+                                <Grid.Column>
+                                    <Header as={"h4"}>
+                                        <Icon name={"users"} size={"big"} color={"grey"}/>
+                                        { t("Grupos que podem visualizar o calendario") }
+                                    </Header>
+                                    <Form.Group grouped>
+                                        { isPublished ? (
+                                            <div>{ t("Todos os grupos vao ver este calendario") }</div>
+                                        ) : (
+                                            <>
+                                                { calendarGroups && calendarGroups.map((item, indexGroup) => (
+                                                    <Form.Field key={indexGroup}>
+                                                        <Checkbox label={item.name} checked={item.selected}
+                                                                  onChange={(e, {checked}) => handleGroupChange(item.id, checked)} />
+                                                    </Form.Field>
+                                                ))}
+                                            </>
+                                        )}
+                                        { groupViewersLoading && (
+                                            <Dimmer active inverted>
+                                                <Loader indeterminate>{t('A carregar grupos')}</Loader>
+                                            </Dimmer>
+                                        )}
+                                    </Form.Group>
+                                </Grid.Column>
+                                <Grid.Column>
+                                    { /*
+                                    <Header as={"h4"}>
+                                        <Icon name={"users"} size={"big"} color={"grey"}/>
+                                        { t("UCs a serem preenchidas") }
+                                    </Header>
+                                    <Form.Group grouped>
+                                        { isPublished ? (
+                                            <div>{ t("Todos os grupos vao ver este calendario") }</div>
+                                        ) : (
+                                            <>
+                                                { calendarGroups && calendarGroups.map((item, indexGroup) => (
+                                                    <Form.Field key={indexGroup}>
+                                                        <Checkbox label={item.name} checked={item.selected}
+                                                                  onChange={(e, {checked}) => handleGroupChange(item.id, checked)} />
+                                                    </Form.Field>
+                                                ))}
+                                            </>
+                                        )}
+                                        { groupViewersLoading && (
+                                            <Dimmer active inverted>
+                                                <Loader indeterminate>{t('A carregar grupos')}</Loader>
+                                            </Dimmer>
+                                        )}
+                                    </Form.Group>
+                                    */}
+                                </Grid.Column>
+                            </Grid.Row>
+                        </Grid>
+                    </Form>
+                </ShowComponentIfAuthorized>
             </Modal.Content>
             <Modal.Actions>
-                <ShowComponentIfAuthorized permission={[SCOPES.PUBLISH_CALENDAR]}>
+                <ShowComponentIfAuthorized permission={[SCOPES.PUBLISH_CALENDAR]} >
                     <Button onClick={publishCalendar} color={"blue"} floated={"left"} icon labelPosition={"right"}>{t('Publicar esta versão do calendário')} <Icon name={"calendar check outline"}/></Button>
                 </ShowComponentIfAuthorized>
                 <Button onClick={onClose}>{t('Fechar')}</Button>

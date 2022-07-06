@@ -3,22 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Filters\CourseUnitGroupFilters;
+use App\Http\Controllers\API\LdapController;
 use App\Http\Requests\CourseUnitGroupRequest;
 use App\Http\Resources\Admin\CourseUnitGroupListResource;
 use App\Http\Resources\Admin\Edit\CourseUnitGroupResource;
+use App\Http\Resources\Admin\LogsResource;
+use App\Http\Resources\Generic\EpochMethodResource;
+use App\Http\Resources\Generic\TeacherResource;
+use App\Http\Resources\MethodResource;
 use App\Models\Calendar;
 use App\Models\CourseUnit;
 use App\Models\CourseUnitGroup;
 use App\Models\Epoch;
+use App\Models\EpochType;
+use App\Models\Group;
+use App\Models\Method;
+use App\Models\UnitLog;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CourseUnitGroupController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index(Request $request, CourseUnitGroupFilters $filters)
     {
@@ -34,6 +46,8 @@ class CourseUnitGroupController extends Controller
      */
     public function store(CourseUnitGroupRequest $request)
     {
+        // TODO quando ja existem metodos e adicionamos mais uma cadeira, adicionar os metodos a essa cadeira.
+        // TODO mas validar se essa cadeira ja tem algum metodo, e devolver um erro. Para o utilizador saber o que fazer
         $existingMethodsForCourseUnits = 0;
         $existingMethods = null;
         foreach ($request->get('course_units') as $courseUnit) {
@@ -52,25 +66,6 @@ class CourseUnitGroupController extends Controller
             $newCourseUnitGroup->academic_year_id = $request->cookie('academic_year');
             $newCourseUnitGroup->save();
 
-            //foreach ($request->get('course_units') as $courseUnit) {
-            //    $courseUnitEntity = CourseUnit::find($courseUnit);
-
-            //    $courseUnitEntity->methods()->syncWithoutDetaching($existingMethods);
-
-            //    foreach ($courseUnitEntity->methods as $method) {
-            //        $existingEpochToCopy = $method->epochs()->first();
-            //        $existingEpochToSync =
-            //            Epoch::where('epoch_type_id', $existingEpochToCopy->epoch_type_id)
-            //            ->whereIn('calendar_id', Calendar::where('course_id', $courseUnitEntity->course_id)->get()->pluck('id'))
-            //            ->get();
-            //        if (!is_null($existingEpochToSync)) {
-            //            $method->epochs()->syncWithoutDetaching($existingEpochToSync->pluck('id'));
-            //        }
-
-            //    }
-
-            //}
-
             CourseUnit::where('course_unit_group_id', null)->whereIn('id', $request->get('course_units'))->update(['course_unit_group_id' => $newCourseUnitGroup->id]);
 
             return response()->json("Created!", Response::HTTP_CREATED);
@@ -84,14 +79,57 @@ class CourseUnitGroupController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(CourseUnitGroupRequest $request, CourseUnitGroup $courseUnitGroup)
     {
-        $courseUnitGroup->description = $request->get('description');
+        $courseUnitGroup->description_pt = $request->get('description_pt');
+        $courseUnitGroup->description_en = $request->get('description_en');
         $courseUnitGroup->save();
+
+        // Get current course_units with methods
+        $methodsId = $courseUnitGroup->courseUnits()->first()->methods()->pluck("id")->toArray();
+
+        // Get current course_units ids
+        $ucs = $courseUnitGroup->courseUnits()->pluck("id")->toArray();
+
+        // get deleted ones
+        $removing_ucs = array_diff($ucs, $request->get('course_units'));
+        if(!empty($removing_ucs)){
+            DB::table("course_unit_method")->whereIn("course_unit_id", $removing_ucs)->delete();
+
+            UnitLog::create([
+                "course_unit_group_id"  => $courseUnitGroup->id,
+                "user_id"               => Auth::id(),
+                "description"           => "Removidos métodos de avaliação á UCs '" . implode(", ", $removing_ucs) . "' por '" . Auth::user()->name . "'."
+            ]);
+        }
+
+        // get new ones
+        $adding_ucs = array_diff($request->get('course_units'), $ucs);
+
+        if(!empty($adding_ucs)){
+            $newInserts = [];
+            foreach ($adding_ucs as $uc) {
+                foreach ($methodsId as $method) {
+                    $newInserts[] = ["course_unit_id" => $uc, "method_id" => $method];
+                }
+            }
+            DB::table("course_unit_method")->insert($newInserts);
+
+            UnitLog::create([
+                "course_unit_group_id"  => $courseUnitGroup->id,
+                "user_id"               => Auth::id(),
+                "description"           => "Adicionados métodos de avaliação á UCs '" . implode(", ", $adding_ucs) . "' por '" . Auth::user()->name . "'."
+            ]);
+        }
+
+        //update the "course_unit_group_id" field,  adding and removing course units
         CourseUnit::whereIn('id', $request->get('course_units'))->update(['course_unit_group_id' => $courseUnitGroup->id]);
         CourseUnit::whereNotIn('id', $request->get('course_units'))->where('course_unit_group_id', $courseUnitGroup->id)->update(['course_unit_group_id' => null]);
+
+
+        return response()->json("Grupo atualizado", Response::HTTP_OK);
     }
 
     /**
@@ -114,5 +152,66 @@ class CourseUnitGroupController extends Controller
     public function destroy(CourseUnitGroup $courseUnitGroup)
     {
         $courseUnitGroup->delete();
+    }
+
+
+    /**
+     * List teachers associated to the unit
+     */
+    public function teachers(CourseUnitGroup $courseUnitGroup)
+    {
+        $teachers = $courseUnitGroup->teachers;
+        $responsible_id = $courseUnitGroup->responsible_user_id;
+        foreach ($teachers as $teacher){
+            $teacher['isResponsible'] = $teacher->id == $responsible_id;
+        }
+        return  TeacherResource::collection($teachers);
+    }
+
+    /**
+     * List methods associated to the unit
+     */
+    public function methodsForCourseUnitGroup(CourseUnitGroup $courseUnitGroup, Request $request)
+    {
+        $epochTypesList = EpochType::all();
+        $list = EpochMethodResource::collection($epochTypesList);
+        $yearId = $request->cookie('academic_year');
+
+        $courseUnit = $courseUnitGroup->courseUnits->first();
+        $courseUnitId = $courseUnit->id;
+
+        $newCollection = collect($list);
+
+        $finalList = $newCollection->map(function ($item, $key) use ($yearId, $courseUnitId){
+            $methods = Method::ofAcademicYear($yearId)
+                ->join('epoch_type_method', 'epoch_type_method.method_id', '=', 'methods.id')
+                ->where('epoch_type_method.epoch_type_id', $item['id'])
+                ->join('course_unit_method', 'course_unit_method.method_id', '=', 'methods.id')
+                ->where('course_unit_method.course_unit_id', $courseUnitId)
+                ->get();
+            //byCourseUnit($courseUnit->id)->byEpochType($epochType->id)->ofAcademicYear($yearId)->get();
+
+            $item['methods'] = MethodResource::collection($methods);
+            return $item;
+        });
+
+        return $finalList->all();
+    }
+
+    public function epochsForCourseUnit(CourseUnitGroup $courseUnitGroup)
+    {
+        // TODO
+        $availableCalendarsForCourseUnit = Calendar::where('course_id', $courseUnit->course_id)->whereIn('semester_id', [$courseUnit->semester_id, 3])->get()->pluck('id');
+        $epochs = Epoch::whereIn('calendar_id', $availableCalendarsForCourseUnit)->groupBy(['epoch_type_id', 'name'])->get(['epoch_type_id', 'name']);
+
+        return response()->json($epochs);
+    }
+
+    /**
+     * List logs associated to the unit
+     */
+    public function logs(CourseUnitGroup $courseUnitGroup)
+    {
+        return  LogsResource::collection($courseUnitGroup->log);
     }
 }

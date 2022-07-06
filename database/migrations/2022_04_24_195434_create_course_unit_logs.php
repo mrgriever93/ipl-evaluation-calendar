@@ -18,9 +18,11 @@ return new class extends Migration
         }
         Schema::create('course_unit_logs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('course_unit_id');
+            $table->unsignedBigInteger('course_unit_id')->nullable();
+            $table->unsignedBigInteger('course_unit_group_id')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->foreign('course_unit_id')->references('id')->on('course_units');
+            $table->foreign('course_unit_group_id')->references('id')->on('course_unit_groups');
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('description');
 
