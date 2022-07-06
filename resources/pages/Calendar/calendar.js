@@ -237,7 +237,9 @@ const Calendar = () => {
         if (typeof calendarPhase === 'number') {
             // filter permissions by phase of calendar
             const localPermissions = JSON.parse(localStorage.getItem('calendarPermissions'));
-            setCalendarPermissions(localPermissions?.filter((item) => item.phases.includes(calendarPhase)) || []);
+            if( localPermissions && Array.isArray(localPermissions) ){
+                setCalendarPermissions(localPermissions?.filter((item) => item.phases?.includes(calendarPhase)) || []);
+            }
         }
     }, [calendarPhase]);
 

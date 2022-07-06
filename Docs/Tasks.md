@@ -288,14 +288,14 @@ Melhorias:
   - [X] Data final da época normal tem de ser no minimo a data final da época periódica (ou a data inicial da epoca normal +1)
   - [X] Fazer disable/enable dos campos à medida que vamos preenchendo as datas por época
   - [ ] Garantir que as validações também acontecem do lado do servidor, evitando criações de calendário inválidos
-- [ ] Rever possível bug na dropdown dos anos letivos quando existe mais do que um ano letivo selecionado
-  - [ ] Adicionar algo (bold ou icon) a mostrar o ano letivo que esta selecionado no dropdown
+- [X] Rever possível bug na dropdown dos anos letivos quando existe mais do que um ano letivo selecionado
+  - [X] Adicionar algo (bold ou icon) a mostrar o ano letivo que esta selecionado no dropdown
 - [ ] Adicionar ação para "selecionar/deselecionar todos" no popup de submissão, para quem pode ver o calendário
 - [ ] Botões de "Aceitar/Aceitar com alterações/Rejeitar" para Conselho Pedagógico ou Direção
 - [X] Rever o relatório e a ordem dos vários capítulos
 
-- [ ] Erro do "includes of undefined" quando abrimos o calendário
-- [ ] Melhorar página de "No permissions"
+- [X] Erro do "includes of undefined" quando abrimos o calendário
+- [1/2] Melhorar página de "No permissions"
 - [X] Erro ao gravar um calendário, este não fica visivel na listagem de calendários, porque não estava a associar os grupos que tinham permissão para ver
 - [X] Remover link dos cursos se nao estiver sincronizado ainda
   - [X] Na pagina dos ano letivos

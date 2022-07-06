@@ -73,8 +73,8 @@
         "ano_letivo.Ao iniciar o processo de sincronização, todas as UCs já preenchidas serão atualizadas, e novas UCs serão adicionadas.": "When starting the syncronization process, all CUs already filled will be updated, and new CUs will be added.",
         "ano_letivo.Para ver a lista de UCs sincronizadas pode clicar neste": "To check the list of syncronized CUs you can click on this",
         "O ano letivo já está selecionado!": "The school year is already selected!",
-        "ano_letivo.Irá sincronizar as escolas que já tenham os dados preenchidos. Para ver a lista das escolas que irão ser sincronizadas.": "A synchronization will occur for the schools that already have the fields fulfilled. To check the list of the schools that will be synchornized.",
-        "Para mais informações, pode ver através deste": "For more informations, you can check this '",
+        "ano_letivo.Irá sincronizar as escolas que já tenham os dados preenchidos. Para ver a lista das escolas que irão ser sincronizadas.": "A synchronization will occur for the schools that already have the fields fulfilled, receiveing the courses, the curricualr units and its teachers. ",
+        "Para mais informações, pode ver através deste": ". To check the list of the schools that will be synchornized, you can check the following '",
 
         "Tipos de Avaliação": "Evaluation Types",
         "Pesquisar tipo de avaliação...": "Search evaluation type...",
@@ -384,6 +384,13 @@
         "Pesquisar...": "Search...",
         "Remover": "Remove",
 
-        "Esta avaliação dura mais do que 5 dias": "This evaluation takes more then 5 days"
+        "Esta avaliação dura mais do que 5 dias": "This evaluation takes more then 5 days",
+
+
+        "Sem Permissões": "No Permissions",
+        "Página não encontrada": "Page not found",
+        "Página não pode ser acedida": "This page cannot be accessed",
+        "A página que tentou aceder, não existe.": "The page you tried to access, does not exists.",
+        "Clique no botão para voltar para uma página inicial.": "Click on the button to go back to the home page."
     }
 }
