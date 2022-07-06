@@ -293,11 +293,16 @@ const AnoLetivo = () => {
                 <Message.Header>{t('ano_letivo.A sincronização vai sempre acontecer quando clicarmos no botão?')}</Message.Header>
                 <p>{ t('ano_letivo.Não. Irá ser iniciada a sincronização quando não houver trabalho para o servidor.') }</p>
                 <br/>
-                <Message.Header>{t('ano_letivo.O que vai sincronizar?')}</Message.Header>
-                <p>{ t('ano_letivo.Ao iniciar o processo de sincronização, todas as UCs já preenchidas serão atualizadas, e novas UCs serão adicionadas.') }</p>
-                <p>{ t('ano_letivo.Para ver a lista de UCs sincronizadas pode clicar neste') }
-                    <a className="margin-left-xs" href="/escola" target={"_blank"}><Icon name={"external"}/>link</a>.</p>
-                <br/>
+
+                    <Message.Header>{t('ano_letivo.O que vai sincronizar?')}</Message.Header>
+                    <p>
+                        { t('ano_letivo.Irá sincronizar as escolas que já tenham os dados preenchidos. Para ver a lista das escolas que irão ser sincronizadas.') }
+                        <ShowComponentIfAuthorized permission={[SCOPES.EDIT_SCHOOLS]}>
+                            { t('Para mais informações, pode ver através deste')} <a className="margin-left-xs" href="/escola" target={"_blank"}><Icon name={"external"}/>link</a>
+                        </ShowComponentIfAuthorized>
+                    </p>
+                    <br/>
+
                 <Message.Header>{ t('ano_letivo.Outras informações') }</Message.Header>
                 <p>{ t('ano_letivo.Apenas 1 sincronização pode acontecer de cada vez, para prevenir duplicações ou bloqueio do servidor.') }</p>
             </Message>
