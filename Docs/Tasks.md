@@ -22,9 +22,9 @@
 
 
 **Agrupamentos**
-- [ ] Ver lista (tem erro)
+- [X] Ver lista (tem erro)
+- [X] Métodos
 - [ ] Traduções
-- [ ] Métodos
 - [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
 
 **Detalhe calendário**
@@ -329,3 +329,26 @@ Melhorias:
 - Como é em relação ao Poster A3 e a esta entrega dia 11 de Julho? Não era dia 14?
 - Perguntar como funciona em relação ao Parecer?
 - Quando fazemos uma cópia... copiamos exames e interrupções. E os comentários? Também é para copiar?
+
+
+
+## Alterar na BD
+
+```
+ALTER TABLE `calendar_v2`.`course_unit_logs`
+DROP FOREIGN KEY `course_unit_logs_course_unit_id_foreign`;
+ALTER TABLE `calendar_v2`.`course_unit_logs`
+ADD COLUMN `course_unit_group_id` BIGINT UNSIGNED NULL AFTER `course_unit_id`,
+CHANGE COLUMN `course_unit_id` `course_unit_id` BIGINT UNSIGNED NULL ,
+ADD INDEX `course_unit_logs_course_unit_group_id_foreign_idx` (`course_unit_group_id` ASC) VISIBLE;
+
+ALTER TABLE `calendar_v2`.`course_unit_logs`
+ADD CONSTRAINT `course_unit_logs_course_unit_id_foreign`
+FOREIGN KEY (`course_unit_id`)
+REFERENCES `calendar_v2`.`course_units` (`id`),
+ADD CONSTRAINT `course_unit_logs_course_unit_group_id_foreign`
+FOREIGN KEY (`course_unit_group_id`)
+REFERENCES `calendar_v2`.`course_unit_groups` (`id`)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION;
+```

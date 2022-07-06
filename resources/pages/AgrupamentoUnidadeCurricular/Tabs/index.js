@@ -8,7 +8,7 @@ import Logs from "./TabLogs";
 import {useComponentIfAuthorized} from "../../../components/ShowComponentIfAuthorized";
 import SCOPES from "../../../utils/scopesConstants";
 
-const CourseTabs = ({ unitId, hasGroup }) => {
+const CourseTabs = ({ groupId }) => {
     const { t } = useTranslation();
     const [hasWarningsMethods, setHasWarningsMethods] = useState(false);
     const [hasWarningsTeachers, setHasWarningsTeachers] = useState(false);
@@ -21,28 +21,32 @@ const CourseTabs = ({ unitId, hasGroup }) => {
                 <Menu.Item key='tab_header_methods'>
                     <Icon name="file alternate"/> { t("Métodos") }
                     {hasWarningsMethods && (
-                        <Popup trigger={<Icon color='orange' name="warning sign" />} content={t('Falta adicionar os métodos desta unidade curricular')} position='top center'/>
+                        <Popup trigger={<Icon color='orange' name="warning sign" />} content={t('Falta adicionar os métodos deste grupo de unidades curriculares')} position='top center'/>
                     )}
                 </Menu.Item>
             ),
-            pane: { key: 'tab_methods',     content: <Methods hasGroup={hasGroup} unitId={unitId} warningsHandler={setHasWarningsMethods} /> }
+            pane: { key: 'tab_methods',     content: <Methods groupId={groupId} warningsHandler={setHasWarningsMethods} /> }
+        });
+    }
+
+    if(false){
+        panes.push({
+            menuItem: (
+                <Menu.Item key='tab_header_teachers'>
+                    <Icon name="users"/> { t("Professores") }
+                    {hasWarningsTeachers && (
+                        <Popup trigger={<Icon color='orange' name="warning sign" />} content={t('Falta selecionar o responsável da unidade curricular')} position='top center'/>
+                    )}
+                </Menu.Item>
+            ),
+            pane: { key: 'tab_teachers',    content: <Teachers groupId={groupId} warningsHandler={setHasWarningsTeachers} /> }
         });
     }
     panes.push({
-        menuItem: (
-            <Menu.Item key='tab_header_teachers'>
-                <Icon name="users"/> { t("Professores") }
-                {hasWarningsTeachers && (
-                    <Popup trigger={<Icon color='orange' name="warning sign" />} content={t('Falta selecionar o responsável da unidade curricular')} position='top center'/>
-                )}
-            </Menu.Item>
-        ),
-        pane: { key: 'tab_teachers',    content: <Teachers unitId={unitId} warningsHandler={setHasWarningsTeachers} /> }
-    });
-    panes.push({
         menuItem: (<Menu.Item key='tab_header_logs'><Icon name="unordered list"/> { t("Logs") }</Menu.Item>),
-        pane: { key: 'tab_logs',        content: <Logs unitId={unitId} /> }
+        pane: { key: 'tab_logs',        content: <Logs groupId={groupId} /> }
     });
+
     return ( <Tab panes={panes} renderActiveOnly={false} /> );
 };
 

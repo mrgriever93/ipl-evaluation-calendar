@@ -178,11 +178,12 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::controller(MethodController::class)->group(function () {
-        Route::post('/methods',                 'store'  );
-        Route::get('/methods',                  'index'  );
-        Route::get('/methods/{method}',         'show'   );
-        Route::patch('/methods/{method}',       'update' );
-        Route::delete('/methods/{method}',      'destroy');
+        Route::post('/methods',                 'store'         );
+        Route::post('/methods/groups',          'storeGroups'   );
+        Route::get('/methods',                  'index'         );
+        Route::get('/methods/{method}',         'show'          );
+        Route::patch('/methods/{method}',       'update'        );
+        Route::delete('/methods/{method}',      'destroy'       );
     });
 
     Route::controller(InterruptionController::class)->group(function () {
@@ -247,11 +248,20 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::controller(CourseUnitGroupController::class)->group(function () {
-        Route::post('/course-unit-groups',                    'store'  );
-        Route::delete('/course-unit-groups/{courseUnitGroup}','destroy');
-        Route::patch('/course-unit-groups/{courseUnitGroup}', 'update' );
         Route::get('/course-unit-groups',                     'index'  );
         Route::get('/course-unit-groups/{courseUnitGroup}',   'show'   );
+        // methods for the course unit
+        Route::get('/course-unit-groups/{courseUnitGroup}/methods', 'methodsForCourseUnitGroup');
+        // get all logs for this course unit
+        Route::get('/course-unit-groups/{courseUnitGroup}/logs',    'logs'                );
+        // relations with teachers
+        Route::get('/course-unit-groups/{courseUnitGroup}/teachers',               'teachers'            );
+        Route::post('/course-unit-groups/{courseUnitGroup}/teacher',               'addTeacher'          );
+        Route::delete('/course-unit-groups/{courseUnitGroup}/teacher/{teacherId}', 'removeTeacher'       );
+
+        Route::post('/course-unit-groups',                    'store'  );
+        Route::patch('/course-unit-groups/{courseUnitGroup}', 'update' );
+        Route::delete('/course-unit-groups/{courseUnitGroup}','destroy');
     });
 
     Route::get('/search/users',         [LdapController::class, 'searchUsers']      );

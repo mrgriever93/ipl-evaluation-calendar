@@ -3,7 +3,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {Field, Form as FinalForm} from 'react-final-form';
 import {useNavigate} from 'react-router';
 import {Link, useParams} from 'react-router-dom';
-import {Button, Card, Container, Dimmer, Divider, Form, Header, Icon, Loader, Message} from 'semantic-ui-react';
+import {Button, Card, Container, Dimmer, Form, Header, Icon, Loader, Message} from 'semantic-ui-react';
 import axios from 'axios';
 import {toast} from 'react-toastify';
 import {successConfig, errorConfig} from '../../utils/toastConfig';
@@ -174,7 +174,7 @@ const New = () => {
                 </Form>
             )} />
             <div className={"margin-top-base"}>
-                { paramsId && <UnitTabs unitId={paramsId}/> }
+                { paramsId && <UnitTabs unitId={paramsId} hasGroup={courseUnitDetail.has_group} /> }
             </div>
         </Container>
     );
