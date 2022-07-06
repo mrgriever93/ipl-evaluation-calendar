@@ -283,15 +283,20 @@ Melhorias:
 
 
 ## Reunião 05/07/2022
-- [ ] Rever date pickers da criação dos calendários:
-  - [ ] Data de inicio da época normal tem de ser no minimo a data de inicio da época periódica
-  - [ ] Data final da época normal tem de ser no minimo a data final da época periódica (ou a data inicial da epoca normal +1)
-  - [ ] Fazer disable/enable dos campos à medida que vamos preenchendo as datas por época
+- [X] Rever date pickers da criação dos calendários:
+  - [X] Data de inicio da época normal tem de ser no minimo a data de inicio da época periódica
+  - [X] Data final da época normal tem de ser no minimo a data final da época periódica (ou a data inicial da epoca normal +1)
+  - [X] Fazer disable/enable dos campos à medida que vamos preenchendo as datas por época
   - [ ] Garantir que as validações também acontecem do lado do servidor, evitando criações de calendário inválidos
 - [ ] Rever possível bug na dropdown dos anos letivos quando existe mais do que um ano letivo selecionado
+  - [ ] Adicionar algo (bold ou icon) a mostrar o ano letivo que esta selecionado no dropdown
 - [ ] Adicionar ação para "selecionar/deselecionar todos" no popup de submissão, para quem pode ver o calendário
 - [ ] Botões de "Aceitar/Aceitar com alterações/Rejeitar" para Conselho Pedagógico ou Direção
-- [ ] Rever o relatório e a ordem dos vários capítulos
+- [X] Rever o relatório e a ordem dos vários capítulos
+
+- [X] Remover link dos cursos se nao estiver sincronizado ainda
+  - Na pagina dos ano letivos
+  - corrigir texto
 
 
 ## TRABALHO FUTURO:
@@ -321,19 +326,3 @@ Melhorias:
 - Como é em relação ao Poster A3 e a esta entrega dia 11 de Julho? Não era dia 14?
 - Perguntar como funciona em relação ao Parecer?
 - Quando fazemos uma cópia... copiamos exames e interrupções. E os comentários? Também é para copiar?
-
-
-
-## Alterar na BD
-
-```
-ALTER TABLE `calendar_v2`.`calendar_changes`
-CHANGE COLUMN `temporary` `is_temporary` TINYINT(1) NOT NULL ;
-```
-
-```
-ALTER TABLE `calendar_v2`.`calendars` 
-ADD COLUMN `version` DECIMAL(8,3) NULL DEFAULT 0.0 AFTER `id`,
-CHANGE COLUMN `temporary` `is_temporary` TINYINT(1) NOT NULL DEFAULT '0' ,
-CHANGE COLUMN `published` `is_published` TINYINT(1) NOT NULL DEFAULT '0' ;
-```
