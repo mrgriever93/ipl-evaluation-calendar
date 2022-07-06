@@ -2,8 +2,6 @@
 
 namespace App\Http\Resources\Admin\Edit;
 
-use App\Http\Resources\MethodResource;
-use App\Http\Resources\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseUnitEditResource extends JsonResource

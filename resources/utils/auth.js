@@ -13,3 +13,22 @@ export const hasValidRefreshToken = () => {
   const currentTimestamp = Math.floor(new Date() / 1000);
   return refreshTokenExpiry > currentTimestamp;
 };
+
+export const hasGroupPermission = (group) => {
+    let groups = localStorage.getItem("groups").toLowerCase();
+    groups = groups.split(",");
+    if( groups && Array.isArray(groups) ){
+        return groups.includes(group.toLowerCase());
+    }
+    return false;
+}
+
+export const getCalendarPhasePermissions = (calendarPhase) => {
+    // filter permissions by phase of calendar
+    const localPermissions = JSON.parse(localStorage.getItem('calendarPermissions'));
+    let permissions = [];
+    if( localPermissions && Array.isArray(localPermissions) ){
+        permissions = localPermissions?.filter((item) => item.phases?.includes(calendarPhase)) || [];
+    }
+    return permissions;
+}

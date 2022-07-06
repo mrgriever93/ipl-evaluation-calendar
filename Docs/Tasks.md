@@ -2,7 +2,7 @@
 
 # Miguel
 - [ ] Adicionar Policies na parte do servidor
-- [ ] Devolver Roles de User e guardar na local storage
+- [X] Devolver Roles de User e guardar na local storage
 - [ ] Publicar um calendário
         - [ ] Se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar e receber feedback
     - [ ] A direção e o Conselho Pedagógico deve ver apenas botões para Aprovar ou Rejeitar

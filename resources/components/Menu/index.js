@@ -43,6 +43,7 @@ const HeaderMenu = () => {
             localStorage.removeItem('authToken');
             localStorage.removeItem('userId');
             localStorage.removeItem('username');
+            localStorage.removeItem('groups');
             localStorage.removeItem('scopes');
             localStorage.removeItem('calendarPermissions');
             localStorage.removeItem('academicYear');
