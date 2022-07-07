@@ -3,7 +3,6 @@
 namespace App\Http\Resources\Generic;
 
 use App\Http\Resources\MethodResource;
-use App\Http\Resources\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseUnitResource extends JsonResource
@@ -26,7 +25,7 @@ class CourseUnitResource extends JsonResource
 
             'branch'    => $this->branch,
             'methods'   => MethodResource::collection($this->whenLoaded('methods')),
-            'teachers'  => UserResource::collection($this->teachers)
+            'teachers'  => TeacherResource::collection($this->teachers)
         ];
     }
 }

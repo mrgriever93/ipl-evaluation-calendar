@@ -20,6 +20,7 @@ import PopupScheduleEvaluation from './detail/popup-sched-evaluation';
 import PopupEvaluationDetail from './detail/popup-evaluation-detail';
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import {getCalendarPhasePermissions} from "../../utils/auth";
 
 const SweetAlertComponent = withReactContent(Swal);
 
@@ -35,7 +36,6 @@ const Calendar = () => {
     const [interruptionsList, setInterruptions] = useState([]);
     const [epochsList, setEpochsList] = useState([]);
     const [generalInfo, setGeneralInfo] = useState();
-    const [differences, setDifferences] = useState();
     const [isLoading, setIsLoading] = useState(true);
     const [isCalendarInfoLoading, setIsCalendarInfoLoading] = useState(true);
 
@@ -50,8 +50,6 @@ const Calendar = () => {
     const [isTemporary, setIsTemporary] = useState(true);
     const [isPublished, setIsPublished] = useState(false);
     const [calendarPhase, setCalendarPhase] = useState(true);
-    const [updatingCalendarPhase, setUpdatingCalendarPhase] = useState(false);
-    const [previousFromDefinitive, setPreviousFromDefinitive] = useState(false);
 
     const [weekTen, setWeekTen] = useState(0);
 
@@ -79,7 +77,7 @@ const Calendar = () => {
                         return item;
                     });
                     localStorage.setItem('calendarPermissions', JSON.stringify(localPermissions));
-                    setCalendarPermissions(JSON.stringify(res.data.data));
+                    setCalendarPermissions(getCalendarPhasePermissions(calendarPhase));
                 }
             });
         }
@@ -235,9 +233,7 @@ const Calendar = () => {
 
     useEffect(() => {
         if (typeof calendarPhase === 'number') {
-            // filter permissions by phase of calendar
-            const localPermissions = JSON.parse(localStorage.getItem('calendarPermissions'));
-            setCalendarPermissions(localPermissions?.filter((item) => item.phases.includes(calendarPhase)) || []);
+            setCalendarPermissions(getCalendarPhasePermissions(calendarPhase));
         }
     }, [calendarPhase]);
 
@@ -272,22 +268,17 @@ const Calendar = () => {
         setIsLoading(true);
         setIsCalendarInfoLoading(true);
         setExamList([]);
-        console.log('loadCalendar');
 
         axios.get(`/calendar/${calId}`)
             .then((response) => {
-                console.log('loadCalendar - response');
                 if (response?.status >= 200 && response?.status < 300) {
                     const {
                         data: {
                             data: {
-                                phase,
                                 published,
                                 interruptions,
                                 epochs,
                                 general_info,
-                                differences,
-                                previous_from_definitive,
                                 week_ten,
                             },
                         },
@@ -318,9 +309,7 @@ const Calendar = () => {
                     setCalendarEndDate(moment(endDate).format("DD-MM-YYYY"));
 
                     setGeneralInfo(general_info);
-                    setDifferences(differences);
                     setIsLoading(false);
-                    setPreviousFromDefinitive(previous_from_definitive);
                     setWeekTen(moment(week_ten).week());
 
                     setIsCalendarInfoLoading(false);
@@ -332,7 +321,6 @@ const Calendar = () => {
 
     const weekData = useMemo(() => {
         if(epochsList.length > 0 && !isCalendarInfoLoading) {
-            console.log('weekData');
             return _.orderBy(
                 epochsList.filter((item) => showingEpochs.includes(item.id)).reduce((acc, curr) => {
                     const start_date = moment(curr.start_date);
@@ -615,7 +603,6 @@ const Calendar = () => {
                 {isLoading && (<PageLoader animate={pageLoaderAnimate} exit={pageLoaderExit}/>)}
             </AnimatePresence>
             <div className='margin-top-l'>
-                {console.log(showingEpochs) }
                 { showingEpochs.length === 0 ? (
                     <EmptyTable isLoading={false} label={t('Todas as épocas ficaram escondidas')}/>
                 ) : (

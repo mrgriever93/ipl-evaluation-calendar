@@ -26,6 +26,11 @@ class CourseUnitGroup extends Model
         return $this->hasMany(CourseUnit::class);
     }
 
+    public function log()
+    {
+        return $this->hasMany(UnitLog::class)->orderBy('created_at', 'desc');
+    }
+
     public function scopeOfAcademicYear($query, $academicYearId) {
         return $query->where('academic_year_id', $academicYearId);
     }

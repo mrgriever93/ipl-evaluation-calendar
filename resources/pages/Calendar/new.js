@@ -118,7 +118,7 @@ const NewCalendar = () => {
                         finalDate = compEndDate;
                     }
                     if(key === "normal_season" || key === "resource_season"){
-                        let endDate_Previous = (values.seasons[values.semester][(key === "periodic_season" ? "periodic_season" : "resource_season")].end_date).split("-");
+                        let endDate_Previous = (values.seasons[values.semester][(key === "normal_season" ? "periodic_season" : "resource_season")].end_date).split("-");
                         let compEndDate_Previous = new Date(endDate_Previous[2] + "-" + endDate_Previous[1] + "-" + endDate_Previous[0]);
                         if(compEndDate_Previous > compEndDate){
                             hasInvalidDates = true;
@@ -139,7 +139,7 @@ const NewCalendar = () => {
         if(!hasAllDates){
             errorTexts.push("Tem de preencher todas as datas de início e fim dos períodos");
         }
-        isValid = hasSemester && hasEpochs && hasAllDates && hasInvalidDates && errorTexts.length === 0;
+        isValid = hasSemester && hasEpochs && hasAllDates && !hasInvalidDates && errorTexts.length === 0;
         setErrorMessages(errorTexts);
         if(!isValid){
             // clear next steps because of changes

@@ -14,10 +14,14 @@ class UnitLog extends Model
     protected $fillable = [
         "description",
         "course_unit_id",
+        "course_unit_group_id",
         "user_id"
     ];
 
     public function courseUnits() {
         return $this->belongsTo(CourseUnit::class);
+    }
+    public function courseUnitGoups() {
+        return $this->belongsTo(CourseUnitGroup::class);
     }
 }
