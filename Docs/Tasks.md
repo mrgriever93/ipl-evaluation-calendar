@@ -300,7 +300,10 @@ Melhorias:
 - [X] Remover link dos cursos se nao estiver sincronizado ainda
   - [X] Na pagina dos ano letivos
   - [X] Corrigir texto que estava trocado
+
+## Issues found while writing report
 - [ ] Rever página de Sobre para acrescentar Grupo 1 e adicionar links externos no footer
+- [ ] Rever criação de nova UC. link não está a funcionar como deve ser
 
 
 ## TRABALHO FUTURO:
