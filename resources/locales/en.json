@@ -391,6 +391,8 @@
         "Página não encontrada": "Page not found",
         "Página não pode ser acedida": "This page cannot be accessed",
         "A página que tentou aceder, não existe.": "The page you tried to access, does not exists.",
-        "Clique no botão para voltar para uma página inicial.": "Click on the button to go back to the home page."
+        "Clique no botão para voltar para uma página inicial.": "Click on the button to go back to the home page.",
+        "Falta preencher os métodos de avaliação e o responsável.": "The evaluation methods and the responsible are missing",
+        "Falta preencher o responsável.": "The responsible is missing."
     }
 }

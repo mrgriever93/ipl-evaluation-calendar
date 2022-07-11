@@ -37,8 +37,16 @@ const List = () => {
     ];
 
     useEffect(() => {
+        if(currentPage === 1){
+            fetchUserList(1, searchTerm, userGroups, perPage);
+        } else {
+            setCurrentPage(1);
+        }
+    }, [searchTerm, userGroups, perPage]);
+
+    useEffect(() => {
         fetchUserList(currentPage, searchTerm, userGroups, perPage);
-    }, [searchTerm, userGroups, perPage, currentPage]);
+    }, [currentPage]);
 
     const fetchUserList = useCallback((page = 1, search, groups, per_page) => {
         if (search || groups) {

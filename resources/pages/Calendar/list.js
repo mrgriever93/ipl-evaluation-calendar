@@ -118,15 +118,19 @@ const CalendarList = () => {
             }
         });
     };
-
+    // this will load the calendar list after any filter is changed, and if its changed,
+    // it will reset the pagination. This way, if a page is not the initial, it will show the results
     useEffect(() => {
-        clearTimeout(filterDebounce);
-        filterDebounce = setTimeout(() => {
+        if(currentPage === 1){
             loadCalendars();
-            clearTimeout(filterDebounce);
-        }, 400);
-    }, [semesterFilter, courseFilter, phaseFilter, currentPage, myCourseOnly, statusFilter]);
-
+        } else {
+            setCurrentPage(1);
+        }
+    }, [semesterFilter, courseFilter, phaseFilter, myCourseOnly, statusFilter]);
+    // loads the calendar list after the page is changed.
+    useEffect(() => {
+        loadCalendars();
+    }, [currentPage]);
 
     const filterByCourse = (course) => {
         setCurrentPage(1);
