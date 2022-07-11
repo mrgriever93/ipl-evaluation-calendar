@@ -868,3 +868,17 @@ div.inline{
     display: flex;
     align-items: center;
 }
+.calendar-loader .ui.card>.content{
+    padding: 0;
+}
+
+.calendar-loader .ui.placeholder .line.full {
+    margin-top: 40px;
+    margin-bottom: 0;
+    border-bottom: 1px solid #bdbdbd;
+    height: 0;
+}
+.calendar-loader .ui.placeholder.year-lines {
+    background-image: linear-gradient(to right,rgb(64 63 63 / 8%) 0,rgb(68 68 68 / 15%) 15%,rgb(177 177 177 / 8%) 30%);
+    margin: 0;
+}

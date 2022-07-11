@@ -26,6 +26,7 @@
 - [X] Métodos
 - [ ] Traduções
 - [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
+- [ ] Quando se criar um novo agrupamento, refderecionar para o detalhe do criado
 
 **Detalhe calendário**
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação

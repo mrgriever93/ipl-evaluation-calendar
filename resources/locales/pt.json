@@ -390,6 +390,9 @@
         "Página não encontrada": "Página não encontrada",
         "Página não pode ser acedida": "Página não pode ser acedida",
         "A página que tentou aceder, não existe.": "A página que tentou aceder, não existe.",
-        "Clique no botão para voltar para uma página inicial.": "Clique no botão para voltar para uma página inicial."
+        "Clique no botão para voltar para uma página inicial.": "Clique no botão para voltar para uma página inicial.",
+        "Falta preencher os métodos de avaliação e o responsável.": "Falta preencher os métodos de avaliação e o responsável.",
+        "Falta preencher o responsável.": "Falta preencher o responsável."
+
     }
 }

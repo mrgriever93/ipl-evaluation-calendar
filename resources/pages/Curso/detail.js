@@ -118,12 +118,12 @@ const Detail = () => {
                         { (!initialValues?.coordinator || !hasCoordinator) && (
                             <Message.Item>{ t('É necessário configurar o docente Coordenador de Curso') }</Message.Item>
                         )}
-                        { !initialValues.initials && (
+                       {/* { !initialValues.initials && (
                             <Message.Item>{ t('É necessário configurar a Sigla do Curso') }</Message.Item>
                         )}
                         { !initialValues.degree_id && (
                             <Message.Item>{ t('É necessário configurar o Tipo de Curso') }</Message.Item>
-                        )}
+                        )}*/}
                     </Message.List>
                 </Message>
             )}
@@ -182,7 +182,7 @@ const Detail = () => {
                             <Form.Group widths="2">
                                 <Field name="coordinator">
                                     {({input: coordinatorInput}) => (
-                                        <Form.Dropdown disabled={loading || !hasPermissionToDefineCoordinator} label={ t("Coordenador do Curso") }
+                                        <Form.Dropdown error={ !hasCoordinator } disabled={loading || !hasPermissionToDefineCoordinator} label={ t("Coordenador do Curso") }
                                                        selectOnBlur={false} options={teachers} selection search loading={searchCoordinator} placeholder={ t("Pesquise o coordenador de curso...") }
                                                        {...coordinatorInput} onSearchChange={_.debounce(handleSearchCoordinator, 400)}
                                                        onChange={(e, {value, options}) => {

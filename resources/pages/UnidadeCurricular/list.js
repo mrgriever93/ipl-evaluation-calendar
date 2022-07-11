@@ -58,9 +58,16 @@ const CourseUnitsList = () => {
     };
 
     useEffect(() => {
-        fetchCourseUnits();
-    }, [semesterFilter, courseFilter, searchFilter, currentPage]);
+        if(currentPage === 1){
+            fetchCourseUnits();
+        } else {
+            setCurrentPage(1);
+        }
+    }, [semesterFilter, courseFilter, searchFilter]);
 
+    useEffect(() => {
+        fetchCourseUnits();
+    }, [currentPage]);
 
     const filterByCourse = (course) => {
         setCourseFilter(course);
@@ -144,10 +151,18 @@ const CourseUnitsList = () => {
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
-                                    {courseUnits.map(({id, name, code, has_methods, branch_label, has_branch, group_name, course_description, semester}) => (
-                                        <Table.Row key={id} warning={!has_methods}>
+                                    {courseUnits.map(({id, name, code, has_methods, has_responsable, branch_label, has_branch, group_name, course_description, semester}) => (
+                                        <Table.Row key={id} warning={!has_methods || !has_responsable}>
                                             <Table.Cell>
-                                                { !has_methods && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher os métodos de avaliação.')} position='top center'/> }
+                                                { (!has_methods || !has_responsable) && <Popup trigger={<Icon name="warning sign" />} content={(
+                                                    <div>
+                                                        { (!has_methods && !has_responsable) ? (
+                                                            t('Falta preencher os métodos de avaliação e o responsável.')
+                                                        ) : (
+                                                            (!has_methods ? t('Falta preencher os métodos de avaliação.') : t('Falta preencher o responsável.'))
+                                                        )}
+                                                    </div>
+                                                )} position='top center'/> }
                                                 ({code}) - {name}
                                             </Table.Cell>
                                             <Table.Cell>
