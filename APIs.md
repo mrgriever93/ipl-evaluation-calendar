@@ -21,6 +21,11 @@
 
 Esta e uma API que ira divulgar os calendarios e exames que estejam publicos, podendo ser filtrados por varios campos
 
+### Language
+Para escolher entre a linguagem de **PT** ou **EN**, basta enviar a opcao no header "**lang**"
+> Default: "**PT**"
+
+
 ## Formato JSON
 Resultados de calendarios
 ### Todos os calendarios de uma escola e de um ano letivo

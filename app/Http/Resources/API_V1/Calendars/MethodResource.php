@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\API_V1;
+namespace App\Http\Resources\API_V1\Calendars;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

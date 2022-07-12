@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\API_V1;
+namespace App\Http\Resources\API_V1\Calendars;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -13,11 +13,6 @@ class CourseUnitResource extends JsonResource
             'name'                  => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
             'initials'              => $this->initials,
             'semester'              => $this->semester->number,
-
-            'course'        => [
-                "code"          => $this->course->code,
-                'name'          => "(" . $this->course->code . ") " . ($request->header("lang") == "en" ? $this->course->name_en : $this->course->name_pt),
-            ],
             'branch'        => [
                 "id"            => $this->branch_id,
                 "name"          => ($request->header("lang") == "en" ? $this->branch->name_en : $this->branch->name_pt),

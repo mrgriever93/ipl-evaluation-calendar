@@ -7,8 +7,8 @@ use App\Http\Controllers\API\GroupController;
 use App\Http\Controllers\API\InterruptionTypeController;
 use App\Http\Controllers\API\LoginController;
 use App\Http\Controllers\API\v1\V1ExamController;
+use App\Http\Controllers\API\v1\V1CalendarController;
 use App\Models\AcademicYear;
-use App\Models\Course;
 use App\Services\ExternalImports;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +44,12 @@ Route::get('/version', function () {
 
 // External/Public api requests
 Route::prefix('v1')->group(function () {
+
+    // Get calendars by filters
+    Route::controller(V1CalendarController::class)->group(function () {
+        Route::get('/{schoolCode}/{academicYearCode}/calendar',                 'list'          );
+        Route::get('/{schoolCode}/{academicYearCode}/calendar/course/{code}',   'listByCourse'  );
+    });
 
     // Get exams by filters
     Route::controller(V1ExamController::class)->group(function () {

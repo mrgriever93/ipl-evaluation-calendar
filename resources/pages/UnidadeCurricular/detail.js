@@ -238,7 +238,7 @@ const New = () => {
                 </Form>
             )} />
             <div className={"margin-top-base"}>
-                { paramsId && <UnitTabs unitId={paramsId} hasGroup={courseUnitDetail.has_group} /> }
+                { paramsId && <UnitTabs unitId={paramsId} hasGroup={ loading || courseUnitDetail?.has_group } /> }
             </div>
         </Container>
     );
