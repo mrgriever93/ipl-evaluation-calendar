@@ -2,20 +2,16 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Resources\Generic\ExamCalendarResource;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\NewExamRequest;
+use App\Http\Resources\API_V1\Calendars\ExamCalendarResource;
+use App\Http\Resources\ExamResource;
 use App\Models\Calendar;
-use App\Models\Course;
 use App\Models\CourseUnit;
 use App\Models\CourseUnitGroup;
 use App\Models\Epoch;
 use App\Models\Exam;
 use App\Models\Method;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\NewExamRequest;
-use App\Http\Resources\ExamResource;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class ExamController extends Controller

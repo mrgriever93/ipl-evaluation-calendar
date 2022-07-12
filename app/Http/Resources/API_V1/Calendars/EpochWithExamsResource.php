@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\API_V1\Calendars;
 
-use App\Http\Resources\Generic\ExamCalendarResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class EpochWithExamsResource extends JsonResource

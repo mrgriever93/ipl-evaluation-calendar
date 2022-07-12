@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Generic;
 
-use Carbon\Carbon;
+use App\Http\Resources\API_V1\Calendars\ExamCalendarResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class EpochCalendarResource extends JsonResource

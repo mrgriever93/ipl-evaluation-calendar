@@ -1,36 +1,31 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\API_V1\Calendars;
 
-use App\Http\Resources\Generic\CourseUnitExamResource;
-use App\Http\Resources\Generic\ExamCommentResource;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ExamResource extends JsonResource
+class ExamCalendarResource extends JsonResource
 {
     public function toArray($request)
     {
         return [
-            'id'                => $this->id,
-            'academic_year'     => $this->whenLoaded('courseUnit', $this->courseUnit->curricular_year),
-            'method'            => new MethodResource($this->method),
-            'course_unit'       => new CourseUnitExamResource($this->courseUnit),
-            'epoch_id'          => $this->epoch_id,
-            'method_id'         => $this->method_id,
-            'room'              => $this->room,
-            'group_id'          => $this->group_id,
-            'date_start'        => $this->date_start,
-            'date_end'          => $this->date_end,
-            'in_class'          => $this->in_class,
-            'hour'              => $this->hour,
-            'duration_minutes'  => $this->duration_minutes,
-            'observations'      => ($request->header("lang") == "en" ? $this->observations_en : $this->observations_pt),
-            'observations_pt'   => $this->observations_pt,
-            'observations_en'   => $this->observations_en,
-            'description'       => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
-            'description_pt'    => $this->description_pt,
-            'description_en'    => $this->description_en,
-            'comments'          => ExamCommentResource::collection($this->whenLoaded('comments')),
+            'method'                => [
+                "id"            => $this->method_id,
+                "name"          => ($request->header("lang") == "en" ? $this->method->evaluationType->name_en : $this->method->evaluationType->name_pt),
+                "description"   => ($request->header("lang") == "en" ? $this->method->description_en : $this->method->description_pt),
+            ],
+            'date_start'            => Carbon::create($this->date_start)->format('Y-m-d'),
+            'date_end'              => Carbon::create($this->date_end)->format('Y-m-d'),
+            'in_class'              => $this->in_class,
+            'hour'                  => $this->hour,
+            'room'                  => $this->room,
+            'duration_minutes'      => $this->duration_minutes,
+            'observations'          => ($request->header("lang") == "en" ? $this->observations_en : $this->observations_pt),
+            'description'           => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
+
+            'course_unit'       => new \App\Http\Resources\API_V1\Calendars\CourseUnitResource($this->courseUnit),
         ];
     }
 }
+

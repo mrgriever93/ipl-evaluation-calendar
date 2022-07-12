@@ -71,11 +71,14 @@ Resultados de exames
                     "code": "epoch_normal",
                     "exams": [
                         {
-                            "date_start": "2008-09-20 00:00:00",
-                            "date_end": "2011-09-20 00:00:00",
-                            "in_class": false,
-                            "room": "A2.1",
-                            "observations": "",
+                            "date_start": "2021-09-07",
+                            "date_end": "2021-09-07",
+                            "in_class": 1,
+                            "hour": null,
+                            "room": null,
+                            "duration_minutes": null,
+                            "observations": null,
+                            "description": null
                             "method": {
                                 "description": "Prova escrita 1",
                                 "evaluation_type": "Prova escrita",
