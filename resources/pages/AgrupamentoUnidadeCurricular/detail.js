@@ -100,7 +100,7 @@ const New = () => {
 
     return (
         <Container>
-            <div className="margin-bottom-s">
+            <div className="margin-bottom-base">
                 <Link to="/agrupamento-unidade-curricular"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
             <FinalForm onSubmit={onSubmit} initialValues={initialValues} render={({handleSubmit}) => (
@@ -143,7 +143,7 @@ const New = () => {
                                     )}
                                 </Field>
                             </Form.Group>
-                            <Message>
+                            <Message info>
                                 <Message.Content>{ t("Se já tiver os métodos definidos, a UC irá estar desativada, não sendo possível agrupá-la.")}</Message.Content>
                             </Message>
                         </Card.Content>

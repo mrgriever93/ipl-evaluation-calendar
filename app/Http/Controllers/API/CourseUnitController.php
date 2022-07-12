@@ -13,6 +13,7 @@ use App\Http\Resources\Generic\CourseUnitSearchResource;
 use App\Http\Resources\Generic\EpochMethodResource;
 use App\Http\Resources\Generic\TeacherResource;
 use App\Http\Resources\MethodResource;
+use App\Models\AcademicYear;
 use App\Models\Calendar;
 use App\Models\Course;
 use App\Models\CourseUnit;
@@ -23,6 +24,7 @@ use App\Models\Method;
 use App\Models\Semester;
 use App\Models\UnitLog;
 use App\Models\User;
+use App\Services\ExternalImports;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -142,17 +144,44 @@ class CourseUnitController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CourseUnitRequest $request)
+    public function store(Request $request)
     {
-        $newCourseUnit = new CourseUnit($request->all());
-        $newCourseUnit->save();
+        $academicYear = AcademicYear::find($request->cookie('academic_year'));
+        $isImported = ExternalImports::importSingleUCFromWebService($academicYear->code, $request->input('school'), $request->input('uc'));
+        if(!$isImported){
+            return response()->json("Error!", Response::HTTP_CONFLICT);
+        }
+
+        $uc = CourseUnit::where("code", $request->input('uc'))->first();
         UnitLog::create([
-            "course_unit_id"    => $newCourseUnit->id,
+            "course_unit_id"    => $uc->id,
             "user_id"           => Auth::id(),
             "description"       => "Unidade curricular criada por '" . Auth::user()->name . "'."
         ]);
 
-        return response()->json("Created!", Response::HTTP_CREATED);
+        return response()->json($uc->id, Response::HTTP_CREATED);
+    }
+
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function refreshUc(CourseUnit $courseUnit)
+    {
+        $academicYear = AcademicYear::find($courseUnit->semester_id);
+        $isImported = ExternalImports::importSingleUCFromWebService($academicYear->code, $courseUnit->course->school_id, $courseUnit->code);
+        if(!$isImported){
+            return response()->json("Error!", Response::HTTP_CONFLICT);
+        }
+
+        $uc = CourseUnit::where("code", $courseUnit->code)->first();
+        UnitLog::create([
+            "course_unit_id"    => $uc->id,
+            "user_id"           => Auth::id(),
+            "description"       => "Unidade curricular atualizada com dados da API por '" . Auth::user()->name . "'."
+        ]);
+
+        return response()->json($uc->id, Response::HTTP_OK);
     }
 
     /**

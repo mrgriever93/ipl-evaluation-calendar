@@ -20,6 +20,7 @@
 - [ ] Meus calendarios/todos -> tem de se atualizar o filtro para ter as permissoes
   - [ ] Botao com role mais especifica? (sendo a direcao ou gop) ou grupo com flag? (tipo user generico)
 
+**Rever nova UC**
 
 **Agrupamentos**
 - [X] Ver lista (tem erro)
@@ -32,6 +33,7 @@
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - [ ] Ao adicionar uma interrupção e eliminar avaliações contínuas, dividir a avaliação em 2 e apaga apenas o dia selecionado para a interrupção
   - [X] Campo na BD criado (group_id) > rever melhor mais tarde
+- [ ] Ir para o dia de hoje no calendario
 
 **Todas as paginas**
 - [ ] Rever traduções
@@ -304,11 +306,11 @@ Melhorias:
 
 
 ## TRABALHO FUTURO:
-- [X] Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos); **(Feito a ~~26/05/2022)**
-- [ ] Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;
-- [ ] Users com mais do que um role (validar o que deve ser feito)
-- [ ] Log dos métodos: registar o que foi alterado e quem alterou;
-- [ ] Notificacoes de quando muda de fase ou adicionam  comentarios no calendario
+- [X] ~~Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos);~~ **(Feito a ~~26/05/2022)**
+- [ ] ~~Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;~~
+- [ ] ~~Users com mais do que um role (validar o que deve ser feito)~~
+- [ ] ~~Log dos métodos: registar o que foi alterado e quem alterou;~~
+- [ ] ~~Notificacoes de quando muda de fase ou adicionam  comentarios no calendario~~
     - [ ] Notificacoes Web
     - [ ] Notificacoes Email
 - [ ] subtipos de avaliação **(Reunião 31/05/2022)**

@@ -868,6 +868,15 @@ div.inline{
     display: flex;
     align-items: center;
 }
+.align-items-end {
+    display: flex;
+    align-items: end;
+}
+.align-end-start{
+    display: flex;
+    align-items: flex-start;
+    justify-content: end;
+}
 .calendar-loader .ui.card>.content{
     padding: 0;
 }

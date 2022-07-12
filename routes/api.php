@@ -233,6 +233,9 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/course-units/{courseUnit}',                     'destroy'             );
 
         // Relations of course units
+        Route::get('/course-units/{courseUnit}/refresh',                'refreshUc'            );
+
+        // Relations of course units
         Route::get('/course-units/{courseUnit}/branches',               'branches'            );
         // relations with teachers
         Route::get('/course-units/{courseUnit}/teachers',               'teachers'            );

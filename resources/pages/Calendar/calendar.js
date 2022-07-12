@@ -594,7 +594,7 @@ const Calendar = () => {
      */
     return (
         <Container>
-            <div className="margin-bottom-s">
+            <div className="margin-bottom-base">
                 <Link to="/"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
             <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings} isLoading={isLoading}
