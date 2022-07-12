@@ -143,10 +143,11 @@ const New = () => {
                             <div className='card-header-alignment'>
                                 <Header as="span">{(isEditMode ? t('Editar') : t('Nova')) + " " + t("Unidades Curriculares")}</Header>
                                 <div>
-                                    <Button onClick={refreshUc} color="blue" icon loading={isSaving} labelPosition="left" title={"Atualizar dados atraves do WebService"}>
-                                        <Icon name={"refresh"} loading={isSearchLoading}/>
-                                        {t("Atualizar dados")}
-                                    </Button>
+                                    { isEditMode && (
+                                        <Button onClick={refreshUc} color="blue" icon loading={isSaving} labelPosition="left" title={"Atualizar dados atraves do WebService"}>
+                                            <Icon name={"refresh"} loading={isSearchLoading}/>
+                                        </Button>
+                                    )}
                                     <Button onClick={handleSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} >
                                         <Icon name={isEditMode ? 'save' : 'plus'}/>
                                         {isEditMode ? t('Guardar') : t('Criar')}
