@@ -304,6 +304,10 @@ Melhorias:
   - [X] Na pagina dos ano letivos
   - [X] Corrigir texto que estava trocado
 
+## Issues found while writing report
+- [ ] Rever página de Sobre para acrescentar Grupo 1 e adicionar links externos no footer
+- [ ] Rever criação de nova UC. link não está a funcionar como deve ser
+
 
 ## TRABALHO FUTURO:
 - [X] ~~Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos);~~ **(Feito a ~~26/05/2022)**
