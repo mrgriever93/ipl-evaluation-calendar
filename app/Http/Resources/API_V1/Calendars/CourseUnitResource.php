@@ -10,13 +10,13 @@ class CourseUnitResource extends JsonResource
     {
         return [
             'code'                  => $this->code,
-            'name'                  => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
+            'name'                  => (($request->header("lang") == "en" || $request->query("lang") == "en") ? $this->name_en : $this->name_pt),
             'initials'              => $this->initials,
             'semester'              => $this->semester->number,
             'branch'        => [
                 "id"            => $this->branch_id,
-                "name"          => ($request->header("lang") == "en" ? $this->branch->name_en : $this->branch->name_pt),
-                "initials"      => ($request->header("lang") == "en" ? $this->branch->initials_en : $this->branch->initials_pt),
+                "name"          => (($request->header("lang") == "en" || $request->query("lang") == "en") ? $this->branch->name_en : $this->branch->name_pt),
+                "initials"      => (($request->header("lang") == "en" || $request->query("lang") == "en") ? $this->branch->initials_en : $this->branch->initials_pt),
             ],
         ];
     }

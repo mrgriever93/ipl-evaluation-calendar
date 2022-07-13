@@ -12,7 +12,7 @@ class EpochWithExamsResource extends JsonResource
             'code'          => $this->epochType->code,
             'start_date'    => $this->start_date,
             'end_date'      => $this->end_date,
-            'name'          => $request->header("lang") == "en" ? $this->epochType->name_en : $this->epochType->name_pt,
+            'name'          => ($request->header("lang") == "en" || $request->query("lang") == "en") ? $this->epochType->name_en : $this->epochType->name_pt,
             'exams'         => ExamCalendarResource::collection($this->exams),
         ];
     }

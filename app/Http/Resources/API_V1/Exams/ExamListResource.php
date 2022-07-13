@@ -16,8 +16,8 @@ class ExamListResource extends JsonResource
             'hour'                  => $this->hour,
             'room'                  => $this->room,
             'duration_minutes'      => $this->duration_minutes,
-            'observations'          => ($request->header("lang") == "en" ? $this->observations_en : $this->observations_pt),
-            'description'           => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt),
+            'observations'          => (($request->header("lang") == "en" || $request->query("lang") == "en") ? $this->observations_en : $this->observations_pt),
+            'description'           => (($request->header("lang") == "en" || $request->query("lang") == "en") ? $this->description_en : $this->description_pt),
             'method'            => new MethodResource($this->method),
             'course_unit'       => new CourseUnitResource($this->courseUnit),
         ];

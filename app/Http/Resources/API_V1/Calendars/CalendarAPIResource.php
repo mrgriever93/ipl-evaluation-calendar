@@ -11,7 +11,7 @@ class CalendarAPIResource extends JsonResource
         return [
             'course'        => [
                 "code"          => $this->course->code,
-                'name'          => "(" . $this->course->code . ") " . ($request->header("lang") == "en" ? $this->course->name_en : $this->course->name_pt),
+                'name'          => "(" . $this->course->code . ") " . (($request->header("lang") == "en" || $request->query("lang") == "en") ? $this->course->name_en : $this->course->name_pt),
             ],
 
             'date_start'        => $this->firstDayOfSchool(),

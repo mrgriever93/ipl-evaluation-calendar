@@ -21,10 +21,6 @@
 
 Esta e uma API que ira divulgar os calendarios e exames que estejam publicos, podendo ser filtrados por varios campos
 
-### Language
-Para escolher entre a linguagem de **PT** ou **EN**, basta enviar a opcao no header "**lang**"
-> Default: "**PT**"
-
 
 ## Formato JSON
 Resultados de calendarios
@@ -48,6 +44,13 @@ Resultados de exames
 ### Filtros:
 #### - Por semestre
     http://172.22.21.74/api/v1/{schoolCode}/{academicYearCode}/exams?semester=1
+
+### Language
+Para escolher entre a linguagem de "**PT**" ou "**EN**", basta enviar a opcao no header "**lang**" ou no url
+> Default: "**PT**"
+#### - Por Lingua
+    http://172.22.21.74/api/v1/{schoolCode}/{academicYearCode}/exams?lang=pt
+    http://172.22.21.74/api/v1/{schoolCode}/{academicYearCode}/exams?lang=en
 
 
 ## Formatos de resposta

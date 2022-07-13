@@ -11,7 +11,7 @@ class InterruptionListResource extends JsonResource
         return [
             'date_start'        => $this->start_date,
             'date_end'          => $this->end_date,
-            'name'              => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt)
+            'name'              => (($request->header("lang") == "en" || $request->query("lang") == "en") ? $this->description_en : $this->description_pt)
         ];
     }
 }
