@@ -155,7 +155,7 @@ class PermissionsAndGroupsSeeder extends Seeder
             ["code"=> "edit_gop",            "name_pt" => "Em edição (GOP)",                    "name_en" => "In edit (GOP)",                          "all_methods_filled" => false  ],
             ["code"=> "edit_cc",             "name_pt" => "Em edição (Coordenador de Curso)",   "name_en" => "In edit (Course coordinator)",           "all_methods_filled" => false  ],
             ["code"=> "edit_responsible",    "name_pt" => "Em edição (Responsável UC)",         "name_en" => "In edit (UC responsible)",               "all_methods_filled" => false  ],
-            ["code"=> "evaluation_students", "name_pt" => "Em avaliação (Alunos)",              "name_en" => "Under evaluation (Students)",            "all_methods_filled" => true   ],
+            ["code"=> "evaluation_students", "name_pt" => "Em avaliação (Estudantes)",          "name_en" => "Under evaluation (Students)",            "all_methods_filled" => true   ],
             ["code"=> "evaluation_ccp",      "name_pt" => "Em avaliação (CCP)",                 "name_en" => "Under evaluation (CCP)",                 "all_methods_filled" => true   ],
             ["code"=> "evaluation_gop",      "name_pt" => "Em avaliação (GOP)",                 "name_en" => "Under evaluation (GOP)",                 "all_methods_filled" => true   ],
             ["code"=> "evaluation_cp",       "name_pt" => "Em avaliação (Conselho Pedagógico)", "name_en" => "Under evaluation (Pedagogical Council)", "all_methods_filled" => true   ],

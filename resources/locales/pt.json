@@ -244,15 +244,15 @@
         "Adicionar Nova unidade curricular": "Adicionar Nova unidade curricular",
         "Ou": "ou",
 
-        "Remover aluno": "Remover aluno",
-        "Adicionar aluno": "Adicionar aluno",
-        "Procurar pelo email do aluno": "Procurar pelo email do aluno",
-        "Aluno a adicionar": "Aluno a adicionar",
+        "Remover estudante": "Remover estudante",
+        "Adicionar estudante": "Adicionar estudante",
+        "Procurar pelo email do estudante": "Procurar pelo email do estudante",
+        "Estudante a adicionar": "Estudante a adicionar",
 
         "Estudante removido com sucesso do curso!": "Estudante removido com sucesso do curso!",
         "Ocorreu um problema ao remover o estudante do curso!": "Ocorreu um problema ao remover o estudante do curso!",
-        "Aluno adicionado com sucesso!": "Aluno adicionado com sucesso!",
-        "Ocorreu um erro ao adicionar o aluno!": "Ocorreu um erro ao adicionar o aluno!",
+        "Estudante adicionado com sucesso!": "Estudante adicionado com sucesso!",
+        "Ocorreu um erro ao adicionar o estudante!": "Ocorreu um erro ao adicionar o estudante!",
 
         "Unidade curricular removida com sucesso do curso!": "Unidade curricular removida com sucesso do curso!",
         "Ocorreu um problema ao remover a unidade curricular do curso!": "Ocorreu um problema ao remover a unidade curricular do curso!",
@@ -288,7 +288,7 @@
         "Caso seja obrigatório, quando criar um novo calendário, terá de preencher a interrupção": "Caso seja obrigatório, quando criar um novo calendário, terá de preencher a interrupção",
 
         "Ramos": "Ramos",
-        "Alunos": "Alunos",
+        "Estudantes": "Estudantes",
         "Ramo adicionado com sucesso!": "Branch added successfully!",
         "Ocorreu um erro ao gravar o ramo!": "There was an error writing the branch!",
         "Ao eliminar este ramo, todas as UCs deste ramo, terão de ser atualizadas posteriormente!": "By deleting this branch, all CUs in this branch will have to be updated later!",

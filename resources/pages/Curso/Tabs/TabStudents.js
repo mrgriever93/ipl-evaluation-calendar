@@ -58,9 +58,9 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
         }).then((res) => {
             if (res.status === 200) {
                 loadCourseStudents();
-                toast(t('Aluno adicionado com sucesso!'), successConfig);
+                toast(t('Estudante adicionado com sucesso!'), successConfig);
             } else {
-                toast(t('Ocorreu um erro ao adicionar o aluno!'), errorConfig);
+                toast(t('Ocorreu um erro ao adicionar o estudante!'), errorConfig);
             }
         });
     };
@@ -78,7 +78,7 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
                 <>
                     <Segment clearing basic className={"padding-none"}>
                         <Button floated='right' icon labelPosition='left' positive size='small' onClick={() => setOpenModal(true)}>
-                            <Icon name='add' /> { t("Adicionar aluno") }
+                            <Icon name='add' /> { t("Adicionar estudante") }
                         </Button>
                     </Segment>
                     <Table striped color="green">
@@ -97,7 +97,7 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
                                     <Table.Cell width="3">
                                         <Button color="red" onClick={() => removeStudent(student.id)}>
                                             <Icon name="trash"/>
-                                            { t("Remover aluno") }
+                                            { t("Remover estudante") }
                                         </Button>
                                     </Table.Cell>
                                 </Table.Row>
@@ -109,10 +109,10 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
 
             {openModal && (
                 <Modal dimmer="blurring" open={openModal} onClose={() => setOpenModal(false)}>
-                    <Modal.Header>{ t("Adicionar aluno") }</Modal.Header>
+                    <Modal.Header>{ t("Adicionar estudante") }</Modal.Header>
                     <Modal.Content>
                         <Form>
-                            <Form.Dropdown placeholder={ t("Procurar pelo email do aluno") } label={ t("Aluno a adicionar") } search selection
+                            <Form.Dropdown placeholder={ t("Procurar pelo email do estudante") } label={ t("Estudante a adicionar") } search selection
                                 loading={searchStudent} options={listOfStudents} onSearchChange={_.debounce(searchStudents, 400)}
                                 onChange={(e, {value}) => setStudentToAdd(
                                     listOfStudents.find((x) => x.value === value),
