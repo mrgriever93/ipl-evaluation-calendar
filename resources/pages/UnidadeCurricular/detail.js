@@ -144,7 +144,7 @@ const New = () => {
                                 <Header as="span">{(isEditMode ? t('Editar') : t('Nova')) + " " + t("Unidades Curriculares")}</Header>
                                 <div>
                                     { isEditMode && (
-                                        <Button onClick={refreshUc} color="blue" icon loading={isSaving} labelPosition="left" title={"Atualizar dados atraves do WebService"}>
+                                        <Button onClick={refreshUc} color="blue" icon loading={isSaving} title={"Atualizar dados atraves do WebService"}>
                                             <Icon name={"refresh"} loading={isSearchLoading}/>
                                         </Button>
                                     )}
