@@ -112,7 +112,7 @@ const PopupEvaluationDetail = ( {isPublished, isOpen, onClose, examId} ) => {
     };
 
     return (
-        <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={closeModalHandler}>
+        <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={closeModalHandler} width={ !ShowComponentIfAuthorized([SCOPES.VIEW_COMMENTS, SCOPES.ADD_COMMENTS]) ? 'mini' : 'small'}>
             <Modal.Header>
                 { t('Detalhes da avaliação') }
                 <span className='heading-description'>{ examDetailObject?.method?.description ? " (" + examDetailObject?.method?.description + ")": '' }</span>

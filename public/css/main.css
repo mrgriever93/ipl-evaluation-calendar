@@ -823,6 +823,10 @@ div.inline{
     background: #ffe5e5;
 }
 
+.exam-detail-content:empty {
+    display: none;
+}
+
 .table-week > table {
     user-select: none;
 }

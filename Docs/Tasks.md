@@ -1,11 +1,14 @@
 # TODO
 
 # Miguel
+- [ ] BUG! - Não é possivel ver os exames associados ao calendário quando entramos no detalhe
+- [ ] BUG!
+- [ ] BUG!
 - [ ] Adicionar Policies na parte do servidor
 - [X] Devolver Roles de User e guardar na local storage
 - [ ] Publicar um calendário
         - [ ] Se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar e receber feedback
-    - [ ] A direção e o Conselho Pedagógico deve ver apenas botões para Aprovar ou Rejeitar
+    - [X] A direção e o Conselho Pedagógico deve ver apenas botões para Aprovar ou Rejeitar
         - [ ] Se rejeitarem devem poder adicionar um comentário/parecer
     - [ ] Ao publicar um calendário, confirmar se uma UC que tenha sido iniciada a marcação dos elementos de avaliação, tem todos os métodos preenchidos, 
     e caso não tenha, dar erro para o utilizador marcar todos os métodos. 
@@ -16,7 +19,7 @@
   - [ ] Ao entrar no detalhe desse calendário consigo ver todas as informações como se pudesse editar na barra de informações superior (mesmo 
   estando em fase "Em edição (GOP)")
   - [ ] Se entrar dentro do detalhe de uma avaliação, consigo adicionar e gerir os comentários
-- [ ] Detalhe de exame fica com espaco vazio caso não possa ver os comentários
+- [?] Detalhe de exame fica com espaco vazio caso não possa ver os comentários
 - [ ] Meus calendarios/todos -> tem de se atualizar o filtro para ter as permissoes
   - [ ] Botao com role mais especifica? (sendo a direcao ou gop) ou grupo com flag? (tipo user generico)
 

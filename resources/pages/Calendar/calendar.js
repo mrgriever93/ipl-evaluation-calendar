@@ -531,6 +531,7 @@ const Calendar = () => {
             const currentDate = moment(day.date);
             // get exams for this date
             const existingExamsAtThisDate = examList.filter((exam) => {
+                // TODO - Erro parece vir daqui
                 return  exam.academic_year === year &&
                         currentDate.isBetween(exam.date_start, exam.date_end, 'date','[]');
             });
