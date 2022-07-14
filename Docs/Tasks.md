@@ -35,6 +35,14 @@
   - [X] Campo na BD criado (group_id) > rever melhor mais tarde
 - [ ] Ir para o dia de hoje no calendario
 
+- [ ] Popup de Revisao
+  - adicionar as datas dos exames marcados
+
+- [ ] Popup de submissao
+  - validar botao de publicar conforme o grupo
+
+- [ ] Adicionar filtragem por UCs no detalhe
+
 **Todas as paginas**
 - [ ] Rever traduções
 - [ ] Adicionar titulo as paginas
