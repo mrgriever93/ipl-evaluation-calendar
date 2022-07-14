@@ -350,20 +350,21 @@ Melhorias:
 ## Alterar na BD
 
 ```
-ALTER TABLE `calendar_v2`.`course_unit_logs`
-DROP FOREIGN KEY `course_unit_logs_course_unit_id_foreign`;
-ALTER TABLE `calendar_v2`.`course_unit_logs`
-ADD COLUMN `course_unit_group_id` BIGINT UNSIGNED NULL AFTER `course_unit_id`,
-CHANGE COLUMN `course_unit_id` `course_unit_id` BIGINT UNSIGNED NULL ,
-ADD INDEX `course_unit_logs_course_unit_group_id_foreign_idx` (`course_unit_group_id` ASC) VISIBLE;
+    ALTER TABLE `calendar_v2`.`course_unit_logs`
+    DROP FOREIGN KEY `course_unit_logs_course_unit_id_foreign`;
 
-ALTER TABLE `calendar_v2`.`course_unit_logs`
-ADD CONSTRAINT `course_unit_logs_course_unit_id_foreign`
-FOREIGN KEY (`course_unit_id`)
-REFERENCES `calendar_v2`.`course_units` (`id`),
-ADD CONSTRAINT `course_unit_logs_course_unit_group_id_foreign`
-FOREIGN KEY (`course_unit_group_id`)
-REFERENCES `calendar_v2`.`course_unit_groups` (`id`)
-ON DELETE NO ACTION
-ON UPDATE NO ACTION;
+    ALTER TABLE `calendar_v2`.`course_unit_logs`
+    ADD COLUMN `course_unit_group_id` BIGINT UNSIGNED NULL AFTER `course_unit_id`,
+    CHANGE COLUMN `course_unit_id` `course_unit_id` BIGINT UNSIGNED NULL ,
+    ADD INDEX `course_unit_logs_course_unit_group_id_foreign_idx` (`course_unit_group_id` ASC) VISIBLE;
+
+    ALTER TABLE `calendar_v2`.`course_unit_logs`
+    ADD CONSTRAINT `course_unit_logs_course_unit_id_foreign`
+    FOREIGN KEY (`course_unit_id`)
+    REFERENCES `calendar_v2`.`course_units` (`id`),
+    ADD CONSTRAINT `course_unit_logs_course_unit_group_id_foreign`
+    FOREIGN KEY (`course_unit_group_id`)
+    REFERENCES `calendar_v2`.`course_unit_groups` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
 ```

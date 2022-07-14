@@ -156,6 +156,30 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
     const closeSubmitModalHandler = () => {
         setOpenSubmitModal(false);
     }
+    
+    const acceptCalendarHandler = () => {
+        if( localStorage.getItem('groups')?.indexOf('board') >= 0 ) {
+            // update phase to published and publish calendar as definitive
+            console.log("publicado");
+        }
+
+        if( localStorage.getItem('groups')?.indexOf('pedagogic') >= 0 ) {
+            // update phase directly to edition GOP
+            console.log("edição GOP");
+        }
+    }
+
+    const rejectCalendarHandler = () => {
+        if( localStorage.getItem('groups')?.indexOf('board') >= 0 ) {
+            // change phase back to edition GOP
+            console.log("edição GOP");
+        }
+
+        if( localStorage.getItem('groups')?.indexOf('pedagogic') >= 0 ) {
+            // change phase back to edition Coordinator
+            console.log("edição CC");
+        }
+    }    
 
     const updatePhaseHandler = (newPhase) => {
         setCalendarPhase(newPhase);
@@ -196,12 +220,25 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                     { !isLoading && (
                         !isPublished ? (
                             <>
-                                { (SCOPES.PUBLISH_CALENDAR || calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0) && (
-                                    <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE]}>
-                                        <Button color="teal" onClick={openSubmitModalHandler}>Submeter</Button>
-                                    </ShowComponentIfAuthorized>
-                                )
-                                }
+                                { localStorage.getItem('groups')?.indexOf('board') >= 0 || localStorage.getItem('groups')?.indexOf('pedagogic') >= 0 ? (
+                                    <>
+                                        { ( calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0) && (
+                                            <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE]}>
+                                                <Button color="red" onClick={rejectCalendarHandler}>{ t('Rejeitar') }</Button>
+                                                <Button color="green" onClick={acceptCalendarHandler}>{ t('Validar') }</Button>
+                                            </ShowComponentIfAuthorized>
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        { (SCOPES.PUBLISH_CALENDAR || calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0) && (
+                                            <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE]}>
+                                                <Button color="teal" onClick={openSubmitModalHandler}>{ t('Submeter') }</Button>
+                                            </ShowComponentIfAuthorized>
+                                        )}
+                                    </>
+                                ) }
+                                
                             </>
                         ) : (
                             <ShowComponentIfAuthorized permission={[SCOPES.CREATE_COPY]}>
