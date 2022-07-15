@@ -52,6 +52,7 @@ const Calendar = () => {
     const [calendarPhase, setCalendarPhase] = useState(true);
 
     const [weekTen, setWeekTen] = useState(0);
+    const [weekToday, setWeekToday] = useState(0);
 
     const [openInterruptionModal, setOpenInterruptionModal] = useState(false);
     const [interruptionModalInfo, setInterruptionModalInfo] = useState({});
@@ -311,6 +312,7 @@ const Calendar = () => {
                     setGeneralInfo(general_info);
                     setIsLoading(false);
                     setWeekTen(moment(week_ten).week());
+                    setWeekToday(moment().format('w'));
 
                     setIsCalendarInfoLoading(false);
                 } else {
@@ -449,7 +451,7 @@ const Calendar = () => {
             // TODO check date_start/date_end
             const existingExamsAtThisDate = examList.filter((exam) => moment(exam.date_start).isSame(moment(day.date), 'day'));
             return (
-                <Table.HeaderCell key={index} textAlign="center">
+                <Table.HeaderCell key={index} textAlign="center" className={(moment().isSame(day.date, 'days') ? "current-day" : "")}>
                     {moment(day.date).format('DD-MM-YYYY')}
                     { (!isPublished && existingExamsAtThisDate?.length === 0 && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) && (
                         ( existingExamsAtThisDate.length > 0 ? (
@@ -656,7 +658,7 @@ const Calendar = () => {
                                         interruptionDays = 0;
                                         alreadyAddedColSpan = false;
                                         return (
-                                            <div key={tableIndex} className={"table-week"}>
+                                            <div key={tableIndex} className={"table-week" + (weekToday - 1 == week ? " current-week" : "")}>
                                                 {weekTen === week && (
                                                     <Divider horizontal style={{marginTop: "var(--space-l)"}}>
                                                         <Header as='h4' style={{textTransform: "uppercase"}}>

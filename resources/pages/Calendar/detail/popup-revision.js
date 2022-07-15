@@ -41,9 +41,13 @@ const PopupRevisionDetail = ( {isOpen, onClose, warnings} ) => {
                                                                 {method.description}
                                                             </Header>
                                                         </Table.Cell>
-                                                        <Table.Cell style={{width: '25%' }} textAlign="center">{ moment(method.exam_date_start).format('DD MMMM, YYYY') === moment(method.exam_date_end).format('DD MMMM, YYYY') ? 
-                                                                        moment(method.exam_date_start).format('DD MMMM, YYYY') : 
-                                                                        moment(method.exam_date_start).format('DD MMMM, YYYY') + " - " + moment(method.exam_date_end).format('DD MMMM, YYYY') }</Table.Cell>
+                                                        <Table.Cell style={{width: '25%' }} textAlign="center">
+                                                            { method.exam_date_start ? (
+                                                                        moment(method.exam_date_start).format('DD MMMM, YYYY') === moment(method.exam_date_end).format('DD MMMM, YYYY') ?
+                                                                        moment(method.exam_date_start).format('DD MMMM, YYYY') :
+                                                                        moment(method.exam_date_start).format('DD MMMM, YYYY') + " - " + moment(method.exam_date_end).format('DD MMMM, YYYY')
+                                                            ) : ( "-")}
+                                                        </Table.Cell>
                                                         <Table.Cell style={{width: '18%' }}>{ method.epoch }</Table.Cell>
                                                     </Table.Row>
                                                 ))}

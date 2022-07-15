@@ -831,7 +831,7 @@ div.inline{
     .exam-detail-info {
         flex: 3;
     }
-    
+
     .exam-detail-content {
         flex: 4;
     }
@@ -924,4 +924,12 @@ div.inline{
 .calendar-loader .ui.placeholder.year-lines {
     background-image: linear-gradient(to right,rgb(64 63 63 / 8%) 0,rgb(68 68 68 / 15%) 15%,rgb(177 177 177 / 8%) 30%);
     margin: 0;
+}
+
+.table-week.current-week {
+    box-shadow: 0 0 7px 1px #000000;
+}
+.ui.table thead th.current-day {
+    color: #fff;
+    background: #3699ed;
 }
