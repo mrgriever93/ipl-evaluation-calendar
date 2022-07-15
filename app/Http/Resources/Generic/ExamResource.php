@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Generic;
 
-use App\Http\Resources\Generic\CourseUnitExamResource;
-use App\Http\Resources\Generic\ExamCommentResource;
+use App\Http\Resources\MethodResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ExamResource extends JsonResource

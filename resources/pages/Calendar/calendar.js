@@ -531,7 +531,6 @@ const Calendar = () => {
             const currentDate = moment(day.date);
             // get exams for this date
             const existingExamsAtThisDate = examList.filter((exam) => {
-                // TODO - Erro parece vir daqui
                 return  exam.academic_year === year &&
                         currentDate.isBetween(exam.date_start, exam.date_end, 'date','[]');
             });
@@ -545,7 +544,7 @@ const Calendar = () => {
                         // For the Future (drag and drop
                         // draggable="false" onDragStart={drag}
                         <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )}
-                            title={ (exam.in_class ? t('Aula') + " - " : "" ) + exam.course_unit + " - " + (exam.method?.description || exam.method?.name) }
+                            title={ (exam.in_class ? t('Aula') + " - " : "" ) + exam.course_unit.name + " - " + (exam.method?.description || exam.method?.name) }
                             color="blue" key={exam.id}
                             onClick={() => openExamDetailHandler(year, exam)}>
                             { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
@@ -558,7 +557,7 @@ const Calendar = () => {
                                 </div>
                             )}
                             <div className="btn-exam-content">
-                                <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : (exam.in_class ? t('Aula') + " - " : "" ) ) + (exam.course_unit_initials || exam.course_unit) }</div>
+                                <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : (exam.in_class ? t('Aula') + " - " : "" ) ) + (exam.course_unit.initials || exam.course_unit.name) }</div>
                                 <div className="btn-exam-type">{ (exam.method?.description || exam.method?.name) }</div>
                             </div>
                         </Button>
