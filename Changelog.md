@@ -11,6 +11,7 @@
   - Adicionado botão procurar via WebService os detalhes da UC e bloqueio dos campos de edição;
   - Adicionado botão para sincronização/atualização dos dados de uma UC via WebService;
 - Adicionada marcação visual para o dia e semana de hoje
+- Adicionado link para fazer scroll para a semana atual se existir
 
 <ins>Issues corrigidos:</ins>
 - Revisão dos date pickers da criação dos calendários:
@@ -20,10 +21,12 @@
 - Revisão da da dropdown dos anos letivos quando existe mais do que um ano letivo selecionado;
 - Correção de um erro da troca de permissões que acontecia quando abríamos a aplicação pela primeira vez;
 - Correção de um erro ao gravar um calendário, este não ficava visivel na listagem de calendários, porque não estava a associar os grupos que tinham permissão para ver;
+- Revisão das permissões e publicação dos calendários pelos vários utilizadores;
 - Remoção do link para página dos cursos, quando estamos na página dos anos letivos e não fizemos uma sincronização e correção do texto de ajuda que estava errado;
 - Revisão do popup de detalhe de uma avaliação, para quando não temos permissões de ver/adicionar comentários ver um popup mais pequeno apenas com os detalhes;
 - Revisão das traduções onde estavam em falta
 - Revisão do footer e página sobre para adicionar créditos com dados do 1º grupo que começou o projeto e links externos
+- Revisão das permissões dos vários utilizadores na aplicação globalmente;
 
 
 ## Versão 0.9 - 04/07/2022
