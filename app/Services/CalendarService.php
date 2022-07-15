@@ -159,10 +159,18 @@ class CalendarService
 
         if (!$calendar->is_published) {
             $calendar->calendar_phase_id = CalendarPhase::phasePublished();
-            $calendar->version = intval($calendar->version) + 1;
-            $calendar->is_published = true;
+            if(Auth::user()->groups()->Coordinator()) {
+                // add 0.1 to version because is a coordinator
+                $calendar->version = floatval($calendar->version) + 0.1;
+                $calendar->is_temporary = true;
+                $calendar->is_published = false;
+            } else if(Auth::user()->groups()->Gop()){
+                // add 1.0 to version because is the gop
+                $calendar->version = intval($calendar->version) + 1;
+                $calendar->is_temporary = false;
+                $calendar->is_published = true;
+            }
             $calendar->save();
-
 
             // delete old viewers
             CalendarViewers::where("calendar_id", $calendar->id)->delete();
@@ -175,21 +183,26 @@ class CalendarService
             // insert all new viewers groups
             CalendarViewers::insert($viewers);
 
+            // if coordinator, copy the calendar to work on
+            if(Auth::user()->groups()->Coordinator()){
+                self::copyCalendar($calendar);
+            }
             CalendarPublished::dispatch($calendar);
         }
     }
 
-    public static function copyCalendar( Calendar $calendar)
+    public static function copyCalendar(Calendar $calendar)
     {
         Calendar::where('id', '!=', $calendar->id)
             ->where('course_id', $calendar->course_id)
             ->where('semester_id', $calendar->semester_id)
             ->delete();
+
         // clone new calendar
         $clone = $calendar->replicate();
         $clone->previous_calendar_id = $calendar->id;
         // validate if we want to add 0.1 or 1.0
-        $clone->version = floatval(intval(explode('.', $calendar->version)[0])  . "." .intval(explode('.', $calendar->version)[1]) + 1);
+        //$clone->version = floatval(intval(explode('.', $calendar->version)[0])  . "." .intval(explode('.', $calendar->version)[1]) + 1);
         // make sure the flags are correct
         $clone->is_published = false;
         $clone->is_temporary = false;
