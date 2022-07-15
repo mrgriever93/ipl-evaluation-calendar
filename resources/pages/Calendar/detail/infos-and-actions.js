@@ -17,7 +17,7 @@ import PopupRevisionDetail from "./popup-revision";
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublished, isTemporary, epochsViewHandler}) => {
+const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublished, isTemporary, epochsViewHandler, hasCurrentWeek = false}) => {
     const { t } = useTranslation();
     // get URL params
     let { id } = useParams();
@@ -83,45 +83,12 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
         setMethodsLoaded(true);
     }, [warnings]);
 
-    // const patchCalendar = (fieldToUpdate, value) => axios.patch(`/calendar/${calendarId}`, {
-    //     [fieldToUpdate]: value,
-    // });
-
-    // const updateCalendarStatus = (newTemporaryStatus) => {
-    //     patchCalendar('temporary', newTemporaryStatus).then((response) => {
-    //         if (response.status === 200) {
-    //             setIsTemporary(newTemporaryStatus);
-    //             toast(t('calendar.Estado do calendário atualizado!'), successConfig);
-    //         }
-    //     });
-    // };
-
-    // const updateCalendarPhase = (newCalendarPhase) => {
-    //     setUpdatingCalendarPhase(true);
-    //     patchCalendar('calendar_phase_id', newCalendarPhase).then(
-    //         (response) => {
-    //             setUpdatingCalendarPhase(false);
-    //             if (response.status === 200) {
-    //                 setCalendarPhase(newCalendarPhase);
-    //                 toast(t('calendar.Fase do calendário atualizada!'), successConfig);
-    //             }
-    //         },
-    //     );
-    // };
-
 
     useEffect(() => {
         if (typeof calendarPhase === 'number') {
             setCalendarPermissions(JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((perm) => perm.phase_id === calendarPhase) || []);
         }
     }, [calendarPhase]);
-
-
-    // const handleFaqClick = (e, titleProps) => {
-    //     const {index} = titleProps;
-    //     const newIndex = activeIndex === index ? -1 : index;
-    //     setActiveIndex(newIndex);
-    // };
 
     useEffect(() => {
         setMethodsLoaded(false);
@@ -206,13 +173,33 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
     useEffect(() => {
         epochsViewHandler(activeEpochs);
     }, [activeEpochs]);
+    
+
+
+    const scrollToTodayHandler = (event) => {
+        event.preventDefault();
+
+        var currentWeekEl = document.querySelector('.current-week');
+        if( !currentWeekEl ) {                
+            toast( t('A data de hoje não existe neste calendário.'), errorConfig);
+            return false;
+        } 
+        else {
+            var offsetTop = currentWeekEl.offsetTop;
+            var topSpace = 120;
+            window.scroll({
+                top: (offsetTop + topSpace),
+                behavior: 'smooth'
+            });
+        }
+    }
 
     return (
         <>
             <div className='main-content-title-section'>
                 <div className='main-content-title'>
                     <Header as="h3">
-                        Calendário de Avaliação
+                        { t('Calendário de Avaliação') }
                         <div className='heading-description'>{ calendarInfo?.course?.name_pt ? " (" + calendarInfo.course.name_pt + ")": '' }</div>
                     </Header>
                 </div>
@@ -253,7 +240,14 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                     <Card.Content>
                         <Grid columns={'equal'} divided>
                             <GridColumn>
-                                <Header as="h4">Legenda</Header>
+                                { hasCurrentWeek && (
+                                    <div style={{float: 'right'}}>
+                                        <a onClick={scrollToTodayHandler} title="click to scroll ">{ t('Esta semana') } <Icon name="paper plane outline" /></a>
+                                    </div>
+                                )}
+                                <div>
+                                    <Header as="h4">Legenda</Header>
+                                </div>
                                 { isLoading ? (
                                     <Placeholder>
                                         <Placeholder.Paragraph>

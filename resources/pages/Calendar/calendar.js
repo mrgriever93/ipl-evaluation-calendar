@@ -294,11 +294,12 @@ const Calendar = () => {
                     let endDate = epochs.length > 0 ? epochs[0].end_date : undefined;
                     let initialEpochs = [];
                     epochs.forEach((epoch) => {
-                        if(startDate > moment(epoch.start_date)){
-                            startDate = moment(epoch.start_date);
+                        if(moment(startDate).isAfter(epoch.start_date)){
+                            startDate = epoch.start_date;
                         }
-                        if(endDate < moment(epoch.end_date)){
-                            endDate = moment(epoch.end_date);
+
+                        if(moment(endDate).isBefore(epoch.end_date)){
+                            endDate = epoch.end_date;
                         }
                         setExamList((current) => [...current, ...epoch.exams]);
                         initialEpochs.push(epoch.id);
@@ -600,7 +601,8 @@ const Calendar = () => {
                 <Link to="/"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
             <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings} isLoading={isLoading}
-                             isPublished={isPublished} isTemporary={isTemporary} showingEpochs={showingEpochs} epochsViewHandler={setShowingEpochs} />
+                             isPublished={isPublished} isTemporary={isTemporary} showingEpochs={showingEpochs} epochsViewHandler={setShowingEpochs} 
+                             hasCurrentWeek={ (moment(calendarStartDate, "DD-MM-YYYY").isSameOrBefore(moment()) && moment(calendarEndDate, "DD-MM-YYYY").isSameOrAfter(moment()))  } />
             <AnimatePresence>
                 {isLoading && (<PageLoader animate={pageLoaderAnimate} exit={pageLoaderExit}/>)}
             </AnimatePresence>
