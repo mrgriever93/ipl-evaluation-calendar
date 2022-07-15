@@ -20,8 +20,8 @@ const List = () => {
     const { t } = useTranslation();
     const columns = [
         {name: t('Nome')},
-        {name: 'Unidades Curriculares' },
-        {name: "Número de UC's" },
+        {name: t('Unidades Curriculares') },
+        {name: t("Número de UC's") },
         {name: t('Ações'),  align: 'center', style: {width: '15%'} },
     ];
 
@@ -75,11 +75,16 @@ const List = () => {
     };
 
     const remove = (courseUnitGroupId) => {
+        let transl = t('Ao eliminar o agrupamento, as avaliações e métodos já adicionados continuarão a estar acessiveis, no entanto não conseguirá utilizar este agrupamento para novas avaliações/métodos!');
+        transl += "<br/><strong>";
+        transl += t('Tem a certeza que deseja eliminar este agrupamento de unidades curriculares, em vez de editar?');
+        transl += "</strong>";
+
         let sweetAlertOptions = {
-            title: 'Atenção!',
-            html: 'Ao eliminar o agrupamento, as avaliações e métodos já adicionados continuarão a estar acessiveis, no entanto não conseguirá utilizar este agrupamento para novas avaliações/métodos!<br/><strong>Tem a certeza que deseja eliminar este agrupamento de unidades curriculares, em vez de editar?</strong>',
-            denyButtonText: 'Não',
-            confirmButtonText: 'Sim',
+            title: t('Atenção!'),
+            html: transl,
+            denyButtonText: t('Não'),
+            confirmButtonText: t('Sim'),
             showConfirmButton: true,
             showDenyButton: true,
             confirmButtonColor: '#21ba45',
@@ -95,10 +100,10 @@ const List = () => {
                     loadCourseUnitGroups();
 
                     if (res.status === 200) {
-                        toast('Agrupamento eliminado com sucesso!', successConfig);
+                        toast( t('Agrupamento eliminado com sucesso!'), successConfig);
                     }
                     else {
-                        toast('Ocorreu um problema ao eliminar este agrupamento!', errorConfig);
+                        toast( t('Ocorreu um problema ao eliminar este agrupamento!'), errorConfig);
                     }
                 });
             }
@@ -135,7 +140,7 @@ const List = () => {
 
                 <Card.Content>
                 { filteredResults.length < 1 || isLoading ? (
-                    <EmptyTable isLoading={isLoading} label="Ohh! Não foi possível encontrar Unidades Agrupadas!" />
+                    <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar Unidades Agrupadas!")} />
                     ) : (
                     <Table celled fixed>
                         <Table.Header>
