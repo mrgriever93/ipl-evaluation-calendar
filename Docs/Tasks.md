@@ -20,15 +20,18 @@
 
 **Agrupamentos**
 - [X] Traduções
-- [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
 - [X] Quando se criar um novo agrupamento, rederecionar para o detalhe do grupo criado
+- [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
 
 **Detalhe calendário**
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
+- [X] Ir para o dia de hoje no calendario
+
+
+- trabalho futuro?
+- [ ] Adicionar filtragem por UCs no detalhe
 - [ ] Ao adicionar uma interrupção e eliminar avaliações contínuas, dividir a avaliação em 2 e apaga apenas o dia selecionado para a interrupção
   - [X] Campo na BD criado (group_id) > rever melhor mais tarde
-- [X] Ir para o dia de hoje no calendario
-- [ ] Adicionar filtragem por UCs no detalhe
 
 **Todas as paginas**
 - [ ] Rever traduções
@@ -289,7 +292,7 @@ Melhorias:
 - [X] Rever possível bug na dropdown dos anos letivos quando existe mais do que um ano letivo selecionado
   - [X] Adicionar algo (bold ou icon) a mostrar o ano letivo que esta selecionado no dropdown
 - [ ] Adicionar ação para "selecionar/deselecionar todos" no popup de submissão, para quem pode ver o calendário
-- [X] Botões de "Aceitar/Aceitar com alterações/Rejeitar" para Conselho Pedagógico ou Direção
+- [ ] Botões de "Aceitar/Aceitar com alterações/Rejeitar" para Conselho Pedagógico ou Direção
 - [X] Rever o relatório e a ordem dos vários capítulos
 
 - [X] Erro do "includes of undefined" quando abrimos o calendário
@@ -298,6 +301,10 @@ Melhorias:
 - [X] Remover link dos cursos se nao estiver sincronizado ainda
   - [X] Na pagina dos ano letivos
   - [X] Corrigir texto que estava trocado
+
+## Issues found while writing report
+- [ ] Rever página de Sobre para acrescentar Grupo 1 e adicionar links externos no footer
+- [ ] Rever criação de nova UC. link não está a funcionar como deve ser
 
 
 ## TRABALHO FUTURO:
