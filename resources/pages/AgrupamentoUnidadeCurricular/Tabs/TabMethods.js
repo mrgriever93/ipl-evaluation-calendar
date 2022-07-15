@@ -265,7 +265,7 @@ const UnitTabMethods = ({ groupId, warningsHandler }) => {
     return (
         <div ref={contextRef}>
             { epochs?.length < 1 || isLoading ? (
-                <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar metodos para esta Unidade Curricular!")}/>
+                <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar métodos para esta Unidade Curricular!")}/>
             ) : (
                 <div>
                     { hasWarnings && (
@@ -273,7 +273,7 @@ const UnitTabMethods = ({ groupId, warningsHandler }) => {
                             <Message.Header>{ t('Os seguintes detalhes do Curso precisam da sua atenção:') }</Message.Header>
                             <Message.List>
                                 { hasOverWeight && (
-                                    <Message.Item>{ t('Existem métodos com mais de 100% na avaliacao') }</Message.Item>
+                                    <Message.Item>{ t('Existem métodos com mais de 100% na avaliação') }</Message.Item>
                                 )}
                                 { isUncomplete && (
                                     <Message.Item>{ t('É necessário configurar os métodos para todas as épocas') }</Message.Item>
@@ -296,7 +296,7 @@ const UnitTabMethods = ({ groupId, warningsHandler }) => {
                     <Sticky offset={50} context={contextRef}>
                         <div className='sticky-methods-header'>
                             <Button onClick={() => setOpenClone(true)} icon labelPosition="left" color="yellow">
-                                <Icon name={"clone outline"}/>{ t("Duplicar metodos") }
+                                <Icon name={"clone outline"}/>{ t("Duplicar métodos") }
                             </Button>
                             <Button onClick={onSubmit} color="green" icon labelPosition="left" loading={isSaving} disabled={!formValid}>
                                 <Icon name="save"/>{ t("Guardar") }
@@ -381,7 +381,7 @@ const UnitTabMethods = ({ groupId, warningsHandler }) => {
                                                 {!epochs[index].methods[methodIndex].evaluation_type_id && (
                                                     <div>
                                                         <Icon color='orange' name="warning sign" />
-                                                        { t("Falta selecionar o tipo de avaliacao") }
+                                                        { t("Falta selecionar o tipo de avaliação") }
                                                     </div>
                                                 )}
                                             </Table.Cell>
@@ -424,7 +424,7 @@ const UnitTabMethods = ({ groupId, warningsHandler }) => {
                                 <Table.Footer fullWidth>
                                     <Table.Row>
                                         <Table.HeaderCell colSpan='8'>
-                                            { t("Total pesos avaliacao:") } <Label color={(getEpochValue(index) > 100 ? "red" : (getEpochValue(index) === 100 ? "green" : "yellow"))}>{ (epochs[index].methods || [])?.reduce((a, b) => a + (b?.weight || 0), 0)  }%</Label>
+                                            { t("Total pesos avaliação:") } <Label color={(getEpochValue(index) > 100 ? "red" : (getEpochValue(index) === 100 ? "green" : "yellow"))}>{ (epochs[index].methods || [])?.reduce((a, b) => a + (b?.weight || 0), 0)  }%</Label>
                                             <Button floated='right' icon labelPosition='left' color={"green"} size='small' onClick={() => {addNewMethod(index, item.id);}}>
                                                 <Icon name='plus' /> { t("Adicionar novo método") }
                                             </Button>
@@ -444,7 +444,7 @@ const UnitTabMethods = ({ groupId, warningsHandler }) => {
                 // }}
                 render={({handleSubmit}) => (
                     <Modal onClose={closeModal} onOpen={() => setOpenClone(true)} open={openClone}>
-                        <Modal.Header>{t("Duplicar Métodos")}</Modal.Header>
+                        <Modal.Header>{t("Duplicar métodos")}</Modal.Header>
                         <Modal.Content>
                             <Form>
                                 <Header as="h4">{t("Seleciona que épocas pretendes duplicar")}</Header>

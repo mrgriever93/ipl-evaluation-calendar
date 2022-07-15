@@ -314,16 +314,18 @@
         "Selecionar Tipo de avaliação": "Selecionar Tipo de avaliação",
         "Métodos de avaliação criados com sucesso!": "Métodos de avaliação criados com sucesso!",
         "Não foi possível criar os métodos de avaliação!":  "Não foi possível criar os métodos de avaliação!",
-        "Existem métodos com mais de 100% na avaliação": "Existem métodos com mais de 100% na avaliação",
         "Ohh! Não foi possível encontrar metodos para esta Unidade Curricular!": "Ohh! Não foi possível encontrar metodos para esta Unidade Curricular!",
         "Os seguintes detalhes do Curso precisam da sua atenção:": "Os seguintes detalhes do Curso precisam da sua atenção:",
         "É necessário configurar os métodos para todas as épocas": "É necessário configurar os métodos para todas as épocas",
         "É necessário configurar o todos os tipos de avaliação nos métodos": "É necessário configurar o todos os tipos de avaliação nos métodos",
         "É necessário ter o peso de avaliação em todos os métodos": "É necessário ter o peso de avaliação em todos os métodos",
+        "Existem métodos com mais de 100% na avaliação":  "Existem métodos com mais de 100% na avaliação",
+        "É necessário no minimo configurar algum dos métodos.": "É necessário no minimo configurar algum dos métodos.",
+        "É necessário ter no minimo 100% nos métodos":  "É necessário ter no minimo 100% nos métodos",
         "Tipo de avaliação": "Tipo de avaliação",
         "Nota mínima": "Nota mínima",
         "Peso da avaliação": "Peso da avaliação",
-        "Total pesos avaliacao:": "Total pesos avaliacao:",
+        "Total pesos avaliação:": "Total pesos avaliação:",
         "Adicionar novo método": "Adicionar novo método",
         "Falta adicionar os métodos desta unidade curricular": "Falta adicionar os métodos desta unidade curricular",
         "Falta selecionar o responsável da unidade curricular": "Falta selecionar o responsável da unidade curricular",
@@ -398,7 +400,40 @@
         "A página que tentou aceder, não existe.": "A página que tentou aceder, não existe.",
         "Clique no botão para voltar para uma página inicial.": "Clique no botão para voltar para uma página inicial.",
         "Falta preencher os métodos de avaliação e o responsável.": "Falta preencher os métodos de avaliação e o responsável.",
-        "Falta preencher o responsável.": "Falta preencher o responsável."
+        "Falta preencher o responsável.": "Falta preencher o responsável.",
+
+        "Ao eliminar o agrupamento, as avaliações e métodos já adicionados continuarão a estar acessiveis, no entanto não conseguirá utilizar este agrupamento para novas avaliações/métodos!": "Ao eliminar o agrupamento, as avaliações e métodos já adicionados continuarão a estar acessiveis, no entanto não conseguirá utilizar este agrupamento para novas avaliações/métodos!",
+        "Tem a certeza que deseja eliminar este agrupamento de unidades curriculares, em vez de editar?": "Tem a certeza que deseja eliminar este agrupamento de unidades curriculares, em vez de editar?",
+        "Agrupamento eliminado com sucesso!": "Agrupamento eliminado com sucesso!",
+        "Ocorreu um problema ao eliminar este agrupamento!": "Ocorreu um problema ao eliminar este agrupamento!",
+        "Unidade Curricular": "Unidade Curricular",
+        "Ohh! Não foi possível encontrar Unidades Agrupadas!": "Ohh! Não foi possível encontrar Unidades Agrupadas!",
+        "Número de UC's": "Número de UC's",
+
+        "Métodos já definidos": "Métodos já definidos",
+        "O agrupamento de unidade curricular foi criado com sucesso!": "O agrupamento de unidade curricular foi criado com sucesso!",
+        "O agrupamento de unidade curricular foi editado com sucesso!": "O agrupamento de unidade curricular foi editado com sucesso!",
+        "Editar Agrupamento de Unidades Curriculares": "Editar Agrupamento de Unidades Curriculares",
+        "Novo Agrupamento de Unidades Curriculares": "Novo Agrupamento de Unidades Curriculares",
+        "Se já tiver os métodos definidos, a UC irá estar desativada, não sendo possível agrupá-la.": "Se já tiver os métodos definidos, a UC irá estar desativada, não sendo possível agrupá-la.",
+        "Duplicar métodos": "Duplicar métodos",
+        "Seleciona que épocas pretendes duplicar": "Seleciona que épocas pretendes duplicar",
+        "Época a copiar": "Época a copiar",
+        "Falta selecionar o tipo de avaliação": "Falta selecionar o tipo de avaliação",
+
+
+
+
+
+
+
+
+
+
+
+        "Detalhe de Agrupamento de Unidades Curriculares - ": "Detalhe de Agrupamento de Unidades Curriculares - ",
+
+        "Calendários de Avaliação - IPLeiria": "Calendários de Avaliação - IPLeiria"
 
     }
 }

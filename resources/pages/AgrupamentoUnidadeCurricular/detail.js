@@ -52,7 +52,7 @@ const New = () => {
                 loadCourseUnits(res?.data?.data?.course_units?.map((x) => x.id).join(','));
                 setLoading(false);
                 setCourseUnitGroupDetail(res?.data?.data);
-                document.title = "Detalhe de Agrupamento de Unidades Curriculares - " + "Calendários de Avaliação - IPLeiria";
+                document.title = t("Detalhe de Agrupamento de Unidades Curriculares - ") + t("Calendários de Avaliação - IPLeiria");
             });
         } else {
             loadCourseUnits();
@@ -82,7 +82,7 @@ const New = () => {
         }).then((res) => {
             setIsSaving(false);
             if (res.status >= 200 && res.status < 300) {
-                toast(`O agrupamento de unidade curricular foi ${isEditMode ? 'editado' : 'criado'} com sucesso!`, successConfig);
+                toast(t(`O agrupamento de unidade curricular foi ${isEditMode ? 'editado' : 'criado'} com sucesso!`), successConfig);
             } else {
                 let errorsArray = [];
                 if(typeof res.response.data.errors === 'object' && res.response.data.errors !== null){
@@ -93,7 +93,7 @@ const New = () => {
                     }
                 }
                 setErrorMessages(errorsArray);
-                toast('Existiu um problema ao gravar as alterações!', errorConfig);
+                toast(t('Existiu um problema ao gravar as alterações!'), errorConfig);
             }
         });
     };
@@ -106,7 +106,7 @@ const New = () => {
             <FinalForm onSubmit={onSubmit} initialValues={initialValues} render={({handleSubmit}) => (
                 <Form warning={ errorMessages.length > 0 }>
                     <Card fluid>
-                        <Card.Content header={`${isEditMode ? 'Editar' : 'Novo'} Agrupamento de Unidades Curriculares`} />
+                        <Card.Content header={t(`${isEditMode ? 'Editar' : 'Novo'} Agrupamento de Unidades Curriculares`)} />
                         { errorMessages.length > 0 && (
                             <Card.Content>
                                 <Message warning>
@@ -125,19 +125,19 @@ const New = () => {
                             <Form.Group widths="equal">
                                 <Field name="description_pt">
                                     {({input: descriptionPtInput}) => (
-                                        <Form.Input label="Descrição - PT" {...descriptionPtInput} />
+                                        <Form.Input label={ t("Descrição") + " - PT"} {...descriptionPtInput} />
                                     )}
                                 </Field>
                                 <Field name="description_en">
                                     {({input: descriptionEnInput}) => (
-                                        <Form.Input label="Descrição - EN" {...descriptionEnInput} />
+                                        <Form.Input label={ t("Descrição") + " - EN"} {...descriptionEnInput} />
                                     )}
                                 </Field>
                             </Form.Group>
                             <Form.Group widths="equal">
                                 <Field name="courseUnits">
                                     {({input: courseUnitsInput}) => (
-                                        <Form.Dropdown options={courseUnits} selection multiple search label="Unidades Curriculares" {...courseUnitsInput}
+                                        <Form.Dropdown options={courseUnits} selection multiple search label={t("Unidades Curriculares")} {...courseUnitsInput}
                                             onChange={(e, {value}) => courseUnitsInput.onChange(value)}
                                         />
                                     )}
@@ -150,7 +150,7 @@ const New = () => {
                         <Card.Content>
                             <Button onClick={handleSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving}>
                                 <Icon name={isEditMode ? 'save' : 'plus'}/>
-                                {isEditMode ? 'Guardar' : 'Criar'}
+                                {isEditMode ? t('Guardar') : t('Criar')}
                             </Button>
                         </Card.Content>
                     </Card>

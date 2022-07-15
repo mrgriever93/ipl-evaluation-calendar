@@ -1,9 +1,6 @@
 # TODO
 
 # Miguel
-- [ ] BUG! - Não é possivel ver os exames associados ao calendário quando entramos no detalhe
-- [ ] BUG!
-- [ ] BUG!
 - [ ] Adicionar Policies na parte do servidor
 - [X] Devolver Roles de User e guardar na local storage
 - [ ] Publicar um calendário
@@ -27,7 +24,7 @@
 **Agrupamentos**
 - [X] Ver lista (tem erro)
 - [X] Métodos
-- [ ] Traduções
+- [X] Traduções
 - [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
 - [ ] Quando se criar um novo agrupamento, refderecionar para o detalhe do criado
 
