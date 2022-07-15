@@ -68,7 +68,7 @@ class CourseUnitGroupController extends Controller
 
             CourseUnit::where('course_unit_group_id', null)->whereIn('id', $request->get('course_units'))->update(['course_unit_group_id' => $newCourseUnitGroup->id]);
 
-            return response()->json("Created!", Response::HTTP_CREATED);
+            return response()->json($newCourseUnitGroup->id, Response::HTTP_CREATED);
         }
 
         return response()->json("Existing methods for more than 1 course unit in the group!", Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -98,10 +98,12 @@ class CourseUnitGroupController extends Controller
         if(!empty($removing_ucs)){
             DB::table("course_unit_method")->whereIn("course_unit_id", $removing_ucs)->delete();
 
+            $ucs_text = CourseUnit::select(DB::raw('CONCAT("(", code, ") ", name_pt) AS name'))->whereIn("id", $removing_ucs)->pluck("name");
+            //implode(", ", $removing_ucs)
             UnitLog::create([
                 "course_unit_group_id"  => $courseUnitGroup->id,
                 "user_id"               => Auth::id(),
-                "description"           => "Removidos métodos de avaliação á UCs '" . implode(", ", $removing_ucs) . "' por '" . Auth::user()->name . "'."
+                "description"           => "Removidos métodos de avaliação á UCs '" . $ucs_text->join(', ', ' e ') . "' por '" . Auth::user()->name . "'."
             ]);
         }
 
@@ -117,10 +119,12 @@ class CourseUnitGroupController extends Controller
             }
             DB::table("course_unit_method")->insert($newInserts);
 
+            $ucs_text = CourseUnit::select(DB::raw('CONCAT("(", code, ") ", name_pt) AS name'))->whereIn("id", $adding_ucs)->pluck("name");
+            //implode(", ", $adding_ucs)
             UnitLog::create([
                 "course_unit_group_id"  => $courseUnitGroup->id,
                 "user_id"               => Auth::id(),
-                "description"           => "Adicionados métodos de avaliação á UCs '" . implode(", ", $adding_ucs) . "' por '" . Auth::user()->name . "'."
+                "description"           => "Adicionados métodos de avaliação á UCs '" . $ucs_text->join(', ', ' e ') . "' por '" . Auth::user()->name . "'."
             ]);
         }
 

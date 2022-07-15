@@ -83,6 +83,9 @@ const New = () => {
             setIsSaving(false);
             if (res.status >= 200 && res.status < 300) {
                 toast(t(`O agrupamento de unidade curricular foi ${isEditMode ? 'editado' : 'criado'} com sucesso!`), successConfig);
+                if(!isEditMode){
+                    navigate("/agrupamento-unidade-curricular/edit/" + res.data);
+                }
             } else {
                 let errorsArray = [];
                 if(typeof res.response.data.errors === 'object' && res.response.data.errors !== null){
