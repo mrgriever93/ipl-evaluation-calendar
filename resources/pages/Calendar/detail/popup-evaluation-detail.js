@@ -10,21 +10,6 @@ import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthor
 import SCOPES from '../../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
-
-const checkIfAuthorized = (permission) => {
-    const userScopes = JSON.parse(localStorage.getItem('scopes'));
-    if(userScopes){
-        if (Array.isArray(permission)) {
-            if (permission.some((per) => userScopes.includes(per))) {
-                return true;
-            }
-        } else {
-            return userScopes.includes(permission);
-        }
-    }
-    return false;
-};
-
 const PopupEvaluationDetail = ( {isPublished, isOpen, onClose, examId} ) => {
     // const history = useNavigate();
     const { t } = useTranslation();
@@ -35,6 +20,20 @@ const PopupEvaluationDetail = ( {isPublished, isOpen, onClose, examId} ) => {
     const [showIgnoredComments, setShowIgnoredComments] = useState(false);
     const [commentText, setCommentText] = useState(undefined);
     const [commentsList, setCommentsList] = useState([]);
+
+    const checkIfAuthorized = (permission) => {
+        const userScopes = JSON.parse(localStorage.getItem('scopes'));
+        if(userScopes){
+            if (Array.isArray(permission)) {
+                if (permission.some((per) => userScopes.includes(per))) {
+                    return true;
+                }
+            } else {
+                return userScopes.includes(permission);
+            }
+        }
+        return false;
+    };
 
     useEffect(() => {
         if(examId) {

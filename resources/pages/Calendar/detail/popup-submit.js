@@ -201,33 +201,6 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                                         )}
                                     </Form.Group>
                                 </Grid.Column>
-                                <Grid.Column>
-                                    { /*
-                                    <Header as={"h4"}>
-                                        <Icon name={"users"} size={"big"} color={"grey"}/>
-                                        { t("UCs a serem preenchidas") }
-                                    </Header>
-                                    <Form.Group grouped>
-                                        { isPublished ? (
-                                            <div>{ t("Todos os grupos vao ver este calendario") }</div>
-                                        ) : (
-                                            <>
-                                                { calendarGroups && calendarGroups.map((item, indexGroup) => (
-                                                    <Form.Field key={indexGroup}>
-                                                        <Checkbox label={item.name} checked={item.selected}
-                                                                  onChange={(e, {checked}) => handleGroupChange(item.id, checked)} />
-                                                    </Form.Field>
-                                                ))}
-                                            </>
-                                        )}
-                                        { groupViewersLoading && (
-                                            <Dimmer active inverted>
-                                                <Loader indeterminate>{t('A carregar grupos')}</Loader>
-                                            </Dimmer>
-                                        )}
-                                    </Form.Group>
-                                    */}
-                                </Grid.Column>
                             </Grid.Row>
                         </Grid>
                     </Form>

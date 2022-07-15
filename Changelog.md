@@ -1,5 +1,14 @@
 # Changelog
 
+## Versão 1.0 - 18/07/2022
+<ins>Novas features:</ins>
+- Adicionadas datas dos exames ao popup de revisão para maior/melhor informação disponível a rever
+- 
+
+<ins>Issues corrigidos:</ins>
+- asdasda
+- 
+
 ## Versão 0.9 - 04/07/2022
 <ins>Novas features:</ins>
 - Adicionada uma nova funcionalidade que permite esconder épocas, permitindo reduzir o calendário visivel
