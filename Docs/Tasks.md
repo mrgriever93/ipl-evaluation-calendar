@@ -26,13 +26,13 @@
 - [X] Métodos
 - [X] Traduções
 - [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
-- [ ] Quando se criar um novo agrupamento, refderecionar para o detalhe do criado
+- [X] Quando se criar um novo agrupamento, rederecionar para o detalhe do grupo criado
 
 **Detalhe calendário**
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - [ ] Ao adicionar uma interrupção e eliminar avaliações contínuas, dividir a avaliação em 2 e apaga apenas o dia selecionado para a interrupção
   - [X] Campo na BD criado (group_id) > rever melhor mais tarde
-- [ ] Ir para o dia de hoje no calendario
+- [X] Ir para o dia de hoje no calendario
 - [ ] Adicionar filtragem por UCs no detalhe
 
 **Todas as paginas**

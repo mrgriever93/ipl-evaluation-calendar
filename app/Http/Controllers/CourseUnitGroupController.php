@@ -68,7 +68,7 @@ class CourseUnitGroupController extends Controller
 
             CourseUnit::where('course_unit_group_id', null)->whereIn('id', $request->get('course_units'))->update(['course_unit_group_id' => $newCourseUnitGroup->id]);
 
-            return response()->json("Created!", Response::HTTP_CREATED);
+            return response()->json($newCourseUnitGroup->id, Response::HTTP_CREATED);
         }
 
         return response()->json("Existing methods for more than 1 course unit in the group!", Response::HTTP_UNPROCESSABLE_ENTITY);
