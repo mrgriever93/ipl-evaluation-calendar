@@ -2,19 +2,28 @@ import axios from 'axios';
 import _ from 'lodash';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
-// import {useParams, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-// import {Field, Form as FinalForm} from 'react-final-form';
 import { Button, Form, Header, Icon, List, Modal, Comment, Divider, Segment, Dimmer, Loader } from 'semantic-ui-react';
 import {toast} from 'react-toastify';
-// import Swal from 'sweetalert2';
-// import withReactContent from 'sweetalert2-react-content';
 
 import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
 import SCOPES from '../../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
-// const SweetAlertComponent = withReactContent(Swal);
+
+const checkIfAuthorized = (permission) => {
+    const userScopes = JSON.parse(localStorage.getItem('scopes'));
+    if(userScopes){
+        if (Array.isArray(permission)) {
+            if (permission.some((per) => userScopes.includes(per))) {
+                return true;
+            }
+        } else {
+            return userScopes.includes(permission);
+        }
+    }
+    return false;
+};
 
 const PopupEvaluationDetail = ( {isPublished, isOpen, onClose, examId} ) => {
     // const history = useNavigate();
@@ -26,7 +35,6 @@ const PopupEvaluationDetail = ( {isPublished, isOpen, onClose, examId} ) => {
     const [showIgnoredComments, setShowIgnoredComments] = useState(false);
     const [commentText, setCommentText] = useState(undefined);
     const [commentsList, setCommentsList] = useState([]);
-    const [calendarPermissions, setCalendarPermissions] = useState(JSON.parse(localStorage.getItem('calendarPermissions')) || []);
 
     useEffect(() => {
         if(examId) {
@@ -53,10 +61,6 @@ const PopupEvaluationDetail = ( {isPublished, isOpen, onClose, examId} ) => {
         setCommentsList([]);
         onClose();
     };
-
-    // useEffect(() => {
-    //     console.log(examDetailObject);
-    // }, [examDetailObject]);
 
     const addComment = (examId) => {
         if(!commentText || commentText.trim().length == 0) {
@@ -112,7 +116,7 @@ const PopupEvaluationDetail = ( {isPublished, isOpen, onClose, examId} ) => {
     };
 
     return (
-        <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={closeModalHandler} width={ !ShowComponentIfAuthorized([SCOPES.VIEW_COMMENTS, SCOPES.ADD_COMMENTS]) ? 'mini' : 'small'}>
+        <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={closeModalHandler} size={ !checkIfAuthorized([SCOPES.VIEW_COMMENTS, SCOPES.ADD_COMMENTS]) ? 'tiny' : 'large'}>
             <Modal.Header>
                 { t('Detalhes da avaliação') }
                 <span className='heading-description'>{ examDetailObject?.method?.description ? " (" + examDetailObject?.method?.description + ")": '' }</span>

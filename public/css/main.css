@@ -772,6 +772,10 @@ div.inline{
     padding: 1.5rem;
 }
 
+.exam-detail-content:empty {
+    display: none;
+}
+
 .exam-detail-content-header {
     align-items: flex-end;
     border-bottom: 1px solid #ccc;
@@ -823,8 +827,34 @@ div.inline{
     background: #ffe5e5;
 }
 
-.exam-detail-content:empty {
-    display: none;
+@media screen and (max-width: 991px) {
+    .exam-detail-info {
+        flex: 3;
+    }
+    
+    .exam-detail-content {
+        flex: 4;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .ui.modal > .content > .exam-detail-modal {
+        flex-direction: column;
+        margin: -1rem;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .exam-detail-info,
+    .exam-detail-content {
+        flex: auto;
+        height: auto;
+        overflow: visible;
+    }
+
+    .exam-detail-content {
+        padding-top: var(--space-l);
+    }
 }
 
 .table-week > table {

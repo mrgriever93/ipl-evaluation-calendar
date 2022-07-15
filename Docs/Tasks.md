@@ -19,7 +19,6 @@
   - [ ] Ao entrar no detalhe desse calendário consigo ver todas as informações como se pudesse editar na barra de informações superior (mesmo 
   estando em fase "Em edição (GOP)")
   - [ ] Se entrar dentro do detalhe de uma avaliação, consigo adicionar e gerir os comentários
-- [?] Detalhe de exame fica com espaco vazio caso não possa ver os comentários
 - [ ] Meus calendarios/todos -> tem de se atualizar o filtro para ter as permissoes
   - [ ] Botao com role mais especifica? (sendo a direcao ou gop) ou grupo com flag? (tipo user generico)
 
