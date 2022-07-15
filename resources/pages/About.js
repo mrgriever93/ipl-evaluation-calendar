@@ -6,7 +6,7 @@ const About = () => {
     return (
         <Container>
             <Segment raised placeholder textAlign="center" color='green'>
-                <Header as="h2" content="Créditos V3:"/>
+                <Header as="h2" content="Créditos V3 - 2021/2022:"/>
                 <p>
                     <a href='https://github.com/mrgriever93' target="_blank">
                         <Icon name="github"/>
@@ -29,7 +29,7 @@ const About = () => {
                 </p>
             </Segment>
             <Segment placeholder textAlign="center" color='orange'>
-                <Header as="h2" content="Créditos V2:"/>
+                <Header as="h2" content="Créditos V2 - 2020/2021:"/>
                 <p>Francisco Fernandes - 2161349</p>
                 <p>
                     <a href='https://github.com/RafaelFerreiraTVD' target="_blank">
@@ -43,7 +43,7 @@ const About = () => {
                 </p>
             </Segment>
             <Segment placeholder textAlign="center" color='red'>
-                <Header as="h2" content="Créditos V1:"/>
+                <Header as="h2" content="Créditos V1 - 2019/2020:"/>
                 <p>Bruno Pereira - 2171193</p>
                 <p>Tiago Lourenço - 2151564</p>
             </Segment>
