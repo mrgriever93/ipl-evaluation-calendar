@@ -190,11 +190,13 @@ class CalendarService
             // insert all new viewers groups
             CalendarViewers::insert($viewers);
 
+            $newId = null;
             // if coordinator, copy the calendar to work on
             if(Auth::user()->groups()->Coordinator()){
-                self::copyCalendar($calendar);
+                $newId = self::copyCalendar($calendar);
             }
             CalendarPublished::dispatch($calendar);
+            return $newId;
         }
     }
 
@@ -259,6 +261,7 @@ class CalendarService
         }
         // insert all new viewers groups
         CalendarViewers::insert($viewers);
+        return $clone->id;
     }
 
     public static function info(Request $request)

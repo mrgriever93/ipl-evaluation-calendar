@@ -64,16 +64,6 @@ class CalendarFilters extends QueryFilters
             }
             return $this->builder->whereIn('course_id', Auth::user()->courseUnits->pluck('course_id'))->orPublished();
         }
-
-        // TODO validate if this is the best option
-        $user_groups = [];
-        foreach ($user->groups->toArray() as $group){
-            $user_groups[] = $group["id"];
-        }
-        $this->builder->whereHas('viewers', function (Builder $query) use($user_groups) {
-            $query->whereIn('group_id', $user_groups);
-        });
-        // TODO END
     }
 
 

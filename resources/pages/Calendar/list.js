@@ -232,7 +232,7 @@ const CalendarList = () => {
                         <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar Calendarios!")}/>
                     ) : (
                         <>
-                            <Table celled fixed>
+                            <Table celled fixed striped selectable>
                                 <Table.Header>
                                     <Table.Row key={'table_header'}>
                                         {columns.map(({name, align, restrictedToCreators, permission, style}, index) => (
