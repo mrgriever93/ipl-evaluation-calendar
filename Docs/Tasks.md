@@ -1,14 +1,12 @@
 # TODO
 
 # Miguel
+- [ ] Ao Publicar um calendário, se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar
+- [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
+**Detalhe calendário**
+- [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - [ ] Adicionar Policies na parte do servidor
-- [ ] Publicar um calendário
-        - [ ] Se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar e receber feedback
-    - [X] A direção e o Conselho Pedagógico deve ver apenas botões para Aprovar ou Rejeitar
-        - [ ] Se rejeitarem devem poder adicionar um comentário/parecer
-    - [ ] Ao publicar um calendário, confirmar se uma UC que tenha sido iniciada a marcação dos elementos de avaliação, tem todos os métodos preenchidos, 
-    e caso não tenha, dar erro para o utilizador marcar todos os métodos. 
-
+    
 **Testes de roles:**
 - [ ] Ao entrar como CC, e selecionar todos os calendários:
   - [ ] Consigo ver calendários que não estão publicados nem como temporários nem como definitivos, e não são do "meu" curso. Não devia.
@@ -18,26 +16,19 @@
 - [ ] Meus calendarios/todos -> tem de se atualizar o filtro para ter as permissoes
   - [ ] Botao com role mais especifica? (sendo a direcao ou gop) ou grupo com flag? (tipo user generico)
 
-**Agrupamentos**
-- [X] Traduções
-- [X] Quando se criar um novo agrupamento, rederecionar para o detalhe do grupo criado
-- [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
-
-**Detalhe calendário**
-- [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
-- [X] Ir para o dia de hoje no calendario
-
-
-- trabalho futuro?
-- [ ] Adicionar filtragem por UCs no detalhe
-- [ ] Ao adicionar uma interrupção e eliminar avaliações contínuas, dividir a avaliação em 2 e apaga apenas o dia selecionado para a interrupção
-  - [X] Campo na BD criado (group_id) > rever melhor mais tarde
-
 **Todas as paginas**
 - [ ] Rever traduções
 - [ ] Adicionar titulo as paginas
 
 ## Issues
+
+**Trabalho futuro?:**
+- [ ] Se for Direção ou Conselho Pedagógico, se rejeitar um calendário devem poder adicionar um comentário/parecer
+- [ ] Adicionar possibilidade de filtrar por UCs no detalhe do calendário (para escolher quais as UC's a ver no calendário)
+- [ ] Ao publicar um calendário, confirmar se uma UC que tenha sido iniciada a marcação dos elementos de avaliação, tem todos os métodos preenchidos, 
+    e caso não tenha, dar erro para o utilizador marcar todos os métodos. 
+- [ ] Ao adicionar uma interrupção e eliminar avaliações contínuas, dividir a avaliação em 2 e apaga apenas o dia selecionado para a interrupção
+  - [X] Campo na BD criado (group_id) > rever melhor mais tarde
 
 # Logica de Calendario
 - [ ] Versao do calendario
