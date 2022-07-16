@@ -11,6 +11,8 @@ import {useTranslation} from "react-i18next";
 import Semesters from "../../components/Filters/Semesters";
 import UnitTabs from "./Tabs";
 import Schools from "../../components/Filters/Schools";
+import SCOPES from "../../utils/scopesConstants";
+import ShowComponentIfAuthorized, {useComponentIfAuthorized} from "../../components/ShowComponentIfAuthorized";
 
 const New = () => {
     const { t } = useTranslation();
@@ -141,18 +143,23 @@ const New = () => {
                         )}
                         <Card.Content>
                             <div className='card-header-alignment'>
-                                <Header as="span">{(isEditMode ? t('Editar') : t('Nova')) + " " + t("Unidades Curriculares")}</Header>
-                                <div>
-                                    { isEditMode && (
-                                        <Button onClick={refreshUc} color="blue" icon loading={isSaving} title={"Atualizar dados atraves do WebService"}>
-                                            <Icon name={"refresh"} loading={isSearchLoading}/>
+
+                                <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]} renderIfNotAllowed={(
+                                    <Header as="span">{t("Detalhe da Unidade Curricular")}</Header>
+                                )}>
+                                    <Header as="span">{(isEditMode ? t('Editar') : t('Nova')) + " " + t("Unidades Curriculares")}</Header>
+                                    <div>
+                                        { isEditMode && (
+                                            <Button onClick={refreshUc} color="blue" icon loading={isSaving} title={"Atualizar dados atraves do WebService"}>
+                                                <Icon name={"refresh"} loading={isSearchLoading}/>
+                                            </Button>
+                                        )}
+                                        <Button onClick={handleSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} >
+                                            <Icon name={isEditMode ? 'save' : 'plus'}/>
+                                            {isEditMode ? t('Guardar') : t('Criar')}
                                         </Button>
-                                    )}
-                                    <Button onClick={handleSubmit} color="green" icon labelPosition="left" floated="right" loading={isSaving} >
-                                        <Icon name={isEditMode ? 'save' : 'plus'}/>
-                                        {isEditMode ? t('Guardar') : t('Criar')}
-                                    </Button>
-                                </div>
+                                    </div>
+                                </ShowComponentIfAuthorized>
                             </div>
                         </Card.Content>
                         { errorMessages.length > 0 && (
@@ -230,7 +237,9 @@ const New = () => {
                                 </Field>
                                 <Field name="branch">
                                     {({input: branchInput}) => (
-                                        <Form.Dropdown options={branchesList} label={t("Ramo")} placeholder={t("Ramo")} selection search {...branchInput} onChange={(e, {value}) => branchInput.onChange(value)}/>
+                                        <Form.Dropdown options={branchesList} label={t("Ramo")} placeholder={t("Ramo")} selection search={useComponentIfAuthorized(SCOPES.EDIT_COURSE_UNITS)} {...branchInput}
+                                                       disabled={!useComponentIfAuthorized(SCOPES.EDIT_COURSE_UNITS)}  className={ (useComponentIfAuthorized(SCOPES.EDIT_COURSE_UNITS) ? '' : 'input-readonly') }
+                                                       onChange={(e, {value}) => branchInput.onChange(value)}/>
                                     )}
                                 </Field>
                             </Form.Group>

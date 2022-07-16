@@ -12,6 +12,7 @@
   - Adicionado botão para sincronização/atualização dos dados de uma UC via WebService;
 - Adicionada marcação visual para o dia e semana de hoje
 - Adicionado link para fazer scroll para a semana atual se existir
+- Adicionado mensagem de erro devolvida pelo servidor ao tentar criar/gravar Grupos de utilizadores;
 
 <ins>Issues corrigidos:</ins>
 - Revisão dos date pickers da criação dos calendários:

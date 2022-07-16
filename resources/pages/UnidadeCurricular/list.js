@@ -7,7 +7,7 @@ import {toast} from 'react-toastify';
 import {useTranslation} from "react-i18next";
 
 import SCOPES from '../../utils/scopesConstants';
-import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
+import ShowComponentIfAuthorized, {useComponentIfAuthorized} from '../../components/ShowComponentIfAuthorized';
 import {successConfig, errorConfig} from '../../utils/toastConfig';
 import EmptyTable from "../../components/EmptyTable";
 import Semesters from "../../components/Filters/Semesters";
@@ -108,9 +108,17 @@ const CourseUnitsList = () => {
     const columns = [
         {name: t('Nome')},
         {name: t('Ramo')},
-        {name: t('Agrupamento')},
+        {
+            name: t('Agrupamento'),
+            permission: [SCOPES.VIEW_UC_GROUPS],
+        },
         {name: t('Semestre'),   align: 'center', style: {width: '10%'} },
-        {name: t('Ações'),      align: 'center', style: {width: '10%'} },
+        {
+            name: t('Ações'),
+            align: 'center',
+            permission: [SCOPES.EDIT_COURSE_UNITS, SCOPES.DELETE_COURSE_UNITS],
+            style: {width: '10%' }
+        },
     ];
     return (
         <Container>
@@ -142,45 +150,63 @@ const CourseUnitsList = () => {
                         <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar Unidades Curriculares!")}/>
                     ) : (
                         <>
-                            <Table celled>
+                            <Table celled selectable striped>
                                 <Table.Header>
                                     <Table.Row>
-                                        {columns.map((col, index) => (
-                                            <Table.HeaderCell key={index} textAlign={col.align} style={col.style}>{col.name}</Table.HeaderCell>
+                                        {columns.map(({name, align, permission, style}, index) => (
+                                            permission ?
+                                            (
+                                                <ShowComponentIfAuthorized permission={[permission]} key={'auth_table_header_cell_' + index}>
+                                                    <Table.HeaderCell textAlign={align} key={'table_header_cell_' + index} style={style}>
+                                                        {name}
+                                                    </Table.HeaderCell>
+                                                </ShowComponentIfAuthorized>
+                                            ) :
+                                            (
+                                                <Table.HeaderCell textAlign={align} key={'table_header_cell_' + index} style={style}>
+                                                    {name}
+                                                </Table.HeaderCell>
+                                            )
                                         ))}
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
                                     {courseUnits.map(({id, name, code, has_methods, has_responsable, branch_label, has_branch, group_name, course_description, semester}) => (
-                                        <Table.Row key={id} warning={!has_methods || !has_responsable}>
+                                        <Table.Row key={id} warning={ (useComponentIfAuthorized(SCOPES.EDIT_COURSE_UNITS) ? (!has_methods || !has_responsable) : false) }>
                                             <Table.Cell>
-                                                { (!has_methods || !has_responsable) && <Popup trigger={<Icon name="warning sign" />} content={(
-                                                    <div>
-                                                        { (!has_methods && !has_responsable) ? (
-                                                            t('Falta preencher os métodos de avaliação e o responsável.')
-                                                        ) : (
-                                                            (!has_methods ? t('Falta preencher os métodos de avaliação.') : t('Falta preencher o responsável.'))
-                                                        )}
-                                                    </div>
-                                                )} position='top center'/> }
+                                                <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]}>
+                                                    { (!has_methods || !has_responsable) && <Popup trigger={<Icon name="warning sign" />} content={(
+                                                        <div>
+                                                            { (!has_methods && !has_responsable) ? (
+                                                                t('Falta preencher os métodos de avaliação e o responsável.')
+                                                            ) : (
+                                                                (!has_methods ? t('Falta preencher os métodos de avaliação.') : t('Falta preencher o responsável.'))
+                                                            )}
+                                                        </div>
+                                                    )} position='top center'/> }
+                                                </ShowComponentIfAuthorized>
                                                 ({code}) - {name}
                                             </Table.Cell>
                                             <Table.Cell>
                                                 { !has_branch && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher a que ramo pertence.')} position='top center'/> }
                                                 {branch_label}
                                             </Table.Cell>
-                                            <Table.Cell>{group_name || '-'}</Table.Cell>
+                                            <ShowComponentIfAuthorized permission={[SCOPES.VIEW_UC_GROUPS]}>
+                                                <Table.Cell>{group_name || '-'}</Table.Cell>
+                                            </ShowComponentIfAuthorized>
                                             <Table.Cell>{semester}</Table.Cell>
-                                            <Table.Cell>
-                                                <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]}>
-                                                    <Link to={`/unidade-curricular/edit/${id}`}>
-                                                        <Button color="yellow" icon="edit" />
-                                                    </Link>
-                                                </ShowComponentIfAuthorized>
-                                                <ShowComponentIfAuthorized permission={[SCOPES.DELETE_COURSE_UNITS]}>
-                                                    <Button color="red" icon="trash" onClick={() => remove({id, course: course_description, unit: name})} />
-                                                </ShowComponentIfAuthorized>
-                                            </Table.Cell>
+                                            <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS, SCOPES.DELETE_COURSE_UNITS]}>
+                                                <Table.Cell>
+                                                    <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]}>
+                                                        <Link to={`/unidade-curricular/edit/${id}`}>
+                                                            <Button color="yellow" icon="edit" />
+                                                        </Link>
+                                                    </ShowComponentIfAuthorized>
+                                                    <ShowComponentIfAuthorized permission={[SCOPES.DELETE_COURSE_UNITS]}>
+                                                        <Button color="red" icon="trash" onClick={() => remove({id, course: course_description, unit: name})} />
+                                                    </ShowComponentIfAuthorized>
+                                                </Table.Cell>
+                                            </ShowComponentIfAuthorized>
                                         </Table.Row>
                                     ))}
                                 </Table.Body>

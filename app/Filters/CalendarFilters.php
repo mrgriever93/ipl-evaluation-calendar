@@ -39,6 +39,7 @@ class CalendarFilters extends QueryFilters
         //    return;
         //}
 
+        // List for students
         if (count($user->groups) === 1 && $user->groups->contains('code', InitialGroups::STUDENT)) {
             if ($search === "true") {
                 return $this->builder->published()
@@ -51,10 +52,12 @@ class CalendarFilters extends QueryFilters
                         ->whereIn('course_id', Auth::user()->courses->pluck('id'));
         }
 
+        // List for coordinator
         if ($user->groups->contains('code', InitialGroups::COORDINATOR)) {
             $this->builder->whereIn('course_id', Course::where('coordinator_user_id', Auth::user()->id)->pluck('id'));
         }
 
+        // List for teacher
         if ($user->groups->contains('code', InitialGroups::TEACHER)) {
             if ($search === "true") {
                 return $this->builder->orWhereIn('course_id', Auth::user()->courseUnits->pluck('course_id'));

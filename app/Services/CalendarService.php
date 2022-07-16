@@ -58,8 +58,7 @@ class CalendarService
             $newCalendar->academic_year_id = $request->cookie('academic_year');
             $newCalendar->semester_id = Semester::where('code', $request->semester)->firstOrFail()->id;
             $newCalendar->course_id = $course["id"] ?? $course;
-            // TODO garantir que este valor e sempre o correto
-            $newCalendar->calendar_phase_id = CalendarPhase::where('code', 'edit_gop')->firstOrFail()->id;
+            $newCalendar->calendar_phase_id = CalendarPhase::phaseEditGop();
             $newCalendar->save();
 
             foreach ($request->epochs as $key => $epoch) {
@@ -106,13 +105,21 @@ class CalendarService
                     $newInterruption->save();
                 }
             }
-            // TODO make the create of calendar more dynamic with DB records
-            CalendarViewers::insert([
-                ["calendar_id" => $newCalendar->id, "group_id" => 1],   // "super_admin"
-                ["calendar_id" => $newCalendar->id, "group_id" => 2],   // "admin"
-                ["calendar_id" => $newCalendar->id, "group_id" => 8],   // "gop"
-                ["calendar_id" => $newCalendar->id, "group_id" => 13]   // "gop_estg"
-            ]);
+            // TODO have in count the school that the calendar belongs to
+            $permissionId = Permission::permissionViewCalendar();
+            $groupsQuery = Group::withExists([
+                'permissions as has_permission' => function ($query) use($permissionId) {
+                    return $query->where('permission_id', $permissionId)->where('phase_id', CalendarPhase::phaseEditGop());
+                }
+            ])->get()->toArray();
+            $viewers = [];
+            foreach ($groupsQuery as $group) {
+                if($group["has_permission"]) {
+                    $viewers[] = ["calendar_id" => $newCalendar->id, "group_id" => $group['id']];
+                }
+            }
+            // insert all new viewers groups
+            CalendarViewers::insert($viewers);
         }
 
         return "Created";
@@ -235,13 +242,23 @@ class CalendarService
         }
 
         $clone->save();
-        // TODO add to the right user
-        CalendarViewers::insert([
-            ["calendar_id" => $clone->id, "group_id" => 1],   // "super_admin"
-            ["calendar_id" => $clone->id, "group_id" => 2],   // "admin"
-            ["calendar_id" => $clone->id, "group_id" => 8],   // "gop"
-            ["calendar_id" => $clone->id, "group_id" => 13]   // "gop_estg"
-        ]);
+
+        // TODO have in count the school that the calendar belongs to
+        $permissionId = Permission::permissionViewCalendar();
+        $phaseId = $clone->calendar_phase_id;
+        $groupsQuery = Group::withExists([
+            'permissions as has_permission' => function ($query) use($permissionId, $phaseId) {
+                return $query->where('permission_id', $permissionId)->where('phase_id', $phaseId);
+            }
+        ])->get()->toArray();
+        $viewers = [];
+        foreach ($groupsQuery as $group) {
+            if($group["has_permission"]) {
+                $viewers[] = ["calendar_id" => $clone->id, "group_id" => $group['id']];
+            }
+        }
+        // insert all new viewers groups
+        CalendarViewers::insert($viewers);
     }
 
     public static function info(Request $request)
@@ -273,8 +290,11 @@ class CalendarService
 
         $epoch_type_id = Epoch::find($request->epoch_id)->epoch_type_id;
         $availableMethods = CourseUnit::where("curricular_year", $request->year)
-            ->where('semester_id', $calendar->semester_id)
             ->where('course_id', $calendar->course_id);
+
+        if(!$calendar->semester->special) {
+            $availableMethods->where('semester_id', $calendar->semester_id);
+        }
 
         //return AvailableCourseUnitsResource::collection($availableMethods);
         $includedCUs = [];
@@ -351,8 +371,10 @@ class CalendarService
 
         $epoch_types = Epoch::where("calendar_id", $calendar->id)->pluck("epoch_type_id")->toArray();
         //dd($epoch_types);
-        $availableMethods = CourseUnit::where('semester_id', $calendar->semester_id)
-            ->where('course_id', $calendar->course_id);
+        $availableMethods = CourseUnit::where('course_id', $calendar->course_id);
+        if(!$calendar->semester->special) {
+            $availableMethods->where('semester_id', $calendar->semester_id);
+        }
 
         //return AvailableCourseUnitsResource::collection($availableMethods);
         $includedCUs = [];

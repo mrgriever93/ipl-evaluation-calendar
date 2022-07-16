@@ -32,17 +32,19 @@ const CourseTabs = ({ unitId, hasGroup }) => {
         menuItem: (
             <Menu.Item key='tab_header_teachers'>
                 <Icon name="users"/> { t("Professores") }
-                {hasWarningsTeachers && (
+                { useComponentIfAuthorized(SCOPES.EDIT_COURSE_UNITS) && hasWarningsTeachers && (
                     <Popup trigger={<Icon color='orange' name="warning sign" />} content={t('Falta selecionar o responsável da unidade curricular')} position='top center'/>
                 )}
             </Menu.Item>
         ),
         pane: { key: 'tab_teachers',    content: <Teachers unitId={unitId} warningsHandler={setHasWarningsTeachers} /> }
     });
-    panes.push({
-        menuItem: (<Menu.Item key='tab_header_logs'><Icon name="unordered list"/> { t("Logs") }</Menu.Item>),
-        pane: { key: 'tab_logs',        content: <Logs unitId={unitId} /> }
-    });
+    if(useComponentIfAuthorized(SCOPES.EDIT_COURSE_UNITS)) {
+        panes.push({
+            menuItem: (<Menu.Item key='tab_header_logs'><Icon name="unordered list"/> {t("Logs")}</Menu.Item>),
+            pane: {key: 'tab_logs', content: <Logs unitId={unitId}/>}
+        });
+    }
     return ( <Tab panes={panes} renderActiveOnly={false} /> );
 };
 

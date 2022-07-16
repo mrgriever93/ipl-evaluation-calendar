@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Card, Checkbox, Container, Dimmer, Form, Icon, Loader } from 'semantic-ui-react';
+import {Button, Card, Checkbox, Container, Dimmer, Form, Icon, Loader, Message} from 'semantic-ui-react';
 import { Field, Form as FinalForm } from 'react-final-form';
 import {useParams, useNavigate} from "react-router-dom";
 import _ from 'lodash';
@@ -22,6 +22,7 @@ const New = () => {
     const [loading, setLoading] = useState(!!paramsId);
     const [isSaving, setIsSaving] = useState(false);
     const [userGroup, setUserGroup] = useState({});
+    const [errorMessages, setErrorMessages] = useState([]);
     const isEditMode = !_.isEmpty(userGroup);
 
     useEffect(() => {
@@ -51,15 +52,23 @@ const New = () => {
         const isNew = !id;
         const axiosFn = isNew ? axios.post : axios.patch;
 
-        axiosFn(`/user-group/${!isNew ? id : ''}`, { name, description_pt, description_en, enabled }).then( (res) => {
+        axiosFn(`/user-group/${!isNew ? id : ''}`, { code: name, name_pt: description_pt, name_en: description_en, enabled }).then( (res) => {
             setIsSaving(false);
+            setErrorMessages([]);
             if (res.status === 200) {
                 toast(t('Grupo atualizado com sucesso'), successConfig);
-            }
-            else if (res.status === 201) {
+            } else if (res.status === 201) {
                 toast(t('Grupo criado com sucesso'), successConfig);
-            }
-            else {
+            } else {
+                let errorsArray = [];
+                if(typeof res.response.data.errors === 'object' && res.response.data.errors !== null){
+                    errorsArray = Object.values(res.response.data.errors);
+                } else {
+                    if(Array.isArray(res.response.data.errors)){
+                        errorsArray = res.response.data.errors;
+                    }
+                }
+                setErrorMessages(errorsArray);
                 toast(t('Existiu um problema ao gravar as alterações!'), errorConfig);
             }
         });
@@ -87,7 +96,7 @@ const New = () => {
                 <Link to="/grupo-utilizador"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
             <FinalForm onSubmit={onSubmit} initialValues={initialValues} render={({ handleSubmit }) => (
-                <Form>
+                <Form warning={ errorMessages.length > 0 }>
                     <Card fluid>
                         { loading && (
                             <Dimmer active inverted>
@@ -95,6 +104,20 @@ const New = () => {
                             </Dimmer>
                         )}
                         <Card.Content header={`${ isEditMode ? t('Editar Grupo de Utilizador') : t('Novo Grupo de Utilizador') }`} />
+                        { errorMessages.length > 0 && (
+                            <Card.Content>
+                                <Message warning>
+                                    <Message.Header>{ t('Os seguintes detalhes da Unidade curricular precisam da sua atenção') }:</Message.Header>
+                                    <Message.List>
+                                        { errorMessages.map((message, index) => (
+                                            <Message.Item key={index}>
+                                                { message }
+                                            </Message.Item>
+                                        ))}
+                                    </Message.List>
+                                </Message>
+                            </Card.Content>
+                        )}
                         <Card.Content>
                             <Form.Group widths="equal">
                                 <Field name="name">
