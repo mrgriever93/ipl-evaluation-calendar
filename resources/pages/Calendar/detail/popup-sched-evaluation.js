@@ -4,7 +4,7 @@ import React, {useEffect, useState} from 'react';
 import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {Field, Form as FinalForm} from 'react-final-form';
-import {DateInput, DatesRangeInput, TimeInput} from 'semantic-ui-calendar-react-yz';
+import {DateInput, TimeInput} from 'semantic-ui-calendar-react-yz';
 import {Button, Divider, Form, Grid, GridColumn, Header, Icon, Modal, Checkbox, TextArea, Message} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import Swal from 'sweetalert2';
@@ -64,22 +64,13 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                 .then((response) => {
                     if (response.status === 200) {
                         let beforeSetCourseUnits = [];
-                        /*
-                        if(scheduleInformation.hasExamsOnDate) {
-                            const branches = scheduleInformation.hasExamsOnDate?.filter((x) => x.academic_year === scheduleInformation.scholarYear)?.map((y) => y?.course_unit?.branch?.id);
-                            beforeSetCourseUnits = response.data.data?.filter((x) => !(branches.length ? branches?.includes(x?.branch?.id) : false));
-                        } else {
-                            beforeSetCourseUnits = response.data.data;
-                        }*/
                         beforeSetCourseUnits = response.data.data;
 
-                        const mapped = beforeSetCourseUnits?.map(
-                            ({id, name, methods, branch, is_complete, has_methods}) => ({
+                        const mapped = beforeSetCourseUnits?.map(({id, name, methods, is_complete, has_methods}) => ({
                                 key: id,
                                 value: id,
                                 text: name,
                                 methods,
-                                branch,
                                 icon: ((!has_methods ? {color: 'yellow', name:'warning circle'} : is_complete ? {color: 'green', name:'check circle'} : undefined)),
                                 description: (!has_methods ? t("Métodos em falta") : undefined),
                                 disabled: !has_methods,
@@ -88,7 +79,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                         setCourseUnits(mapped);
                         // has curricular unit with missing methods?
                         //setShowMissingMethodsLink(response.data.data?.length === 0 || beforeSetCourseUnits?.length === 0);
-                        setShowMissingMethodsLink(beforeSetCourseUnits.filter((item) => item.has_methods).length >= 0);
+                        setShowMissingMethodsLink(beforeSetCourseUnits.filter((item) => !item.has_methods).length > 0);
                     }
                 });
             setLoadRemainingCourseUnits(false);

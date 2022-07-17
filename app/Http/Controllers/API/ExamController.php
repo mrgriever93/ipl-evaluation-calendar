@@ -39,6 +39,9 @@ class ExamController extends Controller
         $courseUnitGroup = CourseUnit::find($request->course_unit_id)->group;
         $courseUnitGroup = $courseUnitGroup ? $courseUnitGroup->id : null;
         if ($courseUnitGroup) {
+            $courses = CourseUnitGroup::find($courseUnitGroup)->courseUnits->pluck('course_id');
+            $calendars = Calendar::whereIn('course_id', $courses)->get();
+
             foreach (CourseUnitGroup::find($courseUnitGroup)->courseUnits as $courseUnit) {
                 foreach (Method::find($request->method_id)->epochType as $epochType) {
                     $epoch = Epoch::where('epoch_type_id', $epochType->id)->where('calendar_id', $calendarId)->first();
