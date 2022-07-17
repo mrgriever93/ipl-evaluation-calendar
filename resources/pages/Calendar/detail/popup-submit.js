@@ -109,8 +109,8 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
         });
     }
 
-    const checkPhaseChangePermission = () => {
-        let phaseFound = JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE)[0];
+    const checkPermissionByPhase = (permissionToCheck) => {
+        let phaseFound = JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((x) => x.name === permissionToCheck)[0];
         return phaseFound?.phases.includes(currentPhaseId);
     }
 
@@ -126,7 +126,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                         <Label color="blue">{ calendarPhases.filter((phase) => phase.value === currentPhaseId)[0]?.text }</Label>
                     </GridColumn>
                 </Grid>
-                { checkPhaseChangePermission() ? (
+                { checkPermissionByPhase(SCOPES.CHANGE_CALENDAR_PHASE) ? (
                     <>
                         <div className='margin-top-base'>
                             { t("Selecionar próxima fase:") }
@@ -233,7 +233,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                     <Button onClick={publishCalendar} color={"blue"} floated={"left"} icon labelPosition={"right"}>{t('Publicar esta versão do calendário')} <Icon name={"calendar check outline"}/></Button>
                 </ShowComponentIfAuthorized>
                 <Button onClick={onClose}>{t('Fechar')}</Button>
-                { checkPhaseChangePermission() && (
+                { checkPermissionByPhase(SCOPES.CHANGE_CALENDAR_PHASE) && (
                     <Button onClick={onSave} color={"green"}>{t('Guardar')}</Button>
                 )}
             </Modal.Actions>

@@ -206,11 +206,11 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
         return false;
     }
 
-    const checkPhaseChangePermission = () => {
-        let phaseFound = JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE)[0];
+    const checkPermissionByPhase = (permissionToCheck) => {
+        let phaseFound = JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((x) => x.name === permissionToCheck)[0];
         return phaseFound?.phases.includes(calendarPhase);
     }
-
+    
     return (
         <>
             <div className='main-content-title-section'>
@@ -224,7 +224,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                     { !isLoading && (
                         !isPublished ? (
                             <>
-                                { checkPhaseChangePermission() && (
+                                { checkPermissionByPhase(SCOPES.CHANGE_CALENDAR_PHASE) && (
                                     <>
                                         { localStorage.getItem('groups')?.indexOf('board') >= 0 || localStorage.getItem('groups')?.indexOf('pedagogic') >= 0 ? (
                                             <>

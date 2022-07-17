@@ -721,6 +721,7 @@ const Calendar = () => {
             <PopupEvaluationDetail
                 isPublished={isPublished || isTemporary}
                 isOpen={openExamDetailModal}
+                currentPhaseId={generalInfo?.phase?.id || 0}
                 onClose={closeExamDetailHandler}
                 examId={viewExamId} />
 

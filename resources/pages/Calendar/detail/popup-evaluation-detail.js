@@ -10,7 +10,7 @@ import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthor
 import SCOPES from '../../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
-const PopupEvaluationDetail = ( {isPublished, isOpen, onClose, examId} ) => {
+const PopupEvaluationDetail = ( {isPublished, isOpen, currentPhaseId, onClose, examId} ) => {
     // const history = useNavigate();
     const { t } = useTranslation();
 
@@ -20,20 +20,6 @@ const PopupEvaluationDetail = ( {isPublished, isOpen, onClose, examId} ) => {
     const [showIgnoredComments, setShowIgnoredComments] = useState(false);
     const [commentText, setCommentText] = useState(undefined);
     const [commentsList, setCommentsList] = useState([]);
-
-    const checkIfAuthorized = (permission) => {
-        const userScopes = JSON.parse(localStorage.getItem('scopes'));
-        if(userScopes){
-            if (Array.isArray(permission)) {
-                if (permission.some((per) => userScopes.includes(per))) {
-                    return true;
-                }
-            } else {
-                return userScopes.includes(permission);
-            }
-        }
-        return false;
-    };
 
     useEffect(() => {
         if(examId) {
@@ -113,6 +99,25 @@ const PopupEvaluationDetail = ( {isPublished, isOpen, onClose, examId} ) => {
             }
         });
     };
+
+    const checkIfAuthorized = (permission) => {
+        const userScopes = JSON.parse(localStorage.getItem('scopes'));
+        if(userScopes){
+            if (Array.isArray(permission)) {
+                if (permission.some((per) => userScopes.includes(per))) {
+                    return true;
+                }
+            } else {
+                return userScopes.includes(permission);
+            }
+        }
+        return false;
+    };
+
+    const checkPermissionByPhase = (permissionToCheck) => {
+        let phaseFound = JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((x) => x.name === permissionToCheck)[0];
+        return phaseFound?.phases.includes(currentPhaseId);
+    }
 
     return (
         <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={closeModalHandler} size={ !checkIfAuthorized([SCOPES.VIEW_COMMENTS, SCOPES.ADD_COMMENTS]) ? 'tiny' : 'large'}>
@@ -209,25 +214,30 @@ const PopupEvaluationDetail = ( {isPublished, isOpen, onClose, examId} ) => {
                                             </div>
                                             <div className='exam-detail-content-header-actions'>
                                                 {!isPublished && (
-                                                    <ShowComponentIfAuthorized permission={[SCOPES.ADD_COMMENTS]}>
-                                                        <Button
-                                                            content={ t('Adicionar comentário')}
-                                                            labelPosition="right"
-                                                            icon="send"
-                                                            primary onClick={() => addComment(examDetailObject?.id)}
-                                                        />
-                                                    </ShowComponentIfAuthorized>
+                                                    <>
+                                                        { checkPermissionByPhase(SCOPES.ADD_COMMENTS) && (
+                                                            <Button
+                                                                content={ t('Adicionar comentário')}
+                                                                labelPosition="right"
+                                                                icon="send"
+                                                                primary onClick={() => addComment(examDetailObject?.id)}
+                                                            />
+                                                        )}
+                                                    </>
                                                 )}
                                             </div>
                                         </div>
                                         {!isPublished && (
-                                            <ShowComponentIfAuthorized permission={[SCOPES.ADD_COMMENTS]}>
-                                                <Form reply className='focus--expander'>
-                                                    <Form.TextArea rows={2} placeholder={ t('Adiciona aqui o teu comentário') } value={commentText} onChange={(ev, {value}) => setCommentText(value)}/>
-                                                    {/* <Button style={{marginBottom: 'var(--space-base)' }} onClick={() => addComment(examDetailObject?.id)} content="Adicionar comentário" labelPosition="right" icon="send" floated='right' primary /> */}
-                                                </Form>
-                                                <Divider clearing />
-                                            </ShowComponentIfAuthorized>
+                                            <>
+                                                { checkPermissionByPhase(SCOPES.ADD_COMMENTS) && (
+                                                    <>
+                                                        <Form reply className='focus--expander'>
+                                                            <Form.TextArea rows={2} placeholder={ t('Adiciona aqui o teu comentário') } value={commentText} onChange={(ev, {value}) => setCommentText(value)}/>
+                                                        </Form>
+                                                        <Divider clearing />
+                                                    </>
+                                                )}
+                                            </>
                                         )}
                                         {commentsList?.filter((x) => (showIgnoredComments ? true : !x.ignored))?.map((comment, commentIndex) => (
                                             <Comment key={commentIndex} className={comment.ignored ? 'comment--ignored' : ''}>
@@ -246,15 +256,19 @@ const PopupEvaluationDetail = ( {isPublished, isOpen, onClose, examId} ) => {
                                                         ) : ''}
                                                     </Comment.Text>
                                                     <Comment.Actions>
-                                                        {!comment.ignored && (
-                                                            <Comment.Action onClick={() => hideCommentHandler(comment.id)}>
-                                                                { t('Esconder') }
-                                                            </Comment.Action>
-                                                        )}
-                                                        { !!comment.ignored && (
-                                                            <Comment.Action onClick={() => showCommentHandler(comment.id)}>
-                                                                { t('Mostrar') }
-                                                            </Comment.Action>
+                                                        { checkPermissionByPhase(SCOPES.ADD_COMMENTS) && (
+                                                            <>
+                                                                {!comment.ignored && (
+                                                                    <Comment.Action onClick={() => hideCommentHandler(comment.id)}>
+                                                                        { t('Esconder') }
+                                                                    </Comment.Action>
+                                                                )}
+                                                                { !!comment.ignored && (
+                                                                    <Comment.Action onClick={() => showCommentHandler(comment.id)}>
+                                                                        { t('Mostrar') }
+                                                                    </Comment.Action>
+                                                                )}
+                                                            </>
                                                         )}
                                                         { moment(new Date()).diff(moment(comment.date), 'minutes') <= 15 && comment.user.id == localStorage.getItem('userId') && (
                                                             <>
