@@ -26,26 +26,32 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
 
     useEffect(() => {
         setIsLoading(true);
-        setGroupViewersLoading(true);
-        axios.get('/calendar-phases-full?phase-id=' + currentPhaseId).then((response) => {
-            if (response.status === 200) {
-                setCalendarPhases(
-                    response.data?.phases.map(({id, description, name}) => ({
-                        key: id,
-                        value: id,
-                        text: description,
-                        name,
-                    })),
-                );
-                setCalendarGroups(response.data?.groups);
-                setGroupViewersLoading(false);
-                setIsLoading(false);
-            }
-        });
+        setGroupViewersLoading(true);              
     }, []);
 
     useEffect(() => {
-        if(!isLoading) {
+        if( isLoading ){
+            if (!currentPhaseId) {
+                return false;
+            }            
+            axios.get('/calendar-phases-full?phase-id=' + currentPhaseId).then((response) => {
+                console.log(response.data)
+                if (response.status === 200) {
+                    setCalendarPhases(
+                        response.data?.phases.map(({id, description, name}) => ({
+                            key: id,
+                            value: id,
+                            text: description,
+                            name,
+                        })),
+                    );
+                    setCalendarGroups(response.data?.groups);
+                    setGroupViewersLoading(false);
+                    setIsLoading(false);
+                }
+            });
+        }  
+        else {
             let currentPhase = calendarPhases.filter((phase) => phase.value === currentPhaseId)[0];
 
             if( currentPhase.text.indexOf('Em edição')  === 0) {
@@ -64,6 +70,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
             setGroupViewersLoading(true);
             axios.get('/calendar-phases-full/groups?phase-id=' + calendarPhase).then((response) => {
                 if (response.status === 200) {
+                    console.log(response.data)
                     setCalendarGroups(response.data?.data);
                     setGroupViewersLoading(false);
                 }

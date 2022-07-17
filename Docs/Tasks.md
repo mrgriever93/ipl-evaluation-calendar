@@ -4,7 +4,7 @@
 - [ ] Validar quando se marca um exame, se for dos agrupados, deixar marcar para os outros. (validar bug)
 - [X] deixar ver detalhe de UC (lista UC)
 - [ ] Rever mudança de fases num CP ou Direção (aceitar e recursar)
-- [ ] Quando abrimos o popup de submissão, não é possível ver quam são os grupos que têm permissão de ver o calendário no momento
+- [X] Quando abrimos o popup de submissão, não é possível ver quam são os grupos que têm permissão de ver o calendário no momento
 
 # Miguel
 - [X] Ao Publicar um calendário, se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar
