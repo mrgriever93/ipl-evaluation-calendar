@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router';
 import {useTranslation} from "react-i18next";
 import { Button, Modal, Header, Icon, Divider, Checkbox, Form, Label, Loader, Dimmer, Grid, GridColumn } from 'semantic-ui-react';
 import {toast} from 'react-toastify';
@@ -9,7 +10,7 @@ import SCOPES from "../../../utils/scopesConstants";
 import ShowComponentIfAuthorized from "../../../components/ShowComponentIfAuthorized";
 
 const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, updatePhase} ) => {
-    // const history = useNavigate();
+    const navigate = useNavigate();
     const { t } = useTranslation();
 
     const [calendarPhases, setCalendarPhases] = useState([]);
@@ -77,7 +78,10 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
         axios.post(`/calendar/${calendarId}/publish`).then((res) => {
             if (res.status === 200) {
                 toast('Calendário publicado com sucesso!', successConfig);
-                document.location.reload();
+                onClose();
+                if ( localStorage.getItem('groups')?.indexOf('coordinator') >= 0 ) {
+                    navigate('/calendario/'+res.data);
+                }                
             } else {
                 toast('Ocorreu um erro ao tentar publicar o calendário!', errorConfig);
             }
