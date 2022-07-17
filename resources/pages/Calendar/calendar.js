@@ -65,7 +65,7 @@ const Calendar = () => {
         // check if URL params are just numbers or else redirects to previous page
         if(!/\d+/.test(calendarId)){
             history(-1);
-            toast(t('calendar.Ocorreu um erro ao carregar a informacao pretendida'), errorConfig);
+            toast(t('Ocorreu um erro ao carregar a informacao pretendida'), errorConfig);
         }
         // validate if calendar Permissions already exists on the local storage
         const permissionsLocal = localStorage.getItem('calendarPermissions');
@@ -167,7 +167,7 @@ const Calendar = () => {
     const interruptionForceHandler = (date) => {
         const sweetAlertConfigs = {
             title: t('Atenção!'),
-            html: 'Ao adicionar uma interrupcao, ira eliminar exames nesta data, e terá de adicioná-los novamente em outra data a escolher!<br/><br/><strong>Tem a certeza que deseja eliminar os exames, e adicionar uma nova interrupcao?</strong>',
+            html: t('Ao adicionar uma interrupcao, ira eliminar avaliações nesta data, e terá de adicioná-los novamente em outra data a escolher!<br/><br/><strong>Tem a certeza que deseja eliminar as avaliações, e adicionar uma nova interrupcao?</strong>'),
             denyButtonText: t('Não'),
             confirmButtonText: t('Sim'),
             showConfirmButton: true,
@@ -180,10 +180,10 @@ const Calendar = () => {
             if (result.isConfirmed) {
                 axios.delete(`/exams/date/${calendarId}/${moment(date).format( 'YYYY-MM-DD')}`).then((res) => {
                     if (res.status === 200) {
-                        toast('Exames eliminados com sucesso deste calendário!', successConfig);
+                        toast(t('Avaliações eliminadas com sucesso deste calendário!'), successConfig);
                         interruptionHandler(undefined, date);
                     } else {
-                        toast('Ocorreu um problema ao eliminar os exames deste calendário! ' +  res.response.data, errorConfig);
+                        toast(t('Ocorreu um problema ao eliminar as avaliações deste calendário!') + " "+ res.response.data, errorConfig);
                     }
                 });
             }
@@ -242,33 +242,6 @@ const Calendar = () => {
             setCalendarPermissions(getCalendarPhasePermissions(calendarPhase));
         }
     }, [calendarPhase]);
-
-    // const patchCalendar = (fieldToUpdate, value) => axios.patch(`/calendar/${calendarId}`, {
-    //     [fieldToUpdate]: value,
-    // });
-
-    // const updateCalendarStatus = (newTemporaryStatus) => {
-    //     patchCalendar('temporary', newTemporaryStatus).then((response) => {
-    //         if (response.status === 200) {
-    //             setIsTemporary(newTemporaryStatus);
-    //             toast(t('calendar.Estado do calendário atualizado!'), successConfig);
-    //         }
-    //     });
-    // };
-
-    // const updateCalendarPhase = (newCalendarPhase) => {
-    //     setUpdatingCalendarPhase(true);
-    //     patchCalendar('calendar_phase_id', newCalendarPhase).then(
-    //         (response) => {
-    //             setUpdatingCalendarPhase(false);
-    //             if (response.status === 200) {
-    //                 setCalendarPhase(newCalendarPhase);
-    //                 toast(t('calendar.Fase do calendário atualizada!'), successConfig);
-    //             }
-    //         },
-    //     );
-    // };
-
 
     const loadCalendar = (calId) => {
         setIsLoading(true);

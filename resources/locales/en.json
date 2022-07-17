@@ -126,8 +126,6 @@
         "Editar Escola": "Edit school",
         "Nova Escola":  "New school",
 
-        "Ocorreu um erro ao carregar a informacao pretendida": "Something went wrong while trying to fetch data",
-
         "Descrição": "Description",
         "Iniciais": "Initials",
         "Ativo?": "Active?",
@@ -271,7 +269,6 @@
         "calendar.Fase do calendário atualizada!": "Calendar phase was updated!",
         "calendar.Comentário ignorado com sucesso!": "Comment ignored with success!",
         "calendar.Ocorreu um erro ao ignorar o comentário!": "There was a problem when ignoring the comment!",
-        "calendar.Ocorreu um erro ao carregar a informacao pretendida": "There was a problem while loading the requested information",
         "calendar.Interrupção eliminada com sucesso deste calendário!": "Interruption deleted with success of the calendar!",
         "calendar.Ocorreu um problema ao eliminar a interrupção deste calendário!": "There was a problem to delete the interruption form the calendar!",
         "calendar.2ª Feira": "Monday",
@@ -280,6 +277,15 @@
         "calendar.5ª Feira": "Thursday",
         "calendar.6ª Feira": "Friday",
         "calendar.Sábado": "Saturday",
+        "Ocorreu um erro ao carregar a informacao pretendida": "There was a problem while loading the requested information",
+        "Ao adicionar uma interrupcao, ira eliminar avaliações nesta data, e terá de adicioná-los novamente em outra data a escolher!<br/><br/><strong>Tem a certeza que deseja eliminar as avaliações, e adicionar uma nova interrupcao?</strong>": "If you add an interruption, you will delete all assessments on this date and you will need to add them again in another date!<br/><br/><strong>Are you sure you want to delete the assessments and add a new interruption?</strong>",
+        "Avaliações eliminadas com sucesso deste calendário!": "Assessments deleted with success from this calendar!",
+        "Ocorreu um problema ao eliminar as avaliações deste calendário!": "There was a problem while deleting assessments from this calendar!",
+        "Adicionar Interrupção": "Add Interruption",
+        "Editar Interrupção": "Edit Interruption",
+        "Aula": "Class",
+        "Marcar": "Schedule",
+        "Todas as épocas ficaram escondidas": "All epochs are now hidden",
 
         "Guardou o coordenador de curso com sucesso!": "Coordinator of the course was saved with success!",
         "Ocorreu um erro ao guardar o coordenador de curso!": "There was a problem trying to save the course coordinator!",

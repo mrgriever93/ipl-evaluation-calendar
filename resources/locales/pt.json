@@ -126,8 +126,6 @@
         "Editar Escola": "Editar escola",
         "Nova Escola":  "Nova escola",
 
-        "Ocorreu um erro ao carregar a informacao pretendida": "Ocorreu um erro ao carregar a informacao pretendida",
-
         "Descrição": "Descrição",
         "Iniciais": "Iniciais",
         "Ativo?": "Ativo?",
@@ -271,7 +269,6 @@
         "calendar.Fase do calendário atualizada!": "Fase do calendário atualizada!",
         "calendar.Comentário ignorado com sucesso!": "Comentário ignorado com sucesso!",
         "calendar.Ocorreu um erro ao ignorar o comentário!": "Ocorreu um erro ao ignorar o comentário!",
-        "calendar.Ocorreu um erro ao carregar a informacao pretendida": "Ocorreu um erro ao carregar a informacao pretendida",
         "calendar.Interrupção eliminada com sucesso deste calendário!": "Interrupção eliminada com sucesso deste calendário!",
         "calendar.Ocorreu um problema ao eliminar a interrupção deste calendário!": "Ocorreu um problema ao eliminar a interrupção deste calendário!",
         "calendar.2ª Feira": "2ª Feira",
@@ -280,6 +277,16 @@
         "calendar.5ª Feira": "5ª Feira",
         "calendar.6ª Feira": "6ª Feira",
         "calendar.Sábado": "Sábado",
+        "Ocorreu um erro ao carregar a informacao pretendida": "Ocorreu um erro ao carregar a informacao pretendida",
+        "Ao adicionar uma interrupcao, ira eliminar avaliações nesta data, e terá de adicioná-los novamente em outra data a escolher!<br/><br/><strong>Tem a certeza que deseja eliminar as avaliações, e adicionar uma nova interrupcao?</strong>": "Ao adicionar uma interrupcao, ira eliminar avaliações nesta data, e terá de adicioná-los novamente em outra data a escolher!<br/><br/><strong>Tem a certeza que deseja eliminar as avaliações, e adicionar uma nova interrupcao?</strong>",
+        "Avaliações eliminadas com sucesso deste calendário!": "Avaliações eliminadas com sucesso deste calendário!",
+        "Ocorreu um problema ao eliminar as avaliações deste calendário!": "Ocorreu um problema ao eliminar as avaliações deste calendário!",
+        "Adicionar Interrupção": "Adicionar Interrupção",
+        "Editar Interrupção": "Editar Interrupção",
+        "Aula": "Aula",
+        "Marcar": "Marcar",
+        "Todas as épocas ficaram escondidas": "Todas as épocas ficaram escondidas",
+
 
         "Guardou o coordenador de curso com sucesso!": "Guardou o coordenador de curso com sucesso!",
         "Ocorreu um erro ao guardar o coordenador de curso!": "Ocorreu um erro ao guardar o coordenador de curso!",
