@@ -116,7 +116,7 @@ const CourseUnitsList = () => {
         {
             name: t('Ações'),
             align: 'center',
-            permission: [SCOPES.EDIT_COURSE_UNITS, SCOPES.DELETE_COURSE_UNITS],
+            permission: [SCOPES.VIEW_COURSE_UNITS, SCOPES.EDIT_COURSE_UNITS, SCOPES.DELETE_COURSE_UNITS],
             style: {width: '10%' }
         },
     ];
@@ -156,7 +156,7 @@ const CourseUnitsList = () => {
                                         {columns.map(({name, align, permission, style}, index) => (
                                             permission ?
                                             (
-                                                <ShowComponentIfAuthorized permission={[permission]} key={'auth_table_header_cell_' + index}>
+                                                <ShowComponentIfAuthorized permission={permission} key={'auth_table_header_cell_' + index}>
                                                     <Table.HeaderCell textAlign={align} key={'table_header_cell_' + index} style={style}>
                                                         {name}
                                                     </Table.HeaderCell>
@@ -195,9 +195,9 @@ const CourseUnitsList = () => {
                                                 <Table.Cell>{group_name || '-'}</Table.Cell>
                                             </ShowComponentIfAuthorized>
                                             <Table.Cell>{semester}</Table.Cell>
-                                            <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS, SCOPES.DELETE_COURSE_UNITS]}>
+                                            <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COURSE_UNITS, SCOPES.EDIT_COURSE_UNITS, SCOPES.DELETE_COURSE_UNITS]}>
                                                 <Table.Cell>
-                                                    <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]}>
+                                                    <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COURSE_UNITS, SCOPES.EDIT_COURSE_UNITS]}>
                                                         <Link to={`/unidade-curricular/edit/${id}`}>
                                                             <Button color="yellow" icon="edit" />
                                                         </Link>

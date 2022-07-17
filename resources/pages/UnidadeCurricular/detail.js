@@ -204,11 +204,13 @@ const New = () => {
                                             <Form.Input className='input-readonly' disabled={true || isEditMode} label={t("Iniciais")} placeholder={t("Iniciais")} {...initialsInput} />
                                         )}
                                     </Field>
-                                    <div className={"field align-end-start"}>
-                                        <a href={"/curso/" + courseUnitDetail.course} target={"_blank"} className="margin-right-m margin-top-l" title={ t("Ver curso") }>
-                                            Ver detalhe do curso <Icon name={"external alternate"} />
-                                        </a>
-                                    </div>
+                                    <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COURSES]}>
+                                        <div className={"field align-end-start"}>
+                                            <a href={"/curso/" + courseUnitDetail.course} target={"_blank"} className="margin-right-m margin-top-l" title={ t("Ver curso") }>
+                                                { t('Ver detalhe do curso') } <Icon name={"external alternate"} />
+                                            </a>
+                                        </div>
+                                    </ShowComponentIfAuthorized>
                                 </Form.Group>
                             )}
 
