@@ -216,9 +216,10 @@ class CalendarService
         $clone->is_published = false;
         $clone->is_temporary = false;
         // set the correct phase, having in account the user that created the copy
-        if(Auth::user()->groups()->gop()){
+        $userGroups = Auth::user()->groups();
+        if($userGroups->gop()->exists()){
             $clone->calendar_phase_id = CalendarPhase::phaseEditGop();
-        } else if(Auth::user()->groups()->coordinator()){
+        } else if($userGroups->coordinator()->exists()){
             $clone->calendar_phase_id = CalendarPhase::phaseEditCC();
         }
         $clone->push();

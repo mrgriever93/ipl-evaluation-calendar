@@ -76,7 +76,7 @@ class CalendarFilters extends QueryFilters
             if ($search === "true") {
                 return $this->builder->orWhereIn('course_id', Auth::user()->courseUnits->pluck('course_id'));
             }
-            return $this->builder->whereIn('course_id', Auth::user()->courseUnits->pluck('course_id'))->orPublished();
+            return $this->builder->whereIn('course_id', Auth::user()->courseUnits->pluck('course_id'))->Published();
         }
     }
 
