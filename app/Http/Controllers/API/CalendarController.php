@@ -30,19 +30,9 @@ class CalendarController extends Controller
 
         $calendars = Calendar::filter($filters)->ofAcademicYear($request->cookie('academic_year'));
 
-        $user_groups = [];
-        foreach (Auth::user()->groups->toArray() as $group){
-            $user_groups[] = $group["id"];
+        if(!$request->has("myCourseOnly")){
+            $calendars->filter(new CalendarFilters(["myCourseOnly" => false]));
         }
-
-        $calendars->where(function ($query) use ($user_groups) {
-            $query->whereHas('viewers', function (Builder $query) use($user_groups) {
-                $query->whereIn('group_id', $user_groups);
-            })
-                ->orWhere('is_published', true)
-                ->orWhere('is_temporary', true);
-        });
-
         return CalendarListResource::collection($calendars->orderBy('previous_calendar_id')->paginate($perPage));
     }
 

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+// TODO validate this to be dynamic with the groups table and have in account the multi school (eg: "gop_estg")
 class InitialGroups
 {
     const SUPER_ADMIN = "super_admin";
