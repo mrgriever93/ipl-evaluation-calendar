@@ -81,6 +81,8 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                 onClose();
                 if ( localStorage.getItem('groups')?.indexOf('coordinator') >= 0 ) {
                     navigate('/calendario/'+res.data);
+                } else {
+                    document.location.reload();
                 }
             } else {
                 toast('Ocorreu um erro ao tentar publicar o calendário!', errorConfig);
