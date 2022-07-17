@@ -14,6 +14,7 @@
 - Adicionado link para fazer scroll para a semana atual se existir
 - Adicionado mensagem de erro devolvida pelo servidor ao tentar criar/gravar Grupos de utilizadores;
 - Adicionado aviso para quando tentamos marcar mais do que uma vez uma avaliação.
+- Adicionado redirect para quando é feito um clone de um calendário, redirecionar para o novo calendário clonado.
 
 <ins>Issues corrigidos:</ins>
 - Revisão dos date pickers da criação dos calendários:
@@ -29,6 +30,7 @@
 - Revisão das traduções onde estavam em falta
 - Revisão do footer e página sobre para adicionar créditos com dados do 1º grupo que começou o projeto e links externos
 - Revisão das permissões dos vários utilizadores na aplicação globalmente;
+- Revisão da publicação de um calendário: se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar.
 
 
 ## Versão 0.9 - 04/07/2022

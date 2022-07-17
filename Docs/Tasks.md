@@ -7,7 +7,7 @@
 - [ ] Quando abrimos o popup de submissão, não é possível ver quam são os grupos que têm permissão de ver o calendário no momento
 
 # Miguel
-- [ ] Ao Publicar um calendário, se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar
+- [X] Ao Publicar um calendário, se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar
 - [X] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
 **Detalhe calendário**
 - [X] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
