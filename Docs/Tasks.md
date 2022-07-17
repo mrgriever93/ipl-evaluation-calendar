@@ -1,8 +1,13 @@
 # TODO
 
+- [ ] Listar "todos" os calendarios, so deve devolver os publicados (definitivos ou temporarios) 
+- [ ] Validar quando se marca um exame, se for dos agrupados, deixar marcar para os outros. (validar bug)
+- [ ] deixar ver detalhe de UC (lista UC)
+- [ ] 
+
 # Miguel
 - [ ] Ao Publicar um calendário, se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar
-- [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
+- [X] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
 **Detalhe calendário**
 - [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
 - [ ] Adicionar Policies na parte do servidor
