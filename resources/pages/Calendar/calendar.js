@@ -331,6 +331,17 @@ const Calendar = () => {
                                 },
                             );
 
+                            // get list of exams for this day
+                            const weekExams = examList.filter((item) => {
+                                const examStartDate = moment(item.date_start, 'YYYY-MM-DD');
+                                const examEndDate = moment(item.date_end, 'YYYY-MM-DD');
+                                if ( ((start_date.isAfter(examStartDate) && start_date.isBefore(examEndDate)) ||
+                                    start_date.isSame(examStartDate, 'day') || start_date.isSame(examEndDate, 'day')) && item.epoch_id === curr.id){
+                                    return item;
+                                }
+                            });
+                            //console.log("weekData: exams by day - " + weekExams.length);
+
                             const week = acc.find(({week}) => week === start_date.isoWeek());
                             if (!week.days.find((day) => day.weekDay === start_date.day())) {
                                 week.days.push({
@@ -338,6 +349,7 @@ const Calendar = () => {
                                     date: start_date.format(),
                                     interruption: currentInterruption,
                                     interruptionDays: 1,
+                                    exams: weekExams
                                 });
                             }
 
@@ -396,6 +408,12 @@ const Calendar = () => {
     let alreadyAddedRowSpan = false;
     let interruptionDays = 0;
 
+    const getExamForDay = (date, epochId, year) => {
+        let list = examList.filter((exam) => {
+            return  exam.academic_year === year && exam.epoch_id === epochId && date.isBetween(exam.date_start, exam.date_end, 'date','[]');
+        });
+        return list;
+    }
     /*
      * Option to drag and drop exams bewteen days
      * TODO - maybe future work
@@ -431,11 +449,11 @@ const Calendar = () => {
             }
         } else if (day?.date) {
             // TODO check date_start/date_end
-            const existingExamsAtThisDate = examList.filter((exam) => moment(exam.date_start).isSame(moment(day.date), 'day'));
+            const existingExamsAtThisDate = day.exams.filter((exam) => moment(exam.date_start).isSame(moment(day.date), 'day'));
             return (
                 <Table.HeaderCell key={index} textAlign="center" className={(moment().isSame(day.date, 'days') ? "current-day" : "")}>
                     {moment(day.date).format('DD-MM-YYYY')}
-                    { (!isPublished && existingExamsAtThisDate?.length === 0 && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) && (
+                    { (!isPublished && !isTemporary && calendarPermissions.filter((x) => x.name === SCOPES.ADD_INTERRUPTION).length > 0) && (
                         ( existingExamsAtThisDate.length > 0 ? (
                                 <Button color={"orange"} className='btn-add-interruption' title={t('Adicionar Interrupção')}
                                         onClick={() => interruptionForceHandler(day.date)}>
@@ -470,7 +488,6 @@ const Calendar = () => {
      * Content of week table
      */
     const weekDayContentCell = (epoch, days, courseIndex, year, weekDay, weekDayIndex, epochsLength) => {
-        console.log('weekDayContentCell');
         // TODO add exam to the dates (by single cols or colspan)
         const day = days.find((day) => day.weekDay === weekDay);
         const firstDayAvailable = moment(days[0].date);
@@ -515,8 +532,8 @@ const Calendar = () => {
         } else if (day?.date) {
             const currentDate = moment(day.date);
             // get exams for this date
-            const existingExamsAtThisDate = examList.filter((exam) => {
-                return  exam.academic_year === year &&
+            const existingExamsAtThisDate = day.exams.filter((exam) => {
+                return  exam.academic_year === year && exam.epoch_id === epoch.id &&
                         currentDate.isBetween(exam.date_start, exam.date_end, 'date','[]');
             });
             let examsComponents = null;
@@ -524,7 +541,7 @@ const Calendar = () => {
             if (existingExamsAtThisDate?.length) {
                 // show a button per exam in this day
                 examsComponents = existingExamsAtThisDate.map((exam) => {
-                    return exam.epoch_id === epoch.id && (
+                    return (
                         // <Button key={exam.id} onClick={() => openExamDetailHandler(year, exam)} isModified={differences?.includes(exam.id)} >
                         // For the Future (drag and drop
                         // draggable="false" onDragStart={drag}
