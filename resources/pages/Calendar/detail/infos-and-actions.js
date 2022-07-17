@@ -62,9 +62,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                     setCreatingCopy(false);
                     if (res.status === 200) {
                         toast('Cópia do calendário criada com sucesso!', successConfig);
-                        if ( localStorage.getItem('groups')?.indexOf('coordinator') >= 0 ) {
-                            navigate('/calendario/'+res.data);
-                        }   
+                        navigate('/calendario/'+res.data);
                     } else {
                         toast('Ocorreu um erro ao tentar criar uma cópia do calendário!', errorConfig);
                     }
