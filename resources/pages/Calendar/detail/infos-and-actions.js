@@ -115,48 +115,45 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
     }, []);
 
     const openRevisionModalHandler = () => {
-        // setViewExamId(exam.id);
         setOpenRevisionModal(true);
     }
     const closeRevisionModalHandler = () => {
-        // setViewExamId(exam.id);
         setOpenRevisionModal(false);
     }
 
     const openSubmitModalHandler = () => {
-        // setViewExamId(exam.id);
         setOpenSubmitModal(true);
     }
 
     const closeSubmitModalHandler = () => {
         setOpenSubmitModal(false);
     }
+
+    const updateToPhase = (isAccepted, message) => {
+        axios.patch(`/calendar/${calendarId}/approval`, {
+                'accepted': isAccepted,
+                'message': message
+            }).then((response) => {
+                if (response.status === 200) {
+                    toast(t('calendar.Fase do calendário atualizada!'), successConfig);
+                    document.location.reload();
+                } else {
+                    toast('Ocorreu um erro ao tentar atualizar o calendário!', errorConfig);
+                }
+            });
+    }
     
     const acceptCalendarHandler = () => {
-        if( localStorage.getItem('groups')?.indexOf('board') >= 0 ) {
-            // update phase to published and publish calendar as definitive
-            console.log("publicado");
-        }
-
-        if( localStorage.getItem('groups')?.indexOf('pedagogic') >= 0 ) {
-            // update phase directly to edition GOP
-            console.log("edição GOP");
-        }
+        updateToPhase(true, '');
     }
 
     const rejectCalendarHandler = () => {
-        if( localStorage.getItem('groups')?.indexOf('board') >= 0 ) {
-            // change phase back to edition GOP
-            console.log("edição GOP");
-        }
-
-        if( localStorage.getItem('groups')?.indexOf('pedagogic') >= 0 ) {
-            // change phase back to edition Coordinator
-            console.log("edição CC");
-        }
+        // TODO: When we have more time, we can add a way for the user to add a message when they reject
+        updateToPhase(false, '');        
     }    
 
     const updatePhaseHandler = (newPhase) => {
+        console.log(newPhase)
         setCalendarPhase(newPhase);
         calendarInfo.phase.id =  newPhase;
     }
