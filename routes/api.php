@@ -96,6 +96,8 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/new-calendar/semesters',               'calendarSemesters'    );
         Route::get('/new-calendar/interruptions',           'calendarInterruptions');
 
+        Route::post('/calendar/{calendar}/approval',         'approval'            );
+
         Route::post('/calendar/{calendar}/publish',         'publish'              );
         Route::post('/calendar/{calendar}/copy',            'copyCalendar'         );
         Route::get('/calendar-phases-full',                 'phases'               );

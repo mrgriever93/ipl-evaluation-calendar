@@ -24,7 +24,7 @@ class ExamCalendarResource extends JsonResource
             'observations'          => (($request->header("lang") == "en" || $request->query("lang") == "en") ? $this->observations_en : $this->observations_pt),
             'description'           => (($request->header("lang") == "en" || $request->query("lang") == "en") ? $this->description_en : $this->description_pt),
 
-            'course_unit'       => new \App\Http\Resources\API_V1\Calendars\CourseUnitResource($this->courseUnit),
+            'course_unit'       => new CourseUnitResource($this->courseUnit),
         ];
     }
 }

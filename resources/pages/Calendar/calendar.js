@@ -9,7 +9,6 @@ import {AnimatePresence} from 'framer-motion';
 import {toast} from 'react-toastify';
 
 import PageLoader from '../../components/PageLoader';
-import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
 import SCOPES from '../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../utils/toastConfig';
 
@@ -139,10 +138,12 @@ const Calendar = () => {
     };
 
     const addExamToList = (exam) => {
-        console.log("addee");
+        console.log("added");
+        console.log(examList.length);
         setExamList((current) => [...current, exam]);
     }
     const updateExamInList = (exam) => {
+        console.log(examList.length);
         setExamList((current) => {
             const copy = [...current];
             const oldExamIndex = copy.findIndex((item) => item.id === exam.id);
@@ -153,11 +154,13 @@ const Calendar = () => {
         });
     }
     const removeExamFromList = (examId) => {
+        console.log(examList.length);
         setExamList((current) => current.filter((item) => item.id !== examId));
     }
 
     useEffect(() => {
         console.log("examList change");
+        console.log(examList.length);
     }, [examList]);
 
     /*
@@ -467,6 +470,7 @@ const Calendar = () => {
      * Content of week table
      */
     const weekDayContentCell = (epoch, days, courseIndex, year, weekDay, weekDayIndex, epochsLength) => {
+        console.log('weekDayContentCell');
         // TODO add exam to the dates (by single cols or colspan)
         const day = days.find((day) => day.weekDay === weekDay);
         const firstDayAvailable = moment(days[0].date);
