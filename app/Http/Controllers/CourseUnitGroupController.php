@@ -12,11 +12,14 @@ use App\Http\Resources\Generic\EpochMethodResource;
 use App\Http\Resources\Generic\TeacherResource;
 use App\Http\Resources\MethodResource;
 use App\Models\Calendar;
+use App\Models\CalendarPhase;
+use App\Models\Course;
 use App\Models\CourseUnit;
 use App\Models\CourseUnitGroup;
 use App\Models\Epoch;
 use App\Models\EpochType;
 use App\Models\Group;
+use App\Models\InitialGroups;
 use App\Models\Method;
 use App\Models\UnitLog;
 use App\Models\User;
@@ -34,8 +37,17 @@ class CourseUnitGroupController extends Controller
      */
     public function index(Request $request, CourseUnitGroupFilters $filters)
     {
-        $list = CourseUnitGroup::with('courseUnits')->filter($filters)->ofAcademicYear($request->cookie('academic_year'))->resolve();
-        return CourseUnitGroupListResource::collection($list);
+        $perPage = request('per_page', 20);
+        $list = CourseUnitGroup::with('courseUnits')->filter($filters)->ofAcademicYear($request->cookie('academic_year'));
+
+        $user = Auth::user();
+        // List for coordinator
+        if ($user->groups->contains('code', InitialGroups::COORDINATOR)) {
+            $list->whereHas("courseUnits.course", function ($query){
+                $query->whereIn('course_id', Course::where('coordinator_user_id', Auth::user()->id)->pluck('id'));
+            });
+        }
+        return CourseUnitGroupListResource::collection($list->paginate($perPage));
     }
 
     /**

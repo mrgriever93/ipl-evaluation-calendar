@@ -90,15 +90,21 @@ class CourseUnitController extends Controller
 
         $courseUnits = CourseUnit::filter($filters)->ofAcademicYear($request->cookie('academic_year'));
 
+        $userId = Auth::user()->id;
+        $userGroups = Auth::user()->groups();
         if ($request->has('all') && $request->all === "true") {
+            if ($userGroups->coordinator()->exists()) {
+                $courseUnits->whereIn('course_id', Course::where('coordinator_user_id', $userId)->pluck('id'));
+                if (with(clone $userGroups)->isTeacher()->get()->count() > 0) {
+                    $courseUnits->orWhereIn('id', Auth::user()->courseUnits->pluck('id'));
+                }
+            }
             $courseUnits = $courseUnits->orderBy('name_' . $lang)->get();
         } else {
-            $userId = Auth::user()->id;
-            $userGroups = Auth::user()->groups();
             if (
-                Auth::user()->groups()->superAdmin()->exists() &&
-                Auth::user()->groups()->admin()->exists() &&
-                Auth::user()->groups()->responsiblePedagogic()->exists()
+                !Auth::user()->groups()->superAdmin()->exists() &&
+                !Auth::user()->groups()->admin()->exists() &&
+                !Auth::user()->groups()->responsiblePedagogic()->exists()
             ) {
                 if (with(clone $userGroups)->responsible()->exists() && $userGroups->count() == 1) {
                     $courseUnits->where('responsible_user_id', $userId);
