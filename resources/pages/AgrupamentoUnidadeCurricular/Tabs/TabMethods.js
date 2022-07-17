@@ -122,6 +122,7 @@ const UnitTabMethods = ({ groupId, warningsHandler }) => {
     };
 
     const onSubmit = () => {
+        console.log(removedMethods);
         if (!isSaving) {
             setIsSaving(true);
             let methods = [];
@@ -139,8 +140,9 @@ const UnitTabMethods = ({ groupId, warningsHandler }) => {
                     })
                 });
             });
+            let remoMethods = removedMethods.filter(item => item !== undefined);
             setIsLoading(true);
-            axios.post('/methods/groups', {methods: [...methods], removed: [...removedMethods]}).then((res) => {
+            axios.post('/methods/groups', {methods: [...methods], removed: [...remoMethods]}).then((res) => {
                 setIsSaving(false);
                 loadMethods();
                 if (res.status === 200) {
@@ -227,10 +229,11 @@ const UnitTabMethods = ({ groupId, warningsHandler }) => {
 
             if(copyEpochs[currEpochIndex].methods.length > 0){
                 copyEpochs[currEpochIndex].methods.forEach((meth) => {
-                    setRemovedMethods((current) => [...current, meth.id]);
+                    if(meth.id) {
+                        setRemovedMethods((current) => [...current, meth.id]);
+                    }
                 })
             }
-
             copyEpochs[currEpochIndex].methods = JSON.parse(JSON.stringify(methodsToClone));
         });
 

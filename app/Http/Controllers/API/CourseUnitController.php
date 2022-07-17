@@ -50,30 +50,31 @@ class CourseUnitController extends Controller
             $userGroups = Auth::user()->groups();
 
             if (!$userGroups->superAdmin()->exists() && !$userGroups->admin()->exists() && !$userGroups->responsiblePedagogic()->exists()) {
-                if (with(clone $userGroups)->responsible()->exists() && $userGroups->count() == 1) {
+                if (Auth::user()->groups()->responsible()->exists() && $userGroups->count() == 1) {
                     $courseUnits->where('responsible_user_id', $userId);
-                    dd("test 3");
                 }
-                if (with(clone $userGroups)->coordinator()->exists()) {
-                    dd("test 2");
+
+                if (Auth::user()->groups()->coordinator()->exists()) {
                     $courseUnits->whereIn('course_id', Course::where('coordinator_user_id', $userId)->pluck('id'));
-                    if (with(clone $userGroups)->isTeacher()->get()->count() > 0) {
+                    if (Auth::user()->groups()->isTeacher()->get()->count() > 0) {
                         $courseUnits->orWhereIn('id', Auth::user()->courseUnits->pluck('id'));
                     }
                 }
 
-                if (with(clone $userGroups)->isTeacher()->exists()) {
+                if (Auth::user()->groups()->isTeacher()->exists()) {
                     $courseUnits->whereIn('id', Auth::user()->courseUnits->pluck('id'));
                 }
 
-                $userGroupsIds = Auth::user()->groups()->pluck("id")->toArray();
-                $schools = School::whereIn('gop_group_id', $userGroupsIds)
-                                ->orWhereIn('board_group_id', $userGroupsIds)
-                                ->orWhereIn('pedagogic_group_id', $userGroupsIds)
-                                ->pluck("id")->toArray();
+                if (Auth::user()->groups()->gop()->exists() || Auth::user()->groups()->board()->exists() || Auth::user()->groups()->pedagogic()->exists()) {
+                    $userGroupsIds = Auth::user()->groups()->pluck("id")->toArray();
+                    $schools = School::whereIn('gop_group_id', $userGroupsIds)
+                        ->orWhereIn('board_group_id', $userGroupsIds)
+                        ->orWhereIn('pedagogic_group_id', $userGroupsIds)
+                        ->pluck("id")->toArray();
 
-                if (!empty($schools)) {
-                    $courseUnits->whereIn('course_id', Course::whereIn('school_id', $schools)->get()->pluck('id'));
+                    if (!empty($schools)) {
+                        $courseUnits->whereIn('course_id', Course::whereIn('school_id', $schools)->get()->pluck('id'));
+                    }
                 }
             }
             if( request('semester') ){
@@ -95,7 +96,7 @@ class CourseUnitController extends Controller
         if ($request->has('all') && $request->all === "true") {
             if ($userGroups->coordinator()->exists()) {
                 $courseUnits->whereIn('course_id', Course::where('coordinator_user_id', $userId)->pluck('id'));
-                if (with(clone $userGroups)->isTeacher()->get()->count() > 0) {
+                if (Auth::user()->groups()->isTeacher()->get()->count() > 0) {
                     $courseUnits->orWhereIn('id', Auth::user()->courseUnits->pluck('id'));
                 }
             }
@@ -106,17 +107,17 @@ class CourseUnitController extends Controller
                 !Auth::user()->groups()->admin()->exists() &&
                 !Auth::user()->groups()->responsiblePedagogic()->exists()
             ) {
-                if (with(clone $userGroups)->responsible()->exists() && $userGroups->count() == 1) {
+                if (Auth::user()->groups()->responsible()->exists() && $userGroups->count() == 1) {
                     $courseUnits->where('responsible_user_id', $userId);
                 }
-                if (with(clone $userGroups)->coordinator()->exists()) {
+                if (Auth::user()->groups()->coordinator()->exists()) {
                     $courseUnits->whereIn('course_id', Course::where('coordinator_user_id', $userId)->pluck('id'));
-                    if (with(clone $userGroups)->isTeacher()->get()->count() > 0) {
+                    if (Auth::user()->groups()->isTeacher()->get()->count() > 0) {
                         $courseUnits->orWhereIn('id', Auth::user()->courseUnits->pluck('id'));
                     }
                 }
 
-                if (with(clone $userGroups)->isTeacher()->exists()) {
+                if (Auth::user()->groups()->isTeacher()->exists()) {
                     $courseUnits->whereIn('id', Auth::user()->courseUnits->pluck('id'));
                 }
 

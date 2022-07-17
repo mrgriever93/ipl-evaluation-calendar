@@ -139,6 +139,7 @@ const Calendar = () => {
     };
 
     const addExamToList = (exam) => {
+        console.log("addee");
         setExamList((current) => [...current, exam]);
     }
     const updateExamInList = (exam) => {
@@ -154,6 +155,10 @@ const Calendar = () => {
     const removeExamFromList = (examId) => {
         setExamList((current) => current.filter((item) => item.id !== examId));
     }
+
+    useEffect(() => {
+        console.log("examList change");
+    }, [examList]);
 
     /*
      * Interruptions
@@ -390,7 +395,7 @@ const Calendar = () => {
                     return acc;
                 }, []), ['year', 'week']);
         }
-    }, [epochsList, interruptionsList, isCalendarInfoLoading, showingEpochs]);
+    }, [epochsList, interruptionsList, isCalendarInfoLoading, showingEpochs, examList]);
 
     useEffect(() => {
         loadCalendar(calendarId);
@@ -601,7 +606,7 @@ const Calendar = () => {
                 <Link to="/"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
             <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings} isLoading={isLoading}
-                             isPublished={isPublished} isTemporary={isTemporary} showingEpochs={showingEpochs} epochsViewHandler={setShowingEpochs} 
+                             isPublished={isPublished} isTemporary={isTemporary} showingEpochs={showingEpochs} epochsViewHandler={setShowingEpochs}
                              hasCurrentWeek={ (moment(calendarStartDate, "DD-MM-YYYY").isSameOrBefore(moment()) && moment(calendarEndDate, "DD-MM-YYYY").isSameOrAfter(moment()))  } />
             <AnimatePresence>
                 {isLoading && (<PageLoader animate={pageLoaderAnimate} exit={pageLoaderExit}/>)}
@@ -689,7 +694,6 @@ const Calendar = () => {
                                                         { courseYears.map((year, courseIndex) => {
                                                             alreadyAddedColSpan = false;
                                                             alreadyAddedRowSpan = false;
-
                                                             return epochs.map((epoch, epochIndex) => (
                                                                 <Table.Row key={courseIndex + "-" + epochIndex} >
                                                                     {epochIndex === 0 && (

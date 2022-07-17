@@ -215,12 +215,11 @@ class CalendarService
         // make sure the flags are correct
         $clone->is_published = false;
         $clone->is_temporary = false;
-        // set the correct phase, having in account the user that created the copy
-        $userGroups = Auth::user()->groups();
-        if($userGroups->gop()->exists()){
-            $clone->calendar_phase_id = CalendarPhase::phaseEditGop();
-        } else if($userGroups->coordinator()->exists()){
+
+        if( Auth::user()->groups()->coordinator()->exists()){
             $clone->calendar_phase_id = CalendarPhase::phaseEditCC();
+        } else {
+            $clone->calendar_phase_id = CalendarPhase::phaseEditGop();
         }
         $clone->push();
         //$calendar->load(['epochs.epochType.methods', 'epochs.exams']);

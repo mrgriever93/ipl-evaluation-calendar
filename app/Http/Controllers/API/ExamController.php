@@ -43,8 +43,10 @@ class ExamController extends Controller
                 foreach (Method::find($request->method_id)->epochType as $epochType) {
                     $epoch = Epoch::where('epoch_type_id', $epochType->id)->where('calendar_id', $calendarId)->first();
                     $hasEpoch = $epoch->calendar()->where('calendars.is_published', false)->exists();
-                    $hasExams = Exam::where('method_id', $request->method_id)->where('epoch_id', $epoch->id)->count();
-                    if ($hasEpoch && $hasExams === 0) {
+
+                    // This would prevent multiple exams
+                    //$hasExams = Exam::where('method_id', $request->method_id)->where('epoch_id', $epoch->id)->count();
+                    if ($hasEpoch){ // && $hasExams === 0) {
                         $newExam = new Exam($request->all());
                         /*$newExam->fill([
                             "course_id" => $courseUnit->course_id,
@@ -192,7 +194,8 @@ class ExamController extends Controller
         }
         $belongsToGroup = $exam->courseUnit->group;
         if($belongsToGroup) {
-            foreach ($exam->method->courseUnits as $courseUnit) {
+            // TODO validate how the grouped exams will work
+            /*foreach ($exam->method->courseUnits as $courseUnit) {
                 $epochId = Epoch::where('epoch_type_id', $exam->epoch->epoch_type_id)
                     ->where('calendar_id', Calendar::where('course_id', $courseUnit->course_id)->where('is_published', false)->latest('id')->first()->id)
                     ->first()->id;
@@ -202,7 +205,8 @@ class ExamController extends Controller
                     $examToDelete->delete();
                     $examToDelete->epoch->calendar()->touch();
                 }
-            }
+            }*/
+            $exam->delete();
         } else {
             $exam->delete();
         }

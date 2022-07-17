@@ -67,12 +67,12 @@ class Group extends Model
 
     public function scopeCoordinator($query)
     {
-        return $query->where('code', InitialGroups::COORDINATOR);
+        return $query->where('code', 'like', InitialGroups::COORDINATOR . "%");
     }
 
     public function scopeBoard($query)
     {
-        return $query->where('code', InitialGroups::BOARD);
+        return $query->where('code', 'like', InitialGroups::BOARD . "%");
     }
 
     public function scopeSuperAdmin($query)
@@ -87,7 +87,7 @@ class Group extends Model
 
     public function scopePedagogic($query)
     {
-        return $query->where('code', InitialGroups::PEDAGOGIC);
+        return $query->where('code', 'like', InitialGroups::PEDAGOGIC . "%");
     }
 
     public function scopeResponsiblePedagogic($query)
@@ -97,15 +97,15 @@ class Group extends Model
 
     public function scopeGop($query)
     {
-        return $query->where('code', InitialGroups::GOP);
+        return $query->where('code', 'like', InitialGroups::GOP . "%");
     }
 
     public function scopeResponsible($query) {
-        return $query->where('code', InitialGroups::RESPONSIBLE);
+        return $query->where('code', 'like', InitialGroups::RESPONSIBLE . "%");
     }
 
     public function scopeIsTeacher($query) {
-        return $query->where('code', InitialGroups::TEACHER);
+        return $query->where('code', 'like', InitialGroups::TEACHER . "%");
     }
 
     public function scopeIsStudent($query) {
