@@ -35,7 +35,6 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                 return false;
             }            
             axios.get('/calendar-phases-full?phase-id=' + currentPhaseId).then((response) => {
-                console.log(response.data)
                 if (response.status === 200) {
                     setCalendarPhases(
                         response.data?.phases.map(({id, description, name}) => ({
@@ -70,7 +69,6 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
             setGroupViewersLoading(true);
             axios.get('/calendar-phases-full/groups?phase-id=' + calendarPhase).then((response) => {
                 if (response.status === 200) {
-                    console.log(response.data)
                     setCalendarGroups(response.data?.data);
                     setGroupViewersLoading(false);
                 }

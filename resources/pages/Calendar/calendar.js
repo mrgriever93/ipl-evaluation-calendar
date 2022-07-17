@@ -114,7 +114,7 @@ const Calendar = () => {
             scholarYear: scholarYear,
             epochs: epochsList,
             selected_epoch: epoch,
-            course_unit_id: exam.course_unit_id,
+            course_unit_id: exam.course_unit?.id,
             group_id: exam.group_id,
             date_start: exam.date_start,
             date_end: exam.date_end,

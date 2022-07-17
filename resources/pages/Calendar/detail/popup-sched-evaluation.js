@@ -28,6 +28,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     const [isLoading, setIsLoading] = useState(true);
     const [loadRemainingCourseUnits, setLoadRemainingCourseUnits] = useState(false);
     const [selectedEpoch, setSelectedEpoch] = useState();
+    const [selectedCourseUnitId, setSelectedCourseUnitId] = useState(-1);
     const [courseUnits, setCourseUnits] = useState([]);
     const [methodList, setMethodList] = useState([]);
 
@@ -35,7 +36,6 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     const [changeData, setChangeData] = useState(false);
     const [savingExam, setSavingExam] = useState(false);
     const [showMissingMethodsLink, setShowMissingMethodsLink] = useState(false);
-    const [selectedCourseUnitId, setSelectedCourseUnitId] = useState(0);
     const [showRepeatedMethodsWarning, setShowRepeatedMethodsWarning] = useState(false);
 
     const [epochStartDate, setEpochStartDate] = useState();
