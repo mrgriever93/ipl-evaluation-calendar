@@ -13,6 +13,7 @@
 - Adicionada marcação visual para o dia e semana de hoje
 - Adicionado link para fazer scroll para a semana atual se existir
 - Adicionado mensagem de erro devolvida pelo servidor ao tentar criar/gravar Grupos de utilizadores;
+- Adicionado aviso para quando tentamos marcar mais do que uma vez uma avaliação.
 
 <ins>Issues corrigidos:</ins>
 - Revisão dos date pickers da criação dos calendários:

@@ -35,17 +35,17 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     const [changeData, setChangeData] = useState(false);
     const [savingExam, setSavingExam] = useState(false);
     const [showMissingMethodsLink, setShowMissingMethodsLink] = useState(false);
+    const [selectedCourseUnitId, setSelectedCourseUnitId] = useState(0);
+    const [showRepeatedMethodsWarning, setShowRepeatedMethodsWarning] = useState(false);
 
     const [epochStartDate, setEpochStartDate] = useState();
     const [epochEndDate, setEpochEndDate] = useState();
 
     useEffect( () => {
-        console.log(scheduleInformation);
         if(!!scheduleInformation.epochs) {
             let availableEpochs = scheduleInformation.epochs.filter((epoch) => {
                 return moment(scheduleInformation.date_start, 'YYYY-MM-DD').isBetween(moment(epoch.start_date), moment(epoch.end_date), 'day', '[]' );
             });
-
             setEpochsList(availableEpochs);
 
             if(scheduleInformation.epoch_id > 0 ) {
@@ -110,6 +110,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     };
 
     const methodListFilterHandler = (course_unit_id) => {
+        setSelectedCourseUnitId(course_unit_id);
         if(courseUnits?.length > 0 ) {
             setMethodList(
                 courseUnits.find((courseUnit) => courseUnit.value === course_unit_id)?.methods.map(({id, description, name, minimum, weight, is_done}) => ({
@@ -122,6 +123,19 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                 )
             );
         }
+    };
+
+    const checkMethodAlreadyScheduled = (methodId) => {
+        let courseUnitMethods = courseUnits.find((courseUnit) => courseUnit.value === selectedCourseUnitId)?.methods;
+        if(courseUnitMethods.length > 0) {
+            let foundMethod = courseUnitMethods.find((method) => method.id === methodId);
+            if(foundMethod?.is_done) {
+                setShowRepeatedMethodsWarning(true);
+                return false;
+            }
+        }
+        setShowRepeatedMethodsWarning(false);
+        return false;
     };
 
     useEffect(() => {
@@ -207,6 +221,11 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                 });
             }
         });
+    };
+
+    const onCloseHandler = () => {
+        setShowRepeatedMethodsWarning(false);
+        onClose();
     };
 
     return (
@@ -356,10 +375,19 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                         selection search
                                                         disabled={ !methodList?.length}
                                                         loading={ methodList !== undefined ? !methodList.length : false }
-                                                        onChange={(e, {value}) => methodInput.onChange(value)}
+                                                        onChange={(e, {value}) => {
+                                                            methodInput.onChange(value);
+                                                            checkMethodAlreadyScheduled(value);
+                                                        }}
                                                     />
                                                 )}
                                             </Field>
+                                            { showRepeatedMethodsWarning && (
+                                                    <Message size='tiny' warning={true}>
+                                                        <div><b>{ t("O elemento de avaliação selecionado já se encontra calendarizado.")}</b></div>
+                                                        <div className='margin-top-xs'>{ t("Verifique se quer mesmo marcar este elemento novamente.")}</div>
+                                                    </Message>
+                                                )}
                                         </>
                                     )}
                                 </GridColumn>
@@ -426,7 +454,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                 { t("Remover avaliação") }
                             </Button>
                         )}
-                        <Button onClick={onClose} >{ t("Cancelar") }</Button>
+                        <Button onClick={onCloseHandler} >{ t("Cancelar") }</Button>
                         <Button onClick={handleSubmit} positive loading={savingExam}>
                             { scheduleInformation?.exam_id ? t("Gravar alterações") : t("Marcar Avaliação") }
                         </Button>
