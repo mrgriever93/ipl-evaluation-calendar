@@ -109,6 +109,11 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
         });
     }
 
+    const checkPhaseChangePermission = () => {
+        let phaseFound = JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE)[0];
+        return phaseFound?.phases.includes(currentPhaseId);
+    }
+
     return (
         <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
             <Modal.Header>{ t("Submeter calendário para a próxima fase") }</Modal.Header>
@@ -121,97 +126,116 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                         <Label color="blue">{ calendarPhases.filter((phase) => phase.value === currentPhaseId)[0]?.text }</Label>
                     </GridColumn>
                 </Grid>
-
-                <div className='margin-top-base'>
-                    { t("Selecionar próxima fase:") }
-                </div>
-                <div className='margin-top-s'>
-                    <Button.Group>
-                        <Button positive={isEditing} onClick={(e) => setIsEditing(true)}>
-                            <Icon name="edit" />{ t("Em edição") }
-                        </Button>
-                        <Button positive={!isEditing} onClick={(e) => setIsEditing(false)}>
-                            <Icon name="eye" />{ t("Em avaliação") }
-                        </Button>
-                    </Button.Group>
-                </div>
-
-                { isEditing ? (
+                { checkPhaseChangePermission() ? (
                     <>
-                        <div className='margin-top-m'>
+                        <div className='margin-top-base'>
+                            { t("Selecionar próxima fase:") }
+                        </div>
+                        <div className='margin-top-s'>
                             <Button.Group>
-                                {calendarPhases.filter((x) => x.text.indexOf('Em edição')  === 0)?.map((phase) => {
-                                    return (
-                                        <Button positive={isEditingPhase === phase.value} onClick={(e) => {
-                                                setIsEditingPhase(phase.value);
-                                                setCalendarPhase(phase.value);
-                                            }} key={phase.value}>
-                                            { phase.text.substr(phase.text.indexOf('(')+1, phase.text.length).replace(')', '') }
-                                        </Button>
-                                    );
-                                })}
+                                <Button positive={isEditing} onClick={(e) => setIsEditing(true)}>
+                                    <Icon name="edit" />{ t("Em edição") }
+                                </Button>
+                                <Button positive={!isEditing} onClick={(e) => setIsEditing(false)}>
+                                    <Icon name="eye" />{ t("Em avaliação") }
+                                </Button>
                             </Button.Group>
                         </div>
+
+                        { isEditing ? (
+                            <>
+                                <div className='margin-top-m'>
+                                    <Button.Group>
+                                        {calendarPhases.filter((x) => x.text.indexOf('Em edição')  === 0)?.map((phase) => {
+                                            return (
+                                                <Button positive={isEditingPhase === phase.value} onClick={(e) => {
+                                                        setIsEditingPhase(phase.value);
+                                                        setCalendarPhase(phase.value);
+                                                    }} key={phase.value}>
+                                                    { phase.text.substr(phase.text.indexOf('(')+1, phase.text.length).replace(')', '') }
+                                                </Button>
+                                            );
+                                        })}
+                                    </Button.Group>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <div className='margin-top-m'>
+                                    <Button.Group>
+                                        {calendarPhases.filter((x) => x.text.indexOf('Em avaliação')  === 0)?.map((phase) => {
+                                            return (
+                                                <Button positive={isEvaluationPhase === phase.value} onClick={(e) => {
+                                                        setIsEvaluationPhase(phase.value);
+                                                        setCalendarPhase(phase.value);
+                                                    }} key={phase.value}>
+                                                    { phase.text.substring(phase.text.indexOf('(')+1, phase.text.length).replace(')', '') }
+                                                </Button>
+                                            );
+                                        })}
+                                    </Button.Group>
+                                </div>
+                            </>
+                        ) }
+                        <Divider />
+                        <ShowComponentIfAuthorized permission={SCOPES.CHANGE_CALENDAR_PHASE}>
+                            <Form>
+                                <Grid columns={2} divided={false}>
+                                    <Grid.Row>
+                                        <Grid.Column>
+                                            <Header as={"h4"}>
+                                                <Icon name={"users"} size={"big"} color={"grey"}/>
+                                                { t("Grupos que podem visualizar o calendario") }
+                                            </Header>
+                                            <Form.Group grouped>
+                                                { isPublished ? (
+                                                    <div>{ t("Todos os grupos vao ver este calendario") }</div>
+                                                ) : (
+                                                    <>
+                                                        { calendarGroups && calendarGroups.map((item, indexGroup) => (
+                                                            <Form.Field key={indexGroup}>
+                                                                <Checkbox label={item.name} checked={item.selected}
+                                                                        onChange={(e, {checked}) => handleGroupChange(item.id, checked)} />
+                                                            </Form.Field>
+                                                        ))}
+                                                    </>
+                                                )}
+                                                { groupViewersLoading && (
+                                                    <Dimmer active inverted>
+                                                        <Loader indeterminate>{t('A carregar grupos')}</Loader>
+                                                    </Dimmer>
+                                                )}
+                                            </Form.Group>
+                                        </Grid.Column>
+                                    </Grid.Row>
+                                </Grid>
+                            </Form>
+                        </ShowComponentIfAuthorized>
                     </>
                 ) : (
                     <>
-                        <div className='margin-top-m'>
-                            <Button.Group>
-                                {calendarPhases.filter((x) => x.text.indexOf('Em avaliação')  === 0)?.map((phase) => {
-                                    return (
-                                        <Button positive={isEvaluationPhase === phase.value} onClick={(e) => {
-                                                setIsEvaluationPhase(phase.value);
-                                                setCalendarPhase(phase.value);
-                                            }} key={phase.value}>
-                                            { phase.text.substring(phase.text.indexOf('(')+1, phase.text.length).replace(')', '') }
-                                        </Button>
-                                    );
-                                })}
-                            </Button.Group>
+                        <div key="empty-table">
+                            <div className={"empty-table-row"}>
+                                <div className='empty-table-row-content'>
+                                    <div className={"margin-bottom-l"}>
+                                        <Icon size='huge' color='red' name='dont'/>
+                                    </div>
+                                    <Header as='h3' className={"margin-y-l"}>{ t("Não tem permissão para mudar de fase do calendário") }</Header>
+                                </div>
+                            </div>
                         </div>
                     </>
-                ) }
-                <Divider />
-                <ShowComponentIfAuthorized permission={SCOPES.CHANGE_CALENDAR_PHASE}>
-                    <Form>
-                        <Grid columns={2} divided={false}>
-                            <Grid.Row>
-                                <Grid.Column>
-                                    <Header as={"h4"}>
-                                        <Icon name={"users"} size={"big"} color={"grey"}/>
-                                        { t("Grupos que podem visualizar o calendario") }
-                                    </Header>
-                                    <Form.Group grouped>
-                                        { isPublished ? (
-                                            <div>{ t("Todos os grupos vao ver este calendario") }</div>
-                                        ) : (
-                                            <>
-                                                { calendarGroups && calendarGroups.map((item, indexGroup) => (
-                                                    <Form.Field key={indexGroup}>
-                                                        <Checkbox label={item.name} checked={item.selected}
-                                                                  onChange={(e, {checked}) => handleGroupChange(item.id, checked)} />
-                                                    </Form.Field>
-                                                ))}
-                                            </>
-                                        )}
-                                        { groupViewersLoading && (
-                                            <Dimmer active inverted>
-                                                <Loader indeterminate>{t('A carregar grupos')}</Loader>
-                                            </Dimmer>
-                                        )}
-                                    </Form.Group>
-                                </Grid.Column>
-                            </Grid.Row>
-                        </Grid>
-                    </Form>
-                </ShowComponentIfAuthorized>
+                )}
+                
             </Modal.Content>
             <Modal.Actions>
                 <ShowComponentIfAuthorized permission={[SCOPES.PUBLISH_CALENDAR]} >
                     <Button onClick={publishCalendar} color={"blue"} floated={"left"} icon labelPosition={"right"}>{t('Publicar esta versão do calendário')} <Icon name={"calendar check outline"}/></Button>
                 </ShowComponentIfAuthorized>
                 <Button onClick={onClose}>{t('Fechar')}</Button>
-                <Button onClick={onSave} color={"green"}>{t('Guardar')}</Button>
+                { checkPhaseChangePermission() && (
+                    <Button onClick={onSave} color={"green"}>{t('Guardar')}</Button>
+                )}
             </Modal.Actions>
         </Modal>
     );

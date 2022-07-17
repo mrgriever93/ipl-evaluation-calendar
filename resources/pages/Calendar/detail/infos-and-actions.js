@@ -83,9 +83,14 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
         setMethodsLoaded(true);
     }, [warnings]);
 
+    useEffect(() => {
+        if (calendarInfo?.phase?.id > 0) {
+            setCalendarPhase(calendarInfo?.phase?.id);
+        }
+    }, [calendarInfo]);    
 
     useEffect(() => {
-        if (typeof calendarPhase === 'number') {
+        if (typeof calendarPhase === 'number' && calendarPhase <= 0) {
             setCalendarPermissions(JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((perm) => perm.phase_id === calendarPhase) || []);
         }
     }, [calendarPhase]);
@@ -194,6 +199,18 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
         }
     }
 
+    const checkPublishPermission = () => {
+        if(SCOPES.PUBLISH_CALENDAR ) {
+            return true;
+        }
+        return false;
+    }
+
+    const checkPhaseChangePermission = () => {
+        let phaseFound = JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE)[0];
+        return phaseFound?.phases.includes(calendarPhase);
+    }
+
     return (
         <>
             <div className='main-content-title-section'>
@@ -207,29 +224,22 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                     { !isLoading && (
                         !isPublished ? (
                             <>
-                                { localStorage.getItem('groups')?.indexOf('board') >= 0 || localStorage.getItem('groups')?.indexOf('pedagogic') >= 0 ? (
+                                { checkPhaseChangePermission() && (
                                     <>
-                                        { ( calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0) && (
-                                            <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE]}>
+                                        { localStorage.getItem('groups')?.indexOf('board') >= 0 || localStorage.getItem('groups')?.indexOf('pedagogic') >= 0 ? (
+                                            <>
                                                 <Button color="red" onClick={rejectCalendarHandler}>{ t('Rejeitar') }</Button>
                                                 <Button color="green" onClick={acceptCalendarHandler}>{ t('Validar') }</Button>
-                                            </ShowComponentIfAuthorized>
-                                        )}
+                                            </>
+                                        ) : (
+                                            <Button color="teal" onClick={openSubmitModalHandler}>{ t('Submeter') }</Button>
+                                        ) }
                                     </>
-                                ) : (
-                                    <>
-                                        { (SCOPES.PUBLISH_CALENDAR || calendarPermissions.filter((x) => x.name === SCOPES.CHANGE_CALENDAR_PHASE).length > 0) && (
-                                            <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE]}>
-                                                <Button color="teal" onClick={openSubmitModalHandler}>{ t('Submeter') }</Button>
-                                            </ShowComponentIfAuthorized>
-                                        )}
-                                    </>
-                                ) }
-                                
+                                )}                                
                             </>
                         ) : (
                             <ShowComponentIfAuthorized permission={[SCOPES.CREATE_COPY]}>
-                                <Button color="orange" loading={creatingCopy} onClick={createCopy} labelPosition={"right"} icon>Criar um cópia desta versão <Icon name={"copy outline"} /></Button>
+                                <Button color="orange" loading={creatingCopy} onClick={createCopy} labelPosition={"right"} icon>{ t('Criar um cópia desta versão') } <Icon name={"copy outline"} /></Button>
                             </ShowComponentIfAuthorized>
                         )
                     )}
