@@ -266,7 +266,6 @@
         "calendar.O comentário foi adicionado com sucesso!": "O comentário foi adicionado com sucesso!",
         "calendar.Ocorreu um erro ao adicionar o comentário!": "Ocorreu um erro ao adicionar o comentário!",
         "calendar.Estado do calendário atualizado!": "Estado do calendário atualizado!",
-        "calendar.Fase do calendário atualizada!": "Fase do calendário atualizada!",
         "calendar.Comentário ignorado com sucesso!": "Comentário ignorado com sucesso!",
         "calendar.Ocorreu um erro ao ignorar o comentário!": "Ocorreu um erro ao ignorar o comentário!",
         "calendar.Interrupção eliminada com sucesso deste calendário!": "Interrupção eliminada com sucesso deste calendário!",
@@ -286,6 +285,7 @@
         "Aula": "Aula",
         "Marcar": "Marcar",
         "Todas as épocas ficaram escondidas": "Todas as épocas ficaram escondidas",
+        "Fase do calendário atualizada!": "Fase do calendário atualizada!",
 
 
         "Guardou o coordenador de curso com sucesso!": "Guardou o coordenador de curso com sucesso!",

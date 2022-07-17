@@ -266,7 +266,6 @@
         "calendar.O comentário foi adicionado com sucesso!": "Comment added with success!",
         "calendar.Ocorreu um erro ao adicionar o comentário!": "There was a problem to add the comment!",
         "calendar.Estado do calendário atualizado!": "Calendar state was updated!",
-        "calendar.Fase do calendário atualizada!": "Calendar phase was updated!",
         "calendar.Comentário ignorado com sucesso!": "Comment ignored with success!",
         "calendar.Ocorreu um erro ao ignorar o comentário!": "There was a problem when ignoring the comment!",
         "calendar.Interrupção eliminada com sucesso deste calendário!": "Interruption deleted with success of the calendar!",
@@ -286,6 +285,7 @@
         "Aula": "Class",
         "Marcar": "Schedule",
         "Todas as épocas ficaram escondidas": "All epochs are now hidden",
+        "Fase do calendário atualizada!": "Calendar phase was updated!",
 
         "Guardou o coordenador de curso com sucesso!": "Coordinator of the course was saved with success!",
         "Ocorreu um erro ao guardar o coordenador de curso!": "There was a problem trying to save the course coordinator!",

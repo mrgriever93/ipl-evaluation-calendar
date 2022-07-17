@@ -47,10 +47,10 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
 
     const createCopy = () => {
         SweetAlertComponent.fire({
-            title: 'Atenção!',
-            html: 'Ao criar uma cópia deste calendário, irá eliminar todas as cópias criadas anteriormente deste mesmo calendário!<br/><br/><strong>Tem a certeza que deseja criar uma cópia do calendário?</strong>',
-            denyButtonText: 'Não',
-            confirmButtonText: 'Sim',
+            title: t('Atenção!'),
+            html: t('Ao criar uma cópia deste calendário, irá eliminar todas as cópias criadas anteriormente deste mesmo calendário!<br/><br/><strong>Tem a certeza que deseja criar uma cópia do calendário?</strong>'),
+            denyButtonText: t('Não'),
+            confirmButtonText: t('Sim'),
             showConfirmButton: true,
             showDenyButton: true,
             confirmButtonColor: '#21ba45',
@@ -61,10 +61,10 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                 axios.post(`/calendar/${calendarId}/copy`).then((res) => {
                     setCreatingCopy(false);
                     if (res.status === 200) {
-                        toast('Cópia do calendário criada com sucesso!', successConfig);
+                        toast(t('Cópia do calendário criada com sucesso!'), successConfig);
                         navigate('/calendario/'+res.data);
                     } else {
-                        toast('Ocorreu um erro ao tentar criar uma cópia do calendário!', errorConfig);
+                        toast(t('Ocorreu um erro ao tentar criar uma cópia do calendário!'), errorConfig);
                     }
                 });
             }
@@ -135,10 +135,10 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                 'message': message
             }).then((response) => {
                 if (response.status === 200) {
-                    toast(t('calendar.Fase do calendário atualizada!'), successConfig);
+                    toast(t('Fase do calendário atualizada!'), successConfig);
                     document.location.reload();
                 } else {
-                    toast('Ocorreu um erro ao tentar atualizar o calendário!', errorConfig);
+                    toast(t('Ocorreu um erro ao tentar atualizar o calendário!'), errorConfig);
                 }
             });
     }
@@ -178,7 +178,6 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
     useEffect(() => {
         epochsViewHandler(activeEpochs);
     }, [activeEpochs]);
-    
 
 
     const scrollToTodayHandler = (event) => {
@@ -197,13 +196,6 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                 behavior: 'smooth'
             });
         }
-    }
-
-    const checkPublishPermission = () => {
-        if(SCOPES.PUBLISH_CALENDAR ) {
-            return true;
-        }
-        return false;
     }
 
     const checkPermissionByPhase = (permissionToCheck) => {
@@ -256,7 +248,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                                     </div>
                                 )}
                                 <div>
-                                    <Header as="h4">Legenda</Header>
+                                    <Header as="h4">{ t('Legenda') }</Header>
                                 </div>
                                 { isLoading ? (
                                     <Placeholder>
@@ -308,7 +300,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                                         ) : (
                                             <div>
                                                 <span>
-                                                    <Header as="h5">Fase:</Header>
+                                                    <Header as="h5">{ t('Fase') }:</Header>
                                                 </span>
                                                 <div className='margin-top-xs'>
                                                     {calendarPhases.find((x) => x.key === calendarPhase)?.text || calendarInfo?.phase?.description}
@@ -327,7 +319,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                                         ) : (
                                             <div className='margin-top-base'>
                                                 <span>
-                                                    <Header as="h5">Estado:</Header>
+                                                    <Header as="h5">{ t('Estado') }:</Header>
                                                 </span>
                                                 <div className='margin-top-xs'>
                                                     { !isPublished && !isTemporary ? (
@@ -357,7 +349,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                                     <div>
                                         <div>
                                             <span>
-                                                <Header as="h5">Última alteração:</Header>
+                                                <Header as="h5">{ t('Última alteração') }:</Header>
                                             </span>
                                             <div className='margin-top-xs'>
                                                 {moment(calendarInfo?.calendar_last_update,).format('DD MMMM, YYYY HH:mm')}
@@ -366,7 +358,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
 
                                         <div className='margin-top-base'>
                                             <span>
-                                                <Header as="h5">Versão:</Header>
+                                                <Header as="h5">{ t('Versão') }:</Header>
                                             </span>
                                             <div className='margin-top-xs'>
                                                 { 'Versão ' + (calendarInfo?.version ? calendarInfo.version : '') }
@@ -401,12 +393,12 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                                                         </div>
                                                         <div className="revision-column-content">
                                                             <ul className="margin-top-base">
-                                                                <li>Existem {methodsIncompleteCount} elementos de avaliação por submeter.</li>
-                                                                <li>Existem {methodsMissingCount} UCs com <a href={ "/unidade-curricular?curso="+calendarInfo?.course?.id} target="_blank">métodos <Icon name="external alternate" /></a> por preencher.</li>
+                                                                <li>{ t('Existem') +" "+ methodsIncompleteCount + " " + t('elementos de avaliação por submeter') }.</li>
+                                                                <li>{ t('Existem') +" "+ methodsMissingCount + " " + t('UCs com') + " " }<a href={ "/unidade-curricular?curso="+calendarInfo?.course?.id} target="_blank">{ t('métodos')} <Icon name="external alternate" /></a> { t('por preencher') }.</li>
                                                             </ul>
                                                         </div>
                                                         <div className={"text-center"}>
-                                                            <a href="#" onClick={openRevisionModalHandler} >ver detalhe</a>
+                                                            <a href="#" onClick={openRevisionModalHandler} >{ t("ver detalhe") }</a>
                                                         </div>
                                                     </>
                                                 ) : (
