@@ -361,7 +361,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                                                 <Header as="h5">{ t('Versão') }:</Header>
                                             </span>
                                             <div className='margin-top-xs'>
-                                                { 'Versão ' + (calendarInfo?.version ? calendarInfo.version : '') }
+                                                { t('Versão') + " " + (calendarInfo?.version ? calendarInfo.version : '') }
                                             </div>
                                         </div>
                                     </div>
@@ -398,7 +398,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                                                             </ul>
                                                         </div>
                                                         <div className={"text-center"}>
-                                                            <a href="#" onClick={openRevisionModalHandler} >{ t("ver detalhe") }</a>
+                                                            <a href="#" onClick={openRevisionModalHandler} >{ t('ver detalhe') }</a>
                                                         </div>
                                                     </>
                                                 ) : (
