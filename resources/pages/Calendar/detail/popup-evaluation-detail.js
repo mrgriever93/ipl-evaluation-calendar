@@ -293,7 +293,7 @@ const PopupEvaluationDetail = ( {isPublished, isOpen, currentPhaseId, onClose, e
                                                     <div> { t('Existem') +" " + commentsList?.filter((x) => (x.ignored)).length + " " + t('comentários escondidos') }</div>
                                                 ) }
                                                 { commentsList?.filter((x) => (x.ignored)).length == 1 && (
-                                                    <div> { t('Existe') +" " + commentsList?.filter((x) => (x.ignored)).length + " " + t('comentário escondido') }</div>
+                                                    <div> { t('Existem') +" " + commentsList?.filter((x) => (x.ignored)).length + " " + t('comentário escondido') }</div>
                                                 ) }
                                             </Segment>
                                         )}
