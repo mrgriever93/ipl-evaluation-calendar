@@ -157,6 +157,34 @@ class CalendarService
         }
     }
 
+
+    public static function approval(Request $request, Calendar $calendar)
+    {
+        // TODO add message field to DB, update this code and add to FrontEnd
+        // $request->input("message")
+        if(Auth::user()->groups()->board()->exists()){
+            if($request->input("accepted")) {
+                self::publish($calendar);
+                return;
+            } else {
+                $calendar->calendar_phase_id = CalendarPhase::phaseEditGop();
+                $calendar->save();
+                CalendarChanged::dispatch($calendar);
+            }
+        }
+        if(Auth::user()->groups()->pedagogic()->exists()){
+            if($request->input("accepted")) {
+                $calendar->calendar_phase_id = CalendarPhase::phaseEditGop();
+            } else {
+                $calendar->calendar_phase_id = CalendarPhase::phaseEditCC();
+            }
+            $calendar->save();
+            CalendarChanged::dispatch($calendar);
+        }
+
+        self::updateCalendarViewers($calendar->id, $calendar->calendar_phase_id, true);
+    }
+
     public static function publish(Calendar $calendar)
     {
         Calendar::where('id', '!=', $calendar->id)
@@ -179,20 +207,11 @@ class CalendarService
             }
             $calendar->save();
 
-            // delete old viewers
-            CalendarViewers::where("calendar_id", $calendar->id)->delete();
-
-            $groups = Group::where('enabled', true)->pluck('id')->toArray();
-            $viewers = [];
-            foreach ($groups as $group) {
-                $viewers[] = ["group_id" => $group, "calendar_id" => $calendar->id];
-            }
-            // insert all new viewers groups
-            CalendarViewers::insert($viewers);
+            self::updateCalendarViewers($calendar->id, $calendar->calendar_phase_id, true);
 
             $newId = null;
             // if coordinator, copy the calendar to work on
-            if(Auth::user()->groups()->Coordinator()){
+            if(Auth::user()->groups()->coordinator()->exists()){
                 $newId = self::copyCalendar($calendar);
             }
             CalendarPublished::dispatch($calendar);
@@ -245,22 +264,8 @@ class CalendarService
 
         $clone->save();
 
-        // TODO have in count the school that the calendar belongs to
-        $permissionId = Permission::permissionViewCalendar();
-        $phaseId = $clone->calendar_phase_id;
-        $groupsQuery = Group::withExists([
-            'permissions as has_permission' => function ($query) use($permissionId, $phaseId) {
-                return $query->where('permission_id', $permissionId)->where('phase_id', $phaseId);
-            }
-        ])->get()->toArray();
-        $viewers = [];
-        foreach ($groupsQuery as $group) {
-            if($group["has_permission"]) {
-                $viewers[] = ["calendar_id" => $clone->id, "group_id" => $group['id']];
-            }
-        }
-        // insert all new viewers groups
-        CalendarViewers::insert($viewers);
+        self::updateCalendarViewers($clone->id, $clone->calendar_phase_id, true);
+
         return $clone->id;
     }
 
@@ -490,5 +495,31 @@ class CalendarService
             }
         ])->get();
         return GroupsPhaseResource::collection($groupsQuery);
+    }
+
+    public static function updateCalendarViewers($calendarId, $phaseId = null, $clearOldViewers = false){
+        if($clearOldViewers){
+            // delete old viewers
+            CalendarViewers::where("calendar_id", $calendarId)->delete();
+        }
+        if($phaseId == null){
+            $phaseId = CalendarPhase::phaseEditGop();
+        }
+        $permissionId = Permission::permissionViewCalendar();
+        // TODO have in count the school that the calendar belongs to
+        $groupsQuery = Group::withExists([
+            'permissions as has_permission' => function ($query) use($permissionId, $phaseId) {
+                return $query->where('permission_id', $permissionId)->where('phase_id', $phaseId);
+            }
+        ])->get()->toArray();
+
+        $viewers = [];
+        foreach ($groupsQuery as $group) {
+            if($group["has_permission"]) {
+                $viewers[] = ["calendar_id" => $calendarId, "group_id" => $group['id']];
+            }
+        }
+        // insert all new viewers groups
+        CalendarViewers::insert($viewers);
     }
 }

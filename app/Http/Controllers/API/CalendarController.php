@@ -123,4 +123,11 @@ class CalendarController extends Controller
         $response = CalendarService::phasesGroups($request);
         return $response;
     }
+
+
+    public function approval(Request $request, Calendar $calendar)
+    {
+        $response = CalendarService::approval($request, $calendar);
+        return $response;
+    }
 }
