@@ -9,7 +9,7 @@ import {errorConfig, successConfig} from '../../../utils/toastConfig';
 import SCOPES from "../../../utils/scopesConstants";
 import ShowComponentIfAuthorized from "../../../components/ShowComponentIfAuthorized";
 
-const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, updatePhase} ) => {
+const PopupSubmit = ( {isOpen, onClose, calendarId, currentPhaseId, updatePhase} ) => {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
@@ -53,7 +53,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
         else {
             let currentPhase = calendarPhases.filter((phase) => phase.value === currentPhaseId)[0];
 
-            if( currentPhase.text.indexOf('Em edição')  === 0) {
+            if( currentPhase.text.indexOf('Em edição') === 0 || currentPhase.text.indexOf('In edit') === 0) {
                 setIsEditing(true);
                 setIsEditingPhase(currentPhase.value);
             } else {
@@ -82,7 +82,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
         //onSave();
         axios.post(`/calendar/${calendarId}/publish`).then((res) => {
             if (res.status === 200) {
-                toast('Calendário publicado com sucesso!', successConfig);
+                toast(t('Calendário publicado com sucesso!'), successConfig);
                 onClose();
                 if ( localStorage.getItem('groups')?.indexOf('coordinator') >= 0 ) {
                     navigate('/calendario/'+res.data);
@@ -90,7 +90,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                     document.location.reload();
                 }
             } else {
-                toast('Ocorreu um erro ao tentar publicar o calendário!', errorConfig);
+                toast(t('Ocorreu um erro ao tentar publicar o calendário!'), errorConfig);
             }
         });
     };
@@ -105,7 +105,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
             'groups': viewGroups
         }).then((response) => {
             if (response.status === 200) {
-                toast(t('calendar.Fase do calendário atualizada!'), successConfig);
+                toast(t('Fase do calendário atualizada!'), successConfig);
             }
         });
         updatePhase(calendarPhase);
@@ -131,7 +131,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
             <Modal.Content>
                 <Grid>
                     <GridColumn width={2}>
-                        <div>{ t("Fase atual:") }</div>
+                        <div>{ t("Fase atual") }:</div>
                     </GridColumn>
                     <GridColumn width={14}>
                         <Label color="blue">{ calendarPhases.filter((phase) => phase.value === currentPhaseId)[0]?.text }</Label>
@@ -140,7 +140,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                 { checkPermissionByPhase(SCOPES.CHANGE_CALENDAR_PHASE) ? (
                     <>
                         <div className='margin-top-base'>
-                            { t("Selecionar próxima fase:") }
+                            { t("Selecionar próxima fase") }:
                         </div>
                         <div className='margin-top-s'>
                             <Button.Group>
@@ -157,7 +157,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                             <>
                                 <div className='margin-top-m'>
                                     <Button.Group>
-                                        {calendarPhases.filter((x) => x.text.indexOf('Em edição')  === 0)?.map((phase) => {
+                                        {calendarPhases.filter((x) => x.text.indexOf('Em edição')  === 0 || x.text.indexOf('In edit')  === 0)?.map((phase) => {
                                             return (
                                                 <Button positive={isEditingPhase === phase.value} onClick={(e) => {
                                                         setIsEditingPhase(phase.value);
@@ -174,7 +174,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                             <>
                                 <div className='margin-top-m'>
                                     <Button.Group>
-                                        {calendarPhases.filter((x) => x.text.indexOf('Em avaliação')  === 0)?.map((phase) => {
+                                        {calendarPhases.filter((x) => x.text.indexOf('Em avaliação')  === 0 || x.text.indexOf('Under evaluation')  === 0)?.map((phase) => {
                                             return (
                                                 <Button positive={isEvaluationPhase === phase.value} onClick={(e) => {
                                                         setIsEvaluationPhase(phase.value);
@@ -200,7 +200,7 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
                                             </Header>
                                             <Form.Group grouped>
                                                 { isPublished ? (
-                                                    <div>{ t("Todos os grupos vao ver este calendario") }</div>
+                                                    <div>{ t("Todos os grupos irão ver este calendario") }</div>
                                                 ) : (
                                                     <>
                                                         { calendarGroups && calendarGroups.map((item, indexGroup) => (
@@ -251,4 +251,4 @@ const PopupEvaluationDetail = ( {isOpen, onClose, calendarId, currentPhaseId, up
         </Modal>
     );
 };
-export default PopupEvaluationDetail;
+export default PopupSubmit;

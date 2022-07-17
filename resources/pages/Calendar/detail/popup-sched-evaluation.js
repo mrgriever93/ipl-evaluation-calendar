@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
-import {useParams, useNavigate} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {Field, Form as FinalForm} from 'react-final-form';
 import {DateInput, DatesRangeInput, TimeInput} from 'semantic-ui-calendar-react-yz';
@@ -9,15 +9,11 @@ import {Button, Divider, Form, Grid, GridColumn, Header, Icon, Modal, Checkbox, 
 import {toast} from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-
-// import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
-// import SCOPES from '../../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
 const SweetAlertComponent = withReactContent(Swal);
 
 const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedExam, updatedExam, deletedExam, calendarDates} ) => {
-    const history = useNavigate();
     const { t } = useTranslation();
     // get URL params
     let { id } = useParams();
@@ -117,7 +113,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                         key: id,
                         value: id,
                         text: (description || name),
-                        description: `Min. ${minimum} / Peso: ${parseInt(weight, 10)}%`,
+                        description: `Min. ${minimum} / ${t('Peso')}: ${parseInt(weight, 10)}%`,
                         icon: (is_done ? {color: 'green', name:'check circle'} : undefined),
                     })
                 )
@@ -199,7 +195,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     const removeExam = (examId) => {
         const sweetAlertConfigs = {
             title: t('Atenção!'),
-            html: 'Ao eliminar este exame, terá de adicioná-lo novamente em outra data a escolher!<br/><br/><strong>Tem a certeza que deseja eliminar este exame, em vez de editar?</strong>',
+            html: t('Ao eliminar esta avaliação, terá de adicioná-la novamente em outra data a escolher!<br/><br/><strong>Tem a certeza que deseja eliminar esta avaliação?</strong>'),
             denyButtonText: t('Não'),
             confirmButtonText: t('Sim'),
             showConfirmButton: true,
@@ -212,10 +208,10 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
             if (result.isConfirmed) {
                 axios.delete(`/exams/${examId}`).then((res) => {
                     if (res.status === 200) {
-                        toast('Exame eliminado com sucesso deste calendário!', successConfig);
+                        toast(t('Avaliação eliminada com sucesso deste calendário!'), successConfig);
                         deletedExam(examId);
                     } else {
-                        toast('Ocorreu um problema ao eliminar o exame deste calendário! ' +  res.response.data, errorConfig);
+                        toast(t('Ocorreu um problema ao eliminar a avaliação deste calendário!') + " " +  res.response.data, errorConfig);
                     }
                     onClose();
                 });

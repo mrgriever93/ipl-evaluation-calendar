@@ -63,7 +63,7 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
     const removeInterruption = (interruptionId) => {
         SweetAlertComponent.fire({
             title: t('Atenção!'),
-            html: 'Ao eliminar a interrupção, todo o período compreendido entre o ínicio e o fim desta interrupção, ficará aberto para avaliações!<br/><strong>Tem a certeza que deseja eliminar esta interrupção, em vez de editar?</strong>',
+            html: t('Ao eliminar a interrupção, todo o período compreendido entre o ínicio e o fim desta interrupção, ficará aberto para avaliações!<br/><strong>Tem a certeza que deseja eliminar esta interrupção, em vez de editar?</strong>'),
             denyButtonText: t('Não'),
             confirmButtonText: t('Sim'),
             showConfirmButton: true,

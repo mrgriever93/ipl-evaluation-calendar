@@ -6,6 +6,7 @@
 - [X] Listar "todos" os calendarios, so deve devolver os publicados (definitivos ou temporarios) 
 - [X] Deixar ver detalhe de UC (lista UC)
 - [ ] Adicionar Policies na parte do servidor
+- [ ] Possibilidade de ver as diferenças entre calendários de avaliação
     
 **Testes de roles:**
 - [ ] Ao entrar como CC, e selecionar todos os calendários:
