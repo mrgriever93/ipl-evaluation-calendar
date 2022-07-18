@@ -4,13 +4,11 @@ namespace App\Http\Controllers\API\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\API_V1\Calendars\CalendarAPIResource;
-use App\Http\Resources\API_V1\Exams\ExamListResource;
 use App\Models\AcademicYear;
 use App\Models\Calendar;
 use App\Models\CalendarPhase;
 use App\Models\Course;
 use App\Models\CourseUnit;
-use App\Models\Exam;
 use App\Models\School;
 use App\Models\Semester;
 use Illuminate\Http\Request;

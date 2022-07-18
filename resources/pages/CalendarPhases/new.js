@@ -87,7 +87,7 @@ const New = () => {
     return (
         <Container>
             <div className="margin-bottom-base">
-                <Link to="/calendario/fases"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
+                <Link to="/fases-calendario"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
             <FinalForm onSubmit={onSubmit} initialValues={initialValues} render={({ handleSubmit }) => (
                 <Form>

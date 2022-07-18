@@ -19,7 +19,7 @@ class CourseListResource extends JsonResource
             'duration' => $this->num_years,
             'has_issues' => $this->coordinator_user_id == null,
             'level' => DegreesUtil::getDegreeLabel($this->degree),
-            'school' => $this->whenLoaded('school')->code
+            'school' => $this->school->code
         ];
     }
 }

@@ -1,5 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {Card, Container, Table, Form, Icon, Modal, Button, Header, Dimmer, Loader, Popup} from 'semantic-ui-react';
+import {
+    Card,
+    Container,
+    Table,
+    Form,
+    Icon,
+    Modal,
+    Button,
+    Header,
+    Dimmer,
+    Loader,
+    Popup,
+    Checkbox, Segment
+} from 'semantic-ui-react';
 import axios from 'axios';
 import {Link, useSearchParams} from 'react-router-dom';
 import _ from 'lodash';
@@ -28,6 +41,7 @@ const CourseUnitsList = () => {
     const [contentLoading, setContentLoading] = useState(true);
 
     const [courseFilter, setCourseFilter] = useState();
+    const [courseUnitAllFilter, setCourseUnitAllFilter] = useState();
     const [semesterFilter, setSemesterFilter] = useState();
     const [searchFilter, setSearchFilter] = useState();
     const [perPage, setPerPage] = useState(10);
@@ -42,9 +56,10 @@ const CourseUnitsList = () => {
     const fetchCourseUnits = () => {
         setContentLoading(true);
         let link = '/course-units?page=' + currentPage;
-        link += (semesterFilter ? '&semester=' + semesterFilter : '');
-        link += (courseFilter   ? '&course='   + courseFilter   : '');
-        link += (searchFilter   ? '&search='   + searchFilter   : '');
+        link += (semesterFilter         ? '&semester='  + semesterFilter        : '');
+        link += (courseFilter           ? '&course='    + courseFilter          : '');
+        link += (searchFilter           ? '&search='    + searchFilter          : '');
+        link += (courseUnitAllFilter    ? '&show_all='  + courseUnitAllFilter   : '');
         link += '&per_page=' + perPage;
 
         axios.get(link).then((response) => {
@@ -63,12 +78,15 @@ const CourseUnitsList = () => {
         } else {
             setCurrentPage(1);
         }
-    }, [semesterFilter, courseFilter, searchFilter]);
+    }, [semesterFilter, courseFilter, searchFilter, courseUnitAllFilter]);
 
     useEffect(() => {
         fetchCourseUnits();
     }, [currentPage]);
 
+    const filterByAllCourseUnits = (showAll) => {
+        setCourseUnitAllFilter(showAll);
+    }
     const filterByCourse = (course) => {
         setCourseFilter(course);
     };
@@ -140,7 +158,13 @@ const CourseUnitsList = () => {
                         <Form.Group>
                             <Form.Input icon='search' iconPosition='left' width={5} onChange={_.debounce(handleSearchCourseUnits, 400)} placeholder={t("Pesquisar por nome")} label={t("Pesquisar por nome")} />
                             <Courses widthSize={5} eventHandler={filterByCourse} />
-                            <Semesters widthSize={5} eventHandler={filterBySemester} withSpecial={false} />
+                            <Semesters widthSize={3} eventHandler={filterBySemester} withSpecial={false} />
+                            <Form.Field width={2}>
+                                <label>Todas as UCs</label>
+                                <Form.Field>
+                                    <Checkbox onChange={(e, {checked}) => filterByAllCourseUnits(checked) }/>
+                                </Form.Field>
+                            </Form.Field>
                             <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                         </Form.Group>
                     </Form>
@@ -196,11 +220,17 @@ const CourseUnitsList = () => {
                                             </ShowComponentIfAuthorized>
                                             <Table.Cell>{semester}</Table.Cell>
                                             <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COURSE_UNITS, SCOPES.EDIT_COURSE_UNITS, SCOPES.DELETE_COURSE_UNITS]}>
-                                                <Table.Cell>
+                                                <Table.Cell textAlign={"center"}>
                                                     <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COURSE_UNITS, SCOPES.EDIT_COURSE_UNITS]}>
-                                                        <Link to={`/unidade-curricular/edit/${id}`}>
-                                                            <Button color="yellow" icon="edit" />
-                                                        </Link>
+                                                        <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]} renderIfNotAllowed={(
+                                                            <Link to={`/unidade-curricular/detail/${id}`}>
+                                                                <Button color="green" icon="eye" />
+                                                            </Link>
+                                                        )}>
+                                                            <Link to={`/unidade-curricular/edit/${id}`}>
+                                                                <Button color="yellow" icon="edit" />
+                                                            </Link>
+                                                        </ShowComponentIfAuthorized>
                                                     </ShowComponentIfAuthorized>
                                                     <ShowComponentIfAuthorized permission={[SCOPES.DELETE_COURSE_UNITS]}>
                                                         <Button color="red" icon="trash" onClick={() => remove({id, course: course_description, unit: name})} />

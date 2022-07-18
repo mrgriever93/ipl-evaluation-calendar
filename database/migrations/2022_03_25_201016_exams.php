@@ -21,6 +21,8 @@ return new class extends Migration
             $table->unsignedBigInteger('epoch_id');
             $table->unsignedBigInteger('method_id');
             $table->unsignedBigInteger('group_id')->nullable();
+            $table->unsignedBigInteger('course_unit_id');
+
             $table->string('room')->nullable();
             $table->timestamp('date_start')->useCurrent();
             $table->timestamp('date_end')->useCurrent();
@@ -33,6 +35,7 @@ return new class extends Migration
             $table->string('description_en')->nullable();
             $table->foreign('epoch_id')->references('id')->on('epochs');
             $table->foreign('method_id')->references('id')->on('methods')->onDelete('cascade');
+            $table->foreign('course_unit_id')->references('id')->on('course_units');
 
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
