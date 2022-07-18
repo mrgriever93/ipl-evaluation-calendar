@@ -3,7 +3,7 @@
 - [X] Validar quando se marca um exame, se for dos agrupados, deixar marcar para os outros. (validar bug)
 - [X] Rever mudança de fases num CP ou Direção (aceitar e recursar)
 - [X] Listar "todos" os calendarios, so deve devolver os publicados (definitivos ou temporarios)
-- [ ] Rever quem pode ver detalhe de UC
+- [X] Rever quem pode ver detalhe de UC
     
 **Testes de roles:**
 - [ ] aaaaaaaaaaaaaaaaaa
