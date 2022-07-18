@@ -1,5 +1,39 @@
 # Changelog
 
+## Versão 1.0 - 18/07/2022
+<ins>Novas features:</ins>
+- Adicionadas datas dos exames ao popup de revisão para maior/melhor informação disponível a rever;
+- Adicionado botões para validar ou rejeitar caso seja membro do Conselho pedagógico ou membro da direção, em vez de ver o botão para submeter;
+- Guardar role do user na local storage, para algumas validações de permissões do calendário;
+- Adicionados métodos e logs aos agrupamentos de UCs;
+- Adicionada possibilidade de marcar exames para UCs agrupadas
+- Revisão do detalhe e de criação de uma UC:
+  - Adicionada dropdown para selecionar o curso;
+  - Adicionado botão procurar via WebService os detalhes da UC e bloqueio dos campos de edição;
+  - Adicionado botão para sincronização/atualização dos dados de uma UC via WebService;
+- Adicionada marcação visual para o dia e semana de hoje
+- Adicionado link para fazer scroll para a semana atual se existir
+- Adicionado mensagem de erro devolvida pelo servidor ao tentar criar/gravar Grupos de utilizadores;
+- Adicionado aviso para quando tentamos marcar mais do que uma vez uma avaliação.
+- Adicionado redirect para quando é feito um clone de um calendário, redirecionar para o novo calendário clonado.
+
+<ins>Issues corrigidos:</ins>
+- Revisão dos date pickers da criação dos calendários:
+  - Data de inicio da época normal tem de ser no minimo a data de inicio da época periódica;
+  - Data final da época normal tem de ser no minimo a data final da época periódica (ou a data inicial da epoca normal +1);
+  - Fazer disable/enable dos campos à medida que vamos preenchendo as datas por época;
+- Revisão da da dropdown dos anos letivos quando existe mais do que um ano letivo selecionado;
+- Correção de um erro da troca de permissões que acontecia quando abríamos a aplicação pela primeira vez;
+- Correção de um erro ao gravar um calendário, este não ficava visivel na listagem de calendários, porque não estava a associar os grupos que tinham permissão para ver;
+- Revisão das permissões e publicação dos calendários pelos vários utilizadores;
+- Remoção do link para página dos cursos, quando estamos na página dos anos letivos e não fizemos uma sincronização e correção do texto de ajuda que estava errado;
+- Revisão do popup de detalhe de uma avaliação, para quando não temos permissões de ver/adicionar comentários ver um popup mais pequeno apenas com os detalhes;
+- Revisão das traduções onde estavam em falta
+- Revisão do footer e página sobre para adicionar créditos com dados do 1º grupo que começou o projeto e links externos
+- Revisão das permissões dos vários utilizadores na aplicação globalmente;
+- Revisão da publicação de um calendário: se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar.
+
+
 ## Versão 0.9 - 04/07/2022
 <ins>Novas features:</ins>
 - Adicionada uma nova funcionalidade que permite esconder épocas, permitindo reduzir o calendário visivel

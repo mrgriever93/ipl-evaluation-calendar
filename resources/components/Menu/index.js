@@ -70,7 +70,7 @@ const HeaderMenu = () => {
         <Menu borderless>
             <Container>
                 <Menu.Item as={Link} to="/"
-                           className={ (location.pathname.includes('/calendario') || location.pathname === '/') && !location.pathname.includes('/calendario/fases') ? 'active' : ''}>
+                           className={ (location.pathname.includes('/calendario') || location.pathname === '/') ? 'active' : ''}>
                     {t('menu.Calendários') }
                 </Menu.Item>
                 <ShowComponentIfAuthorized permission={[COURSE_UNIT_SCOPES[0]]}>
@@ -95,7 +95,7 @@ const HeaderMenu = () => {
                 <ShowComponentIfAuthorized permission={[...CONFIG_SCOPES]}>
                     <Dropdown item text={t('menu.Configurações')} icon={ (academicYearsList.length === 0 ? "warning circle" : "dropdown") }
                         className={ (location.pathname.includes('/ano-letivo') || location.pathname.includes('/escola') ||
-                            location.pathname.includes('/calendario/fases') || location.pathname.includes('/tipo-interrupcao') ||
+                            location.pathname.includes('/fases-calendario') || location.pathname.includes('/tipo-interrupcao') ||
                             location.pathname.includes('/tipo-avaliacao') || location.pathname.includes('/grupo-utilizador') ||
                             location.pathname.includes('/utilizador')) ? 'active' : ''}>
                         <Dropdown.Menu>
@@ -106,7 +106,7 @@ const HeaderMenu = () => {
                                 <Dropdown.Item as={Link} to="/escola">{t('menu.Escolas')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...CALENDAR_PHASES_SCOPES]}>
-                                <Dropdown.Item disabled={academicYearsList.length === 0} as={Link} to="/calendario/fases">{t('menu.Fases Calendário')}</Dropdown.Item>
+                                <Dropdown.Item disabled={academicYearsList.length === 0} as={Link} to="/fases-calendario">{t('menu.Fases Calendário')}</Dropdown.Item>
                             </ShowComponentIfAuthorized>
                             <ShowComponentIfAuthorized permission={[...INTERRUPTION_TYPES_SCOPES,]}>
                                 <Dropdown.Item disabled={academicYearsList.length === 0} as={Link} to="/tipo-interrupcao">{t('menu.Tipos Interrupções')}</Dropdown.Item>

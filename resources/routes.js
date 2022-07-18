@@ -107,15 +107,6 @@ const RouterList = (isLoggedIn) => {
                     path:"/calendario",
                     children: [
                         { path: 'novo', exact: true, element: <CalendarNew />},
-                        {
-                            path: 'fases',
-                            children: [
-                                { path: 'novo', exact: true, element: <PhasesNew />},
-                                { path: 'edit/:id', exact: true, element: <PhasesNew /> },
-                                { path: '', exact: true, element: <PhasesList />},
-                                { path: '*', element: <NotFoundPage />}
-                            ],
-                        },
                         { path: ':id', exact: true, element: <CalendarDetail />},
                         { path: '', exact: true, element: <CalendarList />},
                         { path: '*', element: <NotFoundPage />}
@@ -128,6 +119,7 @@ const RouterList = (isLoggedIn) => {
                         { path: 'novo', exact: true, element: <UnidadeCurricularDetail />},
                         { path: ':id', exact: true, element: <UnidadeCurricularDetail />},
                         { path: 'edit/:id', exact: true, element: <UnidadeCurricularDetail />},
+                        { path: 'detail/:id', exact: true, element: <UnidadeCurricularDetail />},
                         { path: '', exact: true, element: <UnidadeCurricularList /> },
                         { path: '*', element: <NotFoundPage />}
                     ]
@@ -166,11 +158,11 @@ const RouterList = (isLoggedIn) => {
                     ],
                 },
                 {
-                    path: "/utilizador",
-                    element: (isAuthorized.EDIT_USERS || isAuthorized.LOCK_USERS) ? <MultiPageBase /> : <Navigate to="/no-permissions" />,
+                    path: '/fases-calendario',
                     children: [
-                        { path: 'edit/:id', exact: true, element: <UtilizadorDetail />},
-                        { path: '', exact: true, element: <UtilizadorList />},
+                        { path: 'novo', exact: true, element: <PhasesNew />},
+                        { path: 'edit/:id', exact: true, element: <PhasesNew /> },
+                        { path: '', exact: true, element: <PhasesList />},
                         { path: '*', element: <NotFoundPage />}
                     ],
                 },
@@ -201,6 +193,15 @@ const RouterList = (isLoggedIn) => {
                         { path: 'novo', exact: true, element: <GrupoUtilizadorNew />},
                         { path: 'edit/:id', exact: true, element: <GrupoUtilizadorNew />},
                         { path: '', exact: true, element: <GrupoUtilizadorList />},
+                        { path: '*', element: <NotFoundPage />}
+                    ],
+                },
+                {
+                    path: "/utilizador",
+                    element: (isAuthorized.EDIT_USERS || isAuthorized.LOCK_USERS) ? <MultiPageBase /> : <Navigate to="/no-permissions" />,
+                    children: [
+                        { path: 'edit/:id', exact: true, element: <UtilizadorDetail />},
+                        { path: '', exact: true, element: <UtilizadorList />},
                         { path: '*', element: <NotFoundPage />}
                     ],
                 },

@@ -42,7 +42,7 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
         }).then((res) => {
             setIsLoading(false);
             if (res.status === 200 || res.status === 201) {
-                toast(`Interrupção ${values?.id ? 'guardada' : 'marcada'} com sucesso!`, successConfig);
+                toast( t('Interrupção') + " " + values?.id ? t('guardada') : t('marcada') + " " + t('com sucesso!'), successConfig);
                 addedInterruption((values?.id ? res.data.data : res.data), !values?.id);
                 onClose();
             } else {
@@ -55,7 +55,7 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
                     }
                 }
                 setErrorMessages(errorsArray);
-                toast(`Ocorreu um erro ao ${values?.id ? 'guardar' : 'marcar'} a interrupção!`, errorConfig);
+                toast( t('Ocorreu um erro ao') + " " + values?.id ? t('guardar') : t('marcar') + " " + t('a interrupção!'), errorConfig);
             }
         });
     };
@@ -63,7 +63,7 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
     const removeInterruption = (interruptionId) => {
         SweetAlertComponent.fire({
             title: t('Atenção!'),
-            html: 'Ao eliminar a interrupção, todo o período compreendido entre o ínicio e o fim desta interrupção, ficará aberto para avaliações!<br/><strong>Tem a certeza que deseja eliminar esta interrupção, em vez de editar?</strong>',
+            html: t('Ao eliminar a interrupção, todo o período compreendido entre o ínicio e o fim desta interrupção, ficará aberto para avaliações!<br/><strong>Tem a certeza que deseja eliminar esta interrupção, em vez de editar?</strong>'),
             denyButtonText: t('Não'),
             confirmButtonText: t('Sim'),
             showConfirmButton: true,
@@ -76,10 +76,10 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
                 axios.delete(`/interruptions/${interruptionId}`).then((res) => {
                     // loadCalendar(calendarId);
                     if (res.status === 200) {
-                        toast(t('calendar.Interrupção eliminada com sucesso deste calendário!'), successConfig);
+                        toast(t('Interrupção eliminada com sucesso deste calendário!'), successConfig);
                         deletedInterruption(interruptionId);
                     } else {
-                        toast(t('calendar.Ocorreu um problema ao eliminar a interrupção deste calendário!'), errorConfig);
+                        toast(t('Ocorreu um problema ao eliminar a interrupção deste calendário!'), errorConfig);
                     }
                     onClose();
                     setIsLoading(false);
@@ -144,7 +144,7 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
                                 </Dimmer>
                             )}
                             <Modal.Header>
-                                {modalInfo?.id ? 'Editar' : 'Adicionar'}{' '}interrupção
+                                {modalInfo?.id ? t('Editar') : t('Adicionar')}{' ' +  t('interrupção')}
                             </Modal.Header>
                             { errorMessages.length > 0 && (
                                 <Modal.Content>
@@ -166,7 +166,7 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
                                         <Field name="startDate">
                                             {({input: startDateInput}) => (
                                                 <Form.Field>
-                                                    <DateInput name="date" iconPosition="left" label="Data de Ínicio" placeholder="Data de Ínicio"
+                                                    <DateInput name="date" iconPosition="left" label={t("Data de Início")} placeholder={t("Data de Início")}
                                                                dateFormat="DD MMMM, YYYY" value={startDateInput.value}
                                                                minDate={minDate} maxDate={maxDate}
                                                                onChange={(evt, {value}) => {startDateInput.onChange(value);}}
@@ -177,7 +177,7 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
                                         <Field name="endDate">
                                             {({input: endDateInput}) => (
                                                 <Form.Field>
-                                                    <DateInput name="date" iconPosition="left" label="Data de Fim" placeholder="Data de Fim"
+                                                    <DateInput name="date" iconPosition="left" label={t("Data de Fim")} placeholder={t("Data de Fim")}
                                                                dateFormat="DD MMMM, YYYY" value={endDateInput.value}
                                                                minDate={minDate} maxDate={maxDate}
                                                                onChange={(evt, {value}) => {endDateInput.onChange(value);}}
@@ -189,12 +189,12 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
                                     <Form.Group widths={"equal"}>
                                         <Field name="description_pt">
                                             {({input: descriptionPtInput}) => (
-                                                <Form.Input label="Descrição" placeholder="Descrição PT (opcional)"{...descriptionPtInput}/>
+                                                <Form.Input label={t("Descrição PT")} placeholder={t("Descrição PT (opcional)")} {...descriptionPtInput}/>
                                             )}
                                         </Field>
                                         <Field name="description_en">
                                             {({input: descriptionEnInput}) => (
-                                                <Form.Input label="Descrição" placeholder="Descrição EN (opcional)"{...descriptionEnInput}/>
+                                                <Form.Input label={t("Descrição EN")} placeholder={t("Descrição EN (opcional)")} {...descriptionEnInput}/>
                                             )}
                                         </Field>
                                     </Form.Group>
@@ -202,7 +202,7 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
                                         <Field name="interruptionType">
                                             {({input: interruptionTypeInput}) => (
                                                 <Form.Dropdown options={interruptionTypes} selection search loading={!interruptionTypes.length}
-                                                    label="Tipo de interrupção" placeholder="Tipo de interrupção" value={interruptionTypeInput.value} selectOnBlur={false}
+                                                    label={t("Tipo de interrupção")}  placeholder={t("Tipo de interrupção")} value={interruptionTypeInput.value} selectOnBlur={false}
                                                     onChange={(e, {value}) => interruptionTypeInput.onChange(value,)}
                                                 />
                                             )}
@@ -220,7 +220,7 @@ const PopupScheduleInterruption = ( {info, isOpen, onClose, addedInterruption, d
                                 <Button onClick={onClose}>Cancelar</Button>
                                 <Button onClick={handleSubmit} positive icon={!!modalInfo?.id}{...(modalInfo?.id && ({labelPosition: 'left'}))}>
                                     {modalInfo?.id && <Icon name="save"/>}
-                                    {modalInfo?.id ? 'Gravar alterações' : 'Adicionar'}
+                                    {modalInfo?.id ? t('Gravar alterações') : t('Adicionar') }
                                 </Button>
                             </Modal.Actions>
                         </Modal>

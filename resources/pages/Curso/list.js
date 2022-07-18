@@ -5,7 +5,7 @@ import {Link} from 'react-router-dom';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import {toast} from 'react-toastify';
-import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
+import ShowComponentIfAuthorized, {useComponentIfAuthorized} from '../../components/ShowComponentIfAuthorized';
 import SCOPES from '../../utils/scopesConstants';
 import {successConfig, errorConfig} from '../../utils/toastConfig';
 import EmptyTable from "../../components/EmptyTable";
@@ -129,7 +129,7 @@ const CoursesList = () => {
                 </Card.Content>
                 { !loading && courseList.length > 0 ? (
                     <Card.Content>
-                        <Table celled fixed>
+                        <Table celled fixed selectable striped>
                             <Table.Header>
                                 <Table.Row>
                                     {columns.map((col, index) => (
@@ -139,11 +139,13 @@ const CoursesList = () => {
                             </Table.Header>
                             <Table.Body>
                                 {courseList.map(({id, school, code, name, level, has_issues}) => (
-                                    <Table.Row key={code} warning={has_issues}>
+                                    <Table.Row key={code} warning={ (useComponentIfAuthorized(SCOPES.EDIT_COURSES) ? (has_issues) : false) }>
                                         <Table.Cell>{school}</Table.Cell>
                                         <Table.Cell>{code}</Table.Cell>
                                         <Table.Cell>
-                                            {has_issues && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher detalhes sobre este curso.')} position='top center'/>}
+                                            <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSES]}>
+                                                {has_issues && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher detalhes sobre este curso.')} position='top center'/>}
+                                            </ShowComponentIfAuthorized>
                                             {name}
                                         </Table.Cell>
                                         <Table.Cell>{level}</Table.Cell>

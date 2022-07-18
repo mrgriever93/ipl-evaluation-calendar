@@ -5,6 +5,8 @@ import {Icon, Table, Form, Button, Modal, Dimmer, Loader, Segment} from 'semanti
 import {toast} from 'react-toastify';
 import {useTranslation} from "react-i18next";
 import {successConfig, errorConfig} from '../../../utils/toastConfig';
+import SCOPES from "../../../utils/scopesConstants";
+import ShowComponentIfAuthorized from "../../../components/ShowComponentIfAuthorized";
 
 const CourseTabsStudents = ({ courseId, isLoading }) => {
     const { t } = useTranslation();
@@ -52,15 +54,14 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
 
     const addStudent = () => {
         setOpenModal(false);
-        console.log(studentToAdd);
         axios.patch(`/courses/${courseId}/student`, {
             user_email: studentToAdd.value
         }).then((res) => {
             if (res.status === 200) {
                 loadCourseStudents();
-                toast(t('Aluno adicionado com sucesso!'), successConfig);
+                toast(t('Estudante adicionado com sucesso!'), successConfig);
             } else {
-                toast(t('Ocorreu um erro ao adicionar o aluno!'), errorConfig);
+                toast(t('Ocorreu um erro ao adicionar o estudante!'), errorConfig);
             }
         });
     };
@@ -76,17 +77,21 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
             )}
             {!loading && (
                 <>
-                    <Segment clearing basic className={"padding-none"}>
-                        <Button floated='right' icon labelPosition='left' positive size='small' onClick={() => setOpenModal(true)}>
-                            <Icon name='add' /> { t("Adicionar aluno") }
-                        </Button>
-                    </Segment>
+                    <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSES]}>
+                        <Segment clearing basic className={"padding-none"}>
+                            <Button floated='right' icon labelPosition='left' positive size='small' onClick={() => setOpenModal(true)}>
+                                <Icon name='add' /> { t("Adicionar estudante") }
+                            </Button>
+                        </Segment>
+                    </ShowComponentIfAuthorized>
                     <Table striped color="green">
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell>{ t("Email") }</Table.HeaderCell>
                                 <Table.HeaderCell>{ t("Nome") }</Table.HeaderCell>
-                                <Table.HeaderCell>{ t("Ações") }</Table.HeaderCell>
+                                <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSES]}>
+                                    <Table.HeaderCell>{ t("Ações") }</Table.HeaderCell>
+                                </ShowComponentIfAuthorized>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
@@ -94,12 +99,14 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
                                 <Table.Row key={index}>
                                     <Table.Cell>{student.email}</Table.Cell>
                                     <Table.Cell>{student.name}</Table.Cell>
-                                    <Table.Cell width="3">
-                                        <Button color="red" onClick={() => removeStudent(student.id)}>
-                                            <Icon name="trash"/>
-                                            { t("Remover aluno") }
-                                        </Button>
-                                    </Table.Cell>
+                                    <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSES]}>
+                                        <Table.Cell width="3">
+                                            <Button color="red" onClick={() => removeStudent(student.id)}>
+                                                <Icon name="trash"/>
+                                                { t("Remover estudante") }
+                                            </Button>
+                                        </Table.Cell>
+                                    </ShowComponentIfAuthorized>
                                 </Table.Row>
                             ))}
                         </Table.Body>
@@ -109,10 +116,10 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
 
             {openModal && (
                 <Modal dimmer="blurring" open={openModal} onClose={() => setOpenModal(false)}>
-                    <Modal.Header>{ t("Adicionar aluno") }</Modal.Header>
+                    <Modal.Header>{ t("Adicionar estudante") }</Modal.Header>
                     <Modal.Content>
                         <Form>
-                            <Form.Dropdown placeholder={ t("Procurar pelo email do aluno") } label={ t("Aluno a adicionar") } search selection
+                            <Form.Dropdown placeholder={ t("Procurar pelo email do estudante") } label={ t("Estudante a adicionar") } search selection
                                 loading={searchStudent} options={listOfStudents} onSearchChange={_.debounce(searchStudents, 400)}
                                 onChange={(e, {value}) => setStudentToAdd(
                                     listOfStudents.find((x) => x.value === value),

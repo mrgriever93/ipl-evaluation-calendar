@@ -6,7 +6,7 @@ import {Container, Card, Icon, Form, Button, Dimmer, Loader, Header, Message } f
 import {toast} from 'react-toastify';
 import {Field, Form as FinalForm} from 'react-final-form';
 
-import {useComponentIfAuthorized} from '../../components/ShowComponentIfAuthorized';
+import ShowComponentIfAuthorized, {useComponentIfAuthorized} from '../../components/ShowComponentIfAuthorized';
 import SCOPES from '../../utils/scopesConstants';
 import {successConfig, errorConfig} from '../../utils/toastConfig';
 import CourseTabs from "./Tabs";
@@ -118,12 +118,12 @@ const Detail = () => {
                         { (!initialValues?.coordinator || !hasCoordinator) && (
                             <Message.Item>{ t('É necessário configurar o docente Coordenador de Curso') }</Message.Item>
                         )}
-                        { !initialValues.initials && (
+                       {/* { !initialValues.initials && (
                             <Message.Item>{ t('É necessário configurar a Sigla do Curso') }</Message.Item>
                         )}
                         { !initialValues.degree_id && (
                             <Message.Item>{ t('É necessário configurar o Tipo de Curso') }</Message.Item>
-                        )}
+                        )}*/}
                     </Message.List>
                 </Message>
             )}
@@ -137,10 +137,12 @@ const Detail = () => {
                     <Card.Content>
                         <div className='card-header-alignment'>
                             <Header as="span">{ t('Curso') + ": " + ( courseDetail?.display_name || "") }</Header>
-                            <Button onClick={handleSubmit} color="green" icon labelPosition="left" floated="right">
-                                <Icon name={'save'}/>
-                                { t('Guardar') }
-                            </Button>
+                            <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSES]}>
+                                <Button onClick={handleSubmit} color="green" icon labelPosition="left" floated="right">
+                                    <Icon name={'save'}/>
+                                    { t('Guardar') }
+                                </Button>
+                            </ShowComponentIfAuthorized>
                         </div>
                     </Card.Content>
                     <Card.Content>
@@ -179,28 +181,34 @@ const Detail = () => {
                                     )}
                                 </Field>
                             </Form.Group>
-                            <Form.Group widths="2">
-                                <Field name="coordinator">
-                                    {({input: coordinatorInput}) => (
-                                        <Form.Dropdown disabled={loading || !hasPermissionToDefineCoordinator} label={ t("Coordenador do Curso") }
-                                                       selectOnBlur={false} options={teachers} selection search loading={searchCoordinator} placeholder={ t("Pesquise o coordenador de curso...") }
-                                                       {...coordinatorInput} onSearchChange={_.debounce(handleSearchCoordinator, 400)}
-                                                       onChange={(e, {value, options}) => {
-                                                           setCoordinatorUser(
-                                                               {
-                                                                   email: value,
-                                                                   name: options.find((x) => x.value === value).name
-                                                               },
-                                                           );
-                                                           coordinatorInput.onChange(value);
-                                                       }}
-                                        />
-                                    )}
-                                </Field>
-                                <Form.Button disabled={loading || !hasPermissionToDefineCoordinator} label={ t("Guardar") } onClick={setCoordinator} color="green" icon labelPosition="left">
-                                    <Icon name="save"/> { t("Guardar coordenador") }
-                                </Form.Button>
-                            </Form.Group>
+                            <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSES]} renderIfNotAllowed={(
+                                <Form.Group widths="2">
+                                    <Form.Input className='input-readonly' disabled={true} label={ t("Coordenador do Curso") } value={courseDetail?.coordinator?.name} />
+                                </Form.Group>
+                            )}>
+                                <Form.Group widths="2">
+                                    <Field name="coordinator">
+                                        {({input: coordinatorInput}) => (
+                                            <Form.Dropdown error={ !hasCoordinator } disabled={loading || !hasPermissionToDefineCoordinator} className={( loading || !hasPermissionToDefineCoordinator ? 'input-readonly' : '')}
+                                                           label={ t("Coordenador do Curso") } selectOnBlur={false} options={teachers} selection search loading={searchCoordinator} placeholder={ t("Pesquise o coordenador de curso...") }
+                                                           {...coordinatorInput} onSearchChange={_.debounce(handleSearchCoordinator, 400)}
+                                                           onChange={(e, {value, options}) => {
+                                                               setCoordinatorUser(
+                                                                   {
+                                                                       email: value,
+                                                                       name: options.find((x) => x.value === value).name
+                                                                   },
+                                                               );
+                                                               coordinatorInput.onChange(value);
+                                                           }}
+                                            />
+                                        )}
+                                    </Field>
+                                    <Form.Button disabled={loading || !hasPermissionToDefineCoordinator} label={ t("Guardar") } onClick={setCoordinator} color="green" icon labelPosition="left">
+                                        <Icon name="save"/> { t("Guardar coordenador") }
+                                    </Form.Button>
+                                </Form.Group>
+                        </ShowComponentIfAuthorized>
                         </Form>
                     </Card.Content>
                 </Card>

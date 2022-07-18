@@ -315,4 +315,237 @@ class ExternalImports
         Log::channel('courses_sync')->info("Count Courses Units:\r\n   - Created: " . $courseUnitCount["created"] . "\r\n   - Updated: " . $courseUnitCount["updated"]);
         Log::channel('courses_sync')->info('End "importCoursesFromWebService" sync for Year code (' . $academicYearCode . ') and semester (' . $semester . ')');
     }
+
+
+
+    public static function importSingleUCFromWebService(int $academicYearCode, int $schoolId, int $coduc)
+    {
+        set_time_limit(0);
+        ini_set('max_execution_time', 0);
+
+        $isServer = env('APP_SERVER', false);
+        Log::channel('courses_sync')->info('Start "importSingleUCFromWebService" sync for Year code (' . $academicYearCode . '), UC Code (' . $coduc . ')');
+        try{
+
+            // update/created counters
+            $coursesCount = [
+                "created" => 0,
+                "updated" => 0,
+            ];
+            $courseUnitCount = [
+                "created" => 0,
+                "updated" => 0,
+            ];
+
+            //get AcademicYear Id
+            $academicYear = AcademicYear::where('code', $academicYearCode)->firstOrFail();
+            if( !$academicYear ){
+                exit();
+            }
+
+            $academicYearId = $academicYear->id;
+            // get list of schools that have "base_link" data
+            $school = School::find($schoolId);
+
+            // connect to LDAP server
+            $connection = new Connection([
+                'hosts'    => [env('LDAP_HOST')],
+                'username' => env('LDAP_USERNAME'),
+                'password' => env('LDAP_PASSWORD'),
+                'version' => 3,
+            ]);
+            $LdapConnection = $connection->query()->setDn('OU=Funcionarios,dc=ipleiria,dc=pt');
+
+
+            $courseUnits = [];
+
+            /*
+             * Get file contents
+             */
+            //$apiEndpoint = "{$school->base_link}?{$school->query_param_academic_year}={$academicYearCode}&{$school->query_param_semester}=S{$semester}";
+            //array_push($courseUnits, ...explode("<br>", mb_convert_encoding(file_get_contents("$apiEndpoint"), "utf-8", "latin1")));
+
+            // From URL to get webpage contents
+            $apiEndpoint = $school->base_link . '?' . $school->query_param_academic_year . '=' . $academicYearCode . '&coduc=' . $coduc;// . $school->query_param_semester . '=S' . $semester;
+
+            $response = Http::connectTimeout(5*60)->timeout(5*60)->get($apiEndpoint);
+            if($response->failed()){
+                Log::channel('courses_sync')->info('FAILED - "importSingleUCFromWebService" sync for Year code (' . $academicYearCode . '), UC Code (' . $coduc . ')');
+                return false;
+            }
+            $file_data = $response->body();
+
+            // converts file and splits by line/<br>
+            array_push($courseUnits, ...explode("<br>", mb_convert_encoding($file_data, "utf-8", "latin1")));
+
+            // check if the file has any content (prevent going forward
+            if( empty($courseUnits)) {
+                Log::channel('courses_sync')->info('EMPTY Courses - "importSingleUCFromWebService" sync for Year code (' . $academicYearCode . '), UC Code (' . $coduc . ')');
+                return false;
+            }
+            Log::channel('courses_sync')->info(sizeof($courseUnits));
+            // loop for each course unit
+            foreach ($courseUnits as $courseUnit) {
+                if (!empty($courseUnit)) {
+                    /* split each line. EX:
+                     *
+                     *  202122;S2;1;9119;Licenciatura em Engenharia Informática;9119201;Análise Matemática ;Alexandra Cristina Ferros dos Santos Nascimento Baptista(alexandra.nascimento),Ana Isabel Gonçalves Mendes(aimendes),Susana Raquel Carvalho Ferreira(susfer),Andrea Inês Gaspar Cravo(andrea.cravo),Jorge Pereira Fatelo(jorge.fatelo),Nuno José Lopes dos Santos Bernardino(nuno.bernardino);1;94;316;EID;AM;Mathematical Analysis;Computer Engineering
+                     *
+                     * $info[] => this will be based on the settings for each school, set on the admin page
+                     */
+
+                    $info = explode(";", $courseUnit);
+                    if($info[1] !== "S1" && $info[1] !== "S2"){
+                        return false;
+                    }
+
+                    // save semester ID instead of just a number
+                    $semester_id = Semester::where("number", ($info[1] === "S1" ? 1 : 2))->first()->id;
+
+                    // Retrieve Course by code or create it if it doesn't exist...
+                    $course = Course::firstOrCreate(
+                        [
+                            "code" => $info[$school->index_course_code],
+                            "academic_year_id" => $academicYearId
+                        ],
+                        [
+                            "school_id" => $school->id,
+                            "initials" => $info[$school->index_course_initials],//$gen_initials,
+                            "name_pt" => $info[$school->index_course_name_pt],
+                            "name_en" => $info[$school->index_course_name_en], // this will duplicate the value as default, to prevent empty states
+                            "degree" => DegreesUtil::getDegreeId($info[$school->index_course_name_pt])
+                        ]
+                    );
+                    // check for updates and then update the different value
+                    // user just created in the database; it didn't exist before.
+                    if( !$course->wasRecentlyCreated ) {
+                        $hasUpdate = false;
+                        if($course->initials != $info[$school->index_course_initials]) {
+                            $hasUpdate = true;
+                            $course->initials = $info[$school->index_course_initials];
+                        }
+                        if($course->name_pt != $info[$school->index_course_name_pt]) {
+                            $hasUpdate = true;
+                            $course->name_pt = $info[$school->index_course_name_pt];
+                        }
+                        if($course->name_en != $info[$school->index_course_name_en]) {
+                            $hasUpdate = true;
+                            $course->name_en = $info[$school->index_course_name_en];
+                        }
+                        if($course->degree != DegreesUtil::getDegreeId($info[$school->index_course_name_pt])) {
+                            $hasUpdate = true;
+                            $course->degree = DegreesUtil::getDegreeId($info[$school->index_course_name_pt]);
+                        }
+                        if($hasUpdate){
+                            $course->save();
+                            $coursesCount["updated"]++;
+                        }
+                    } else {
+                        $coursesCount["created"]++;
+                    }
+                    // https://laravel.com/docs/9.x/eloquent-relationships#syncing-associations
+                    //$course->academicYears()->syncWithoutDetaching($academicYearId); // -> Old logic, it had a pivot table [academic_year_course]
+                    // Retrieve Branch by course_id or create it if it doesn't exist...
+                    $branch = Branch::firstOrCreate(
+                        ["course_id" => $course->id],
+                        [
+                            "name_pt"       => "Tronco Comum",
+                            "name_en"       => "Common Branch",
+                            "initials_pt"   => "TComum",
+                            "initials_en"   => "CBranch",
+                        ]
+                    );
+                    // Retrieve CourseUnit by code or create it if it doesn't exist...
+                    $newestCourseUnit = CourseUnit::firstOrCreate(
+                        [
+                            "code" => $info[$school->index_course_unit_code],
+                            "semester_id" => $semester_id,
+                            "academic_year_id" => $academicYear->id
+                        ],
+                        [
+                            "course_id" => $course->id,
+                            "branch_id" => $branch->id,
+                            "curricular_year" => $info[$school->index_course_unit_curricular_year],
+                            "initials" => $info[$school->index_course_unit_initials],
+                            "name_pt" => $info[$school->index_course_unit_name_pt],
+                            "name_en" => $info[$school->index_course_unit_name_en] // this will duplicate the value as default, to prevent empty states
+                        ]
+                    );
+                    // TODO Check branch (ramo)
+
+                    // check for updates and then update the different value
+                    // user just created in the database; it didn't exist before.
+                    if( !$newestCourseUnit->wasRecentlyCreated ) {
+                        $hasUpdate = false;
+                        if($newestCourseUnit->curricular_year != $info[$school->index_course_unit_curricular_year]) {
+                            $hasUpdate = true;
+                            $newestCourseUnit->curricular_year = $info[$school->index_course_unit_curricular_year];
+                        }
+                        if($newestCourseUnit->initials != $info[$school->index_course_unit_initials]) {
+                            $hasUpdate = true;
+                            $newestCourseUnit->initials = $info[$school->index_course_unit_initials];
+                        }
+                        if($newestCourseUnit->name_pt != $info[$school->index_course_unit_name_pt]) {
+                            $hasUpdate = true;
+                            $newestCourseUnit->name_pt = $info[$school->index_course_unit_name_pt];
+                        }
+                        if($newestCourseUnit->name_en != $info[$school->index_course_unit_name_en]) {
+                            $hasUpdate = true;
+                            $newestCourseUnit->name_en = $info[$school->index_course_unit_name_en];
+                        }
+                        if($hasUpdate){
+                            $newestCourseUnit->save();
+                            $courseUnitCount["updated"]++;
+                        }
+                    } else {
+                        $courseUnitCount["created"]++;
+                    }
+                    // https://laravel.com/docs/9.x/eloquent-relationships#syncing-associations
+                    //$newestCourseUnit->academicYears()->syncWithoutDetaching($academicYearId); // -> Old logic, it had a pivot table [academic_year_course_unit]
+                    // split teaches from request
+                    // 2100;Matemáticas Gerais;210001;Matemática A ;Ana Cristina Felizardo Henriques(ana.f.henriques),Diogo Pedro Ferreira Nascimento Baptista(diogo.baptista),Fátima Maria Marques da Silva(fatima.silva),José Maria Gouveia Martins(jmmartins);1
+                    $teachers = explode(",", $info[$school->index_course_unit_teachers]);
+                    $teachersForCourseUnit = [];
+                    foreach ($teachers as $teacher) {
+                        if (!empty($teacher)) {
+                            preg_match('#\((.*?)\)#', $teacher, $match);
+                            $username = trim($match[1]);
+                            if (!empty($username)) {
+                                //create email from username
+                                $userEmail = "{$username}@ipleiria.pt";
+                                // validate if user already exists on our USERS table
+                                $foundUser = User::where("email", $userEmail)->first();
+                                if (is_null($foundUser)) {
+                                    // if the user is not created, it will create a new record for the user.
+                                    if($isServer){
+                                        $ldapUser = (clone $LdapConnection)->whereContains('mailNickname', $username)->orWhereContains('mail', $userEmail)->first('cn');
+                                        $name = $ldapUser['cn'][0];
+                                    } else {
+                                        preg_match_all('#(.*?)\(#', $teacher, $matches, PREG_SET_ORDER, 0);
+                                        $name = (isset($matches[0]) ? ($matches[0][1] ?? "") : "");
+                                    }
+                                    $foundUser = User::create([
+                                        "email" => $userEmail,
+                                        "name" => $name,
+                                        "password" => "",
+                                    ]);
+                                }
+                                // https://laravel.com/docs/9.x/eloquent-relationships#syncing-associations
+                                $foundUser->groups()->syncWithoutDetaching(Group::isTeacher()->get());
+                                $teachersForCourseUnit[] = $foundUser->id;
+                            }
+                        }
+                    }
+                    // https://laravel.com/docs/9.x/eloquent-relationships#syncing-associations
+                    $newestCourseUnit->teachers()->sync($teachersForCourseUnit, true);
+                }
+            }
+
+        } catch(\Exception $e){
+            Log::channel('courses_sync')->error('There was an error syncing. -------- ' . $e->getMessage());
+            return false;
+        }
+        Log::channel('courses_sync')->info('End "importSingleUCFromWebService" sync for Year code (' . $academicYearCode . '), UC Code (' . $coduc . ')');
+        return true;
+    }
 }

@@ -7,6 +7,8 @@ import withReactContent from 'sweetalert2-react-content';
 import {useTranslation} from "react-i18next";
 
 import {successConfig, errorConfig} from '../../../utils/toastConfig';
+import SCOPES from "../../../utils/scopesConstants";
+import ShowComponentIfAuthorized, {useComponentIfAuthorized} from "../../../components/ShowComponentIfAuthorized";
 const SweetAlertComponent = withReactContent(Swal);
 
 const CourseTabsBranches = ({ courseId }) => {
@@ -84,14 +86,16 @@ const CourseTabsBranches = ({ courseId }) => {
                 </div>
             )}
             {!loading && (
-                <Table compact celled className={"definition-last"}>
+                <Table compact celled className={(useComponentIfAuthorized(SCOPES.EDIT_COURSES) ? "definition-last" : "")}>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell width={4}>{ t("Nome") } - PT</Table.HeaderCell>
                             <Table.HeaderCell width={2}>{ t("Iniciais") } - PT</Table.HeaderCell>
                             <Table.HeaderCell width={4}>{ t("Nome") } - EN</Table.HeaderCell>
                             <Table.HeaderCell width={2}>{ t("Iniciais") } - EN</Table.HeaderCell>
-                            <Table.HeaderCell style={{ width: "1%" }} />
+                            <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSES]}>
+                                <Table.HeaderCell style={{ width: "1%" }} />
+                            </ShowComponentIfAuthorized>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -101,24 +105,28 @@ const CourseTabsBranches = ({ courseId }) => {
                                 <Table.Cell>{ branch.initials_pt }</Table.Cell>
                                 <Table.Cell>{ branch.name_en }</Table.Cell>
                                 <Table.Cell>{ branch.initials_en }</Table.Cell>
-                                <Table.Cell collapsing>
-                                    <Button color="red" icon onClick={() => removeBranch(branch.id)}>
-                                        <Icon name={"trash"} />
-                                    </Button>
-                                </Table.Cell>
+                                <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSES]}>
+                                    <Table.Cell collapsing>
+                                        <Button color="red" icon onClick={() => removeBranch(branch.id)}>
+                                            <Icon name={"trash"} />
+                                        </Button>
+                                    </Table.Cell>
+                                </ShowComponentIfAuthorized>
                             </Table.Row>
                         ))}
                     </Table.Body>
 
-                    <Table.Footer fullWidth>
-                        <Table.Row>
-                            <Table.HeaderCell colSpan='5'>
-                                <Button floated='right' icon labelPosition='left' color={"green"} size='small' onClick={() => setOpenModal(true)} >
-                                    <Icon name='plus' /> { t("Adicionar ramo") }
-                                </Button>
-                            </Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Footer>
+                    <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSES]}>
+                        <Table.Footer fullWidth>
+                            <Table.Row>
+                                <Table.HeaderCell colSpan='5'>
+                                    <Button floated='right' icon labelPosition='left' color={"green"} size='small' onClick={() => setOpenModal(true)} >
+                                        <Icon name='plus' /> { t("Adicionar ramo") }
+                                    </Button>
+                                </Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Footer>
+                    </ShowComponentIfAuthorized>
                 </Table>
             )}
 

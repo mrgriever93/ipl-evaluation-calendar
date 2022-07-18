@@ -297,7 +297,7 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
                     { !hasGroup && (
                         <Sticky offset={50} context={contextRef}>
                             <div className='sticky-methods-header'>
-                                <Button onClick={() => setOpenClone(true)} icon labelPosition="left" color="yellow">
+                                <Button onClick={() => setOpenClone(true)} icon labelPosition="left" color="yellow" disabled={hasNoMethods}>
                                     <Icon name={"clone outline"}/>{ t("Duplicar metodos") }
                                 </Button>
                                 <Button onClick={onSubmit} color="green" icon labelPosition="left" loading={isSaving} disabled={!formValid}>
