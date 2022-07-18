@@ -40,6 +40,7 @@ class CourseUnitController extends Controller
     {
         $lang = (in_array($request->header("lang"), ["en", "pt"]) ? $request->header("lang") : "pt");
         $perPage = request('per_page', 20);
+        $allUCs = request('show_all', false);
 
         $courseUnits = CourseUnit::with('methods')->filter($filters, $lang)->ofAcademicYear($request->cookie('academic_year'));
 
@@ -48,32 +49,33 @@ class CourseUnitController extends Controller
         } else {
             $userId = Auth::user()->id;
             $userGroups = Auth::user()->groups();
-
-            if (!$userGroups->superAdmin()->exists() && !$userGroups->admin()->exists() && !$userGroups->responsiblePedagogic()->exists()) {
-                if (Auth::user()->groups()->responsible()->exists() && $userGroups->count() == 1) {
-                    $courseUnits->where('responsible_user_id', $userId);
-                }
-
-                if (Auth::user()->groups()->coordinator()->exists()) {
-                    $courseUnits->whereIn('course_id', Course::where('coordinator_user_id', $userId)->pluck('id'));
-                    if (Auth::user()->groups()->isTeacher()->get()->count() > 0) {
-                        $courseUnits->orWhereIn('id', Auth::user()->courseUnits->pluck('id'));
+            if(!$allUCs) {
+                if (!$userGroups->superAdmin()->exists() && !$userGroups->admin()->exists() && !$userGroups->responsiblePedagogic()->exists()) {
+                    if (Auth::user()->groups()->responsible()->exists() && $userGroups->count() == 1) {
+                        $courseUnits->where('responsible_user_id', $userId);
                     }
-                }
 
-                if (Auth::user()->groups()->isTeacher()->exists()) {
-                    $courseUnits->whereIn('id', Auth::user()->courseUnits->pluck('id'));
-                }
+                    if (Auth::user()->groups()->coordinator()->exists()) {
+                        $courseUnits->whereIn('course_id', Course::where('coordinator_user_id', $userId)->pluck('id'));
+                        if (Auth::user()->groups()->isTeacher()->get()->count() > 0) {
+                            $courseUnits->orWhereIn('id', Auth::user()->courseUnits->pluck('id'));
+                        }
+                    }
 
-                if (Auth::user()->groups()->gop()->exists() || Auth::user()->groups()->board()->exists() || Auth::user()->groups()->pedagogic()->exists()) {
-                    $userGroupsIds = Auth::user()->groups()->pluck("id")->toArray();
-                    $schools = School::whereIn('gop_group_id', $userGroupsIds)
-                        ->orWhereIn('board_group_id', $userGroupsIds)
-                        ->orWhereIn('pedagogic_group_id', $userGroupsIds)
-                        ->pluck("id")->toArray();
+                    if (Auth::user()->groups()->isTeacher()->exists()) {
+                        $courseUnits->whereIn('id', Auth::user()->courseUnits->pluck('id'));
+                    }
 
-                    if (!empty($schools)) {
-                        $courseUnits->whereIn('course_id', Course::whereIn('school_id', $schools)->get()->pluck('id'));
+                    if (Auth::user()->groups()->gop()->exists() || Auth::user()->groups()->board()->exists() || Auth::user()->groups()->pedagogic()->exists()) {
+                        $userGroupsIds = Auth::user()->groups()->pluck("id")->toArray();
+                        $schools = School::whereIn('gop_group_id', $userGroupsIds)
+                            ->orWhereIn('board_group_id', $userGroupsIds)
+                            ->orWhereIn('pedagogic_group_id', $userGroupsIds)
+                            ->pluck("id")->toArray();
+
+                        if (!empty($schools)) {
+                            $courseUnits->whereIn('course_id', Course::whereIn('school_id', $schools)->get()->pluck('id'));
+                        }
                     }
                 }
             }

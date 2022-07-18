@@ -1,6 +1,6 @@
 # TODO
 
-- [ ] Validar quando se marca um exame, se for dos agrupados, deixar marcar para os outros. (validar bug)
+- [X] Validar quando se marca um exame, se for dos agrupados, deixar marcar para os outros. (validar bug)
 - [X] Rever mudança de fases num CP ou Direção (aceitar e recursar)
 - [X] Listar "todos" os calendarios, so deve devolver os publicados (definitivos ou temporarios)
 - [ ] Rever quem pode ver detalhe de UC
@@ -346,4 +346,18 @@ Melhorias:
     REFERENCES `calendar_v2`.`course_unit_groups` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION;
+    
+    
+    
+    ALTER TABLE `calendar_v2`.`exams`
+    ADD COLUMN `course_unit_id` BIGINT UNSIGNED NULL AFTER `method_id`,
+    ADD INDEX `exams_course_unit_id_foreign_idx` (`course_unit_id` ASC) VISIBLE;
+    
+    ALTER TABLE `calendar_v2`.`exams`
+    ADD CONSTRAINT `exams_course_unit_id_foreign` 
+    FOREIGN KEY (`course_unit_id`) 
+    REFERENCES `calendar_v2`.`course_units` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+
 ```

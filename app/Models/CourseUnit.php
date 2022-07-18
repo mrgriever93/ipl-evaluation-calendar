@@ -74,6 +74,11 @@ class CourseUnit extends Model
         return $this->hasManyDeepFromRelations($this->methods(), (new Method)->exams());
     }
 
+    public function examsDirect()
+    {
+        return $this->hasMany(Exam::class);
+    }
+
     public function responsibleUser() {
         return $this->belongsTo(User::class, 'responsible_user_id');
     }

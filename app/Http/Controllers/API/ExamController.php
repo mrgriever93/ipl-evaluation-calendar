@@ -4,7 +4,6 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NewExamRequest;
-use App\Http\Resources\API_V1\Calendars\ExamCalendarResource;
 use App\Http\Resources\ExamResource;
 use App\Models\Calendar;
 use App\Models\CourseUnit;
@@ -39,24 +38,37 @@ class ExamController extends Controller
         $courseUnitGroup = CourseUnit::find($request->course_unit_id)->group;
         $courseUnitGroup = $courseUnitGroup ? $courseUnitGroup->id : null;
         if ($courseUnitGroup) {
+            $cal = Calendar::find($calendarId);
             $courses = CourseUnitGroup::find($courseUnitGroup)->courseUnits->pluck('course_id');
-            $calendars = Calendar::whereIn('course_id', $courses)->get();
+            $calendars = Calendar::whereIn('course_id', $courses)
+                ->where('semester_id', $cal->semester_id)
+                ->ofAcademicYear($cal->academic_year_id)
+                ->where('is_temporary', false)
+                ->where('is_published', false)
+                ->get();
 
-            foreach (CourseUnitGroup::find($courseUnitGroup)->courseUnits as $courseUnit) {
+            foreach ($calendars as $calendar) {
                 foreach (Method::find($request->method_id)->epochType as $epochType) {
-                    $epoch = Epoch::where('epoch_type_id', $epochType->id)->where('calendar_id', $calendarId)->first();
+                    $epoch = Epoch::where('epoch_type_id', $epochType->id)->where('calendar_id', $calendar->id)->first();
                     $hasEpoch = $epoch->calendar()->where('calendars.is_published', false)->exists();
 
                     // This would prevent multiple exams
-                    //$hasExams = Exam::where('method_id', $request->method_id)->where('epoch_id', $epoch->id)->count();
-                    if ($hasEpoch){ // && $hasExams === 0) {
-                        $newExam = new Exam($request->all());
-                        /*$newExam->fill([
-                            "course_id" => $courseUnit->course_id,
-                            "epoch_id" => $epoch->id,
-                            "course_unit_id" => $courseUnit->id
-                        ]);*/
-                        $newExam->save();
+                    // $hasExams = Exam::where('method_id', $request->method_id)->where('epoch_id', $epoch->id)->exists();
+
+                    // This will let the users create multiple times an exam for the method
+                    if ($hasEpoch){// && !$hasExams) {
+                        $courseUnit = CourseUnit::where('course_id', $calendar->course_id)->where('course_unit_group_id', $courseUnitGroup)->first();
+                        if($courseUnit) {
+                            $newGroupedExam = new Exam($request->all());
+                            // dynamic fields
+                            $newGroupedExam->epoch_id = $epoch->id;
+                            $newGroupedExam->course_unit_id = $courseUnit->id;
+
+                            $newGroupedExam->save();
+                            if($courseUnit->id === $request->course_unit_id){
+                                $newExam = $newGroupedExam;
+                            }
+                        }
                     }
                 }
             }
@@ -64,7 +76,10 @@ class ExamController extends Controller
             $newExam = new Exam($request->all());
             $newExam->save();
         }
-        return response()->json(new ExamResource($newExam), Response::HTTP_CREATED);
+        if($newExam){
+            return response()->json(new ExamResource($newExam), Response::HTTP_CREATED);
+        }
+        return response()->json('no exams to create', Response::HTTP_CONFLICT);
     }
 
     public function update(NewExamRequest $request, Exam $exam)
@@ -108,11 +123,46 @@ class ExamController extends Controller
         if($validation){
             return $validation;
         }
-        // check if CUs of exam belongs to any group
-        $belongsToGroup = $exam->courseUnit->group;
-        if($belongsToGroup) {
 
+        // check if CUs of exam belongs to any group
+        /* TODO check if we want to update all exams related to a Grouped UC/exam
+        $courseUnitGroup =  $exam->courseUnit->group;
+        $courseUnitGroup = $courseUnitGroup ? $courseUnitGroup->id : null;
+        if ($courseUnitGroup) {
+            $cal = Calendar::find($request->calendar_id);
+            $courses = CourseUnitGroup::find($courseUnitGroup)->courseUnits->pluck('course_id');
+            $calendars = Calendar::whereIn('course_id', $courses)
+                ->where('semester_id', $cal->semester_id)
+                ->where('is_temporary', false)
+                ->where('is_published', false)
+                ->get();
+
+            foreach ($calendars as $calendar) {
+                foreach (Method::find($request->method_id)->epochType as $epochType) {
+                    $epoch = Epoch::where('epoch_type_id', $epochType->id)->where('calendar_id', $calendar->id)->first();
+                    $hasEpoch = $epoch->calendar()->where('calendars.is_published', false)->exists();
+
+                    // This would prevent multiple exams
+                    $hasExams = Exam::where('method_id', $request->method_id)
+                        ->where('epoch_id', $epoch->id)->exists();
+                    if ($hasEpoch && !$hasExams) {
+                        $courseUnit = CourseUnit::where('course_id', $calendar->course_id)->where('course_unit_group_id', $courseUnitGroup)->first();
+                        if($courseUnit) {
+                            $newGroupedExam = new Exam($request->all());
+                            // dynamic fields
+                            $newGroupedExam->epoch_id = $epoch->id;
+                            $newGroupedExam->course_unit_id = $courseUnit->id;
+
+                            $newGroupedExam->save();
+                            if($courseUnit->id === $request->course_unit_id){
+                                $newExam = $newGroupedExam;
+                            }
+                        }
+                    }
+                }
+            }
         } else {
+        */
             //$exam->calendar_id     = $request->calendar_id;
             //$exam->course_id       = $request->course_id;
             $exam->epoch_id        = $request->epoch_id;
@@ -128,7 +178,7 @@ class ExamController extends Controller
             $exam->observations_pt = $request->observations_pt;
             $exam->observations_en = $request->observations_en;
             $exam->save();
-        }
+        //}
         return response()->json(new ExamResource($exam), Response::HTTP_OK);
     }
 

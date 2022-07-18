@@ -80,7 +80,7 @@ const List = () => {
                         <Header as="span">{t("Fases do Calendário")}</Header>
                         <ShowComponentIfAuthorized permission={[SCOPES.CREATE_CALENDAR_PHASES]}>
                             { !isLoading && (
-                                <Link to="/calendario/fases/novo">
+                                <Link to="/fases-calendario/novo">
                                     <Button floated="right" color="green">{t("Novo")}</Button>
                                 </Link>
                             )}
@@ -117,7 +117,7 @@ const List = () => {
                                     </Table.Cell>
                                     <Table.Cell textAlign="center">
                                         <ShowComponentIfAuthorized permission={[SCOPES.EDIT_CALENDAR_PHASES]}>
-                                            <Link to={`/calendario/fases/edit/${id}`}>
+                                            <Link to={`/fases-calendario/edit/${id}`}>
                                                 <Button color="yellow" icon>
                                                     <Icon name="edit"/>
                                                 </Button>
