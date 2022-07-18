@@ -138,12 +138,10 @@ const Calendar = () => {
     };
 
     const addExamToList = (exam) => {
-        console.log("added");
-        console.log(examList.length);
         setExamList((current) => [...current, exam]);
     }
+
     const updateExamInList = (exam) => {
-        console.log(examList.length);
         setExamList((current) => {
             const copy = [...current];
             const oldExamIndex = copy.findIndex((item) => item.id === exam.id);
@@ -154,14 +152,8 @@ const Calendar = () => {
         });
     }
     const removeExamFromList = (examId) => {
-        console.log(examList.length);
         setExamList((current) => current.filter((item) => item.id !== examId));
     }
-
-    useEffect(() => {
-        console.log("examList change");
-        console.log(examList.length);
-    }, [examList]);
 
     /*
      * Interruptions
@@ -340,7 +332,6 @@ const Calendar = () => {
                                     return item;
                                 }
                             });
-                            //console.log("weekData: exams by day - " + weekExams.length);
 
                             const week = acc.find(({week}) => week === start_date.isoWeek());
                             if (!week.days.find((day) => day.weekDay === start_date.day())) {
@@ -408,12 +399,12 @@ const Calendar = () => {
     let alreadyAddedRowSpan = false;
     let interruptionDays = 0;
 
-    const getExamForDay = (date, epochId, year) => {
-        let list = examList.filter((exam) => {
-            return  exam.academic_year === year && exam.epoch_id === epochId && date.isBetween(exam.date_start, exam.date_end, 'date','[]');
-        });
-        return list;
-    }
+    // const getExamForDay = (date, epochId, year) => {
+    //     let list = examList.filter((exam) => {
+    //         return  exam.academic_year === year && exam.epoch_id === epochId && date.isBetween(exam.date_start, exam.date_end, 'date','[]');
+    //     });
+    //     return list;
+    // }
     /*
      * Option to drag and drop exams bewteen days
      * TODO - maybe future work

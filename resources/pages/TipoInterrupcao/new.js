@@ -40,7 +40,6 @@ const New = () => {
     }, [paramsId, loading, interruptionDetail, navigate]);
 
     const initialValues = useMemo(() => {
-        console.log(interruptionDetail);
         const { id, name_pt, name_en, enabled = true, mandatory } = interruptionDetail;
         return { id, name_pt, name_en, enabled, mandatory };
     }, [interruptionDetail]);

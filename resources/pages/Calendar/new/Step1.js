@@ -32,7 +32,6 @@ const Step1 = ({setActiveSemester, activeSemester}) => {
     }, []);
 
     const getMinDate = (semester, code, field) => {
-        // console.log("getMinDate > [semester: " + semester + "] / {code: " + code + "} / (Field: " + field + ")");
         let startDate = minDate;
         if(seasonsDates && seasonsDates[semester]) {
             if (code !== "periodic_season") {

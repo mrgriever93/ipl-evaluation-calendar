@@ -122,7 +122,6 @@ const UnitTabMethods = ({ groupId, warningsHandler }) => {
     };
 
     const onSubmit = () => {
-        console.log(removedMethods);
         if (!isSaving) {
             setIsSaving(true);
             let methods = [];

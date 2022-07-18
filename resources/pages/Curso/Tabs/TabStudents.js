@@ -54,7 +54,6 @@ const CourseTabsStudents = ({ courseId, isLoading }) => {
 
     const addStudent = () => {
         setOpenModal(false);
-        console.log(studentToAdd);
         axios.patch(`/courses/${courseId}/student`, {
             user_email: studentToAdd.value
         }).then((res) => {

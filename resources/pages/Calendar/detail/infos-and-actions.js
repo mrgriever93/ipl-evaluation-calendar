@@ -153,7 +153,6 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
     }    
 
     const updatePhaseHandler = (newPhase) => {
-        console.log(newPhase)
         setCalendarPhase(newPhase);
         calendarInfo.phase.id =  newPhase;
     }

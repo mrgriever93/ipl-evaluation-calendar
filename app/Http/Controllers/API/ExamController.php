@@ -64,7 +64,7 @@ class ExamController extends Controller
             $newExam = new Exam($request->all());
             $newExam->save();
         }
-        return response()->json(new ExamCalendarResource($newExam), Response::HTTP_CREATED);
+        return response()->json(new ExamResource($newExam), Response::HTTP_CREATED);
     }
 
     public function update(NewExamRequest $request, Exam $exam)
@@ -129,7 +129,7 @@ class ExamController extends Controller
             $exam->observations_en = $request->observations_en;
             $exam->save();
         }
-        return response()->json(new ExamCalendarResource($exam), Response::HTTP_OK);
+        return response()->json(new ExamResource($exam), Response::HTTP_OK);
     }
 
     public function checkIfCanEditExam($calendarId, $epochId, $course_id, $method_id, $course_unit_id, $examId = null){
