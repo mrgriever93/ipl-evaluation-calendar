@@ -6,6 +6,7 @@
 - Adicionado botões para validar ou rejeitar caso seja membro do Conselho pedagógico ou membro da direção, em vez de ver o botão para submeter;
 - Guardar role do user na local storage, para algumas validações de permissões do calendário;
 - Adicionados métodos e logs aos agrupamentos de UCs;
+- Adicionada possibilidade de marcar exames para UCs agrupadas
 - Revisão do detalhe e de criação de uma UC:
   - Adicionada dropdown para selecionar o curso;
   - Adicionado botão procurar via WebService os detalhes da UC e bloqueio dos campos de edição;
