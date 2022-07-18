@@ -16,6 +16,7 @@
 ## Issues
 
 **Trabalho futuro?:**
+- [ ] Adicionar possibilidade de ver os cursos no detalhe de uma UC Agrupada
 - [ ] Possibilidade de ver as diferenças entre calendários de avaliação
 - [ ] Se for Direção ou Conselho Pedagógico, se rejeitar um calendário devem poder adicionar um comentário/parecer
 - [ ] Adicionar possibilidade de filtrar por UCs no detalhe do calendário (para escolher quais as UC's a ver no calendário)
