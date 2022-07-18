@@ -13,7 +13,7 @@ import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedExam, updatedExam, deletedExam, calendarDates} ) => {
+const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, onClose, addedExam, updatedExam, deletedExam, calendarDates} ) => {
     const { t } = useTranslation();
     // get URL params
     let { id } = useParams();
@@ -210,7 +210,6 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
             }
         });
     };
-
     const onCloseHandler = () => {
         setShowRepeatedMethodsWarning(false);
         onClose();
@@ -267,11 +266,21 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                                                maxDate={ moment(epochEndDate || calendarDates.maxDate, 'DD-MM-YYYY') }
                                                                                {...dateStartInput}
                                                                                onChange={(evt, {value}) => {
-                                                                                   dateStartInput.onChange( value );
-                                                                                   dateEndInput.onChange( value );
-                                                                                   // save this dates to validate number of days for message
-                                                                                   scheduleInformation.date_start = moment(value, 'DD-MM-YYYY').format("YYYY-MM-DD");
-                                                                                   scheduleInformation.date_end = moment(value, 'DD-MM-YYYY').format("YYYY-MM-DD");
+                                                                                   let hasInterruptions = interruptions.filter((interruption) => {
+                                                                                       return moment(interruption.start_date).isSameOrBefore(moment(value, 'DD-MM-YYYY')) &&
+                                                                                           moment(interruption.start_date).isSameOrAfter(moment(value, 'DD-MM-YYYY')) &&
+                                                                                           moment(interruption.end_date).isSameOrBefore(moment(value, 'DD-MM-YYYY')) &&
+                                                                                           moment(interruption.end_date).isSameOrAfter(moment(value, 'DD-MM-YYYY'))
+                                                                                   });
+                                                                                   if(hasInterruptions.length === 0) {
+                                                                                       dateStartInput.onChange(value);
+                                                                                       dateEndInput.onChange(value);
+                                                                                       // save this dates to validate number of days for message
+                                                                                       scheduleInformation.date_start = moment(value, 'DD-MM-YYYY').format("YYYY-MM-DD");
+                                                                                       scheduleInformation.date_end = moment(value, 'DD-MM-YYYY').format("YYYY-MM-DD");
+                                                                                   } else {
+                                                                                       toast(t('Data em conflito com interrupção existente!'), errorConfig);
+                                                                                   }
                                                                                }}
                                                                     />
                                                                     <DateInput placeholder={ t("Inserir data final") } label={ t("Data final") }
@@ -282,9 +291,19 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                                                value={ moment(scheduleInformation?.date_end).format('DD-MM-YYYY') }
                                                                                {...dateEndInput}
                                                                                onChange={(evt, {value}) => {
-                                                                                   dateEndInput.onChange( value );
-                                                                                   // save this dates to validate number of days for message
-                                                                                   scheduleInformation.date_end = moment(value, 'DD-MM-YYYY').format("YYYY-MM-DD");
+                                                                                   let hasInterruptions = interruptions.filter((interruption) => {
+                                                                                       return moment(interruption.start_date).isSameOrBefore(moment(value, 'DD-MM-YYYY')) &&
+                                                                                           moment(interruption.start_date).isSameOrAfter(moment(value, 'DD-MM-YYYY')) &&
+                                                                                           moment(interruption.end_date).isSameOrBefore(moment(value, 'DD-MM-YYYY')) &&
+                                                                                           moment(interruption.end_date).isSameOrAfter(moment(value, 'DD-MM-YYYY'))
+                                                                                   });
+                                                                                   if(hasInterruptions.length === 0) {
+                                                                                       dateEndInput.onChange(value);
+                                                                                       // save this dates to validate number of days for message
+                                                                                       scheduleInformation.date_end = moment(value, 'DD-MM-YYYY').format("YYYY-MM-DD");
+                                                                                   } else {
+                                                                                       toast(t('Data em conflito com interrupção existente!'), errorConfig);
+                                                                                   }
                                                                                }}
                                                                     />
                                                                 </Form.Group>

@@ -717,6 +717,7 @@ const Calendar = () => {
             <PopupScheduleEvaluation
                 isOpen={openScheduleExamModal}
                 onClose={closeScheduleExamModal}
+                interruptions={interruptionsList}
                 scheduleInformation={scheduleExamInfo}
                 addedExam={addExamToList}
                 updatedExam={updateExamInList}
