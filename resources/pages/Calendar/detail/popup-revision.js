@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import {useTranslation} from "react-i18next";
 import {Button, Modal, List, Icon, Table, Header, Message} from 'semantic-ui-react';
 
@@ -20,15 +21,16 @@ const PopupRevisionDetail = ( {isOpen, onClose, warnings} ) => {
                                         <Table basic='very' celled>
                                             <Table.Header>
                                                 <Table.Row>
-                                                    <Table.HeaderCell width="1"></Table.HeaderCell>
+                                                    <Table.HeaderCell></Table.HeaderCell>
                                                     <Table.HeaderCell>{ t("Elemento de Avaliação") }</Table.HeaderCell>
+                                                    <Table.HeaderCell textAlign="center">{ t("Data") }</Table.HeaderCell>
                                                     <Table.HeaderCell>{ t("Época") }</Table.HeaderCell>
                                                 </Table.Row>
                                             </Table.Header>
                                             <Table.Body>
                                                 { item.methods.map((method, indexMethod) => (
                                                     <Table.Row key={indexMethod}>
-                                                        <Table.Cell textAlign={"center"}>
+                                                        <Table.Cell width="1" textAlign="center">
                                                             <Icon name={method.is_done ? 'checkmark' : "close"} color={method.is_done ? 'green' : "red"}/>
                                                         </Table.Cell>
                                                         <Table.Cell>
@@ -39,7 +41,14 @@ const PopupRevisionDetail = ( {isOpen, onClose, warnings} ) => {
                                                                 {method.description}
                                                             </Header>
                                                         </Table.Cell>
-                                                        <Table.Cell>{method.epoch}</Table.Cell>
+                                                        <Table.Cell style={{width: '25%' }} textAlign="center">
+                                                            { method.exam_date_start ? (
+                                                                        moment(method.exam_date_start).format('DD MMMM, YYYY') === moment(method.exam_date_end).format('DD MMMM, YYYY') ?
+                                                                        moment(method.exam_date_start).format('DD MMMM, YYYY') :
+                                                                        moment(method.exam_date_start).format('DD MMMM, YYYY') + " - " + moment(method.exam_date_end).format('DD MMMM, YYYY')
+                                                            ) : ( "-")}
+                                                        </Table.Cell>
+                                                        <Table.Cell style={{width: '18%' }}>{ method.epoch }</Table.Cell>
                                                     </Table.Row>
                                                 ))}
                                             </Table.Body>

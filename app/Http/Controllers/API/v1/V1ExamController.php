@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API\v1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\API_V1\ExamListResource;
+use App\Http\Resources\API_V1\Exams\ExamListResource;
 use App\Models\AcademicYear;
 use App\Models\CalendarPhase;
 use App\Models\Course;

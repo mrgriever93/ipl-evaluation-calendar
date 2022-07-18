@@ -19,7 +19,7 @@ import {
 import {toast} from 'react-toastify';
 import {useTranslation} from "react-i18next";
 import {successConfig, errorConfig} from '../../../utils/toastConfig';
-import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
+import ShowComponentIfAuthorized, {useComponentIfAuthorized} from '../../../components/ShowComponentIfAuthorized';
 import SCOPES from '../../../utils/scopesConstants';
 
 const CourseTabsUnits = ({ courseId, isLoading }) => {
@@ -110,7 +110,7 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
                             <Header as='h4'>
                                 { t("Ano") } {year}
                             </Header>
-                            <Table striped color="green">
+                            <Table color="green" selectable striped>
                                 <Table.Header>
                                     <Table.Row>
                                         {columns.map((col, index) => (
@@ -120,9 +120,11 @@ const CourseTabsUnits = ({ courseId, isLoading }) => {
                                 </Table.Header>
                                 <Table.Body>
                                     {courseUnitsGrouped[year].map((unit, index) => (
-                                        <Table.Row key={index} warning={ !unit.has_methods }>
+                                        <Table.Row key={index} warning={ (useComponentIfAuthorized(SCOPES.EDIT_COURSE_UNITS) ? (!unit.has_methods || !unit.has_responsable) : false) } >
                                             <Table.Cell>
-                                                { !unit.has_methods && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher os métodos de avaliação.')} position='top center'/> }
+                                                <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]}>
+                                                    { !unit.has_methods && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher os métodos de avaliação.')} position='top center'/> }
+                                                </ShowComponentIfAuthorized>
                                                 ({ unit.code }) - { unit.name }
                                             </Table.Cell>
                                             <Table.Cell>

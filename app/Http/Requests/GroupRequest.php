@@ -15,10 +15,19 @@ class GroupRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => "required|string",
-            "description_pt" => "required|string",
-            "description_en" => "required|string",
-            "enabled" => "boolean"
+            "code"      => "required|string|unique:groups,code," . $this->id,
+            "name_pt"   => "required|string",
+            "name_en"   => "required|string",
+            "enabled"   => "boolean"
+        ];
+    }
+
+    public function messages() {
+        return [
+            'code.required'     => 'O código é de preenchimento obrigatório.',
+            'code.unique'       => 'O código já está a ser utilizado noutro grupo.',
+            'name_pt.required'  => 'A Descrição PT é de preenchimento obrigatório.',
+            'name_en.required'  => 'A Descrição EN é de preenchimento obrigatório.'
         ];
     }
 }

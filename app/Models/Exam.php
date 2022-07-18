@@ -13,6 +13,7 @@ class Exam extends Model
     protected $fillable = [
         "epoch_id",
         "method_id",
+        "course_unit_id",
         "room",
         "group_id",
         "date_start",
@@ -44,6 +45,11 @@ class Exam extends Model
     public function courseUnit()
     {
         return $this->hasOneDeepFromRelations($this->method(), (new Method)->courseUnits());
+    }
+
+    public function courseUnitDirect()
+    {
+        return $this->belongsTo(CourseUnit::class, 'course_unit_id', 'id');
     }
 
     public function course()

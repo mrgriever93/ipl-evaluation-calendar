@@ -20,6 +20,7 @@ class CourseUnitListResource extends JsonResource
             //'branch_label'        => ($lang_header == "en" ? $this->branch()->first()->name_en : $this->branch()->first()->name_pt),
             'branch_label'          => ($this->branch ? ($lang_header == "en" ? $this->branch->name_en : $this->branch->name_pt) : "-"),
             'has_methods'           => $this->methods()->exists(),
+            'has_responsable'       => !empty($this->responsible_user_id),
             'has_branch'            => $this->branch()->exists()
         ];
     }

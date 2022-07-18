@@ -58,8 +58,7 @@ class CalendarService
             $newCalendar->academic_year_id = $request->cookie('academic_year');
             $newCalendar->semester_id = Semester::where('code', $request->semester)->firstOrFail()->id;
             $newCalendar->course_id = $course["id"] ?? $course;
-            // TODO garantir que este valor e sempre o correto
-            $newCalendar->calendar_phase_id = CalendarPhase::where('code', 'edit_gop')->firstOrFail()->id;
+            $newCalendar->calendar_phase_id = CalendarPhase::phaseEditGop();
             $newCalendar->save();
 
             foreach ($request->epochs as $key => $epoch) {
@@ -106,13 +105,21 @@ class CalendarService
                     $newInterruption->save();
                 }
             }
-            // TODO make the create of calendar more dynamic with DB records
-            CalendarViewers::insert([
-                ["calendar_id" => $newCalendar->id, "group_id" => 1],   // "super_admin"
-                ["calendar_id" => $newCalendar->id, "group_id" => 2],   // "admin"
-                ["calendar_id" => $newCalendar->id, "group_id" => 8],   // "gop"
-                ["calendar_id" => $newCalendar->id, "group_id" => 13]   // "gop_estg"
-            ]);
+            // TODO have in count the school that the calendar belongs to
+            $permissionId = Permission::permissionViewCalendar();
+            $groupsQuery = Group::withExists([
+                'permissions as has_permission' => function ($query) use($permissionId) {
+                    return $query->where('permission_id', $permissionId)->where('phase_id', CalendarPhase::phaseEditGop());
+                }
+            ])->get()->toArray();
+            $viewers = [];
+            foreach ($groupsQuery as $group) {
+                if($group["has_permission"]) {
+                    $viewers[] = ["calendar_id" => $newCalendar->id, "group_id" => $group['id']];
+                }
+            }
+            // insert all new viewers groups
+            CalendarViewers::insert($viewers);
         }
 
         return "Created";
@@ -150,6 +157,34 @@ class CalendarService
         }
     }
 
+
+    public static function approval(Request $request, Calendar $calendar)
+    {
+        // TODO add message field to DB, update this code and add to FrontEnd
+        // $request->input("message")
+        if(Auth::user()->groups()->board()->exists()){
+            if($request->input("accepted")) {
+                self::publish($calendar);
+                return;
+            } else {
+                $calendar->calendar_phase_id = CalendarPhase::phaseEditGop();
+                $calendar->save();
+                CalendarChanged::dispatch($calendar);
+            }
+        }
+        if(Auth::user()->groups()->pedagogic()->exists()){
+            if($request->input("accepted")) {
+                $calendar->calendar_phase_id = CalendarPhase::phaseEditGop();
+            } else {
+                $calendar->calendar_phase_id = CalendarPhase::phaseEditCC();
+            }
+            $calendar->save();
+            CalendarChanged::dispatch($calendar);
+        }
+
+        self::updateCalendarViewers($calendar->id, $calendar->calendar_phase_id, true);
+    }
+
     public static function publish(Calendar $calendar)
     {
         Calendar::where('id', '!=', $calendar->id)
@@ -159,45 +194,51 @@ class CalendarService
 
         if (!$calendar->is_published) {
             $calendar->calendar_phase_id = CalendarPhase::phasePublished();
-            $calendar->version = intval($calendar->version) + 1;
-            $calendar->is_published = true;
+            if(Auth::user()->groups()->Coordinator()) {
+                // add 0.1 to version because is a coordinator
+                $calendar->version = floatval($calendar->version) + 0.1;
+                $calendar->is_temporary = true;
+                $calendar->is_published = false;
+            } else if(Auth::user()->groups()->Gop()){
+                // add 1.0 to version because is the gop
+                $calendar->version = intval($calendar->version) + 1;
+                $calendar->is_temporary = false;
+                $calendar->is_published = true;
+            }
             $calendar->save();
 
+            self::updateCalendarViewers($calendar->id, $calendar->calendar_phase_id, true);
 
-            // delete old viewers
-            CalendarViewers::where("calendar_id", $calendar->id)->delete();
-
-            $groups = Group::where('enabled', true)->pluck('id')->toArray();
-            $viewers = [];
-            foreach ($groups as $group) {
-                $viewers[] = ["group_id" => $group, "calendar_id" => $calendar->id];
+            $newId = null;
+            // if coordinator, copy the calendar to work on
+            if(Auth::user()->groups()->coordinator()->exists()){
+                $newId = self::copyCalendar($calendar);
             }
-            // insert all new viewers groups
-            CalendarViewers::insert($viewers);
-
             CalendarPublished::dispatch($calendar);
+            return $newId;
         }
     }
 
-    public static function copyCalendar( Calendar $calendar)
+    public static function copyCalendar(Calendar $calendar)
     {
         Calendar::where('id', '!=', $calendar->id)
             ->where('course_id', $calendar->course_id)
             ->where('semester_id', $calendar->semester_id)
             ->delete();
+
         // clone new calendar
         $clone = $calendar->replicate();
         $clone->previous_calendar_id = $calendar->id;
         // validate if we want to add 0.1 or 1.0
-        $clone->version = floatval(intval(explode('.', $calendar->version)[0])  . "." .intval(explode('.', $calendar->version)[1]) + 1);
+        //$clone->version = floatval(intval(explode('.', $calendar->version)[0])  . "." .intval(explode('.', $calendar->version)[1]) + 1);
         // make sure the flags are correct
         $clone->is_published = false;
         $clone->is_temporary = false;
-        // set the correct phase, having in account the user that created the copy
-        if(Auth::user()->groups()->gop()){
-            $clone->calendar_phase_id = CalendarPhase::phaseEditGop();
-        } else if(Auth::user()->groups()->coordinator()){
+
+        if( Auth::user()->groups()->coordinator()->exists()){
             $clone->calendar_phase_id = CalendarPhase::phaseEditCC();
+        } else {
+            $clone->calendar_phase_id = CalendarPhase::phaseEditGop();
         }
         $clone->push();
         //$calendar->load(['epochs.epochType.methods', 'epochs.exams']);
@@ -222,13 +263,10 @@ class CalendarService
         }
 
         $clone->save();
-        // TODO add to the right user
-        CalendarViewers::insert([
-            ["calendar_id" => $clone->id, "group_id" => 1],   // "super_admin"
-            ["calendar_id" => $clone->id, "group_id" => 2],   // "admin"
-            ["calendar_id" => $clone->id, "group_id" => 8],   // "gop"
-            ["calendar_id" => $clone->id, "group_id" => 13]   // "gop_estg"
-        ]);
+
+        self::updateCalendarViewers($clone->id, $clone->calendar_phase_id, true);
+
+        return $clone->id;
     }
 
     public static function info(Request $request)
@@ -260,8 +298,11 @@ class CalendarService
 
         $epoch_type_id = Epoch::find($request->epoch_id)->epoch_type_id;
         $availableMethods = CourseUnit::where("curricular_year", $request->year)
-            ->where('semester_id', $calendar->semester_id)
             ->where('course_id', $calendar->course_id);
+
+        if(!$calendar->semester->special) {
+            $availableMethods->where('semester_id', $calendar->semester_id);
+        }
 
         //return AvailableCourseUnitsResource::collection($availableMethods);
         $includedCUs = [];
@@ -338,8 +379,10 @@ class CalendarService
 
         $epoch_types = Epoch::where("calendar_id", $calendar->id)->pluck("epoch_type_id")->toArray();
         //dd($epoch_types);
-        $availableMethods = CourseUnit::where('semester_id', $calendar->semester_id)
-            ->where('course_id', $calendar->course_id);
+        $availableMethods = CourseUnit::where('course_id', $calendar->course_id);
+        if(!$calendar->semester->special) {
+            $availableMethods->where('semester_id', $calendar->semester_id);
+        }
 
         //return AvailableCourseUnitsResource::collection($availableMethods);
         $includedCUs = [];
@@ -452,5 +495,31 @@ class CalendarService
             }
         ])->get();
         return GroupsPhaseResource::collection($groupsQuery);
+    }
+
+    public static function updateCalendarViewers($calendarId, $phaseId = null, $clearOldViewers = false){
+        if($clearOldViewers){
+            // delete old viewers
+            CalendarViewers::where("calendar_id", $calendarId)->delete();
+        }
+        if($phaseId == null){
+            $phaseId = CalendarPhase::phaseEditGop();
+        }
+        $permissionId = Permission::permissionViewCalendar();
+        // TODO have in count the school that the calendar belongs to
+        $groupsQuery = Group::withExists([
+            'permissions as has_permission' => function ($query) use($permissionId, $phaseId) {
+                return $query->where('permission_id', $permissionId)->where('phase_id', $phaseId);
+            }
+        ])->get()->toArray();
+
+        $viewers = [];
+        foreach ($groupsQuery as $group) {
+            if($group["has_permission"]) {
+                $viewers[] = ["calendar_id" => $calendarId, "group_id" => $group['id']];
+            }
+        }
+        // insert all new viewers groups
+        CalendarViewers::insert($viewers);
     }
 }

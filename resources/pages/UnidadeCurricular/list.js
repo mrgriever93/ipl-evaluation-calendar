@@ -1,5 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {Card, Container, Table, Form, Icon, Modal, Button, Header, Dimmer, Loader, Popup} from 'semantic-ui-react';
+import {
+    Card,
+    Container,
+    Table,
+    Form,
+    Icon,
+    Modal,
+    Button,
+    Header,
+    Dimmer,
+    Loader,
+    Popup,
+    Checkbox, Segment
+} from 'semantic-ui-react';
 import axios from 'axios';
 import {Link, useSearchParams} from 'react-router-dom';
 import _ from 'lodash';
@@ -7,7 +20,7 @@ import {toast} from 'react-toastify';
 import {useTranslation} from "react-i18next";
 
 import SCOPES from '../../utils/scopesConstants';
-import ShowComponentIfAuthorized from '../../components/ShowComponentIfAuthorized';
+import ShowComponentIfAuthorized, {useComponentIfAuthorized} from '../../components/ShowComponentIfAuthorized';
 import {successConfig, errorConfig} from '../../utils/toastConfig';
 import EmptyTable from "../../components/EmptyTable";
 import Semesters from "../../components/Filters/Semesters";
@@ -28,6 +41,7 @@ const CourseUnitsList = () => {
     const [contentLoading, setContentLoading] = useState(true);
 
     const [courseFilter, setCourseFilter] = useState();
+    const [courseUnitAllFilter, setCourseUnitAllFilter] = useState();
     const [semesterFilter, setSemesterFilter] = useState();
     const [searchFilter, setSearchFilter] = useState();
     const [perPage, setPerPage] = useState(10);
@@ -42,9 +56,10 @@ const CourseUnitsList = () => {
     const fetchCourseUnits = () => {
         setContentLoading(true);
         let link = '/course-units?page=' + currentPage;
-        link += (semesterFilter ? '&semester=' + semesterFilter : '');
-        link += (courseFilter   ? '&course='   + courseFilter   : '');
-        link += (searchFilter   ? '&search='   + searchFilter   : '');
+        link += (semesterFilter         ? '&semester='  + semesterFilter        : '');
+        link += (courseFilter           ? '&course='    + courseFilter          : '');
+        link += (searchFilter           ? '&search='    + searchFilter          : '');
+        link += (courseUnitAllFilter    ? '&show_all='  + courseUnitAllFilter   : '');
         link += '&per_page=' + perPage;
 
         axios.get(link).then((response) => {
@@ -58,10 +73,20 @@ const CourseUnitsList = () => {
     };
 
     useEffect(() => {
+        if(currentPage === 1){
+            fetchCourseUnits();
+        } else {
+            setCurrentPage(1);
+        }
+    }, [semesterFilter, courseFilter, searchFilter, courseUnitAllFilter]);
+
+    useEffect(() => {
         fetchCourseUnits();
-    }, [semesterFilter, courseFilter, searchFilter, currentPage]);
+    }, [currentPage]);
 
-
+    const filterByAllCourseUnits = (showAll) => {
+        setCourseUnitAllFilter(showAll);
+    }
     const filterByCourse = (course) => {
         setCourseFilter(course);
     };
@@ -101,9 +126,17 @@ const CourseUnitsList = () => {
     const columns = [
         {name: t('Nome')},
         {name: t('Ramo')},
-        {name: t('Agrupamento')},
+        {
+            name: t('Agrupamento'),
+            permission: [SCOPES.VIEW_UC_GROUPS],
+        },
         {name: t('Semestre'),   align: 'center', style: {width: '10%'} },
-        {name: t('Ações'),      align: 'center', style: {width: '10%'} },
+        {
+            name: t('Ações'),
+            align: 'center',
+            permission: [SCOPES.VIEW_COURSE_UNITS, SCOPES.EDIT_COURSE_UNITS, SCOPES.DELETE_COURSE_UNITS],
+            style: {width: '10%' }
+        },
     ];
     return (
         <Container>
@@ -125,7 +158,13 @@ const CourseUnitsList = () => {
                         <Form.Group>
                             <Form.Input icon='search' iconPosition='left' width={5} onChange={_.debounce(handleSearchCourseUnits, 400)} placeholder={t("Pesquisar por nome")} label={t("Pesquisar por nome")} />
                             <Courses widthSize={5} eventHandler={filterByCourse} />
-                            <Semesters widthSize={5} eventHandler={filterBySemester} withSpecial={false} />
+                            <Semesters widthSize={3} eventHandler={filterBySemester} withSpecial={false} />
+                            <Form.Field width={2}>
+                                <label>Todas as UCs</label>
+                                <Form.Field>
+                                    <Checkbox onChange={(e, {checked}) => filterByAllCourseUnits(checked) }/>
+                                </Form.Field>
+                            </Form.Field>
                             <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                         </Form.Group>
                     </Form>
@@ -135,37 +174,69 @@ const CourseUnitsList = () => {
                         <EmptyTable isLoading={isLoading} label={t("Ohh! Não foi possível encontrar Unidades Curriculares!")}/>
                     ) : (
                         <>
-                            <Table celled>
+                            <Table celled selectable striped>
                                 <Table.Header>
                                     <Table.Row>
-                                        {columns.map((col, index) => (
-                                            <Table.HeaderCell key={index} textAlign={col.align} style={col.style}>{col.name}</Table.HeaderCell>
+                                        {columns.map(({name, align, permission, style}, index) => (
+                                            permission ?
+                                            (
+                                                <ShowComponentIfAuthorized permission={permission} key={'auth_table_header_cell_' + index}>
+                                                    <Table.HeaderCell textAlign={align} key={'table_header_cell_' + index} style={style}>
+                                                        {name}
+                                                    </Table.HeaderCell>
+                                                </ShowComponentIfAuthorized>
+                                            ) :
+                                            (
+                                                <Table.HeaderCell textAlign={align} key={'table_header_cell_' + index} style={style}>
+                                                    {name}
+                                                </Table.HeaderCell>
+                                            )
                                         ))}
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
-                                    {courseUnits.map(({id, name, code, has_methods, branch_label, has_branch, group_name, course_description, semester}) => (
-                                        <Table.Row key={id} warning={!has_methods}>
+                                    {courseUnits.map(({id, name, code, has_methods, has_responsable, branch_label, has_branch, group_name, course_description, semester}) => (
+                                        <Table.Row key={id} warning={ (useComponentIfAuthorized(SCOPES.EDIT_COURSE_UNITS) ? (!has_methods || !has_responsable) : false) }>
                                             <Table.Cell>
-                                                { !has_methods && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher os métodos de avaliação.')} position='top center'/> }
+                                                <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]}>
+                                                    { (!has_methods || !has_responsable) && <Popup trigger={<Icon name="warning sign" />} content={(
+                                                        <div>
+                                                            { (!has_methods && !has_responsable) ? (
+                                                                t('Falta preencher os métodos de avaliação e o responsável.')
+                                                            ) : (
+                                                                (!has_methods ? t('Falta preencher os métodos de avaliação.') : t('Falta preencher o responsável.'))
+                                                            )}
+                                                        </div>
+                                                    )} position='top center'/> }
+                                                </ShowComponentIfAuthorized>
                                                 ({code}) - {name}
                                             </Table.Cell>
                                             <Table.Cell>
                                                 { !has_branch && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher a que ramo pertence.')} position='top center'/> }
                                                 {branch_label}
                                             </Table.Cell>
-                                            <Table.Cell>{group_name || '-'}</Table.Cell>
+                                            <ShowComponentIfAuthorized permission={[SCOPES.VIEW_UC_GROUPS]}>
+                                                <Table.Cell>{group_name || '-'}</Table.Cell>
+                                            </ShowComponentIfAuthorized>
                                             <Table.Cell>{semester}</Table.Cell>
-                                            <Table.Cell>
-                                                <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]}>
-                                                    <Link to={`/unidade-curricular/edit/${id}`}>
-                                                        <Button color="yellow" icon="edit" />
-                                                    </Link>
-                                                </ShowComponentIfAuthorized>
-                                                <ShowComponentIfAuthorized permission={[SCOPES.DELETE_COURSE_UNITS]}>
-                                                    <Button color="red" icon="trash" onClick={() => remove({id, course: course_description, unit: name})} />
-                                                </ShowComponentIfAuthorized>
-                                            </Table.Cell>
+                                            <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COURSE_UNITS, SCOPES.EDIT_COURSE_UNITS, SCOPES.DELETE_COURSE_UNITS]}>
+                                                <Table.Cell textAlign={"center"}>
+                                                    <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COURSE_UNITS, SCOPES.EDIT_COURSE_UNITS]}>
+                                                        <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]} renderIfNotAllowed={(
+                                                            <Link to={`/unidade-curricular/detail/${id}`}>
+                                                                <Button color="green" icon="eye" />
+                                                            </Link>
+                                                        )}>
+                                                            <Link to={`/unidade-curricular/edit/${id}`}>
+                                                                <Button color="yellow" icon="edit" />
+                                                            </Link>
+                                                        </ShowComponentIfAuthorized>
+                                                    </ShowComponentIfAuthorized>
+                                                    <ShowComponentIfAuthorized permission={[SCOPES.DELETE_COURSE_UNITS]}>
+                                                        <Button color="red" icon="trash" onClick={() => remove({id, course: course_description, unit: name})} />
+                                                    </ShowComponentIfAuthorized>
+                                                </Table.Cell>
+                                            </ShowComponentIfAuthorized>
                                         </Table.Row>
                                     ))}
                                 </Table.Body>

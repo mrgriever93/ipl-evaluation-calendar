@@ -1,23 +1,19 @@
 import axios from 'axios';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
-import {useParams, useNavigate} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {Field, Form as FinalForm} from 'react-final-form';
-import {DateInput, DatesRangeInput, TimeInput} from 'semantic-ui-calendar-react-yz';
+import {DateInput, TimeInput} from 'semantic-ui-calendar-react-yz';
 import {Button, Divider, Form, Grid, GridColumn, Header, Icon, Modal, Checkbox, TextArea, Message} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-
-// import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
-// import SCOPES from '../../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
 
 const SweetAlertComponent = withReactContent(Swal);
 
 const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedExam, updatedExam, deletedExam, calendarDates} ) => {
-    const history = useNavigate();
     const { t } = useTranslation();
     // get URL params
     let { id } = useParams();
@@ -28,6 +24,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     const [isLoading, setIsLoading] = useState(true);
     const [loadRemainingCourseUnits, setLoadRemainingCourseUnits] = useState(false);
     const [selectedEpoch, setSelectedEpoch] = useState();
+    const [selectedCourseUnitId, setSelectedCourseUnitId] = useState(-1);
     const [courseUnits, setCourseUnits] = useState([]);
     const [methodList, setMethodList] = useState([]);
 
@@ -35,17 +32,16 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     const [changeData, setChangeData] = useState(false);
     const [savingExam, setSavingExam] = useState(false);
     const [showMissingMethodsLink, setShowMissingMethodsLink] = useState(false);
+    const [showRepeatedMethodsWarning, setShowRepeatedMethodsWarning] = useState(false);
 
     const [epochStartDate, setEpochStartDate] = useState();
     const [epochEndDate, setEpochEndDate] = useState();
 
     useEffect( () => {
-        console.log(scheduleInformation);
         if(!!scheduleInformation.epochs) {
             let availableEpochs = scheduleInformation.epochs.filter((epoch) => {
                 return moment(scheduleInformation.date_start, 'YYYY-MM-DD').isBetween(moment(epoch.start_date), moment(epoch.end_date), 'day', '[]' );
             });
-
             setEpochsList(availableEpochs);
 
             if(scheduleInformation.epoch_id > 0 ) {
@@ -63,27 +59,19 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     }, [scheduleInformation])
 
     useEffect(() => {
+        console.log(scheduleInformation);
         if (loadRemainingCourseUnits) {
             axios.get(`/available-methods/${calendarId}/?epoch_id=${selectedEpoch}&year=${scheduleInformation.scholarYear}`)
                 .then((response) => {
                     if (response.status === 200) {
                         let beforeSetCourseUnits = [];
-                        /*
-                        if(scheduleInformation.hasExamsOnDate) {
-                            const branches = scheduleInformation.hasExamsOnDate?.filter((x) => x.academic_year === scheduleInformation.scholarYear)?.map((y) => y?.course_unit?.branch?.id);
-                            beforeSetCourseUnits = response.data.data?.filter((x) => !(branches.length ? branches?.includes(x?.branch?.id) : false));
-                        } else {
-                            beforeSetCourseUnits = response.data.data;
-                        }*/
                         beforeSetCourseUnits = response.data.data;
 
-                        const mapped = beforeSetCourseUnits?.map(
-                            ({id, name, methods, branch, is_complete, has_methods}) => ({
+                        const mapped = beforeSetCourseUnits?.map(({id, name, methods, is_complete, has_methods}) => ({
                                 key: id,
                                 value: id,
                                 text: name,
                                 methods,
-                                branch,
                                 icon: ((!has_methods ? {color: 'yellow', name:'warning circle'} : is_complete ? {color: 'green', name:'check circle'} : undefined)),
                                 description: (!has_methods ? t("Métodos em falta") : undefined),
                                 disabled: !has_methods,
@@ -92,7 +80,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                         setCourseUnits(mapped);
                         // has curricular unit with missing methods?
                         //setShowMissingMethodsLink(response.data.data?.length === 0 || beforeSetCourseUnits?.length === 0);
-                        setShowMissingMethodsLink(beforeSetCourseUnits.filter((item) => item.has_methods).length >= 0);
+                        setShowMissingMethodsLink(beforeSetCourseUnits.filter((item) => !item.has_methods).length > 0);
                     }
                 });
             setLoadRemainingCourseUnits(false);
@@ -110,18 +98,32 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     };
 
     const methodListFilterHandler = (course_unit_id) => {
+        setSelectedCourseUnitId(course_unit_id);
         if(courseUnits?.length > 0 ) {
             setMethodList(
                 courseUnits.find((courseUnit) => courseUnit.value === course_unit_id)?.methods.map(({id, description, name, minimum, weight, is_done}) => ({
                         key: id,
                         value: id,
                         text: (description || name),
-                        description: `Min. ${minimum} / Peso: ${parseInt(weight, 10)}%`,
+                        description: `Min. ${minimum} / ${t('Peso')}: ${parseInt(weight, 10)}%`,
                         icon: (is_done ? {color: 'green', name:'check circle'} : undefined),
                     })
                 )
             );
         }
+    };
+
+    const checkMethodAlreadyScheduled = (methodId) => {
+        let courseUnitMethods = courseUnits.find((courseUnit) => courseUnit.value === selectedCourseUnitId)?.methods;
+        if(courseUnitMethods.length > 0) {
+            let foundMethod = courseUnitMethods.find((method) => method.id === methodId);
+            if(foundMethod?.is_done) {
+                setShowRepeatedMethodsWarning(true);
+                return false;
+            }
+        }
+        setShowRepeatedMethodsWarning(false);
+        return false;
     };
 
     useEffect(() => {
@@ -185,7 +187,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
     const removeExam = (examId) => {
         const sweetAlertConfigs = {
             title: t('Atenção!'),
-            html: 'Ao eliminar este exame, terá de adicioná-lo novamente em outra data a escolher!<br/><br/><strong>Tem a certeza que deseja eliminar este exame, em vez de editar?</strong>',
+            html: t('Ao eliminar esta avaliação, terá de adicioná-la novamente em outra data a escolher!<br/><br/><strong>Tem a certeza que deseja eliminar esta avaliação?</strong>'),
             denyButtonText: t('Não'),
             confirmButtonText: t('Sim'),
             showConfirmButton: true,
@@ -198,15 +200,20 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
             if (result.isConfirmed) {
                 axios.delete(`/exams/${examId}`).then((res) => {
                     if (res.status === 200) {
-                        toast('Exame eliminado com sucesso deste calendário!', successConfig);
+                        toast(t('Avaliação eliminada com sucesso deste calendário!'), successConfig);
                         deletedExam(examId);
                     } else {
-                        toast('Ocorreu um problema ao eliminar o exame deste calendário! ' +  res.response.data, errorConfig);
+                        toast(t('Ocorreu um problema ao eliminar a avaliação deste calendário!') + " " +  res.response.data, errorConfig);
                     }
                     onClose();
                 });
             }
         });
+    };
+
+    const onCloseHandler = () => {
+        setShowRepeatedMethodsWarning(false);
+        onClose();
     };
 
     return (
@@ -356,10 +363,19 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                                         selection search
                                                         disabled={ !methodList?.length}
                                                         loading={ methodList !== undefined ? !methodList.length : false }
-                                                        onChange={(e, {value}) => methodInput.onChange(value)}
+                                                        onChange={(e, {value}) => {
+                                                            methodInput.onChange(value);
+                                                            checkMethodAlreadyScheduled(value);
+                                                        }}
                                                     />
                                                 )}
                                             </Field>
+                                            { showRepeatedMethodsWarning && (
+                                                    <Message size='tiny' warning={true}>
+                                                        <div><b>{ t("O elemento de avaliação selecionado já se encontra calendarizado.")}</b></div>
+                                                        <div className='margin-top-xs'>{ t("Verifique se quer mesmo marcar este elemento novamente.")}</div>
+                                                    </Message>
+                                                )}
                                         </>
                                     )}
                                 </GridColumn>
@@ -426,7 +442,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, isOpen, onClose, addedEx
                                 { t("Remover avaliação") }
                             </Button>
                         )}
-                        <Button onClick={onClose} >{ t("Cancelar") }</Button>
+                        <Button onClick={onCloseHandler} >{ t("Cancelar") }</Button>
                         <Button onClick={handleSubmit} positive loading={savingExam}>
                             { scheduleInformation?.exam_id ? t("Gravar alterações") : t("Marcar Avaliação") }
                         </Button>

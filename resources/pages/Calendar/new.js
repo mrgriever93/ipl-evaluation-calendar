@@ -39,7 +39,7 @@ const NewCalendar = () => {
         {
             number: 1,
             icon: 'calendar alternate outline',
-            title: t('Época'),
+            title: t('Épocas'),
             description: t('Selecione o semestre do calendário a criar, assim como as datas das épocas.')
         },
         {
@@ -323,7 +323,7 @@ const NewCalendar = () => {
 
     return (
         <Container>
-            <div className="margin-bottom-s">
+            <div className="margin-bottom-base">
                 <Link to="/"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
             <FinalForm onSubmit={onSubmit} initialValues={formInitialValues} key={'form_new_calendar'} render={({handleSubmit, values}) => (

@@ -1,42 +1,32 @@
 # TODO
 
-# Miguel
-- [ ] Adicionar Policies na parte do servidor
-- [X] Devolver Roles de User e guardar na local storage
-- [ ] Publicar um calendário
-        - [ ] Se for o CC, é uma publicação provisória, e cria automaticamente um clone do calendário para continuar a editar e receber feedback
-    - [ ] A direção e o Conselho Pedagógico deve ver apenas botões para Aprovar ou Rejeitar
-        - [ ] Se rejeitarem devem poder adicionar um comentário/parecer
-    - [ ] Ao publicar um calendário, confirmar se uma UC que tenha sido iniciada a marcação dos elementos de avaliação, tem todos os métodos preenchidos, 
-    e caso não tenha, dar erro para o utilizador marcar todos os métodos. 
-
+- [X] Validar quando se marca um exame, se for dos agrupados, deixar marcar para os outros. (validar bug)
+- [X] Rever mudança de fases num CP ou Direção (aceitar e recursar)
+- [X] Listar "todos" os calendarios, so deve devolver os publicados (definitivos ou temporarios)
+- [X] Rever quem pode ver detalhe de UC
+    
 **Testes de roles:**
-- [ ] Ao entrar como CC, e selecionar todos os calendários:
-  - [ ] Consigo ver calendários que não estão publicados nem como temporários nem como definitivos, e não são do "meu" curso. Não devia.
-  - [ ] Ao entrar no detalhe desse calendário consigo ver todas as informações como se pudesse editar na barra de informações superior (mesmo 
-  estando em fase "Em edição (GOP)")
-  - [ ] Se entrar dentro do detalhe de uma avaliação, consigo adicionar e gerir os comentários
-- [ ] Detalhe de exame fica com espaco vazio caso não possa ver os comentários
-- [ ] Meus calendarios/todos -> tem de se atualizar o filtro para ter as permissoes
-  - [ ] Botao com role mais especifica? (sendo a direcao ou gop) ou grupo com flag? (tipo user generico)
+- [ ] aaaaaaaaaaaaaaaaaa
 
-
-**Agrupamentos**
-- [X] Ver lista (tem erro)
-- [X] Métodos
-- [ ] Traduções
-- [ ] Nas UCs agrupadas, os Coordenadores de Curso podem marcar grupos apenas para as UCs dos seus cursos (ex: EI PL e D)
-
-**Detalhe calendário**
-- [ ] Adicionar avisos quando marcamos 2 vezes a mesma avaliação
-- [ ] Ao adicionar uma interrupção e eliminar avaliações contínuas, dividir a avaliação em 2 e apaga apenas o dia selecionado para a interrupção
-  - [X] Campo na BD criado (group_id) > rever melhor mais tarde
 
 **Todas as paginas**
 - [ ] Rever traduções
 - [ ] Adicionar titulo as paginas
 
 ## Issues
+
+**Trabalho futuro?:**
+- [ ] Possibilidade de ver as diferenças entre calendários de avaliação
+- [ ] Se for Direção ou Conselho Pedagógico, se rejeitar um calendário devem poder adicionar um comentário/parecer
+- [ ] Adicionar possibilidade de filtrar por UCs no detalhe do calendário (para escolher quais as UC's a ver no calendário)
+- [ ] Ao publicar um calendário, confirmar se uma UC que tenha sido iniciada a marcação dos elementos de avaliação, tem todos os métodos preenchidos, 
+    e caso não tenha, dar erro para o utilizador marcar todos os métodos. 
+- [ ] Ao adicionar uma interrupção e eliminar avaliações contínuas, dividir a avaliação em 2 e apaga apenas o dia selecionado para a interrupção
+  - [X] Campo na BD criado (group_id) > rever melhor mais tarde
+- [ ] Adicionar Policies na parte do servidor
+
+
+------
 
 # Logica de Calendario
 - [ ] Versao do calendario
@@ -301,13 +291,17 @@ Melhorias:
   - [X] Na pagina dos ano letivos
   - [X] Corrigir texto que estava trocado
 
+## Issues found while writing report
+- [ ] Rever página de Sobre para acrescentar Grupo 1 e adicionar links externos no footer
+- [ ] Rever criação de nova UC. link não está a funcionar como deve ser
+
 
 ## TRABALHO FUTURO:
-- [X] Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos); **(Feito a ~~26/05/2022)**
-- [ ] Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;
-- [ ] Users com mais do que um role (validar o que deve ser feito)
-- [ ] Log dos métodos: registar o que foi alterado e quem alterou;
-- [ ] Notificacoes de quando muda de fase ou adicionam  comentarios no calendario
+- [X] ~~Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos);~~ **(Feito a ~~26/05/2022)**
+- [ ] ~~Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;~~
+- [ ] ~~Users com mais do que um role (validar o que deve ser feito)~~
+- [ ] ~~Log dos métodos: registar o que foi alterado e quem alterou;~~
+- [ ] ~~Notificacoes de quando muda de fase ou adicionam  comentarios no calendario~~
     - [ ] Notificacoes Web
     - [ ] Notificacoes Email
 - [ ] subtipos de avaliação **(Reunião 31/05/2022)**
@@ -335,20 +329,35 @@ Melhorias:
 ## Alterar na BD
 
 ```
-ALTER TABLE `calendar_v2`.`course_unit_logs`
-DROP FOREIGN KEY `course_unit_logs_course_unit_id_foreign`;
-ALTER TABLE `calendar_v2`.`course_unit_logs`
-ADD COLUMN `course_unit_group_id` BIGINT UNSIGNED NULL AFTER `course_unit_id`,
-CHANGE COLUMN `course_unit_id` `course_unit_id` BIGINT UNSIGNED NULL ,
-ADD INDEX `course_unit_logs_course_unit_group_id_foreign_idx` (`course_unit_group_id` ASC) VISIBLE;
+    ALTER TABLE `calendar_v2`.`course_unit_logs`
+    DROP FOREIGN KEY `course_unit_logs_course_unit_id_foreign`;
 
-ALTER TABLE `calendar_v2`.`course_unit_logs`
-ADD CONSTRAINT `course_unit_logs_course_unit_id_foreign`
-FOREIGN KEY (`course_unit_id`)
-REFERENCES `calendar_v2`.`course_units` (`id`),
-ADD CONSTRAINT `course_unit_logs_course_unit_group_id_foreign`
-FOREIGN KEY (`course_unit_group_id`)
-REFERENCES `calendar_v2`.`course_unit_groups` (`id`)
-ON DELETE NO ACTION
-ON UPDATE NO ACTION;
+    ALTER TABLE `calendar_v2`.`course_unit_logs`
+    ADD COLUMN `course_unit_group_id` BIGINT UNSIGNED NULL AFTER `course_unit_id`,
+    CHANGE COLUMN `course_unit_id` `course_unit_id` BIGINT UNSIGNED NULL ,
+    ADD INDEX `course_unit_logs_course_unit_group_id_foreign_idx` (`course_unit_group_id` ASC) VISIBLE;
+
+    ALTER TABLE `calendar_v2`.`course_unit_logs`
+    ADD CONSTRAINT `course_unit_logs_course_unit_id_foreign`
+    FOREIGN KEY (`course_unit_id`)
+    REFERENCES `calendar_v2`.`course_units` (`id`),
+    ADD CONSTRAINT `course_unit_logs_course_unit_group_id_foreign`
+    FOREIGN KEY (`course_unit_group_id`)
+    REFERENCES `calendar_v2`.`course_unit_groups` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+    
+    
+    
+    ALTER TABLE `calendar_v2`.`exams`
+    ADD COLUMN `course_unit_id` BIGINT UNSIGNED NULL AFTER `method_id`,
+    ADD INDEX `exams_course_unit_id_foreign_idx` (`course_unit_id` ASC) VISIBLE;
+    
+    ALTER TABLE `calendar_v2`.`exams`
+    ADD CONSTRAINT `exams_course_unit_id_foreign` 
+    FOREIGN KEY (`course_unit_id`) 
+    REFERENCES `calendar_v2`.`course_units` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
+
 ```

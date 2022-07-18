@@ -3,7 +3,6 @@
 namespace App\Http\Resources\Generic;
 
 use App\Http\Resources\CalendarGeneralInfoResource;
-use App\Http\Resources\Generic\CourseResource;
 use App\Http\Resources\InterruptionResource;
 use App\Http\Resources\PhaseResource;
 use Illuminate\Http\Resources\Json\JsonResource;

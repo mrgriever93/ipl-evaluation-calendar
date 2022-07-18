@@ -40,7 +40,6 @@ const New = () => {
     }, [paramsId, loading, interruptionDetail, navigate]);
 
     const initialValues = useMemo(() => {
-        console.log(interruptionDetail);
         const { id, name_pt, name_en, enabled = true, mandatory } = interruptionDetail;
         return { id, name_pt, name_en, enabled, mandatory };
     }, [interruptionDetail]);
@@ -74,7 +73,7 @@ const New = () => {
 
     return (
         <Container>
-            <div className="margin-bottom-s margin-top-base">
+            <div className="margin-bottom-base">
                 <Link to="/tipo-interrupcao"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
             <FinalForm onSubmit={onSubmit} initialValues={initialValues} render={({ handleSubmit }) => (

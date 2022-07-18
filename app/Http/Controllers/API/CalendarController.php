@@ -14,8 +14,10 @@ use App\Http\Resources\Generic\SemestersSearchResource;
 use App\Models\Calendar;
 use App\Models\Semester;
 use App\Services\CalendarService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class CalendarController extends Controller
 {
@@ -27,6 +29,10 @@ class CalendarController extends Controller
         $perPage = request('per_page', 20);
 
         $calendars = Calendar::filter($filters)->ofAcademicYear($request->cookie('academic_year'));
+
+        if(!$request->has("myCourseOnly")){
+            $calendars->filter(new CalendarFilters(["myCourseOnly" => false]));
+        }
         return CalendarListResource::collection($calendars->orderBy('previous_calendar_id')->paginate($perPage));
     }
 
@@ -57,12 +63,14 @@ class CalendarController extends Controller
 
     public function publish(Request $request, Calendar $calendar)
     {
-        CalendarService::publish($calendar);
+        $response = CalendarService::publish($calendar);
+        return response()->json($response);
     }
 
     public function copyCalendar(Request $request, Calendar $calendar)
     {
-        CalendarService::copyCalendar($calendar);
+        $response = CalendarService::copyCalendar($calendar);
+        return response()->json($response);
     }
 
     public function info(Request $request)
@@ -113,6 +121,13 @@ class CalendarController extends Controller
     public function phasesGroups(Request $request)
     {
         $response = CalendarService::phasesGroups($request);
+        return $response;
+    }
+
+
+    public function approval(Request $request, Calendar $calendar)
+    {
+        $response = CalendarService::approval($request, $calendar);
         return $response;
     }
 }

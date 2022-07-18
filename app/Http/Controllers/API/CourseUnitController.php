@@ -13,6 +13,7 @@ use App\Http\Resources\Generic\CourseUnitSearchResource;
 use App\Http\Resources\Generic\EpochMethodResource;
 use App\Http\Resources\Generic\TeacherResource;
 use App\Http\Resources\MethodResource;
+use App\Models\AcademicYear;
 use App\Models\Calendar;
 use App\Models\Course;
 use App\Models\CourseUnit;
@@ -20,9 +21,11 @@ use App\Models\Epoch;
 use App\Models\EpochType;
 use App\Models\Group;
 use App\Models\Method;
+use App\Models\School;
 use App\Models\Semester;
 use App\Models\UnitLog;
 use App\Models\User;
+use App\Services\ExternalImports;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +40,7 @@ class CourseUnitController extends Controller
     {
         $lang = (in_array($request->header("lang"), ["en", "pt"]) ? $request->header("lang") : "pt");
         $perPage = request('per_page', 20);
+        $allUCs = request('show_all', false);
 
         $courseUnits = CourseUnit::with('methods')->filter($filters, $lang)->ofAcademicYear($request->cookie('academic_year'));
 
@@ -45,39 +49,34 @@ class CourseUnitController extends Controller
         } else {
             $userId = Auth::user()->id;
             $userGroups = Auth::user()->groups();
-            if (
-                Auth::user()->groups()->superAdmin()->get()->count() == 0 &&
-                Auth::user()->groups()->admin()->get()->count() == 0 &&
-                Auth::user()->groups()->responsiblePedagogic()->get()->count() == 0
-            ) {
-                if (with(clone $userGroups)->responsible()->get()->count() > 0 && $userGroups->count() == 1) {
-                    $courseUnits->where('responsible_user_id', $userId);
-                }
-                if (with(clone $userGroups)->coordinator()->get()->count() > 0) {
-                    $courseUnits->whereIn('course_id', Course::where('coordinator_user_id', $userId)->pluck('id'));
-                    if (with(clone $userGroups)->isTeacher()->get()->count() > 0) {
-                        $courseUnits->orWhereIn('id', Auth::user()->courseUnits->pluck('id'));
+            if(!$allUCs) {
+                if (!$userGroups->superAdmin()->exists() && !$userGroups->admin()->exists() && !$userGroups->responsiblePedagogic()->exists()) {
+                    if (Auth::user()->groups()->responsible()->exists() && $userGroups->count() == 1) {
+                        $courseUnits->where('responsible_user_id', $userId);
                     }
-                }
 
-                if (with(clone $userGroups)->isTeacher()->get()->count() > 0) {
-                    $courseUnits->whereIn('id', Auth::user()->courseUnits->pluck('id'));
-                }
+                    if (Auth::user()->groups()->coordinator()->exists()) {
+                        $courseUnits->whereIn('course_id', Course::where('coordinator_user_id', $userId)->pluck('id'));
+                        if (Auth::user()->groups()->isTeacher()->get()->count() > 0) {
+                            $courseUnits->orWhereIn('id', Auth::user()->courseUnits->pluck('id'));
+                        }
+                    }
 
-                $schoolsForTheUser = collect();
+                    if (Auth::user()->groups()->isTeacher()->exists()) {
+                        $courseUnits->whereIn('id', Auth::user()->courseUnits->pluck('id'));
+                    }
 
-                if (Auth::user()->gopSchools->pluck('id')->count() > 0) {
-                    $schoolsForTheUser->push(Auth::user()->gopSchools->pluck('id'));
-                }
-                if (Auth::user()->boardSchools->pluck('id')->count() > 0) {
-                    $schoolsForTheUser->push(Auth::user()->boardSchools->pluck('id'));
-                }
-                if (Auth::user()->pedagogicSchools->pluck('id')->count() > 0) {
-                    $schoolsForTheUser->push(Auth::user()->pedagogicSchools->pluck('id'));
-                }
+                    if (Auth::user()->groups()->gop()->exists() || Auth::user()->groups()->board()->exists() || Auth::user()->groups()->pedagogic()->exists()) {
+                        $userGroupsIds = Auth::user()->groups()->pluck("id")->toArray();
+                        $schools = School::whereIn('gop_group_id', $userGroupsIds)
+                            ->orWhereIn('board_group_id', $userGroupsIds)
+                            ->orWhereIn('pedagogic_group_id', $userGroupsIds)
+                            ->pluck("id")->toArray();
 
-                if ($schoolsForTheUser->count() > 0) {
-                    $courseUnits->whereIn('course_id', Course::whereIn('school_id', $schoolsForTheUser->toArray())->get()->pluck('id'));
+                        if (!empty($schools)) {
+                            $courseUnits->whereIn('course_id', Course::whereIn('school_id', $schools)->get()->pluck('id'));
+                        }
+                    }
                 }
             }
             if( request('semester') ){
@@ -94,27 +93,33 @@ class CourseUnitController extends Controller
 
         $courseUnits = CourseUnit::filter($filters)->ofAcademicYear($request->cookie('academic_year'));
 
+        $userId = Auth::user()->id;
+        $userGroups = Auth::user()->groups();
         if ($request->has('all') && $request->all === "true") {
+            if ($userGroups->coordinator()->exists()) {
+                $courseUnits->whereIn('course_id', Course::where('coordinator_user_id', $userId)->pluck('id'));
+                if (Auth::user()->groups()->isTeacher()->get()->count() > 0) {
+                    $courseUnits->orWhereIn('id', Auth::user()->courseUnits->pluck('id'));
+                }
+            }
             $courseUnits = $courseUnits->orderBy('name_' . $lang)->get();
         } else {
-            $userId = Auth::user()->id;
-            $userGroups = Auth::user()->groups();
             if (
-                Auth::user()->groups()->superAdmin()->exists() &&
-                Auth::user()->groups()->admin()->exists() &&
-                Auth::user()->groups()->responsiblePedagogic()->exists()
+                !Auth::user()->groups()->superAdmin()->exists() &&
+                !Auth::user()->groups()->admin()->exists() &&
+                !Auth::user()->groups()->responsiblePedagogic()->exists()
             ) {
-                if (with(clone $userGroups)->responsible()->exists() && $userGroups->count() == 1) {
+                if (Auth::user()->groups()->responsible()->exists() && $userGroups->count() == 1) {
                     $courseUnits->where('responsible_user_id', $userId);
                 }
-                if (with(clone $userGroups)->coordinator()->exists()) {
+                if (Auth::user()->groups()->coordinator()->exists()) {
                     $courseUnits->whereIn('course_id', Course::where('coordinator_user_id', $userId)->pluck('id'));
-                    if (with(clone $userGroups)->isTeacher()->get()->count() > 0) {
+                    if (Auth::user()->groups()->isTeacher()->get()->count() > 0) {
                         $courseUnits->orWhereIn('id', Auth::user()->courseUnits->pluck('id'));
                     }
                 }
 
-                if (with(clone $userGroups)->isTeacher()->exists()) {
+                if (Auth::user()->groups()->isTeacher()->exists()) {
                     $courseUnits->whereIn('id', Auth::user()->courseUnits->pluck('id'));
                 }
 
@@ -142,17 +147,44 @@ class CourseUnitController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CourseUnitRequest $request)
+    public function store(Request $request)
     {
-        $newCourseUnit = new CourseUnit($request->all());
-        $newCourseUnit->save();
+        $academicYear = AcademicYear::find($request->cookie('academic_year'));
+        $isImported = ExternalImports::importSingleUCFromWebService($academicYear->code, $request->input('school'), $request->input('uc'));
+        if(!$isImported){
+            return response()->json("Error!", Response::HTTP_CONFLICT);
+        }
+
+        $uc = CourseUnit::where("code", $request->input('uc'))->first();
         UnitLog::create([
-            "course_unit_id"    => $newCourseUnit->id,
+            "course_unit_id"    => $uc->id,
             "user_id"           => Auth::id(),
             "description"       => "Unidade curricular criada por '" . Auth::user()->name . "'."
         ]);
 
-        return response()->json("Created!", Response::HTTP_CREATED);
+        return response()->json($uc->id, Response::HTTP_CREATED);
+    }
+
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function refreshUc(CourseUnit $courseUnit)
+    {
+        $academicYear = AcademicYear::find($courseUnit->semester_id);
+        $isImported = ExternalImports::importSingleUCFromWebService($academicYear->code, $courseUnit->course->school_id, $courseUnit->code);
+        if(!$isImported){
+            return response()->json("Error!", Response::HTTP_CONFLICT);
+        }
+
+        $uc = CourseUnit::where("code", $courseUnit->code)->first();
+        UnitLog::create([
+            "course_unit_id"    => $uc->id,
+            "user_id"           => Auth::id(),
+            "description"       => "Unidade curricular atualizada com dados da API por '" . Auth::user()->name . "'."
+        ]);
+
+        return response()->json($uc->id, Response::HTTP_OK);
     }
 
     /**

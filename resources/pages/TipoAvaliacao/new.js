@@ -73,7 +73,7 @@ const New = () => {
 
     return (
         <Container>
-            <div className="margin-bottom-s">
+            <div className="margin-bottom-base">
                 <Link to="/tipo-avaliacao"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
             <FinalForm onSubmit={onSubmit} initialValues={initialValues} render={({ handleSubmit }) => (
