@@ -1,10 +1,10 @@
 # TODO
 **Detalhe calendario**
-- [ ] Validar exames que sao gop e user nao e gop (validar se grupo por eliminar)
-- [ ] Validar se exame nao esta em cima de interrupcao (validar/melhorar)
+- [ ] Validar avaliacoes que sao gop e user nao e gop (validar se grupo por eliminar)
+- [ ] Validar se avaliacao nao esta em cima de interrupcao (validar/melhorar)
 - [ ]
 
-- [X] Validar quando se marca um exame, se for dos agrupados, deixar marcar para os outros. (validar bug)
+- [X] Validar quando se marca um avaliacao, se for dos agrupados, deixar marcar para os outros. (validar bug)
 - [X] Rever mudança de fases num CP ou Direção (aceitar e recursar)
 - [X] Listar "todos" os calendarios, so deve devolver os publicados (definitivos ou temporarios)
 - [X] Rever quem pode ver detalhe de UC
@@ -22,13 +22,28 @@
 - [ ] Validar anos quando entramos e somos associados a um curso
 - [ ] Validar quando e o responsavel da UC e nao deixar editar as outras cadeiras senao as deles
 - [ ] Perguntar se:
-  - [ ] o GOP pode editar qualquer exame
+  - [ ] o GOP pode editar qualquer avaliacao
     - [ ] O Coordenador de Curso so editar as suas cadeiras do curso
       - [ ] O Responsavel da UC so pode editar as da sua cadeira
-        - [ ] Se qualquer docente da cadeira pode editar os exames
+        - [ ] Se qualquer docente da cadeira pode editar os avaliacoes
         - [ ] Se apenas quem criou pode editar (ou seja, mesmo sendo da mesma cadeira, nao pode mexer)
-    - [ ] o GOP pode editar em qualquer altura/qualquer exame, mesmo sendo outros a criar
-         
+    - [ ] o GOP pode editar em qualquer altura/qualquer avaliacao, mesmo sendo outros a criar
+- [ ] Validar todos os Filtros das listas
+- [ ] Validar permissoes de Responsavel UC do que pode ver no calendario e na lista (ex: campo do estado do calendario)
+- [ ] Adicionar Ano de UC na lista (lista ucs e lista de ucs no curso)
+  - [ ] Adicionar ano letivo onde acharmos necessario para distinguir a cadeira
+
+- No detalhe da UC/UCs Agrupadas
+- [ ] Copiar Metodos de outras cadeiras (talvez popup com pesquisa de UC e ano letivo (deixar de anos anteriores))
+
+- No Calendario
+- [ ] Copiar avaliacoes de outro Calendario (apenas para o ano letivo corrente, e se tiver ja algum avaliacao daquela UC/ ou algo do genero)
+  - [ ] Copiar apenas avaliacoes da UC especifica (?) (ex: pos laboral e diurno)
+  - [ ] Copiar todos os avaliacoes (GOP?)
+  - [ ] Copiar todos os avaliacoes (CC?)
+    - [ ] Talvez mostrar um popup com a lista das UCs que podem ser copiadas e depois selecionar todas 
+    - [ ] Mostrar um aviso/disabled caso exista conflito com alguma existente (poder mudar a data?)
+      - validar forma a fazer isto (???)
 
 ## Issues
 
@@ -77,7 +92,7 @@
     - "**In Edit (GOP) [1]**" caso seja o GOP
   - Sera criado um clone de:
     - Calendario
-    - Exames
+    - Avaliacoes
     - Interrupcoes
     - _Comentarios_
       - sera preciso copiar? Se sim, todos ou apenas os que nao estao escondidos?
@@ -313,8 +328,9 @@ Melhorias:
 - [ ] Rever página de Sobre para acrescentar Grupo 1 e adicionar links externos no footer
 - [ ] Rever criação de nova UC. link não está a funcionar como deve ser
 
+---
 
-## TRABALHO FUTURO:
+# TRABALHO FUTURO:
 - [X] ~~Adicionar flag em cursos como Inglês e Matemática para remover da listagem (não são cursos);~~ **(Feito a ~~26/05/2022)**
 - [ ] ~~Adicionar flag nos cursos para saber quais estão em Inglês e devem ser sempre apresentados em Inglês;~~
 - [ ] ~~Users com mais do que um role (validar o que deve ser feito)~~
@@ -335,47 +351,3 @@ Melhorias:
 - [ ] Adicionar alertas de sistema para relembrar publicação do calendário provisório e definitivo (Artigo 21) **Ideia Alexandre**
   - [ ] Provisório - até 1º dia de aulas
   - [ ] Definitivo - até 5a semana de aulas
-
-
-## Perguntar aos profs
-- Como é em relação ao Poster A3 e a esta entrega dia 11 de Julho? Não era dia 14?
-- Perguntar como funciona em relação ao Parecer?
-- Quando fazemos uma cópia... copiamos exames e interrupções. E os comentários? Também é para copiar?
-
-
-
-## Alterar na BD
-
-```
-    ALTER TABLE `calendar_v2`.`course_unit_logs`
-    DROP FOREIGN KEY `course_unit_logs_course_unit_id_foreign`;
-
-    ALTER TABLE `calendar_v2`.`course_unit_logs`
-    ADD COLUMN `course_unit_group_id` BIGINT UNSIGNED NULL AFTER `course_unit_id`,
-    CHANGE COLUMN `course_unit_id` `course_unit_id` BIGINT UNSIGNED NULL ,
-    ADD INDEX `course_unit_logs_course_unit_group_id_foreign_idx` (`course_unit_group_id` ASC) VISIBLE;
-
-    ALTER TABLE `calendar_v2`.`course_unit_logs`
-    ADD CONSTRAINT `course_unit_logs_course_unit_id_foreign`
-    FOREIGN KEY (`course_unit_id`)
-    REFERENCES `calendar_v2`.`course_units` (`id`),
-    ADD CONSTRAINT `course_unit_logs_course_unit_group_id_foreign`
-    FOREIGN KEY (`course_unit_group_id`)
-    REFERENCES `calendar_v2`.`course_unit_groups` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION;
-    
-    
-    
-    ALTER TABLE `calendar_v2`.`exams`
-    ADD COLUMN `course_unit_id` BIGINT UNSIGNED NULL AFTER `method_id`,
-    ADD INDEX `exams_course_unit_id_foreign_idx` (`course_unit_id` ASC) VISIBLE;
-    
-    ALTER TABLE `calendar_v2`.`exams`
-    ADD CONSTRAINT `exams_course_unit_id_foreign` 
-    FOREIGN KEY (`course_unit_id`) 
-    REFERENCES `calendar_v2`.`course_units` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION;
-
-```
