@@ -1,4 +1,8 @@
 # TODO
+**Detalhe calendario**
+- [ ] Validar exames que sao gop e user nao e gop (validar se grupo por eliminar)
+- [ ] Validar se exame nao esta em cima de interrupcao (validar/melhorar)
+- [ ]
 
 - [X] Validar quando se marca um exame, se for dos agrupados, deixar marcar para os outros. (validar bug)
 - [X] Rever mudança de fases num CP ou Direção (aceitar e recursar)
@@ -12,6 +16,19 @@
 **Todas as paginas**
 - [ ] Rever traduções
 - [ ] Adicionar titulo as paginas
+
+
+**Bugs pre-demo**
+- [ ] Validar anos quando entramos e somos associados a um curso
+- [ ] Validar quando e o responsavel da UC e nao deixar editar as outras cadeiras senao as deles
+- [ ] Perguntar se:
+  - [ ] o GOP pode editar qualquer exame
+    - [ ] O Coordenador de Curso so editar as suas cadeiras do curso
+      - [ ] O Responsavel da UC so pode editar as da sua cadeira
+        - [ ] Se qualquer docente da cadeira pode editar os exames
+        - [ ] Se apenas quem criou pode editar (ou seja, mesmo sendo da mesma cadeira, nao pode mexer)
+    - [ ] o GOP pode editar em qualquer altura/qualquer exame, mesmo sendo outros a criar
+         
 
 ## Issues
 
