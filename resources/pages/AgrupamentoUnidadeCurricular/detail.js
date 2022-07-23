@@ -23,6 +23,7 @@ const New = () => {
     const [courseUnits, setCourseUnitsList] = useState([]);
     const [errorMessages, setErrorMessages] = useState([]);
     const isEditMode = !_.isEmpty(courseUnitGroupDetail);
+    const [coursesCount, setCoursesCount] = useState(0);
 
 
     const loadCourseUnits = (includingIdsString) => {
@@ -52,6 +53,7 @@ const New = () => {
                 loadCourseUnits(res?.data?.data?.course_units?.map((x) => x.id).join(','));
                 setLoading(false);
                 setCourseUnitGroupDetail(res?.data?.data);
+                setCoursesCount(res?.data?.data?.courseUnits?.length);
                 document.title = t("Detalhe de Agrupamento de Unidades Curriculares - ") + t("Calendários de Avaliação - IPLeiria");
             });
         } else {
@@ -85,6 +87,8 @@ const New = () => {
                 toast(t(`O agrupamento de unidade curricular foi ${isEditMode ? 'editado' : 'criado'} com sucesso!`), successConfig);
                 if(!isEditMode){
                     navigate("/agrupamento-unidade-curricular/edit/" + res.data);
+                } else {
+                    setCoursesCount(courseUnits.length);
                 }
             } else {
                 let errorsArray = [];
@@ -161,7 +165,7 @@ const New = () => {
             )} />
             { isEditMode && (
             <div className={"margin-top-base"}>
-                { paramsId && <UnitTabsGroup groupId={paramsId}/> }
+                { paramsId && <UnitTabsGroup groupId={paramsId} coursesCount={coursesCount} /> }
             </div>
             )}
         </Container>

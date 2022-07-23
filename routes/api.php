@@ -261,10 +261,12 @@ Route::middleware('auth:api')->group(function () {
     Route::controller(CourseUnitGroupController::class)->group(function () {
         Route::get('/course-unit-groups',                     'index'  );
         Route::get('/course-unit-groups/{courseUnitGroup}',   'show'   );
-        // methods for the course unit
+        // methods for the course unit group
         Route::get('/course-unit-groups/{courseUnitGroup}/methods', 'methodsForCourseUnitGroup');
-        // get all logs for this course unit
-        Route::get('/course-unit-groups/{courseUnitGroup}/logs',    'logs'                );
+        // get all logs for this course unit group
+        Route::get('/course-unit-groups/{courseUnitGroup}/logs',    'logs'      );
+        // get all courses for this course unit group
+        Route::get('/course-unit-groups/{courseUnitGroup}/courses', 'courses'   );
         // relations with teachers
         Route::get('/course-unit-groups/{courseUnitGroup}/teachers',               'teachers'            );
         Route::post('/course-unit-groups/{courseUnitGroup}/teacher',               'addTeacher'          );
