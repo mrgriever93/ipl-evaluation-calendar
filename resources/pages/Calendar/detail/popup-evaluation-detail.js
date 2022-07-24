@@ -139,7 +139,14 @@ const PopupEvaluationDetail = ( {isPublished, isOpen, currentPhaseId, onClose, e
                             <List divided verticalAlign='middle'>
                                 <List.Item>
                                     <List.Content><b>{ t('Curso')}: </b></List.Content>
-                                    <List.Content floated='right'>{examDetailObject?.course_unit?.course?.name}</List.Content>
+                                    <List.Content floated='right'>
+                                        {examDetailObject?.course_unit?.course?.name}
+                                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COURSES]}>
+                                            <a href={"/curso/" + examDetailObject?.course_unit?.course?.id} target={"_blank"} className="margin-left-s" title={ t("Ver Curso") }>
+                                                <Icon name={"external alternate"} />
+                                            </a>
+                                        </ShowComponentIfAuthorized>
+                                    </List.Content>
                                 </List.Item>
                                 <List.Item>
                                     <List.Content><b>{ t('Ramo')}: </b></List.Content>
@@ -151,7 +158,14 @@ const PopupEvaluationDetail = ( {isPublished, isOpen, currentPhaseId, onClose, e
                                 </List.Item>
                                 <List.Item>
                                     <List.Content><b>{ t('Unidade Curricular')}: </b></List.Content>
-                                    <List.Content floated='right'>{examDetailObject?.course_unit?.name}</List.Content>
+                                    <List.Content floated='right'>
+                                        {examDetailObject?.course_unit?.name}
+                                        <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COURSE_UNITS]}>
+                                            <a href={"/unidade-curricular/detail/" + examDetailObject?.course_unit?.id} target={"_blank"} className="margin-left-s" title={ t("Ver Unidade Curricular") }>
+                                                <Icon name={"external alternate"} />
+                                            </a>
+                                        </ShowComponentIfAuthorized>
+                                    </List.Content>
                                 </List.Item>
                                 <List.Item>
                                     <List.Content><b>{ t('Responsável da UC')}: </b></List.Content>
