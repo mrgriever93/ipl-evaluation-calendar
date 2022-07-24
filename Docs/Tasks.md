@@ -8,6 +8,7 @@
 - [X] Rever mudança de fases num CP ou Direção (aceitar e recursar)
 - [X] Listar "todos" os calendarios, so deve devolver os publicados (definitivos ou temporarios)
 - [X] Rever quem pode ver detalhe de UC
+- [ ] Rever quem pode ou não adicionar comentários e se deve estar associado às fases
     
 **Testes de roles:**
 - [ ] aaaaaaaaaaaaaaaaaa
