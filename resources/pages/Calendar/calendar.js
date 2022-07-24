@@ -498,19 +498,6 @@ const Calendar = () => {
         // TODO add exam to the dates (by single cols or colspan)
         const day = days.find((day) => day.weekDay === weekDay);
 
-        if(day?.epochsDaily === undefined){
-            return (<Table.Cell key={weekDayIndex} />);
-        }
-        if(epoch === null){
-            if(day.epochsDaily.length > 0) {
-                epoch = day.epochsDaily[0];
-            } else {
-                return (<Table.Cell key={weekDayIndex} />);
-            }
-        }
-        if(day.epochsDaily.filter((item) => item.code === epoch.code).length === 0){
-            return (<Table.Cell key={weekDayIndex} />);
-        }
         const firstDayAvailable = moment(days[0].date);
         const lastDayAvailable = moment(days[days.length - 1].date);
         const {interruption} = day || {};
@@ -524,6 +511,21 @@ const Calendar = () => {
         if ((isInterruption && alreadyAddedRowSpan && courseIndex > 0) || (isInterruption && interruptionDays++ >= day?.interruptionDays)) {
             return null;
         }
+
+        if(day?.epochsDaily === undefined){
+            return (<Table.Cell key={weekDayIndex} />);
+        }
+        if(epoch === null){
+            if(day.epochsDaily.length > 0) {
+                epoch = day.epochsDaily[0];
+            } else {
+                return (<Table.Cell key={weekDayIndex} />);
+            }
+        }
+        if(day.epochsDaily.filter((item) => item.code === epoch.code).length === 0){
+            return (<Table.Cell key={weekDayIndex} />);
+        }
+
         // check if is 1 year and not a date OR if is an interruption
         if ((year === 1 && !day?.date) || isInterruption) {
             // is an interruption and for multiple days

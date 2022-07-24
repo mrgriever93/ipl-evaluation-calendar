@@ -136,7 +136,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
     }
 
     const updateToPhase = (isAccepted, message) => {
-        axios.patch(`/calendar/${calendarId}/approval`, {
+        axios.post(`/calendar/${calendarId}/approval`, {
                 'accepted': isAccepted,
                 'message': message
             }).then((response) => {
