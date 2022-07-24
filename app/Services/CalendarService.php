@@ -142,11 +142,11 @@ class CalendarService
 
         // TODO check user for this action
         if($calendar->calendar_phase_id == CalendarPhase::phasePublished()) {
-            if(Auth::user()->groups()->Gop()){
+            if(Auth::user()->groups()->Gop()->exists()){
                 $calendar->is_temporary = false;
                 $calendar->is_published = true;
                 $calendar->save();
-            } else if(Auth::user()->groups()->Coordinator()){
+            } else if(Auth::user()->groups()->Coordinator()->exists()){
                 $calendar->is_temporary = true;
                 $calendar->is_published = false;
                 $calendar->save();
@@ -194,12 +194,13 @@ class CalendarService
 
         if (!$calendar->is_published) {
             $calendar->calendar_phase_id = CalendarPhase::phasePublished();
-            if(Auth::user()->groups()->Coordinator()) {
+
+            if(Auth::user()->groups()->coordinator()->exists()) {
                 // add 0.1 to version because is a coordinator
                 $calendar->version = floatval($calendar->version) + 0.1;
                 $calendar->is_temporary = true;
                 $calendar->is_published = false;
-            } else if(Auth::user()->groups()->Gop()){
+            } else if(Auth::user()->groups()->Gop()->exists() || Auth::user()->groups()->board()->exists()){
                 // add 1.0 to version because is the gop
                 $calendar->version = intval($calendar->version) + 1;
                 $calendar->is_temporary = false;
