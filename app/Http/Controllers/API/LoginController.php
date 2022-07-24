@@ -8,12 +8,26 @@ use App\Http\Resources\Generic\UserResource;
 use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Models\Group;
-use App\Models\InitialGroups;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+
+class InitialGroupsLdap
+{
+    const SUPER_ADMIN = "Super Admin";
+    const ADMIN = "Administrador de Sistema";
+    const COMISSION_CCP = "Comissão Científico-Pedagógica";
+    const PEDAGOGIC = "Conselho Pedagógico";
+    const COORDINATOR = "Coordenador de Curso";
+    const BOARD = "Direção";
+    const GOP = "GOP";
+    const TEACHER = "Docente";
+    const RESPONSIBLE_PEDAGOGIC = "Responsável Conselho Pedagógico";
+    const RESPONSIBLE = "Responsável Unidade Curricular";
+    const STUDENT = "Estudante";
+}
 
 
 class LoginController extends Controller
@@ -51,7 +65,7 @@ class LoginController extends Controller
                             $user->groups()->syncWithoutDetaching([$bdGroup->id]);
                         }
 
-                        if ($group === InitialGroups::STUDENT) {
+                        if (strtolower($group) === strtolower(InitialGroupsLdap::STUDENT)) {
                             foreach ($user->ldap->departmentnumber as $course) {
                                 $bdCourse = Course::where('code', $course)->first();
                                 if ($bdCourse) {
@@ -63,7 +77,6 @@ class LoginController extends Controller
                 }
             }
             $scopes = $user->permissions()->where('group_permissions.enabled', true)->groupBy('permissions.code')->pluck('permissions.code')->values()->toArray();
-            //dd($user);
 
             $accessToken = $user->createToken('authToken', $scopes)->accessToken;
 
