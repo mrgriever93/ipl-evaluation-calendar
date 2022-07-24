@@ -31,6 +31,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
     const [calendarPhase, setCalendarPhase] = useState(true);
     const [changeData, setChangeData] = useState(false);
     const [savingExam, setSavingExam] = useState(false);
+    const [showEmptyUcs, setShowEmptyUcs] = useState(false);
     const [showMissingMethodsLink, setShowMissingMethodsLink] = useState(false);
     const [showRepeatedMethodsWarning, setShowRepeatedMethodsWarning] = useState(false);
 
@@ -81,6 +82,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
                         // has curricular unit with missing methods?
                         //setShowMissingMethodsLink(response.data.data?.length === 0 || beforeSetCourseUnits?.length === 0);
                         setShowMissingMethodsLink(beforeSetCourseUnits.filter((item) => !item.has_methods).length > 0);
+                        setShowEmptyUcs(response.data.data.length === 0);
                     }
                 });
             setLoadRemainingCourseUnits(false);
@@ -320,12 +322,14 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
                                             )}
                                         </Field>
                                     </div>
-                                    <p className="margin-top-s">
-                                        <Button color={ !changeData ? 'yellow' : undefined } icon labelPosition="left" onClick={() => setChangeData((old) => !old)}>
-                                            <Icon name="calendar alternate"/>
-                                            { !changeData ? t("Alterar data") : t("Cancelar edição") }
-                                        </Button>
-                                    </p>
+                                    { !showEmptyUcs && (
+                                        <p className="margin-top-s">
+                                            <Button color={ !changeData ? 'yellow' : undefined } icon labelPosition="left" onClick={() => setChangeData((old) => !old)}>
+                                                <Icon name="calendar alternate"/>
+                                                { !changeData ? t("Alterar data") : t("Cancelar edição") }
+                                            </Button>
+                                        </p>
+                                    )}
                                     { moment(scheduleInformation?.date_end, "YYYY-MM-DD").diff(moment(scheduleInformation?.date_start, "YYYY-MM-DD"), "d") > 5  && (
                                         <Message size='tiny' warning={true}>
                                             <div>{ t("Esta avaliação dura mais do que 5 dias")}.</div>
@@ -334,124 +338,134 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
                                 </GridColumn>
                             </Grid>
                             <Divider/>
-                            <Grid columns={2}>
-                                <GridColumn>
-                                    {!scheduleInformation?.id && (
-                                        <>
-                                            <Field name="epoch">
-                                                {({input: epochInput}) => (
-                                                    <Form.Dropdown
-                                                        options={epochsList.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name }))}
-                                                        value={selectedEpoch || -1}
-                                                        selection search
-                                                        label={ t("Época") }
-                                                        onChange={(e, {value}) => epochDropdownOnChange(e, value)}
-                                                    />
-                                                )}
-                                            </Field>
-                                            <Field name="courseUnit">
-                                                {({input: courseUnitInput}) => (
-                                                    <Form.Dropdown
-                                                        options={courseUnits}
-                                                        label={ t("Unidade Curricular") }
-                                                        {...courseUnitInput}
-                                                        selection search
-                                                        disabled={!courseUnits?.length}
-                                                        loading={courseUnits !== undefined ? !courseUnits.length : false}
-                                                        onChange={(e, {value, options}) => {
-                                                            methodListFilterHandler(value);
-                                                            courseUnitInput.onChange(value);
-                                                        }}
-                                                    />
-                                                )}
-                                            </Field>
-                                            { showMissingMethodsLink && (
-                                                    <Message size='tiny' warning={true}>
-                                                        <div>{ t("Existem Unidades Curriculares sem métodos definidos.")}</div>
-                                                        <div className='margin-top-xs'>
-                                                            <a href={ "/unidade-curricular?curso="+scheduleInformation?.courseId} target="_blank">{ t("Preencha aqui")} <Icon name="external alternate" /></a>
-                                                        </div>
-                                                    </Message>
-                                                )}
-                                            <Field name="method">
-                                                {({input: methodInput}) => (
-                                                    <Form.Dropdown
-                                                        label={ t("Elemento de Avaliação")}
-                                                        options={ methodList }
-                                                        {...methodInput}
-                                                        selection search
-                                                        disabled={ !methodList?.length}
-                                                        loading={ methodList !== undefined ? !methodList.length : false }
-                                                        onChange={(e, {value}) => {
-                                                            methodInput.onChange(value);
-                                                            checkMethodAlreadyScheduled(value);
-                                                        }}
-                                                    />
-                                                )}
-                                            </Field>
-                                            { showRepeatedMethodsWarning && (
-                                                    <Message size='tiny' warning={true}>
-                                                        <div><b>{ t("O elemento de avaliação selecionado já se encontra calendarizado.")}</b></div>
-                                                        <div className='margin-top-xs'>{ t("Verifique se quer mesmo marcar este elemento novamente.")}</div>
-                                                    </Message>
-                                                )}
-                                        </>
-                                    )}
-                                </GridColumn>
-                                <GridColumn>
-                                    <>
-                                        <Field name="inClass" type="checkbox">
-                                            {({input: inClassInput}) => (
-                                                <>
-                                                    {/* <Grid columns={2} verticalAlign="middle">
-                                                        <GridColumn className='margin-bottom-s'> */}
-                                                            <Form.Field>
-                                                                <Checkbox toggle label={ t("Na aula")} name="inClass" checked={inClassInput.checked}
-                                                                    onChange={(evt, {checked}) => { inClassInput.onChange(checked) }}/>
-                                                            </Form.Field>
-                                                        {/* </GridColumn> */}
-
-                                                        { ! inClassInput.checked && (
-                                                            // <GridColumn>
-                                                                <Field name="hour">
-                                                                    {({input: hourInput}) => (
-                                                                        <Form.Field>
-                                                                            <TimeInput label={ t("Hora de ínicio")} name="hour" iconPosition="left" placeholder={ t("Hora de ínicio (opcional)")} timeFormat="24" value={hourInput.value}
-                                                                                        onChange={(evt, {value}) => { hourInput.onChange(value); }}/>
-                                                                        </Form.Field>
-                                                                    )}
-                                                                </Field>
-                                                            // </GridColumn>
-                                                        )}
-                                                    {/* </Grid> */}
-                                                    { ! inClassInput.checked && (
-                                                        <Field name="room" defaultValue={scheduleInformation?.id ? scheduleInformation?.room : null}>
-                                                            {({input: roomInput}) => (
-                                                                <Form.Input label={ t("Sala")} placeholder={ t("Sala da avaliação (opcional)")} {...roomInput} />
-                                                            )}
-                                                        </Field>
+                            { showEmptyUcs ? (
+                                <Message size='tiny' info={true}>
+                                    <div>{ t("Não tem Unidades Curriculares associadas para os dados selecionados ou não tem permissões.")}</div>
+                                </Message>
+                            ) : (
+                                <Grid columns={2}>
+                                    <GridColumn>
+                                        {!scheduleInformation?.id && (
+                                            <>
+                                                <Field name="epoch">
+                                                    {({input: epochInput}) => (
+                                                        <Form.Dropdown
+                                                            options={epochsList.map((epoch) => ({ key: epoch.id, value: epoch.id, text: epoch.name }))}
+                                                            value={selectedEpoch || -1}
+                                                            selection search
+                                                            label={ t("Época") }
+                                                            onChange={(e, {value}) => epochDropdownOnChange(e, value)}
+                                                        />
                                                     )}
-                                                </>
-                                            )}
-                                        </Field>
-                                        <Field name="durationMinutes">
-                                            {({input: durationMinutesInput}) => (
-                                                <Form.Input label={ t("Duração")} placeholder={ t("Duração em minutos (opcional)")}  type="number" step="1"{...durationMinutesInput}/>
-                                            )}
-                                        </Field>
-                                        <Field name="observationsPT">
-                                            {({input: observationsPTInput}) => (
-                                                <Form.Input label={ t("Observações PT")} control={TextArea} rows={2} {...observationsPTInput}/>
-                                            )}
-                                        </Field>
-                                        <Field name="observationsEN">
-                                            {({input: observationsENInput}) => (
-                                                <Form.Input label={ t("Observações EN")} control={TextArea} rows={2} {...observationsENInput}/>
-                                            )}
-                                        </Field>
-                                    </>
-                                </GridColumn>
-                            </Grid>
+                                                </Field>
+                                                <Field name="courseUnit">
+                                                    {({input: courseUnitInput}) => (
+                                                        <Form.Dropdown
+                                                            options={courseUnits}
+                                                            label={ t("Unidade Curricular") }
+                                                            {...courseUnitInput}
+                                                            selection search
+                                                            selectOnBlur={false}
+                                                            placeholder={t("Selecione a Unidade Curricular")}
+                                                            disabled={!courseUnits?.length}
+                                                            loading={courseUnits !== undefined ? !courseUnits.length : false}
+                                                            onChange={(e, {value, options}) => {
+                                                                methodListFilterHandler(value);
+                                                                courseUnitInput.onChange(value);
+                                                            }}
+                                                        />
+                                                    )}
+                                                </Field>
+                                                { showMissingMethodsLink && (
+                                                        <Message size='tiny' warning={true}>
+                                                            <div>{ t("Existem Unidades Curriculares sem métodos definidos.")}</div>
+                                                            <div className='margin-top-xs'>
+                                                                <a href={ "/unidade-curricular?curso="+scheduleInformation?.courseId} target="_blank">{ t("Preencha aqui")} <Icon name="external alternate" /></a>
+                                                            </div>
+                                                        </Message>
+                                                    )}
+                                                <Field name="method">
+                                                    {({input: methodInput}) => (
+                                                        <Form.Dropdown
+                                                            label={ t("Elemento de Avaliação")}
+                                                            options={ methodList }
+                                                            {...methodInput}
+                                                            selection search
+                                                            selectOnBlur={false}
+                                                            placeholder={t("Selecione o elemento de Avaliação")}
+                                                            disabled={ !methodList?.length}
+                                                            loading={ methodList !== undefined ? !methodList.length : false }
+                                                            onChange={(e, {value}) => {
+                                                                methodInput.onChange(value);
+                                                                checkMethodAlreadyScheduled(value);
+                                                            }}
+                                                        />
+                                                    )}
+                                                </Field>
+                                                { showRepeatedMethodsWarning && (
+                                                        <Message size='tiny' warning={true}>
+                                                            <div><b>{ t("O elemento de avaliação selecionado já se encontra calendarizado.")}</b></div>
+                                                            <div className='margin-top-xs'>{ t("Verifique se quer mesmo marcar este elemento novamente.")}</div>
+                                                        </Message>
+                                                    )}
+                                            </>
+                                        )}
+                                    </GridColumn>
+                                    <GridColumn>
+                                        <>
+                                            <Field name="inClass" type="checkbox">
+                                                {({input: inClassInput}) => (
+                                                    <>
+                                                        {/* <Grid columns={2} verticalAlign="middle">
+                                                            <GridColumn className='margin-bottom-s'> */}
+                                                                <Form.Field>
+                                                                    <Checkbox toggle label={ t("Na aula")} name="inClass" checked={inClassInput.checked}
+                                                                        onChange={(evt, {checked}) => { inClassInput.onChange(checked) }}/>
+                                                                </Form.Field>
+                                                            {/* </GridColumn> */}
+
+                                                            { ! inClassInput.checked && (
+                                                                // <GridColumn>
+                                                                    <Field name="hour">
+                                                                        {({input: hourInput}) => (
+                                                                            <Form.Field>
+                                                                                <TimeInput label={ t("Hora de ínicio")} name="hour" iconPosition="left" placeholder={ t("Hora de ínicio (opcional)")} timeFormat="24" value={hourInput.value}
+                                                                                            onChange={(evt, {value}) => { hourInput.onChange(value); }}/>
+                                                                            </Form.Field>
+                                                                        )}
+                                                                    </Field>
+                                                                // </GridColumn>
+                                                            )}
+                                                        {/* </Grid> */}
+                                                        { ! inClassInput.checked && (
+                                                            <Field name="room" defaultValue={scheduleInformation?.id ? scheduleInformation?.room : null}>
+                                                                {({input: roomInput}) => (
+                                                                    <Form.Input label={ t("Sala")} placeholder={ t("Sala da avaliação (opcional)")} {...roomInput} />
+                                                                )}
+                                                            </Field>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </Field>
+                                            <Field name="durationMinutes">
+                                                {({input: durationMinutesInput}) => (
+                                                    <Form.Input label={ t("Duração")} placeholder={ t("Duração em minutos (opcional)")}  type="number" step="1"{...durationMinutesInput}/>
+                                                )}
+                                            </Field>
+                                            <Field name="observationsPT">
+                                                {({input: observationsPTInput}) => (
+                                                    <Form.Input label={ t("Observações PT")} control={TextArea} rows={2} {...observationsPTInput}/>
+                                                )}
+                                            </Field>
+                                            <Field name="observationsEN">
+                                                {({input: observationsENInput}) => (
+                                                    <Form.Input label={ t("Observações EN")} control={TextArea} rows={2} {...observationsENInput}/>
+                                                )}
+                                            </Field>
+                                        </>
+                                    </GridColumn>
+                                </Grid>
+                            )}
                         </Form>
                     </Modal.Content>
                     <Modal.Actions>
@@ -462,9 +476,11 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
                             </Button>
                         )}
                         <Button onClick={onCloseHandler} >{ t("Cancelar") }</Button>
-                        <Button onClick={handleSubmit} positive loading={savingExam}>
-                            { scheduleInformation?.exam_id ? t("Gravar alterações") : t("Marcar Avaliação") }
-                        </Button>
+                        { !showEmptyUcs && (
+                            <Button onClick={handleSubmit} positive loading={savingExam}>
+                                { scheduleInformation?.exam_id ? t("Gravar alterações") : t("Marcar Avaliação") }
+                            </Button>
+                        )}
                     </Modal.Actions>
                 </Modal>
             )}

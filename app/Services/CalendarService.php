@@ -320,7 +320,12 @@ class CalendarService
 
         if (Auth::user()->groups()->responsible()->exists()) {
             // include CUs that the user is responsible for
-            array_push($includedCUs, CourseUnit::where('responsible_user_id', Auth::user()->id)->get()->pluck('id'));
+            $ucs = CourseUnit::where('responsible_user_id', Auth::user()->id)->get()->pluck('id')->toArray();
+            if(empty($includedCUs)){
+                $includedCUs = $ucs;
+            } else {
+                $includedCUs[] = $ucs;
+            }
         }
         if(!empty($includedCUs)) {
             $availableMethods->whereIn('course_units.id', $includedCUs);
@@ -400,7 +405,12 @@ class CalendarService
 
         if (Auth::user()->groups()->responsible()->exists()) {
             // include CUs that the user is responsible for
-            array_push($includedCUs, CourseUnit::where('responsible_user_id', Auth::user()->id)->get()->pluck('id'));
+            $ucs = CourseUnit::where('responsible_user_id', Auth::user()->id)->get()->pluck('id')->toArray();
+            if(empty($includedCUs)){
+                $includedCUs = $ucs;
+            } else {
+                $includedCUs[] = $ucs;
+            }
         }
         if(!empty($includedCUs)) {
             $availableMethods->whereIn('course_units.id', $includedCUs);
