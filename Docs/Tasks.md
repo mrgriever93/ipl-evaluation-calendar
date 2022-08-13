@@ -1,51 +1,92 @@
 # TODO
-**Detalhe calendario**
+
+> Lista Calendarios
+- [ ] Listar "todos" os calendarios, so deve devolver os publicados (definitivos ou temporarios)
+
+> criacao calendario
+- [ ] avisar caso curso ja tenha calendario
+- [ ] selecionar todos os cursos (filtrados)
+- [ ] adicionar os cursos sem tipo de curso
+
+
+> Detalhe Calendario
+- [ ] filtrar UCs num calendario, que esteja neste WebService
+  > http://www.dei.estg.ipleiria.pt/intranet/horarios/ws/inscricoes/inscricoes_cursos_json.php?anoletivo=202122&cod_curso=9119&cod_aluno=2192779
+
+- [ ] Adicionar ICS quando se ve detalhe de avaliacao
+
+- [ ] Se for um curso sem tipo, mostra a opcao de exportar as avaliacoes para outros calendarios criados, e a opcoa de selecionar as avaliacoes criadas
+    - [ ] Filtragem de UCs
+        - [ ] Filtrar por UC associada a um aluno
+
+**old**
+- [ ] Copiar avaliacoes de outro Calendario (apenas para o ano letivo corrente, e se tiver ja algum avaliacao daquela UC/ ou algo do genero)
+    - [ ] Copiar apenas avaliacoes da UC especifica (?) (ex: pos laboral e diurno)
+    - [ ] Copiar todos os avaliacoes (GOP?)
+    - [ ] Copiar todos os avaliacoes (CC?)
+        - [ ] Talvez mostrar um popup com a lista das UCs que podem ser copiadas e depois selecionar todas
+        - [ ] Mostrar um aviso/disabled caso exista conflito com alguma existente (poder mudar a data?)
+            - validar forma a fazer isto (???)
+
+- [ ] Validar quando e o responsavel da UC e nao deixar editar as outras cadeiras senao as deles
+    - Perguntar se: (logica de pensamento)
+    - [ ] o GOP pode editar qualquer avaliacao
+        - [ ] O Coordenador de Curso so editar as suas cadeiras do curso
+            - [ ] O Responsavel da UC so pode editar as da sua cadeira
+                - [ ] Se qualquer docente da cadeira pode editar os avaliacoes
+                - [ ] Se apenas quem criou pode editar (ou seja, mesmo sendo da mesma cadeira, nao pode mexer)
+        - [ ] o GOP pode editar em qualquer altura/qualquer avaliacao, mesmo sendo outros a criar
+
+- [ ] Validar permissoes de Responsavel UC do que pode ver no calendario e na lista (ex: campo do estado do calendario)
+
+- [ ] Validar quando se marca um avaliacao, se for dos agrupados, deixar marcar para os outros. (validar bug)
+
 - [ ] Validar avaliacoes que sao gop e user nao e gop (validar se grupo por eliminar)
 - [ ] Validar se avaliacao nao esta em cima de interrupcao (validar/melhorar)
-- [ ]
-
-- [X] Validar quando se marca um avaliacao, se for dos agrupados, deixar marcar para os outros. (validar bug)
 - [X] Rever mudança de fases num CP ou Direção (aceitar e recursar)
-- [X] Listar "todos" os calendarios, so deve devolver os publicados (definitivos ou temporarios)
+    - [ ] Validar se esta completo
 - [X] Rever quem pode ver detalhe de UC
 - [ ] Rever quem pode ou não adicionar comentários e se deve estar associado às fases
-    
-**Testes de roles:**
-- [ ] aaaaaaaaaaaaaaaaaa
 
+> Metodos
+- [ ] copiar metodos de outros anos
+- [ ] copiar de outros cursos (ex: D/PL)
 
-**Todas as paginas**
+> Publicacao de Calendario
+- [ ] Enviar email
+
+> UCs Agrupadas
+- [ ] ao marcar uma avaliacao, ira marcar nos calendarios dos cursos que estao associados a essa UC agrupada
+
+**old**
+- [ ] Copiar Metodos de outras cadeiras (talvez popup com pesquisa de UC e ano letivo (deixar de anos anteriores))
+
+> Todas as paginas
 - [ ] Rever traduções
 - [ ] Adicionar titulo as paginas
 
+> Qualquer Lista
+- [ ] validar os filtros
 
-**Bugs pre-demo**
-- [ ] Validar anos quando entramos e somos associados a um curso
-- [ ] Validar quando e o responsavel da UC e nao deixar editar as outras cadeiras senao as deles
-- [ ] Perguntar se:
-  - [ ] o GOP pode editar qualquer avaliacao
-    - [ ] O Coordenador de Curso so editar as suas cadeiras do curso
-      - [ ] O Responsavel da UC so pode editar as da sua cadeira
-        - [ ] Se qualquer docente da cadeira pode editar os avaliacoes
-        - [ ] Se apenas quem criou pode editar (ou seja, mesmo sendo da mesma cadeira, nao pode mexer)
-    - [ ] o GOP pode editar em qualquer altura/qualquer avaliacao, mesmo sendo outros a criar
-- [ ] Validar todos os Filtros das listas
-- [ ] Validar permissoes de Responsavel UC do que pode ver no calendario e na lista (ex: campo do estado do calendario)
+> Listagem de UCs
 - [ ] Adicionar Ano de UC na lista (lista ucs e lista de ucs no curso)
-  - [ ] Adicionar ano letivo onde acharmos necessario para distinguir a cadeira
+    - [ ] Adicionar ano letivo onde acharmos necessario para distinguir a cadeira
 
-- No detalhe da UC/UCs Agrupadas
-- [ ] Copiar Metodos de outras cadeiras (talvez popup com pesquisa de UC e ano letivo (deixar de anos anteriores))
+> Login
+- [ ] Validar anos quando entramos e somos associados a um curso
 
-- No Calendario
-- [ ] Copiar avaliacoes de outro Calendario (apenas para o ano letivo corrente, e se tiver ja algum avaliacao daquela UC/ ou algo do genero)
-  - [ ] Copiar apenas avaliacoes da UC especifica (?) (ex: pos laboral e diurno)
-  - [ ] Copiar todos os avaliacoes (GOP?)
-  - [ ] Copiar todos os avaliacoes (CC?)
-    - [ ] Talvez mostrar um popup com a lista das UCs que podem ser copiadas e depois selecionar todas 
-    - [ ] Mostrar um aviso/disabled caso exista conflito com alguma existente (poder mudar a data?)
-      - validar forma a fazer isto (???)
+> sync webservice
+- [ ] adicionar o ramo [0,1,2]
+  - [ ] adicionar no sync (ramo 1, ramo 2, ramo 3, ...)
+  - [ ] poder editar nomes dos ramos no detalhe do curso
 
+- [ ] adicionar inscritos, aprovados e reprovados (UCs)
+  - [ ] Adicionar campos na tabela da bd
+  - [ ] Adicionar campos de sync na tabela da escola
+  - [ ] Adicionar registo no sync 
+
+
+---
 ## Issues
 
 **Trabalho futuro?:**
