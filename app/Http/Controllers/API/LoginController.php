@@ -66,8 +66,9 @@ class LoginController extends Controller
                         }
 
                         if (strtolower($group) === strtolower(InitialGroupsLdap::STUDENT)) {
+                            $academicYearId = AcademicYear::selected()->first()->id;
                             foreach ($user->ldap->departmentnumber as $course) {
-                                $bdCourse = Course::where('code', $course)->first();
+                                $bdCourse = Course::where('code', $course)->where("academic_year_id", $academicYearId)->first();
                                 if ($bdCourse) {
                                     $user->courses()->syncWithoutDetaching([$bdCourse->id]);
                                 }

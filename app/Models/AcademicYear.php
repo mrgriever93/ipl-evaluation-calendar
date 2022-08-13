@@ -32,4 +32,14 @@ class AcademicYear extends Model
     {
         return $this->hasMany(CourseUnitGroup::class);
     }
+
+    public function scopeSelected($query)
+    {
+        return $query->where('selected', true);
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('active', true);
+    }
 }

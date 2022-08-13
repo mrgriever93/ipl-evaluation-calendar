@@ -73,7 +73,7 @@
     - [ ] Adicionar ano letivo onde acharmos necessario para distinguir a cadeira
 
 > Login
-- [ ] Validar anos quando entramos e somos associados a um curso
+- [X] Validar anos quando entramos e somos associados a um curso
 
 > sync webservice
 - [X] adicionar o ramo [0,1,2]
