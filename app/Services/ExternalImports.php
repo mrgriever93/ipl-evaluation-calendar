@@ -158,10 +158,6 @@ class ExternalImports
                                 "name_pt"   => $info[$school->index_course_name_pt],
                                 "name_en"   => $info[$school->index_course_name_en], // this will duplicate the value as default, to prevent empty states
                                 "degree"    => DegreesUtil::getDegreeId($info[$school->index_course_name_pt]),
-
-                                "registered"=> $info[$school->index_course_unit_registered],
-                                "passed"    => $info[$school->index_course_unit_passed],
-                                "flunk"     => $info[$school->index_course_unit_flunk],
                             ]
                         );
                         // check for updates and then update the different value
@@ -184,19 +180,6 @@ class ExternalImports
                                 $hasUpdate = true;
                                 $course->degree = DegreesUtil::getDegreeId($info[$school->index_course_name_pt]);
                             }
-
-                            if($course->registered != $info[$school->index_course_unit_registered]) {
-                                $hasUpdate = true;
-                                $course->registered = $info[$school->index_course_unit_registered];
-                            }
-                            if($course->passed != $info[$school->index_course_unit_passed]) {
-                                $hasUpdate = true;
-                                $course->passed = $info[$school->index_course_unit_passed];
-                            }
-                            if($course->flunk != $info[$school->index_course_unit_flunk]) {
-                                $hasUpdate = true;
-                                $course->flunk = $info[$school->index_course_unit_flunk];
-                            }
                             if($hasUpdate){
                                 $course->save();
                                 $coursesCount["updated"]++;
@@ -207,13 +190,18 @@ class ExternalImports
                         // https://laravel.com/docs/9.x/eloquent-relationships#syncing-associations
                         //$course->academicYears()->syncWithoutDetaching($academicYearId); // -> Old logic, it had a pivot table [academic_year_course]
                         // Retrieve Branch by course_id or create it if it doesn't exist...
+
                         $branch = Branch::firstOrCreate(
-                            ["course_id" => $course->id],
                             [
-                                "name_pt"       => "Tronco Comum",
-                                "name_en"       => "Common Branch",
-                                "initials_pt"   => "TComum",
-                                "initials_en"   => "CBranch",
+                                "course_id" => $course->id,
+                                "branch_number" => $info[$school->index_course_unit_branch],
+                                "academic_year_id" => $academicYearId
+                            ],
+                            [
+                                "name_pt"       => ($info[$school->index_course_unit_branch] == 0 ? "Tronco Comum" : "Ramo " . $info[$school->index_course_unit_branch]) ,
+                                "name_en"       => ($info[$school->index_course_unit_branch] == 0 ? "Common Branch" : "Branch " . $info[$school->index_course_unit_branch]),
+                                "initials_pt"   => ($info[$school->index_course_unit_branch] == 0 ? "TComum" : "R" . $info[$school->index_course_unit_branch]),
+                                "initials_en"   => ($info[$school->index_course_unit_branch] == 0 ? "CBranch" : "B" . $info[$school->index_course_unit_branch]),
                             ]
                         );
                         // Retrieve CourseUnit by code or create it if it doesn't exist...
@@ -229,10 +217,13 @@ class ExternalImports
                                 "curricular_year" => $info[$school->index_course_unit_curricular_year],
                                 "initials" => $info[$school->index_course_unit_initials],
                                 "name_pt" => $info[$school->index_course_unit_name_pt],
-                                "name_en" => $info[$school->index_course_unit_name_en] // this will duplicate the value as default, to prevent empty states
+                                "name_en" => $info[$school->index_course_unit_name_en], // this will duplicate the value as default, to prevent empty states
+
+                                "registered"=> $info[$school->index_course_unit_registered],
+                                "passed"    => $info[$school->index_course_unit_passed],
+                                "flunk"     => $info[$school->index_course_unit_flunk],
                             ]
                         );
-                        // TODO Check branch (ramo)
 
                         // check for updates and then update the different value
                         // user just created in the database; it didn't exist before.
@@ -253,6 +244,19 @@ class ExternalImports
                             if($newestCourseUnit->name_en != $info[$school->index_course_unit_name_en]) {
                                 $hasUpdate = true;
                                 $newestCourseUnit->name_en = $info[$school->index_course_unit_name_en];
+                            }
+
+                            if($course->registered != $info[$school->index_course_unit_registered]) {
+                                $hasUpdate = true;
+                                $course->registered = $info[$school->index_course_unit_registered];
+                            }
+                            if($course->passed != $info[$school->index_course_unit_passed]) {
+                                $hasUpdate = true;
+                                $course->passed = $info[$school->index_course_unit_passed];
+                            }
+                            if($course->flunk != $info[$school->index_course_unit_flunk]) {
+                                $hasUpdate = true;
+                                $course->flunk = $info[$school->index_course_unit_flunk];
                             }
                             if($hasUpdate){
                                 $newestCourseUnit->save();

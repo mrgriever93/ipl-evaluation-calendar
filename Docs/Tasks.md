@@ -76,8 +76,8 @@
 - [ ] Validar anos quando entramos e somos associados a um curso
 
 > sync webservice
-- [ ] adicionar o ramo [0,1,2]
-  - [ ] adicionar no sync (ramo 1, ramo 2, ramo 3, ...)
+- [X] adicionar o ramo [0,1,2]
+  - [X] adicionar no sync (ramo 1, ramo 2, ramo 3, ...)
   - [ ] poder editar nomes dos ramos no detalhe do curso
 
 - [X] adicionar inscritos, aprovados e reprovados (UCs)

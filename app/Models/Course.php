@@ -21,10 +21,7 @@ class Course extends Model
         "academic_year_id",
         "num_years",
         "coordinator_user_id",
-        "school_id",
-        "registered",
-        "passed",
-        "flunk"
+        "school_id"
     ];
 
     public function academicYears()

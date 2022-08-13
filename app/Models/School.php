@@ -32,6 +32,8 @@ class School extends Model
         'index_course_unit_passed',
         'index_course_unit_flunk',
 
+        'index_course_unit_branch',
+
         'query_param_academic_year',
         'query_param_semester',
         'gop_group_id',

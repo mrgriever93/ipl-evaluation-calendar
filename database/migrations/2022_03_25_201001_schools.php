@@ -44,6 +44,8 @@ return new class extends Migration
             $table->string('index_course_unit_passed')->nullable();             // 9
             $table->string('index_course_unit_flunk')->nullable();              // 10
 
+            $table->string('index_course_unit_branch')->nullable();             // 15
+
             $table->string('index_course_unit_curricular_year')->nullable();
             $table->string('index_course_unit_teachers')->nullable();
 
