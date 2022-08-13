@@ -69,8 +69,10 @@
 - [ ] validar os filtros
 
 > Listagem de UCs
-- [ ] Adicionar Ano de UC na lista (lista ucs e lista de ucs no curso)
-    - [ ] Adicionar ano letivo onde acharmos necessario para distinguir a cadeira
+- [X] Adicionar Ano de UC na lista (lista ucs e lista de ucs no curso)
+  - [ ] Adicionar ano letivo onde acharmos necessario para distinguir a cadeira
+
+- [ ] Na listagem, os agrupamentos não mostra nada. Parece que não vem do servidor o "group_name"
 
 > Login
 - [X] Validar anos quando entramos e somos associados a um curso

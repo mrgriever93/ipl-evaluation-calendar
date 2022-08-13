@@ -1,18 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-    Card,
-    Container,
-    Table,
-    Form,
-    Icon,
-    Modal,
-    Button,
-    Header,
-    Dimmer,
-    Loader,
-    Popup,
-    Checkbox, Segment
-} from 'semantic-ui-react';
+import { Card, Container, Table, Form, Icon, Modal, Button, Header, Dimmer, Loader, Popup, Checkbox, List } from 'semantic-ui-react';
 import axios from 'axios';
 import {Link, useSearchParams} from 'react-router-dom';
 import _ from 'lodash';
@@ -125,12 +112,13 @@ const CourseUnitsList = () => {
 
     const columns = [
         {name: t('Nome')},
-        {name: t('Ramo')},
         {
             name: t('Agrupamento'),
+            align: 'center',
             permission: [SCOPES.VIEW_UC_GROUPS],
         },
-        {name: t('Semestre'),   align: 'center', style: {width: '10%'} },
+        {name: t('Outros'), align: 'center', style: {width: '15%'} },
+        {name: t('Ramo'),   align: 'center', style: {width: '8%'}  },
         {
             name: t('Ações'),
             align: 'center',
@@ -195,7 +183,8 @@ const CourseUnitsList = () => {
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
-                                    {courseUnits.map(({id, name, code, has_methods, has_responsable, branch_label, has_branch, group_name, course_description, semester}) => (
+                                    { console.log(courseUnits) }
+                                    {courseUnits.map(({id, name, code, has_methods, has_responsable, branch_label, has_branch, group_name, course_description, curricularYear, semester}) => (
                                         <Table.Row key={id} warning={ (useComponentIfAuthorized(SCOPES.EDIT_COURSE_UNITS) ? (!has_methods || !has_responsable) : false) }>
                                             <Table.Cell>
                                                 <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]}>
@@ -211,14 +200,29 @@ const CourseUnitsList = () => {
                                                 </ShowComponentIfAuthorized>
                                                 ({code}) - {name}
                                             </Table.Cell>
-                                            <Table.Cell>
-                                                { !has_branch && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher a que ramo pertence.')} position='top center'/> }
-                                                {branch_label}
-                                            </Table.Cell>
                                             <ShowComponentIfAuthorized permission={[SCOPES.VIEW_UC_GROUPS]}>
                                                 <Table.Cell>{group_name || '-'}</Table.Cell>
                                             </ShowComponentIfAuthorized>
-                                            <Table.Cell>{semester}</Table.Cell>
+                                            <Table.Cell>
+                                                <List verticalAlign='middle'>
+                                                    <List.Item>
+                                                        <List.Content floated='right'>
+                                                            <b>{ semester }</b>
+                                                        </List.Content>
+                                                        <List.Content>{ t('Semestre') + ': ' }</List.Content>
+                                                    </List.Item>
+                                                    <List.Item>
+                                                        <List.Content floated='right'>
+                                                            <b>{ curricularYear }</b>
+                                                        </List.Content>
+                                                        <List.Content>{ t('Ano Curricular') + ': ' }</List.Content>
+                                                    </List.Item>
+                                                </List>
+                                            </Table.Cell>
+                                            <Table.Cell textAlign='center'>
+                                                { !has_branch && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher a que ramo pertence.')} position='top center'/> }
+                                                { branch_label }
+                                            </Table.Cell>
                                             <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COURSE_UNITS, SCOPES.EDIT_COURSE_UNITS, SCOPES.DELETE_COURSE_UNITS]}>
                                                 <Table.Cell textAlign={"center"}>
                                                     <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COURSE_UNITS, SCOPES.EDIT_COURSE_UNITS]}>
