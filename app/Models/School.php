@@ -28,6 +28,10 @@ class School extends Model
         'index_course_unit_curricular_year',
         'index_course_unit_teachers',
 
+        'index_course_unit_registered',
+        'index_course_unit_passed',
+        'index_course_unit_flunk',
+
         'query_param_academic_year',
         'query_param_semester',
         'gop_group_id',

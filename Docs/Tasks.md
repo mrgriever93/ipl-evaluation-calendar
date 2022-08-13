@@ -80,10 +80,10 @@
   - [ ] adicionar no sync (ramo 1, ramo 2, ramo 3, ...)
   - [ ] poder editar nomes dos ramos no detalhe do curso
 
-- [ ] adicionar inscritos, aprovados e reprovados (UCs)
-  - [ ] Adicionar campos na tabela da bd
-  - [ ] Adicionar campos de sync na tabela da escola
-  - [ ] Adicionar registo no sync 
+- [X] adicionar inscritos, aprovados e reprovados (UCs)
+  - [X] Adicionar campos na tabela da bd
+  - [X] Adicionar campos de sync na tabela da escola
+  - [X] Adicionar registo no sync 
 
 
 ---

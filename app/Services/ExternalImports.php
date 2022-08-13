@@ -154,10 +154,14 @@ class ExternalImports
                             ],
                             [
                                 "school_id" => $school->id,
-                                "initials" => $info[$school->index_course_initials],//$gen_initials,
-                                "name_pt" => $info[$school->index_course_name_pt],
-                                "name_en" => $info[$school->index_course_name_en], // this will duplicate the value as default, to prevent empty states
-                                "degree" => DegreesUtil::getDegreeId($info[$school->index_course_name_pt])
+                                "initials"  => $info[$school->index_course_initials],//$gen_initials,
+                                "name_pt"   => $info[$school->index_course_name_pt],
+                                "name_en"   => $info[$school->index_course_name_en], // this will duplicate the value as default, to prevent empty states
+                                "degree"    => DegreesUtil::getDegreeId($info[$school->index_course_name_pt]),
+
+                                "registered"=> $info[$school->index_course_unit_registered],
+                                "passed"    => $info[$school->index_course_unit_passed],
+                                "flunk"     => $info[$school->index_course_unit_flunk],
                             ]
                         );
                         // check for updates and then update the different value
@@ -179,6 +183,19 @@ class ExternalImports
                             if($course->degree != DegreesUtil::getDegreeId($info[$school->index_course_name_pt])) {
                                 $hasUpdate = true;
                                 $course->degree = DegreesUtil::getDegreeId($info[$school->index_course_name_pt]);
+                            }
+
+                            if($course->registered != $info[$school->index_course_unit_registered]) {
+                                $hasUpdate = true;
+                                $course->registered = $info[$school->index_course_unit_registered];
+                            }
+                            if($course->passed != $info[$school->index_course_unit_passed]) {
+                                $hasUpdate = true;
+                                $course->passed = $info[$school->index_course_unit_passed];
+                            }
+                            if($course->flunk != $info[$school->index_course_unit_flunk]) {
+                                $hasUpdate = true;
+                                $course->flunk = $info[$school->index_course_unit_flunk];
                             }
                             if($hasUpdate){
                                 $course->save();

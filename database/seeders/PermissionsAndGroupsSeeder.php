@@ -99,6 +99,10 @@ class PermissionsAndGroupsSeeder extends Seeder
                 "index_course_unit_teachers"        => "7",//"4",
                 "index_course_unit_curricular_year" => "2",//"5",
 
+                "index_course_unit_registered"      => "8",
+                "index_course_unit_passed"          => "9",
+                "index_course_unit_flunk"           => "10",
+
                 "query_param_academic_year"         => "anoletivo",
                 "query_param_semester"              => "periodo",
                 "gop_group_id"                      => "12",

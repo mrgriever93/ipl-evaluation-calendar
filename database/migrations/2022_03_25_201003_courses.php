@@ -32,6 +32,10 @@ return new class extends Migration
             $table->foreign('school_id')->references('id')->on('schools');
             $table->foreign('academic_year_id')->references('id')->on('academic_years');
 
+            $table->integer('registered')->nullable();
+            $table->integer('passed')->nullable();
+            $table->integer('flunk')->nullable();
+
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
             $table->softDeletes();
