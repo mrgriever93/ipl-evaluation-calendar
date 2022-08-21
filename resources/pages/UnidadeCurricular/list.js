@@ -48,12 +48,12 @@ const CourseUnitsList = () => {
     const fetchCourseUnits = () => {
         setContentLoading(true);
         let link = '/course-units?page=' + currentPage;
-        link += (semesterFilter         ? '&semester='          + semesterFilter        : '');
-        link += (courseFilter           ? '&course='            + courseFilter          : '');
-        link += (curricularYearFilter   ? '&curricular_year='   + curricularYearFilter  : '');
-        link += (groupUnitFilter        ? '&group_unit='        + groupUnitFilter       : '');
-        link += (searchFilter           ? '&search='            + searchFilter          : '');
-        link += (courseUnitAllFilter    ? '&show_all='          + courseUnitAllFilter   : '');
+        link += (semesterFilter         ? '&semester='      + semesterFilter        : '');
+        link += (courseFilter           ? '&course='        + courseFilter          : '');
+        link += (curricularYearFilter   ? '&year='          + curricularYearFilter  : '');
+        link += (groupUnitFilter        ? '&group_unit='    + groupUnitFilter       : '');
+        link += (searchFilter           ? '&search='        + searchFilter          : '');
+        link += (courseUnitAllFilter    ? '&show_all='      + courseUnitAllFilter   : '');
         link += '&per_page=' + perPage;
 
         axios.get(link).then((response) => {
@@ -123,7 +123,7 @@ const CourseUnitsList = () => {
 
     const filterByGroupUnit = (value) => {
         setGroupUnitFilter(value);
-    }; 
+    };
 
     const toggleAdvancedFilters = (event) => {
         event.preventDefault();
@@ -181,7 +181,7 @@ const CourseUnitsList = () => {
                                 <GroupUnits widthSize={3} eventHandler={filterByGroupUnit} />
                                 <Semesters widthSize={3} eventHandler={filterBySemester} withSpecial={false} />
                                 <CurricularYears widthSize={2} eventHandler={filterByCurricularYear}/>
-                                
+
                                 <Form.Field width={4}>
                                     <label>{ t("UCs visíveis")}</label>
                                     <Button.Group fluid>

@@ -11,7 +11,7 @@ const FilterOptionCurricularYear = ({widthSize, eventHandler, value, disabled, c
 
     useEffect(() => {
         setLoading(true);
-        axios.get('/semesters').then((response) => {
+        axios.get('/course-units/years').then((response) => {
             if (response.status >= 200 && response.status < 300) {
                 if(isSearch){
                     response.data.data.unshift({value: '', text: t("Todos")});

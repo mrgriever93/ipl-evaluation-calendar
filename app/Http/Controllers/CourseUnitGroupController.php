@@ -9,6 +9,7 @@ use App\Http\Resources\Admin\CourseUnitGroupListResource;
 use App\Http\Resources\Admin\Edit\CourseUnitGroupResource;
 use App\Http\Resources\Admin\LogsResource;
 use App\Http\Resources\Generic\CourseListResource;
+use App\Http\Resources\Generic\CourseUnitGroupSearchResource;
 use App\Http\Resources\Generic\EpochMethodResource;
 use App\Http\Resources\Generic\TeacherResource;
 use App\Http\Resources\MethodResource;
@@ -50,6 +51,21 @@ class CourseUnitGroupController extends Controller
         }
         return CourseUnitGroupListResource::collection($list->paginate($perPage));
     }
+
+    public function search(Request $request, CourseUnitGroupFilters $filters)
+    {
+        $list = CourseUnitGroup::filter($filters)->ofAcademicYear($request->cookie('academic_year'));
+
+        $user = Auth::user();
+        // List for coordinator
+        if ($user->groups->contains('code', InitialGroups::COORDINATOR)) {
+            $list->whereHas("courseUnits.course", function ($query){
+                $query->whereIn('course_id', Course::where('coordinator_user_id', Auth::user()->id)->pluck('id'));
+            });
+        }
+        return CourseUnitGroupSearchResource::collection($list->paginate(30));
+    }
+
 
     /**
      * Store a newly created resource in storage.

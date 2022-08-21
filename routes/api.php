@@ -237,6 +237,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/course-units',                                     'index'               );
         Route::post('/course-units',                                    'store'               );
         Route::get('/course-units/search',                              'search'              );
+        Route::get('/course-units/years',                               'years'               );
         Route::get('/course-units/{courseUnit}',                        'show'                );
         Route::patch('/course-units/{courseUnit}',                      'update'              );
         Route::delete('/course-units/{courseUnit}',                     'destroy'             );
@@ -261,6 +262,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::controller(CourseUnitGroupController::class)->group(function () {
         Route::get('/course-unit-groups',                     'index'  );
+        Route::get('/course-unit-groups/search',              'search'  );
         Route::get('/course-unit-groups/{courseUnitGroup}',   'show'   );
         // methods for the course unit group
         Route::get('/course-unit-groups/{courseUnitGroup}/methods', 'methodsForCourseUnitGroup');

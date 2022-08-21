@@ -10,6 +10,7 @@ use App\Http\Resources\Admin\LogsResource;
 use App\Http\Resources\Generic\BranchSearchResource;
 use App\Http\Resources\Generic\CourseUnitListResource;
 use App\Http\Resources\Generic\CourseUnitSearchResource;
+use App\Http\Resources\Generic\CourseUnitYearsResource;
 use App\Http\Resources\Generic\EpochMethodResource;
 use App\Http\Resources\Generic\TeacherResource;
 use App\Http\Resources\MethodResource;
@@ -144,6 +145,11 @@ class CourseUnitController extends Controller
         return CourseUnitSearchResource::collection($courseUnits);
     }
 
+    public function years(Request $request){
+        $years = CourseUnit::select('curricular_year as year')->distinct()->orderBy('year')->get();
+
+        return CourseUnitYearsResource::collection($years);
+    }
     /**
      * Store a newly created resource in storage.
      */

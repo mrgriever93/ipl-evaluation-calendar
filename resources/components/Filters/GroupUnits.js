@@ -11,7 +11,7 @@ const FilterOptionGroupUnit = ({widthSize, eventHandler, value, disabled, classN
 
     useEffect(() => {
         setLoading(true);
-        axios.get('/semesters').then((response) => {
+        axios.get('/course-unit-groups/search').then((response) => {
             if (response.status >= 200 && response.status < 300) {
                 if(isSearch){
                     response.data.data.unshift({value: '', text: t("Todos")});
