@@ -167,13 +167,15 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::controller(AcademicYearController::class)->group(function () {
-        Route::post('/academic-years',                      'store' );
-        Route::get('/academic-years',                       'index' );
-        Route::get('/academic-years/menu',                  'menu' );
-        Route::post('/academic-years/switch',               'switch');
-        Route::delete('/academic-year/{id}',                'destroy');
-        Route::post('/academic-year/{id}/active',           'active');
-        Route::post('/academic-year/{id}/selected',         'selected');
+        Route::get('/academic-years',                       'index'     );
+        Route::get('/academic-years/menu',                  'menu'      );
+        Route::get('/academic-years/search',                'search'    );
+
+        Route::post('/academic-years',                      'store'     );
+        Route::post('/academic-years/switch',               'switch'    );
+        Route::delete('/academic-year/{id}',                'destroy'   );
+        Route::post('/academic-year/{id}/active',           'active'    );
+        Route::post('/academic-year/{id}/selected',         'selected'  );
         Route::get('/academic-year/{id}/sync/{semester}',   'sync')->where(['id' => '[0-9]+', 'semester' => '[1-2]']);;
     });
 
@@ -192,6 +194,9 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/methods/{method}',         'show'          );
         Route::patch('/methods/{method}',       'update'        );
         Route::delete('/methods/{method}',      'destroy'       );
+
+        Route::get('/method/copy',              'methodsToCopy' );
+        Route::post('/method/clone',            'methodsClone'  );
     });
 
     Route::controller(InterruptionController::class)->group(function () {
@@ -253,6 +258,7 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/course-units/{courseUnit}/teacher/{teacherId}', 'removeTeacher'       );
         // methods for the course unit
         Route::get('/course-units/{courseUnit}/methods',                'methodsForCourseUnit');
+
         //Route::get('/course-units/{courseUnit}/epochs',                 'epochsForCourseUnit' );
         Route::patch('/course-units/{courseUnit}/responsible',          'assignResponsible'   );
         // get all logs for this course unit

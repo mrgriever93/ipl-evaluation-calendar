@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\NewGroupMethodRequest;
+use App\Http\Resources\Generic\CourseUnitSearchResource;
 use App\Models\CourseUnit;
 use App\Models\CourseUnitGroup;
 use App\Models\Method;
@@ -12,6 +13,8 @@ use App\Http\Requests\NewMethodRequest;
 use App\Http\Requests\UpdateMethodRequest;
 use App\Http\Resources\MethodResource;
 use App\Models\UnitLog;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
@@ -98,7 +101,6 @@ class MethodController extends Controller
         return response()->json("Created/Updated!", Response::HTTP_OK);
     }
 
-
     public function show(Method $method)
     {
         return new MethodResource($method);
@@ -107,6 +109,40 @@ class MethodController extends Controller
     public function update(UpdateMethodRequest $request, Method $method)
     {
         $method->update($request->all());
+    }
+
+
+    public function methodsToCopy(Request $request){
+        $ucs = CourseUnit::has('methods')->ofAcademicYear($request->year)->get();
+        return CourseUnitSearchResource::collection($ucs);
+    }
+
+    public function methodsClone(Request $request){
+
+        // search course unit
+        $copyCourseUnit = CourseUnit::find($request->copy_course_unit_id);
+        $courseUnit = CourseUnit::find($request->new_course_unit_id);
+
+        foreach ($copyCourseUnit->methods as $method) {
+            $newMethod = $method->replicate()->fill([
+                'academic_year_id'  => $request->cookie('academic_year'),
+                'created_at'        => null,
+                'updated_at'        => null
+            ]);
+            $newMethod->save();
+//dd($method->epochType->first()->id);
+            $newMethod->epochType()->syncWithoutDetaching($method->epochType->first()->id);
+            $newMethod->courseUnits()->sync($courseUnit);
+            $newMethod->save();
+        }
+
+        UnitLog::create([
+            "course_unit_id"    => $courseUnit->id,
+            "user_id"           => Auth::id(),
+            "description"       => "Metodos de avaliacao copiados por '" . Auth::user()->name . "' da UC '" . $copyCourseUnit->name_pt . "'."
+        ]);
+
+        return response()->json("Created/Updated!", Response::HTTP_OK);
     }
 
     public function destroy(Method $method)

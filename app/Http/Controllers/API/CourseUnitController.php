@@ -223,6 +223,7 @@ class CourseUnitController extends Controller
         $courseUnit->academicYears()->detach($request->cookie('academic_year'));
     }
 
+
     /******************************************
      *             RELATIONS CALLS
      *  - Branches
@@ -239,6 +240,7 @@ class CourseUnitController extends Controller
         return  BranchSearchResource::collection($courseUnit->course->branches);
     }
 
+
     /**
      * List teachers associated to the unit
      */
@@ -251,7 +253,6 @@ class CourseUnitController extends Controller
         }
         return  TeacherResource::collection($teachers);
     }
-
 
     public function addTeacher(Request $request, CourseUnit $courseUnit)
     {
@@ -306,6 +307,24 @@ class CourseUnitController extends Controller
         return response()->json("user removed", Response::HTTP_OK);
     }
 
+    /* Assign responsible for the Curricular Unit */
+    public function assignResponsible(Request $request, CourseUnit $courseUnit)
+    {
+        $user = User::find($request->responsible_teacher);
+        if ($user->groups()->responsible()->count() == 0) {
+            $user->groups()->syncWithoutDetaching(Group::responsible()->get());
+        }
+        $courseUnit->responsibleUser()->associate($user);
+        $courseUnit->save();
+
+        UnitLog::create([
+            "course_unit_id"    => $courseUnit->id,
+            "user_id"           => Auth::id(),
+            "description"       => "Professor responsavel por esta Unidade curricular alterado para '$user->email' por '" . Auth::user()->name . "'."
+        ]);
+    }
+
+
     /**
      * List methods associated to the unit
      */
@@ -340,24 +359,6 @@ class CourseUnitController extends Controller
 
         return response()->json($epochs);
     }
-
-
-    public function assignResponsible(Request $request, CourseUnit $courseUnit)
-    {
-        $user = User::find($request->responsible_teacher);
-        if ($user->groups()->responsible()->count() == 0) {
-            $user->groups()->syncWithoutDetaching(Group::responsible()->get());
-        }
-        $courseUnit->responsibleUser()->associate($user);
-        $courseUnit->save();
-
-        UnitLog::create([
-            "course_unit_id"    => $courseUnit->id,
-            "user_id"           => Auth::id(),
-            "description"       => "Professor responsavel por esta Unidade curricular alterado para '$user->email' por '" . Auth::user()->name . "'."
-        ]);
-    }
-
 
     /**
      * List logs associated to the unit
