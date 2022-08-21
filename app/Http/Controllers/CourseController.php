@@ -246,6 +246,12 @@ class CourseController extends Controller
     private function createOrUpdateBranches($branches, $course)
     {
         if (isset($branches)) {
+
+            $num_branchs = Branch::where('course_id', $course->id)
+                ->where('academic_year_id', $course->academic_year_id)
+                ->count();
+            $number = $num_branchs > 0 ? $num_branchs : 0;
+            $count = 0;
             foreach ($branches as $branch) {
                 if (isset($branch->id)) {
                     $existingBranch = Branch::find($branch->id);
@@ -253,6 +259,8 @@ class CourseController extends Controller
                     $existingBranch->course()->associate($course);
                 } else {
                     $newBranch = new Branch($branch);
+                    $branch->branch_number = $number + $count;
+                    $count++;
                     $newBranch->course()->associate($course);
                     $newBranch->save();
                 }
@@ -262,15 +270,37 @@ class CourseController extends Controller
 
     private function createOrUpdateSingleBranch($branch, $course)
     {
+        $num_branchs = Branch::where('course_id', $course->id)
+                ->where('academic_year_id', $course->academic_year_id)
+                ->count();
+        $number = $num_branchs > 0 ? $num_branchs : 0;
         return Branch::firstOrCreate(
             [
-                'course_id'     => $course->id,
-                'name_pt'       => $branch['name_pt'],
-                'name_en'       => $branch['name_en'],
-                'initials_pt'   => $branch['initials_pt'],
-                'initials_en'   => $branch['initials_en'],
+                'course_id'         => $course->id,
+                'academic_year_id'  => $course->academic_year_id,
+                'name_pt'           => $branch['name_pt'],
+                'name_en'           => $branch['name_en'],
+                'initials_pt'       => $branch['initials_pt'],
+                'initials_en'       => $branch['initials_en'],
+                'branch_number'     => $number
             ]
         );
+    }
+
+
+    public function branchUpdate(Request $request, Course $course){
+        if( empty($request->name_pt) || empty($request->initials_pt) || empty($request->name_en) || empty($request->initials_en) ){
+            return response()->json("Values not defined", Response::HTTP_BAD_REQUEST);
+        }
+        $branch = Branch::findOrFail($request->id);
+
+        $branch->name_pt        = $request->name_pt;
+        $branch->initials_pt    = $request->initials_pt;
+        $branch->name_en        = $request->name_en;
+        $branch->initials_en    = $request->initials_en;
+        $branch->save();
+
+        return $this->branchesList($course);
     }
 
     public function deleteBranch(Course $course, Branch $branch) {

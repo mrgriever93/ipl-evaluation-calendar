@@ -17,7 +17,7 @@ const CourseTabsBranches = ({ courseId }) => {
     const [loading, setLoading] = useState(true);
     const [loadingRequest, setLoadingRequest] = useState(false);
     const [branches, setBranches] = useState([]);
-    const [newBranch, setNewBranch] = useState({name_pt: '', initials_pt: '', name_en: '', initials_en: ''});
+    const [newBranch, setNewBranch] = useState({id: null, name_pt: '', initials_pt: '', name_en: '', initials_en: ''});
 
     const loadCourseBranches = () => {
         setLoading(true);
@@ -33,21 +33,28 @@ const CourseTabsBranches = ({ courseId }) => {
 
     const addNewBranch = () => {
         setLoadingRequest(true);
-        axios.post(`/courses/${courseId}/branch`, newBranch).then((res) => {
+        const isNew = !newBranch.id;
+        const axiosFn = isNew ? axios.post : axios.patch;
+        axiosFn(`/courses/${courseId}/branch`, newBranch).then((res) => {
             if (res.status === 200) {
                 setBranches(res.data.data);
                 toast(t('Ramo adicionado com sucesso!'), successConfig);
-                setOpenModal(false);
-                setNewBranch({name_pt: '', initials_pt: '', name_en: '', initials_en: ''});
+                closeModal();
                 setLoadingRequest(false);
             } else {
                 toast(t('Ocorreu um erro ao gravar o ramo!'), errorConfig);
             }
         });
     };
+
     const closeModal = () => {
         setOpenModal(false);
-        setNewBranch({name_pt: '', initials_pt: '', name_en: '', initials_en: ''});
+        setNewBranch({id: null, name_pt: '', initials_pt: '', name_en: '', initials_en: ''});
+    }
+
+    const editBranch = (branch) => {
+        setNewBranch(branch);
+        setOpenModal(true);
     }
 
     const removeBranch = (branchId) => {
@@ -61,19 +68,19 @@ const CourseTabsBranches = ({ courseId }) => {
             confirmButtonColor: '#21ba45',
             denyButtonColor: '#db2828',
         }).then((result) => {
-                if (result.isConfirmed) {
-                    setLoadingRequest(true);
-                    axios.delete(`/courses/${courseId}/branch/${branchId}`).then((res) => {
-                        if (res.status === 200) {
-                            setBranches(res.data.data);
-                            setLoadingRequest(false);
-                            toast(t('Ramo eliminado com sucesso!'), successConfig);
-                        } else {
-                            toast(t('Ocorreu um problema ao eliminar este ramo!'), errorConfig);
-                        }
-                    });
-                }
-            });
+            if (result.isConfirmed) {
+                setLoadingRequest(true);
+                axios.delete(`/courses/${courseId}/branch/${branchId}`).then((res) => {
+                    if (res.status === 200) {
+                        setBranches(res.data.data);
+                        setLoadingRequest(false);
+                        toast(t('Ramo eliminado com sucesso!'), successConfig);
+                    } else {
+                        toast(t('Ocorreu um problema ao eliminar este ramo!'), errorConfig);
+                    }
+                });
+            }
+        });
     };
 
     return (
@@ -107,6 +114,9 @@ const CourseTabsBranches = ({ courseId }) => {
                                 <Table.Cell>{ branch.initials_en }</Table.Cell>
                                 <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSES]}>
                                     <Table.Cell collapsing>
+                                        <Button color="yellow" icon onClick={() => editBranch(branch)}>
+                                            <Icon name={"pencil"} />
+                                        </Button>
                                         <Button color="red" icon onClick={() => removeBranch(branch.id)}>
                                             <Icon name={"trash"} />
                                         </Button>
@@ -115,18 +125,19 @@ const CourseTabsBranches = ({ courseId }) => {
                             </Table.Row>
                         ))}
                     </Table.Body>
-
-                    <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSES]}>
-                        <Table.Footer fullWidth>
-                            <Table.Row>
-                                <Table.HeaderCell colSpan='5'>
-                                    <Button floated='right' icon labelPosition='left' color={"green"} size='small' onClick={() => setOpenModal(true)} >
-                                        <Icon name='plus' /> { t("Adicionar ramo") }
-                                    </Button>
-                                </Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Footer>
-                    </ShowComponentIfAuthorized>
+                    {/*
+                        <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSES]}>
+                            <Table.Footer fullWidth>
+                                <Table.Row>
+                                    <Table.HeaderCell colSpan='5'>
+                                        <Button floated='right' icon labelPosition='left' color={"green"} size='small' onClick={() => setOpenModal(true)} >
+                                            <Icon name='plus' /> { t("Adicionar ramo") }
+                                        </Button>
+                                    </Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Footer>
+                        </ShowComponentIfAuthorized>
+                    */}
                 </Table>
             )}
 
@@ -136,18 +147,18 @@ const CourseTabsBranches = ({ courseId }) => {
                     <Modal.Content>
                         <Form>
                             <Form.Group widths={2}>
-                                <Form.Input label={ t("Nome do ramo") + " - PT" } placeholder={ t("Nome do ramo") + " - PT" } onChange={(e, {value}) => setNewBranch(newBranch => ({...newBranch, name_pt: value}))}/>
-                                <Form.Input label={ t("Iniciais do ramo") + " - PT" } placeholder={ t("Iniciais do ramo") + " - PT" } onChange={(e, {value}) => setNewBranch(newBranch => ({...newBranch, initials_pt: value}))}/>
+                                <Form.Input value={newBranch.name_pt} label={ t("Nome do ramo") + " - PT" } placeholder={ t("Nome do ramo") + " - PT" } onChange={(e, {value}) => setNewBranch(newBranch => ({...newBranch, name_pt: value}))}/>
+                                <Form.Input value={newBranch.initials_pt} label={ t("Iniciais do ramo") + " - PT" } placeholder={ t("Iniciais do ramo") + " - PT" } onChange={(e, {value}) => setNewBranch(newBranch => ({...newBranch, initials_pt: value}))}/>
                             </Form.Group>
                             <Form.Group widths={2}>
-                                <Form.Input label={ t("Nome do ramo") + " - EN" } placeholder={ t("Nome do ramo") + " - EN" } onChange={(e, {value}) => setNewBranch(newBranch => ({...newBranch, name_en: value}))}/>
-                                <Form.Input label={ t("Iniciais do ramo") + " - EN" } placeholder={ t("Iniciais do ramo") + " - EN" } onChange={(e, {value}) => setNewBranch(newBranch => ({...newBranch, initials_en: value}))}/>
+                                <Form.Input value={newBranch.name_en} label={ t("Nome do ramo") + " - EN" } placeholder={ t("Nome do ramo") + " - EN" } onChange={(e, {value}) => setNewBranch(newBranch => ({...newBranch, name_en: value}))}/>
+                                <Form.Input value={newBranch.initials_en} label={ t("Iniciais do ramo") + " - EN" } placeholder={ t("Iniciais do ramo") + " - EN" } onChange={(e, {value}) => setNewBranch(newBranch => ({...newBranch, initials_en: value}))}/>
                             </Form.Group>
                         </Form>
                     </Modal.Content>
                     <Modal.Actions>
-                        <Button negative onClick={closeModal}>{ t("Cancelar") }</Button>
-                        <Button positive onClick={addNewBranch} loading={loadingRequest}>{ t("Adicionar") }</Button>
+                        <Button floated={"left"} negative onClick={closeModal}>{ t("Cancelar") }</Button>
+                        <Button positive onClick={addNewBranch} loading={loadingRequest}>{ t((newBranch.id != null ? "Guardar" : "Adicionar")) }</Button>
                     </Modal.Actions>
                 </Modal>
             )}

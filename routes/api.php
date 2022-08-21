@@ -217,6 +217,7 @@ Route::middleware('auth:api')->group(function () {
 
         Route::get('/courses/{course}/branches',             'branchesList'     );
         Route::post('/courses/{course}/branch',              'branchAdd'        );
+        Route::patch('/courses/{course}/branch',             'branchUpdate'     );
         Route::delete('/courses/{course}/branch/{branch}',   'deleteBranch'     );
 
         Route::get('/courses/{course}/units',                'getUnits'         );

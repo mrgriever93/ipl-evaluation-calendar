@@ -80,7 +80,7 @@
 > sync webservice
 - [X] adicionar o ramo [0,1,2]
   - [X] adicionar no sync (ramo 1, ramo 2, ramo 3, ...)
-  - [ ] poder editar nomes dos ramos no detalhe do curso
+  - [X] poder editar nomes dos ramos no detalhe do curso
 
 - [X] adicionar inscritos, aprovados e reprovados (UCs)
   - [X] Adicionar campos na tabela da bd
