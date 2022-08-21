@@ -11,6 +11,8 @@ import ShowComponentIfAuthorized, {useComponentIfAuthorized} from '../../compone
 import {successConfig, errorConfig} from '../../utils/toastConfig';
 import EmptyTable from "../../components/EmptyTable";
 import Semesters from "../../components/Filters/Semesters";
+import CurricularYears from "../../components/Filters/CurricularYears";
+import GroupUnits from "../../components/Filters/GroupUnits";
 import Courses from "../../components/Filters/Courses";
 import FilterOptionPerPage from "../../components/Filters/PerPage";
 import PaginationDetail from "../../components/Pagination";
@@ -28,11 +30,14 @@ const CourseUnitsList = () => {
     const [contentLoading, setContentLoading] = useState(true);
 
     const [courseFilter, setCourseFilter] = useState();
-    const [courseUnitAllFilter, setCourseUnitAllFilter] = useState();
+    const [courseUnitAllFilter, setCourseUnitAllFilter] = useState(false);
     const [semesterFilter, setSemesterFilter] = useState();
+    const [curricularYearFilter, setCurricularYearFilter] = useState();
+    const [groupUnitFilter, setGroupUnitFilter] = useState();
     const [searchFilter, setSearchFilter] = useState();
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+    const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
     useEffect(() => {
         if(searchCourse){
@@ -43,10 +48,12 @@ const CourseUnitsList = () => {
     const fetchCourseUnits = () => {
         setContentLoading(true);
         let link = '/course-units?page=' + currentPage;
-        link += (semesterFilter         ? '&semester='  + semesterFilter        : '');
-        link += (courseFilter           ? '&course='    + courseFilter          : '');
-        link += (searchFilter           ? '&search='    + searchFilter          : '');
-        link += (courseUnitAllFilter    ? '&show_all='  + courseUnitAllFilter   : '');
+        link += (semesterFilter         ? '&semester='          + semesterFilter        : '');
+        link += (courseFilter           ? '&course='            + courseFilter          : '');
+        link += (curricularYearFilter   ? '&curricular_year='   + curricularYearFilter  : '');
+        link += (groupUnitFilter        ? '&group_unit='        + groupUnitFilter       : '');
+        link += (searchFilter           ? '&search='            + searchFilter          : '');
+        link += (courseUnitAllFilter    ? '&show_all='          + courseUnitAllFilter   : '');
         link += '&per_page=' + perPage;
 
         axios.get(link).then((response) => {
@@ -65,7 +72,7 @@ const CourseUnitsList = () => {
         } else {
             setCurrentPage(1);
         }
-    }, [semesterFilter, courseFilter, searchFilter, courseUnitAllFilter]);
+    }, [semesterFilter, courseFilter, curricularYearFilter, groupUnitFilter, searchFilter, courseUnitAllFilter]);
 
     useEffect(() => {
         fetchCourseUnits();
@@ -110,6 +117,19 @@ const CourseUnitsList = () => {
         setSemesterFilter(value);
     };
 
+    const filterByCurricularYear = (value) => {
+        setCurricularYearFilter(value);
+    };
+
+    const filterByGroupUnit = (value) => {
+        setGroupUnitFilter(value);
+    }; 
+
+    const toggleAdvancedFilters = (event) => {
+        event.preventDefault();
+        setShowAdvancedFilters(!showAdvancedFilters);
+    };
+
     const columns = [
         {name: t('Nome')},
         {
@@ -145,16 +165,32 @@ const CourseUnitsList = () => {
                     <Form>
                         <Form.Group>
                             <Form.Input icon='search' iconPosition='left' width={5} onChange={_.debounce(handleSearchCourseUnits, 400)} placeholder={t("Pesquisar por nome")} label={t("Pesquisar por nome")} />
-                            <Courses widthSize={5} eventHandler={filterByCourse} />
-                            <Semesters widthSize={3} eventHandler={filterBySemester} withSpecial={false} />
-                            <Form.Field width={2}>
-                                <label>Todas as UCs</label>
-                                <Form.Field>
-                                    <Checkbox onChange={(e, {checked}) => filterByAllCourseUnits(checked) }/>
-                                </Form.Field>
+                            <Form.Field width={9}>
+                                <div className='margin-top-l'>
+                                    <a href="#" onClick={toggleAdvancedFilters}>
+                                        { t('Filtros avançandos') }
+                                        <Icon name='angle down' />
+                                    </a>
+                                </div>
                             </Form.Field>
                             <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                         </Form.Group>
+                        { showAdvancedFilters && (
+                            <Form.Group>
+                                <Courses widthSize={4} eventHandler={filterByCourse} />
+                                <GroupUnits widthSize={3} eventHandler={filterByGroupUnit} />
+                                <Semesters widthSize={3} eventHandler={filterBySemester} withSpecial={false} />
+                                <CurricularYears widthSize={2} eventHandler={filterByCurricularYear}/>
+                                
+                                <Form.Field width={4}>
+                                    <label>{ t("UCs visíveis")}</label>
+                                    <Button.Group fluid>
+                                        <Button positive={!courseUnitAllFilter} onClick={(e) => filterByAllCourseUnits(false)}>{ t("Apenas as minhas") }</Button>
+                                        <Button positive={courseUnitAllFilter} onClick={(e) => filterByAllCourseUnits(true)}>{ t("Todas") }</Button>
+                                    </Button.Group>
+                                </Form.Field>
+                            </Form.Group>
+                        )}
                     </Form>
                 </Card.Content>
                 <Card.Content>
