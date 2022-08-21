@@ -118,7 +118,7 @@ const CourseUnitsList = () => {
             permission: [SCOPES.VIEW_UC_GROUPS],
         },
         {name: t('Outros'), align: 'center', style: {width: '15%'} },
-        {name: t('Ramo'),   align: 'center', style: {width: '8%'}  },
+        {name: t('Ramo'),   align: 'center', style: {width: '11%'}  },
         {
             name: t('Ações'),
             align: 'center',
@@ -183,7 +183,7 @@ const CourseUnitsList = () => {
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
-                                    {courseUnits.map(({id, name, code, has_methods, has_responsable, branch_label, has_branch, group_name, course_description, curricularYear, semester}) => (
+                                    {courseUnits.map(({id, name, code, has_methods, has_responsable, branch_label, has_branch, group_name, group_id, course_description, curricularYear, semester}) => (
                                         <Table.Row key={id} warning={ (useComponentIfAuthorized(SCOPES.EDIT_COURSE_UNITS) ? (!has_methods || !has_responsable) : false) }>
                                             <Table.Cell>
                                                 <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]}>
@@ -200,7 +200,14 @@ const CourseUnitsList = () => {
                                                 ({code}) - {name}
                                             </Table.Cell>
                                             <ShowComponentIfAuthorized permission={[SCOPES.VIEW_UC_GROUPS]}>
-                                                <Table.Cell>{group_name || '-'}</Table.Cell>
+                                                <Table.Cell>
+                                                    { group_name || "-" }
+                                                    { group_id && (
+                                                        <Link target={"_blank"} to={`/agrupamento-unidade-curricular/edit/${group_id}`} className={"margin-left-xs"}>
+                                                            <Icon name={"external alternate"} />
+                                                        </Link>
+                                                    )}
+                                                </Table.Cell>
                                             </ShowComponentIfAuthorized>
                                             <Table.Cell>
                                                 <List verticalAlign='middle'>
