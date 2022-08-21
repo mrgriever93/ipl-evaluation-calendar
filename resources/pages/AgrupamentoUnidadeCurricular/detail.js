@@ -40,7 +40,7 @@ const New = () => {
                     value: x.value,
                     text: x.text,
                     disabled: x.has_methods,
-                    description: (x.has_methods ? t("Métodos já definidos") : undefined)
+                    description: (x.has_methods ? t("Métodos já definidos") + " - " : "") + x.year + " " + t("Ano")
                 })));
             }
         });

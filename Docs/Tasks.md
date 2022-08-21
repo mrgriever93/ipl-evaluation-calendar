@@ -74,6 +74,8 @@
 
 - [ ] Na listagem, os agrupamentos não mostra nada. Parece que não vem do servidor o "group_name"
 
+
+# Done - Last Push
 > Login
 - [X] Validar anos quando entramos e somos associados a um curso
 

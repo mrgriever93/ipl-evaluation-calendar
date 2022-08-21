@@ -183,7 +183,6 @@ const CourseUnitsList = () => {
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
-                                    { console.log(courseUnits) }
                                     {courseUnits.map(({id, name, code, has_methods, has_responsable, branch_label, has_branch, group_name, course_description, curricularYear, semester}) => (
                                         <Table.Row key={id} warning={ (useComponentIfAuthorized(SCOPES.EDIT_COURSE_UNITS) ? (!has_methods || !has_responsable) : false) }>
                                             <Table.Cell>

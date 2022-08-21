@@ -15,6 +15,7 @@ class CourseUnitSearchResource extends JsonResource
             'value' => $this->id,
             'text'  => "($this->code) " . ($lang_header == "en" ? $this->name_en : $this->name_pt),
             'has_methods'   => $this->methods->count() > 0,
+            'year'  => $this->curricular_year
         ];
     }
 }
