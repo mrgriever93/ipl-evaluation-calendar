@@ -49,7 +49,7 @@ class CalendarService
         }
 
         foreach ($courses as $key => $course) {
-            $newCalendar = new Calendar($request->safe());
+            $newCalendar = new Calendar($request->safe()->toArray());
             $newCalendar->version = 0.0;
             // To make sure that the calendar starts with the right flags
             $newCalendar->is_temporary = 0;

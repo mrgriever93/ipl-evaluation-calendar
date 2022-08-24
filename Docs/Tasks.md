@@ -4,9 +4,11 @@
 - [ ] Listar "todos" os calendarios, so deve devolver os publicados (definitivos ou temporarios)
 
 > criacao calendario
-- [ ] avisar caso curso ja tenha calendario
+- [X] avisar caso curso ja tenha calendario
+  - Mostra se tem calendario para o ano letivo e para a epoca escolhida
+- [X] adicionar os cursos sem tipo de curso
+  - Adicionada opcao "sem curso"
 - [ ] selecionar todos os cursos (filtrados)
-- [ ] adicionar os cursos sem tipo de curso
 
 
 > Detalhe Calendario
@@ -49,11 +51,12 @@
 - [ ] Rever quem pode ou não adicionar comentários e se deve estar associado às fases
 
 > Metodos
-- [ ] copiar metodos de outros anos
-- [ ] copiar de outros cursos (ex: D/PL)
+- [X] copiar metodos de outros anos
+- [X] copiar de outros cursos (ex: D/PL)
 
 > Publicacao de Calendario
-- [ ] Enviar email
+- [X] Enviar email
+  - Enviar so para estudantes, ou tambem para os professores?
 
 > UCs Agrupadas
 - [ ] ao marcar uma avaliacao, ira marcar nos calendarios dos cursos que estao associados a essa UC agrupada

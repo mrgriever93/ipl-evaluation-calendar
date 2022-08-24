@@ -81,6 +81,10 @@
         
         $> npm run dev          // compile once
 
+
+12) Preview sent emails:
+    After having the docker with sail running, you can go to this link http://localhost:8025/ and preview the email sent.
+
 12) Plugins
 
    [Translations](https://react.i18next.com/)

@@ -2,15 +2,12 @@
 
 namespace App\Events;
 
-use App\Models\AcademicYear;
+use App\Mail\CalendarPublishedEmail;
 use App\Models\Calendar;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Mail;
 
 class CalendarPublished
 {
@@ -26,5 +23,14 @@ class CalendarPublished
     public function __construct(Calendar $calendar)
     {
         $this->calendar = $calendar;
+
+        //$users = $calendar->course()->students()->pluck('email');
+        $students = $calendar->course->students()->pluck('email')->join(', ');//->toArray();
+        // TODO > send to teachers as well? Or just students?
+        //foreach ($students as $recipient) {
+        if($students != "") {
+            Mail::bcc($students)->send(new CalendarPublishedEmail($calendar));//queue
+        }
+        //}
     }
 }
