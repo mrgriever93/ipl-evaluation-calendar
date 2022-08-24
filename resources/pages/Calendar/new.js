@@ -75,6 +75,8 @@ const NewCalendar = () => {
     const [additionalInterruptions, setAdditionalInterruptions] = useState([]);
     const [tenWeekDate, setTenWeekDate] = useState();
 
+    const [selectedEpoch, SetSelectedEpoch] = useState();
+
     const addCourse = (course) => {
         setCourses([...courses, {...course}]);
     };
@@ -145,6 +147,8 @@ const NewCalendar = () => {
             // clear next steps because of changes
             setCompletedSteps([...completedSteps.filter((step) => step < 1)]);
             setMaxStep(1);
+        } else {
+            SetSelectedEpoch(values.semester);
         }
 
         return isValid;
@@ -368,7 +372,7 @@ const NewCalendar = () => {
                                            additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} removeAdditionalInterruptions={removeInterruption} />
                                 </div>
                                 <div className={currentStep === 3 ? "display-block" : "display-none"}>
-                                    <Step3 allCourses={allCourses} setAllCourses={setAllCourses} courses={courses} removeCourse={removeCourse} addCourse={addCourse} loading={loading} setLoading={setLoading}/>
+                                    <Step3 allCourses={allCourses} epoch={selectedEpoch} setAllCourses={setAllCourses} courses={courses} removeCourse={removeCourse} addCourse={addCourse} loading={loading} setLoading={setLoading}/>
                                 </div>
                             </Form>
                         </Card.Content>

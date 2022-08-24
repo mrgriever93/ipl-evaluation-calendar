@@ -1,6 +1,20 @@
 import _ from 'lodash';
 import React, {useEffect, useState} from 'react';
-import {Button, Container, Header, Dimmer, Form, Grid, Divider, Icon, Card, Label, Loader, Table} from 'semantic-ui-react';
+import {
+    Button,
+    Container,
+    Header,
+    Dimmer,
+    Form,
+    Grid,
+    Divider,
+    Icon,
+    Card,
+    Label,
+    Loader,
+    Table,
+    Popup
+} from 'semantic-ui-react';
 import {useField} from 'react-final-form';
 import axios from "axios";
 import PaginationDetail from "../../../components/Pagination";
@@ -8,7 +22,7 @@ import FilterOptionPerPage from "../../../components/Filters/PerPage";
 import {useTranslation} from "react-i18next";
 import FilterOptionDegree from "../../../components/Filters/Degree";
 
-const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loading, setLoading}) => {
+const Step3 = ({allCourses, setAllCourses, courses, removeCourse, epoch, addCourse, loading, setLoading}) => {
     const { t } = useTranslation();
     const {input: coursesFieldInput} = useField('step3.courses');
     const [courseList, setCourseList] = useState([]);
@@ -38,7 +52,7 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
         } else {
             setCurrentPage(1);
         }
-    }, [courseSearch, perPage, degree]);
+    }, [courseSearch, perPage, degree, epoch]);
 
     const fetchCourses = () => {
         setLoading(true);
@@ -46,6 +60,7 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
         let searchLink = `/courses?page=${currentPage}`;
         searchLink += `${courseSearch ? `&search=${courseSearch}` : ''}`;
         searchLink += `${degree ? `&degree=${degree}` : ''}`;
+        searchLink += `${epoch ? `&epoch=${epoch}` : ''}`;
         searchLink += '&per_page=' + perPage;
         //searchLink += `${school ? `&school=${school}` : ''}`;
         //searchLink += `${degree ? `&degree=${degree}` : ''}`;
@@ -68,7 +83,7 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
             <Card.Content>
                 <Form.Group>
                     <Form.Input width={6} label={t("Pesquisar curso (Código, Sigla ou Nome)")} placeholder={ t("Pesquisar...") } fluid onChange={_.debounce(searchCourse, 900)}/>
-                    <FilterOptionDegree widthSize={5} eventHandler={(value) => setDegree(value)}/>
+                    <FilterOptionDegree widthSize={5} showAllDegrees={true} eventHandler={(value) => setDegree(value)}/>
                     <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                 </Form.Group>
             </Card.Content>
@@ -104,10 +119,13 @@ const Step3 = ({allCourses, setAllCourses, courses, removeCourse, addCourse, loa
                                 </Table.Header>
                                 <Table.Body>
                                     {courseList.map((course, index) => (
-                                        <Table.Row key={index}>
+                                        <Table.Row key={index} warning={course.has_calendar}>
                                             <Table.Cell>{course.code}</Table.Cell>
                                             <Table.Cell>{course.initials}</Table.Cell>
-                                            <Table.Cell>{course.name}</Table.Cell>
+                                            <Table.Cell>
+                                                {course.has_calendar && (<Popup trigger={<Icon name="warning sign" />} content={(<div>{t("Já tem calendário")}</div>)} position='top center'/>)}
+                                                {course.name}
+                                            </Table.Cell>
                                             <Table.Cell>
                                                 { ( !!courses.find(({id: courseId}) => courseId === course.id) ? (
                                                     <Button onClick={() => removeCourse(course.id)} color="red">{ t("Remover") }</Button>
