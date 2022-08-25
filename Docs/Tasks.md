@@ -4,12 +4,7 @@
 - [ ] Listar "todos" os calendarios, so deve devolver os publicados (definitivos ou temporarios)
 
 > criacao calendario
-- [X] avisar caso curso ja tenha calendario
-  - Mostra se tem calendario para o ano letivo e para a epoca escolhida
-- [X] adicionar os cursos sem tipo de curso
-  - Adicionada opcao "sem curso"
 - [ ] selecionar todos os cursos (filtrados)
-
 
 > Detalhe Calendario
 - [ ] filtrar UCs num calendario, que esteja neste WebService
@@ -50,13 +45,6 @@
 - [X] Rever quem pode ver detalhe de UC
 - [ ] Rever quem pode ou não adicionar comentários e se deve estar associado às fases
 
-> Metodos
-- [X] copiar metodos de outros anos
-- [X] copiar de outros cursos (ex: D/PL)
-
-> Publicacao de Calendario
-- [X] Enviar email
-  - Enviar so para estudantes, ou tambem para os professores?
 
 > UCs Agrupadas
 - [ ] ao marcar uma avaliacao, ira marcar nos calendarios dos cursos que estao associados a essa UC agrupada
@@ -71,16 +59,12 @@
 > Qualquer Lista
 - [ ] validar os filtros
 
-> Listagem de UCs
-- [X] Adicionar Ano de UC na lista (lista ucs e lista de ucs no curso)
-  - [ ] Adicionar ano letivo onde acharmos necessario para distinguir a cadeira
-
-- [X] Na listagem, os agrupamentos não mostra nada. Parece que não vem do servidor o "group_name"
-
 
 # Done - Last Push
+
 > Login
 - [X] Validar anos quando entramos e somos associados a um curso
+
 
 > sync webservice
 - [X] adicionar o ramo [0,1,2]
@@ -91,6 +75,31 @@
   - [X] Adicionar campos na tabela da bd
   - [X] Adicionar campos de sync na tabela da escola
   - [X] Adicionar registo no sync 
+
+
+> Metodos
+- [X] copiar metodos de outros anos
+- [X] copiar de outros cursos (ex: D/PL)
+
+
+> Publicacao de Calendario
+- [X] Enviar email
+    - Enviar so para estudantes, ou tambem para os professores?
+
+
+> Listagem de UCs
+- [X] Adicionar Ano de UC na lista (lista ucs e lista de ucs no curso)
+    - [X] Adicionar ano letivo onde acharmos necessario para distinguir a cadeira
+
+- [X] Na listagem, os agrupamentos não mostra nada. Parece que não vem do servidor o "group_name"
+
+
+> criacao calendario
+- [X] avisar caso curso ja tenha calendario
+    - Mostra se tem calendario para o ano letivo e para a epoca escolhida
+- [X] adicionar os cursos sem tipo de curso
+    - Adicionada opcao "Sem curso"
+
 
 
 ---
