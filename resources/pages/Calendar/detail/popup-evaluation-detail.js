@@ -3,12 +3,26 @@ import _ from 'lodash';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
-import { Button, Form, Header, Icon, List, Modal, Comment, Divider, Segment, Dimmer, Loader } from 'semantic-ui-react';
+import {
+    Button,
+    Form,
+    Header,
+    Icon,
+    List,
+    Modal,
+    Comment,
+    Divider,
+    Segment,
+    Dimmer,
+    Loader,
+    Dropdown
+} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 
 import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
 import SCOPES from '../../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
+import {Link} from "react-router-dom";
 
 const PopupEvaluationDetail = ( {isPublished, isOpen, currentPhaseId, onClose, examId} ) => {
     // const history = useNavigate();
@@ -39,6 +53,21 @@ const PopupEvaluationDetail = ( {isPublished, isOpen, currentPhaseId, onClose, e
                 toast(t('Ocorreu um erro no load da avaliação'), errorConfig);
                 toast(error, errorConfig);
             });
+    };
+
+    const getCalendarEvent = (type) => {
+        axios.get(`/exams/${examId}/calendar-event?type=${type}`).then((response) => {
+            if (response?.status >= 200) {
+                console.log(response.data);
+                window.open(response.data);//, '_blank');//.focus();
+
+                var blob = new Blob([icsMSG], { type: 'text/calendar;charset=utf-8' });
+                window.navigator.msSaveOrOpenBlob(blob, 'download.ics');
+            }
+        }).catch((error) => {
+            toast(t('Ocorreu um erro no load do evento do calendario'), errorConfig);
+            toast(error, errorConfig);
+        });
     };
 
     const closeModalHandler = () => {
@@ -317,6 +346,19 @@ const PopupEvaluationDetail = ( {isPublished, isOpen, currentPhaseId, onClose, e
                 )}
             </Modal.Content>
             <Modal.Actions>
+                <Button.Group color='teal' floated={"left"}>
+                    <Button href={"/exams/" + examId + "/calendar-event"} target={"_blank"}><Icon name={"calendar plus outline"} /> { t("Download evento") }</Button>
+                    <Dropdown floating  className='button icon' trigger={<></>}>
+                        <Dropdown.Menu>
+                            <Dropdown.Item onClick={() => getCalendarEvent("google") }>     <Icon name={"google"} /> Google</Dropdown.Item>
+                            <Dropdown.Item onClick={() => getCalendarEvent("yahoo") }>      <Icon name={"yahoo"} /> Yahoo</Dropdown.Item>
+                            <Dropdown.Item onClick={() => getCalendarEvent("webOutlook") }> <Icon name={"microsoft"} /> Evento webOutlook</Dropdown.Item>
+                            <Dropdown.Item onClick={() => getCalendarEvent("webOffice") }>  <Icon name={"microsoft"} /> Evento webOffice</Dropdown.Item>
+                            <Dropdown.Item  href={"/exams/" + examId + "/calendar-event?type=ics"} target={"_blank"}><Icon name={"file outline"} /> Ficheiro ICS</Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+                </Button.Group>
+
                 { commentsList?.filter((x) => (x.ignored)).length > 0 && (
                     <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COMMENTS]}>
                         <Button icon floated='left' color={!showIgnoredComments ? 'green' : 'red'} labelPosition="left" onClick={() => setShowIgnoredComments((cur) => !cur)}>

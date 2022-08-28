@@ -88,6 +88,11 @@ Route::middleware('auth:api')->group(function () {
         Route::patch('/calendar/{calendar}',                'update'           );
         Route::delete('/calendar/{calendar}',               'destroy'          );
 
+        Route::post('/calendar/{calendar}/approval',         'approval'            );
+
+        Route::post('/calendar/{calendar}/publish',         'publish'              );
+        Route::post('/calendar/{calendar}/copy',            'copyCalendar'         );
+
         Route::get('/calendar/{calendar}/warnings',         'getCalendarWarnings');
         /* Previous Methods */
         Route::get('/available-methods/{calendar}',         'getAvailableMethods'  );
@@ -96,10 +101,6 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/new-calendar/semesters',               'calendarSemesters'    );
         Route::get('/new-calendar/interruptions',           'calendarInterruptions');
 
-        Route::post('/calendar/{calendar}/approval',         'approval'            );
-
-        Route::post('/calendar/{calendar}/publish',         'publish'              );
-        Route::post('/calendar/{calendar}/copy',            'copyCalendar'         );
         Route::get('/calendar-phases-full',                 'phases'               );
         Route::get('/calendar-phases-full/groups',          'phasesGroups'         );
     });
@@ -151,11 +152,12 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::controller(ExamController::class)->group(function () {
-        Route::get('/exams/{exam}',           'show'   );
-        Route::post('/exams',                 'store'  );
-        Route::patch('/exams/{exam}',         'update' );
-        Route::delete('/exams/date/{calendar}/{date}',   'destroyByDate');
-        Route::delete('/exams/{exam}',        'destroy');
+        Route::get('/exams/{exam}',                     'show'        );
+        Route::get('/exams/{exam}/calendar-event',      'icsDownload' );
+        Route::post('/exams',                           'store'       );
+        Route::patch('/exams/{exam}',                   'update'      );
+        Route::delete('/exams/date/{calendar}/{date}',  'destroyByDate');
+        Route::delete('/exams/{exam}',                  'destroy');
     });
 
     Route::controller(ExamCommentController::class)->group(function () {

@@ -81,9 +81,29 @@ const NewCalendar = () => {
         setCourses([...courses, {...course}]);
     };
 
+    const addCoursesList = (coursesList) => {
+        const uniqueIds = [];
+        const fullCourses = [ ...courses, ...coursesList];
+
+        const uniqueCourses = fullCourses.filter(element => {
+            const isDuplicate = uniqueIds.includes(element.id);
+            if (!isDuplicate) {
+                uniqueIds.push(element.id);
+                return true;
+            }
+            return false;
+        });
+
+        setCourses(uniqueCourses);
+        //setCourses([...courses, ...coursesList]);
+    };
+
     const removeCourse = (id) => {
         setCourses([...courses.filter((course) => course.id !== id)]);
     };
+    const clearAllCourses = () => {
+        setCourses([]);
+    }
 
     const setTenWeek = (date) => {
         setTenWeekDate(date);
@@ -372,7 +392,9 @@ const NewCalendar = () => {
                                            additionalInterruptions={additionalInterruptions} setAdditionalInterruptions={setAdditionalInterruptions} removeAdditionalInterruptions={removeInterruption} />
                                 </div>
                                 <div className={currentStep === 3 ? "display-block" : "display-none"}>
-                                    <Step3 allCourses={allCourses} epoch={selectedEpoch} setAllCourses={setAllCourses} courses={courses} removeCourse={removeCourse} addCourse={addCourse} loading={loading} setLoading={setLoading}/>
+                                    <Step3 allCourses={allCourses} epoch={selectedEpoch} setAllCourses={setAllCourses} courses={courses}
+                                           removeCourse={removeCourse} addCourse={addCourse} addMultiCourses={addCoursesList} clearCourses={clearAllCourses}
+                                           loading={loading} setLoading={setLoading}/>
                                 </div>
                             </Form>
                         </Card.Content>

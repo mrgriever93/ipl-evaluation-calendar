@@ -44,7 +44,7 @@ class CourseController extends Controller
         }
         $courseList->filter($filters);
 
-        return CourseListResource::collection($courseList->paginate($perPage));
+        return CourseListResource::collection( ( $perPage == "all" ? $courseList->get() : $courseList->paginate($perPage) ) );
     }
 
     /**

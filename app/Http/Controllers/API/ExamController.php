@@ -11,7 +11,10 @@ use App\Models\CourseUnitGroup;
 use App\Models\Epoch;
 use App\Models\Exam;
 use App\Models\Method;
+use Carbon\Carbon;
 use Illuminate\Http\Response;
+use Spatie\CalendarLinks\Link;
+use Illuminate\Http\Request;
 
 class ExamController extends Controller
 {
@@ -24,6 +27,64 @@ class ExamController extends Controller
     {
         return new ExamResource($exam::with(['courseUnit', 'comments'])->find($exam->id));
     }
+
+    public function icsDownload(Request $request, Exam $exam)
+    {
+        $eventExam = $exam;//$exam::with(['courseUnit'])->find($exam->id);
+
+        $from = \DateTime::createFromFormat('Y-m-d H:i:s', $eventExam->date_start);
+        $to = \DateTime::createFromFormat('Y-m-d H:i:s', $eventExam->date_end);
+
+        if ($request->header("lang") == "en") {
+            $title = "Evaluation for '" . trim($eventExam->courseUnit->name_en) . "'";
+            $description = ($eventExam->in_class ? "This evaluation will occur during the class time" : "The room(s) where the evaluation will occurr are: '" . $eventExam->room . "'");
+            $description .= "\n\rThe evaluation that will be made is: '" . $eventExam->method->description_en . "'";
+            $description .= "\n\rObservations: \n\r " . $eventExam->observations_en;
+        } else {
+            $title = "Avaliação para '" . trim($eventExam->courseUnit->name_pt) . "'";
+            $description = ($eventExam->in_class ? "A avaliação irá decorrer durante o horario da aula" : "A(s) sala(s) onde a avaliação irá decorrer: '" . $eventExam->room . "'");
+            $description .= "\n\rA avaliação que irá decorrer é: '" . $eventExam->method->description_pt . "'";
+            $description .= "\n\rObservações: \n\r " . $eventExam->observations_pt;
+        }
+
+        if ($eventExam->in_class) {
+            $link = Link::createAllDay($title, $from, $to);
+        } else {
+            $link = Link::create($title, $from, $to);
+        }
+        $link->description($description);
+        // $link->address('Kruikstraat 22, 2018 Antwerpen');
+
+        if(!$request->has('type')){
+            return $link->ics();
+        }
+        // Generate a link to create an event on Google calendar
+        if($request->type == "google"){
+            return $link->google();
+        }
+        // Generate a link to create an event on Yahoo calendar
+        if($request->type == "yahoo") {
+            return $link->yahoo();
+        }
+        // Generate a link to create an event on outlook.live.com calendar
+        if($request->type == "webOutlook"){
+            return $link->webOutlook();
+        }
+        // Generate a link to create an event on outlook.office.com calendar
+        if($request->type == "webOffice") {
+            return $link->webOffice();
+        }
+        // Generate a data uri for an ics file (for iCal & Outlook)
+        if($request->type == "ics") {
+            return $link->ics();
+        }
+        // Generate a data URI using arbitrary generator:
+        //if($request->type == "google") {
+        //    return $link->formatWith(new \Your\Generator());
+        //}
+        return $link->ics();
+    }
+
 
     public function store(NewExamRequest $request)
     {

@@ -1,9 +1,7 @@
 <?php
 
 use App\Http\Controllers\ReactController;
-use App\Mail\CalendarPublishedEmail;
 use Felix\RickRoll\Facades\RickRoll;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
@@ -48,5 +46,6 @@ Route::get('/mailable/send', function () {
     }
 });
 */
+Route::get('/exams/{exam}/calendar-event', [ReactController::class, 'icsDownload']);
 Route::get('/calendario/{id}', [ReactController::class, 'index'])->name('calendar-detail');
 Route::get('/{any}', [ReactController::class, 'index'])->where('any', '.*');
