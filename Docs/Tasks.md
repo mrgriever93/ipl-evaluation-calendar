@@ -3,14 +3,9 @@
 > Lista Calendarios
 - [ ] Listar "todos" os calendarios, so deve devolver os publicados (definitivos ou temporarios)
 
-> criacao calendario
-- [X] selecionar todos os cursos (filtrados)
-
 > Detalhe Calendario
 - [ ] filtrar UCs num calendario, que esteja neste WebService
   > http://www.dei.estg.ipleiria.pt/intranet/horarios/ws/inscricoes/inscricoes_cursos_json.php?anoletivo=202122&cod_curso=9119&cod_aluno=2192779
-
-- [X] Adicionar ICS quando se ve detalhe de avaliacao
 
 - [ ] Se for um curso sem tipo, mostra a opcao de exportar as avaliacoes para outros calendarios criados, e a opcoa de selecionar as avaliacoes criadas
     - [ ] Filtragem de UCs
@@ -99,8 +94,10 @@
     - Mostra se tem calendario para o ano letivo e para a epoca escolhida
 - [X] adicionar os cursos sem tipo de curso
     - Adicionada opcao "Sem curso"
+- [X] selecionar todos os cursos (filtrados)
 
-
+> detalhe calendario
+- [X] Adicionar ICS quando se ve detalhe de avaliacao
 
 ---
 ## Issues
