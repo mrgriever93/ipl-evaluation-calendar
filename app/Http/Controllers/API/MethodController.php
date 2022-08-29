@@ -118,28 +118,49 @@ class MethodController extends Controller
     }
 
     public function methodsClone(Request $request){
+        return $this->cloneMethod($request->copy_course_unit_id, $request->new_course_unit_id, $request->cookie('academic_year'));
+    }
 
+    public function methodsCloneGrouped(Request $request){
         // search course unit
-        $copyCourseUnit = CourseUnit::find($request->copy_course_unit_id);
-        $courseUnit = CourseUnit::find($request->new_course_unit_id);
+        $courseUnitGroup = CourseUnitGroup::find($request->course_unit_group_id);
+        $groupCourseUnits = $courseUnitGroup->courseUnits()->get();
 
+        return $this->cloneMethod($request->copy_course_unit_id, null, $request->cookie('academic_year'), $groupCourseUnits, $courseUnitGroup->id);
+    }
+
+    private function cloneMethod($old_course_unit_id, $new_course_unit_id, $academic_year_id, $grouped = null, $group_id = null)
+    {
+        // search course unit
+        $copyCourseUnit = CourseUnit::find($old_course_unit_id);
+        if(!$grouped) {
+            $courseUnit = CourseUnit::find($new_course_unit_id);
+        }
         foreach ($copyCourseUnit->methods as $method) {
             $newMethod = $method->replicate()->fill([
-                'academic_year_id'  => $request->cookie('academic_year'),
+                'academic_year_id'  => $academic_year_id,
                 'created_at'        => null,
                 'updated_at'        => null
             ]);
             $newMethod->save();
-//dd($method->epochType->first()->id);
+
             $newMethod->epochType()->syncWithoutDetaching($method->epochType->first()->id);
-            $newMethod->courseUnits()->sync($courseUnit);
-            $newMethod->save();
+            if($grouped) {
+                foreach ($grouped as $groupCourseUnit) {
+                    $newMethod->courseUnits()->syncWithoutDetaching($groupCourseUnit);
+                    $newMethod->save();
+                }
+            } else {
+                $newMethod->courseUnits()->sync($courseUnit);
+                $newMethod->save();
+            }
         }
 
         UnitLog::create([
-            "course_unit_id"    => $courseUnit->id,
-            "user_id"           => Auth::id(),
-            "description"       => "Metodos de avaliacao copiados por '" . Auth::user()->name . "' da UC '" . $copyCourseUnit->name_pt . "'."
+            "course_unit_group_id"  => ($grouped ? $group_id : null),
+            "course_unit_id"        => (!$grouped ? $courseUnit->id : null),
+            "user_id"               => Auth::id(),
+            "description"           => "Metodos de avaliacao copiados por '" . Auth::user()->name . "' da UC '" . $copyCourseUnit->name_pt . "'."
         ]);
 
         return response()->json("Created/Updated!", Response::HTTP_OK);

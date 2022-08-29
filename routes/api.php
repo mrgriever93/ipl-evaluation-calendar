@@ -199,6 +199,8 @@ Route::middleware('auth:api')->group(function () {
 
         Route::get('/method/copy',              'methodsToCopy' );
         Route::post('/method/clone',            'methodsClone'  );
+        Route::post('/method/clone-grouped',    'methodsCloneGrouped'  );
+
     });
 
     Route::controller(InterruptionController::class)->group(function () {

@@ -45,7 +45,8 @@
 - [ ] ao marcar uma avaliacao, ira marcar nos calendarios dos cursos que estao associados a essa UC agrupada
 
 **old**
-- [ ] Copiar Metodos de outras cadeiras (talvez popup com pesquisa de UC e ano letivo (deixar de anos anteriores))
+- [X] Copiar Metodos de outras cadeiras (talvez popup com pesquisa de UC e ano letivo (deixar de anos anteriores))
+  - [ ] Confirmar exames no calendario se nao existe conflito entre calendarios
 
 > Todas as paginas
 - [ ] Rever traduções
@@ -161,6 +162,7 @@
 - [ ] Limpeza "Requests Folder"
 
 ---
+
 # Done
 - [X] No curso, qdo pede para rever cenas tipo Coordenador:
     - [X]  Dps de preencheres e gravar n atualiza para tirar o erro
