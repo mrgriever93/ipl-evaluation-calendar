@@ -25,6 +25,10 @@ return new class extends Migration
             $table->string('initials_en');
             $table->foreign('course_id')->references('id')->on('courses');
 
+            $table->string('branch_number');
+            $table->unsignedBigInteger('academic_year_id');
+            $table->foreign('academic_year_id')->references('id')->on('academic_years');
+
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });

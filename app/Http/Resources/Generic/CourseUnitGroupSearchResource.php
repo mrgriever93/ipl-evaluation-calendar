@@ -4,7 +4,7 @@ namespace App\Http\Resources\Generic;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CourseUnitSearchResource extends JsonResource
+class CourseUnitGroupSearchResource extends JsonResource
 {
     public function toArray($request)
     {
@@ -13,9 +13,7 @@ class CourseUnitSearchResource extends JsonResource
         return [
             'key'   => $this->id,
             'value' => $this->id,
-            'text'  => "($this->code) " . ($lang_header == "en" ? $this->name_en : $this->name_pt),
-            'has_methods'   => $this->methods->count() > 0,
-            'year'  => $this->curricular_year
+            'text'  => ($request->header("lang") == "en" ? $this->description_en : $this->description_pt)
         ];
     }
 }

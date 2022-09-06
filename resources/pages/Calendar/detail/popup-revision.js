@@ -7,6 +7,12 @@ const PopupRevisionDetail = ( {isOpen, onClose, warnings} ) => {
     // const history = useNavigate();
     const { t } = useTranslation();
 
+    let selectedLanguage = localStorage.getItem('language');
+    if(selectedLanguage === null){
+        selectedLanguage = "pt";
+        localStorage.setItem('language', selectedLanguage);
+    }
+
     return (
         <Modal closeOnEscape closeOnDimmerClick open={isOpen} onClose={onClose}>
             <Modal.Header as={"h2"}>{ t("Revisão") }</Modal.Header>
@@ -44,8 +50,8 @@ const PopupRevisionDetail = ( {isOpen, onClose, warnings} ) => {
                                                         <Table.Cell style={{width: '25%' }} textAlign="center">
                                                             { method.exam_date_start ? (
                                                                         moment(method.exam_date_start).format('DD MMMM, YYYY') === moment(method.exam_date_end).format('DD MMMM, YYYY') ?
-                                                                        moment(method.exam_date_start).format('DD MMMM, YYYY') :
-                                                                        moment(method.exam_date_start).format('DD MMMM, YYYY') + " - " + moment(method.exam_date_end).format('DD MMMM, YYYY')
+                                                                        moment(method.exam_date_start).locale(selectedLanguage).format('DD MMMM, YYYY') :
+                                                                        moment(method.exam_date_start).locale(selectedLanguage).format('DD MMMM, YYYY') + " - " + moment(method.exam_date_end).locale(selectedLanguage).format('DD MMMM, YYYY')
                                                             ) : ( "-")}
                                                         </Table.Cell>
                                                         <Table.Cell style={{width: '18%' }}>{ method.epoch }</Table.Cell>

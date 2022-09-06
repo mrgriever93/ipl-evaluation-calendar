@@ -49,7 +49,7 @@ class CalendarService
         }
 
         foreach ($courses as $key => $course) {
-            $newCalendar = new Calendar($request->all());
+            $newCalendar = new Calendar($request->safe()->toArray());
             $newCalendar->version = 0.0;
             // To make sure that the calendar starts with the right flags
             $newCalendar->is_temporary = 0;
@@ -142,11 +142,11 @@ class CalendarService
 
         // TODO check user for this action
         if($calendar->calendar_phase_id == CalendarPhase::phasePublished()) {
-            if(Auth::user()->groups()->Gop()){
+            if(Auth::user()->groups()->Gop()->exists()){
                 $calendar->is_temporary = false;
                 $calendar->is_published = true;
                 $calendar->save();
-            } else if(Auth::user()->groups()->Coordinator()){
+            } else if(Auth::user()->groups()->Coordinator()->exists()){
                 $calendar->is_temporary = true;
                 $calendar->is_published = false;
                 $calendar->save();
@@ -194,12 +194,13 @@ class CalendarService
 
         if (!$calendar->is_published) {
             $calendar->calendar_phase_id = CalendarPhase::phasePublished();
-            if(Auth::user()->groups()->Coordinator()) {
+
+            if(Auth::user()->groups()->coordinator()->exists()) {
                 // add 0.1 to version because is a coordinator
                 $calendar->version = floatval($calendar->version) + 0.1;
                 $calendar->is_temporary = true;
                 $calendar->is_published = false;
-            } else if(Auth::user()->groups()->Gop()){
+            } else if(Auth::user()->groups()->Gop()->exists() || Auth::user()->groups()->board()->exists()){
                 // add 1.0 to version because is the gop
                 $calendar->version = intval($calendar->version) + 1;
                 $calendar->is_temporary = false;
@@ -320,7 +321,12 @@ class CalendarService
 
         if (Auth::user()->groups()->responsible()->exists()) {
             // include CUs that the user is responsible for
-            array_push($includedCUs, CourseUnit::where('responsible_user_id', Auth::user()->id)->get()->pluck('id'));
+            $ucs = CourseUnit::where('responsible_user_id', Auth::user()->id)->get()->pluck('id')->toArray();
+            if(empty($includedCUs)){
+                $includedCUs = $ucs;
+            } else {
+                $includedCUs[] = $ucs;
+            }
         }
         if(!empty($includedCUs)) {
             $availableMethods->whereIn('course_units.id', $includedCUs);
@@ -400,7 +406,12 @@ class CalendarService
 
         if (Auth::user()->groups()->responsible()->exists()) {
             // include CUs that the user is responsible for
-            array_push($includedCUs, CourseUnit::where('responsible_user_id', Auth::user()->id)->get()->pluck('id'));
+            $ucs = CourseUnit::where('responsible_user_id', Auth::user()->id)->get()->pluck('id')->toArray();
+            if(empty($includedCUs)){
+                $includedCUs = $ucs;
+            } else {
+                $includedCUs[] = $ucs;
+            }
         }
         if(!empty($includedCUs)) {
             $availableMethods->whereIn('course_units.id', $includedCUs);

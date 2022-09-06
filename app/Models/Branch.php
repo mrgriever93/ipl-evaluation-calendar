@@ -10,6 +10,8 @@ class Branch extends Model
     use HasFactory;
 
     protected $fillable = [
+        "branch_number",
+        "academic_year_id",
         "name_pt",
         "name_en",
         "initials_pt",

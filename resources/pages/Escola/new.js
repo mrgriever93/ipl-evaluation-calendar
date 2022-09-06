@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Card, Container, Dimmer, Form, Icon, Loader, Tab, Message } from 'semantic-ui-react';
+import {Button, Card, Container, Dimmer, Form, Icon, Loader, Tab, Message, Header} from 'semantic-ui-react';
 import { Field, Form as FinalForm } from 'react-final-form';
 import { useParams, useNavigate} from "react-router-dom";
 import _ from 'lodash';
@@ -85,6 +85,11 @@ const New = () => {
             index_course_unit_initials,
             index_course_unit_curricular_year,
             index_course_unit_teachers,
+            index_course_unit_registered,
+            index_course_unit_passed,
+            index_course_unit_flunk,
+            index_course_unit_branch,
+
             query_param_academic_year,
             query_param_semester,
             gop_group_id,
@@ -107,6 +112,10 @@ const New = () => {
             index_course_unit_initials,
             index_course_unit_curricular_year,
             index_course_unit_teachers,
+            index_course_unit_registered,
+            index_course_unit_passed,
+            index_course_unit_flunk,
+            index_course_unit_branch,
             query_param_academic_year,
             query_param_semester,
             gop_group_id,
@@ -126,13 +135,20 @@ const New = () => {
             index_course_unit_initials,
             index_course_unit_curricular_year,
             index_course_unit_teachers,
+            index_course_unit_registered,
+            index_course_unit_passed,
+            index_course_unit_flunk,
+            index_course_unit_branch,
             query_param_academic_year,
             query_param_semester,
             gop_group_id,
             board_group_id,
             pedagogic_group_id
     }) => {
-        if(!index_course_code || !index_course_name_pt || !index_course_name_en || !index_course_initials || !index_course_unit_name_pt || !index_course_unit_name_en || !index_course_unit_initials || !index_course_unit_curricular_year || !index_course_unit_code || !index_course_unit_teachers){
+        if(!index_course_code || !index_course_name_pt || !index_course_name_en || !index_course_initials ||
+            !index_course_unit_name_pt || !index_course_unit_name_en || !index_course_unit_initials || !index_course_unit_curricular_year ||
+            !index_course_unit_registered || !index_course_unit_passed || !index_course_unit_flunk || !index_course_unit_branch ||
+            !index_course_unit_code || !index_course_unit_teachers){
             setTabActiveIndex(0);
             return false;
         }
@@ -151,6 +167,7 @@ const New = () => {
             base_link,
             index_course_code, index_course_name_pt, index_course_name_en, index_course_initials,
             index_course_unit_code, index_course_unit_name_pt, index_course_unit_name_en, index_course_unit_initials,
+            index_course_unit_registered, index_course_unit_passed, index_course_unit_flunk, index_course_unit_branch,
             index_course_unit_curricular_year, index_course_unit_teachers,
             query_param_academic_year, query_param_semester
         }).then((res) => {
@@ -200,61 +217,96 @@ const New = () => {
                             { t('O nome da unidade curricular é a segunda (2ª) coluna, então deveremos converter para o index = 1, pois retiramos sempre 1 unidade ao número da ordem da coluna.') }
                         </Message.Content>
                     </Message>
-                    <Card fluid>
+
+                    <Card fluid color={"green"}>
                         <Card.Content>
-                            <Form.Group widths="equal">
+                            <Card.Header>{ t('Informação do Curso') }</Card.Header>
+                        </Card.Content>
+                        <Card.Content>
+                            <Form.Group widths="3">
                                 <Field name="index_course_code" validate={required}>
                                     {({input: index_course_codeInput, meta}) => (
-                                        <Form.Input type='number' label={ t("Index coluna Código Curso") } {...index_course_codeInput} error={ meta.touched && meta.error } />
-                                    )}
-                                </Field>
-                                <Field name="index_course_name_pt" validate={required}>
-                                    {({input: index_course_namePtInput, meta}) => (
-                                        <Form.Input type='number' label={ t("Index coluna Nome Curso PT") } {...index_course_namePtInput} error={ meta.touched && meta.error } />
-                                    )}
-                                </Field>
-                                <Field name="index_course_name_en" validate={required}>
-                                    {({input: index_course_nameEnInput, meta}) => (
-                                        <Form.Input type='number' label={ t("Index coluna Nome Curso EN") } {...index_course_nameEnInput} error={ meta.touched && meta.error } />
+                                        <Form.Input type='number' label={ t("Index coluna Código") } {...index_course_codeInput} error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
                                 <Field name="index_course_initials" validate={required}>
                                     {({input: index_course_initialsInput, meta}) => (
-                                        <Form.Input type='number' label={ t("Index coluna Iniciais do Curso") } {...index_course_initialsInput} error={ meta.touched && meta.error } />
+                                        <Form.Input type='number' label={ t("Index coluna Iniciais") } {...index_course_initialsInput} error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
                             </Form.Group>
+                            <Form.Group widths="3">
+                                <Field name="index_course_name_pt" validate={required}>
+                                    {({input: index_course_namePtInput, meta}) => (
+                                        <Form.Input type='number' label={ t("Index coluna Nome PT") } {...index_course_namePtInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                                <Field name="index_course_name_en" validate={required}>
+                                    {({input: index_course_nameEnInput, meta}) => (
+                                        <Form.Input type='number' label={ t("Index coluna Nome EN") } {...index_course_nameEnInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                            </Form.Group>
+                        </Card.Content>
+                    </Card>
+                    <Card fluid color={"blue"}>
+                        <Card.Content>
+                            <Card.Header>{ t('Informação das Unidades Curriculares') }</Card.Header>
+                        </Card.Content>
+                        <Card.Content>
                             <Form.Group widths="equal">
                                 <Field name="index_course_unit_code" validate={required}>
                                     {({input: index_course_unit_codeInput, meta}) => (
-                                        <Form.Input type='number' label={ t("Index coluna Código Unidade Curricular") } {...index_course_unit_codeInput} error={ meta.touched && meta.error } />
+                                        <Form.Input type='number' label={ t("Index coluna Código") } {...index_course_unit_codeInput} error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
-                                <Field name="index_course_unit_name_pt" validate={required}>
-                                    {({input: index_course_unit_namePtInput, meta}) => (
-                                        <Form.Input type='number' label={ t("Index coluna Nome PT Unidade Curricular") } {...index_course_unit_namePtInput} error={ meta.touched && meta.error } />
+                                <Field name="index_course_unit_curricular_year" validate={required}>
+                                    {({input: index_course_unit_curricular_yearInput, meta}) => (
+                                        <Form.Input type='number' label={ t("Index coluna Ano curricular") } {...index_course_unit_curricular_yearInput} error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
-                                <Field name="index_course_unit_name_en" validate={required}>
-                                    {({input: index_course_unit_nameEnInput, meta}) => (
-                                        <Form.Input type='number' label={ t("Index coluna Nome EN Unidade Curricular") } {...index_course_unit_nameEnInput} error={ meta.touched && meta.error } />
+                                <Field name="index_course_unit_branch" validate={required}>
+                                    {({input: index_course_unit_branchInput, meta}) => (
+                                        <Form.Input type='number' label={ t("Index coluna Ramo") } {...index_course_unit_branchInput} error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
                             </Form.Group>
                             <Form.Group widths="equal">
                                 <Field name="index_course_unit_initials" validate={required}>
                                     {({input: index_course_unit_initialsInput, meta}) => (
-                                        <Form.Input type='number' label={ t("Index coluna Iniciais da Unidade Curricular") } {...index_course_unit_initialsInput} error={ meta.touched && meta.error } />
+                                        <Form.Input type='number' label={ t("Index coluna Iniciais") } {...index_course_unit_initialsInput} error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
+                                <Field name="index_course_unit_name_pt" validate={required}>
+                                    {({input: index_course_unit_namePtInput, meta}) => (
+                                        <Form.Input type='number' label={ t("Index coluna Nome PT") } {...index_course_unit_namePtInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                                <Field name="index_course_unit_name_en" validate={required}>
+                                    {({input: index_course_unit_nameEnInput, meta}) => (
+                                        <Form.Input type='number' label={ t("Index coluna Nome EN") } {...index_course_unit_nameEnInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                            </Form.Group>
+                            <Form.Group widths="equal">
                                 <Field name="index_course_unit_teachers" validate={required}>
                                     {({input: index_course_unit_teachersInput, meta}) => (
                                         <Form.Input type='number' label={ t("Index coluna Professores do curso") } {...index_course_unit_teachersInput} error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
-                                <Field name="index_course_unit_curricular_year" validate={required}>
-                                    {({input: index_course_unit_curricular_yearInput, meta}) => (
-                                        <Form.Input type='number' label={ t("Index coluna Ano curricular da Unidade Curricular") } {...index_course_unit_curricular_yearInput} error={ meta.touched && meta.error } />
+                                <Field name="index_course_unit_registered" validate={required}>
+                                    {({input: index_course_unit_registeredInput, meta}) => (
+                                        <Form.Input type='number' label={ t("Index coluna Alunos Registados") } {...index_course_unit_registeredInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                                <Field name="index_course_unit_passed" validate={required}>
+                                    {({input: index_course_unit_passedInput, meta}) => (
+                                        <Form.Input type='number' label={ t("Index coluna Alunos Aprovados") } {...index_course_unit_passedInput} error={ meta.touched && meta.error } />
+                                    )}
+                                </Field>
+                                <Field name="index_course_unit_flunk" validate={required}>
+                                    {({input: index_course_unit_flunkInput, meta}) => (
+                                        <Form.Input type='number' label={ t("Index coluna Alunos Reprovados") } {...index_course_unit_flunkInput} error={ meta.touched && meta.error } />
                                     )}
                                 </Field>
                             </Form.Group>

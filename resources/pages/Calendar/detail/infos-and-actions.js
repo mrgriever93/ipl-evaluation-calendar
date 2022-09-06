@@ -25,6 +25,12 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
     let { id } = useParams();
     const calendarId = id;
 
+    let selectedLanguage = localStorage.getItem('language');
+    if(selectedLanguage === null){
+        selectedLanguage = "pt";
+        localStorage.setItem('language', selectedLanguage);
+    }
+
     const [calendarPermissions, setCalendarPermissions] = useState(JSON.parse(localStorage.getItem('calendarPermissions')) || []);
     const [openSubmitModal, setOpenSubmitModal] = useState(false);
     const [calendarPhases, setCalendarPhases] = useState([]);
@@ -90,7 +96,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
         if (calendarInfo?.phase?.id > 0) {
             setCalendarPhase(calendarInfo?.phase?.id);
         }
-    }, [calendarInfo]);    
+    }, [calendarInfo]);
 
     useEffect(() => {
         if (typeof calendarPhase === 'number' && calendarPhase <= 0) {
@@ -130,7 +136,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
     }
 
     const updateToPhase = (isAccepted, message) => {
-        axios.patch(`/calendar/${calendarId}/approval`, {
+        axios.post(`/calendar/${calendarId}/approval`, {
                 'accepted': isAccepted,
                 'message': message
             }).then((response) => {
@@ -142,15 +148,15 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                 }
             });
     }
-    
+
     const acceptCalendarHandler = () => {
         updateToPhase(true, '');
     }
 
     const rejectCalendarHandler = () => {
         // TODO: When we have more time, we can add a way for the user to add a message when they reject
-        updateToPhase(false, '');        
-    }    
+        updateToPhase(false, '');
+    }
 
     const updatePhaseHandler = (newPhase) => {
         setCalendarPhase(newPhase);
@@ -183,10 +189,10 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
         event.preventDefault();
 
         var currentWeekEl = document.querySelector('.current-week');
-        if( !currentWeekEl ) {                
+        if( !currentWeekEl ) {
             toast( t('A data de hoje não existe neste calendário.'), errorConfig);
             return false;
-        } 
+        }
         else {
             var offsetTop = currentWeekEl.offsetTop;
             var topSpace = 120;
@@ -201,7 +207,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
         let phaseFound = JSON.parse(localStorage.getItem('calendarPermissions'))?.filter((x) => x.name === permissionToCheck)[0];
         return phaseFound?.phases.includes(calendarPhase);
     }
-    
+
     return (
         <>
             <div className='main-content-title-section'>
@@ -269,9 +275,9 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                                                     </div>
                                                 } position='bottom center'>
                                                     <Popup.Content>
-                                                        <b>{t("Ínicio")}:</b>{' '}{moment(epoch.start_date).format('DD MMMM, YYYY')}
+                                                        <b>{t("Ínicio")}:</b>{' '}{moment(epoch.start_date).locale(selectedLanguage).format('DD MMMM, YYYY')}
                                                         <br/>
-                                                        <b>{t("Fim")}:</b>{' '}{moment(epoch.end_date).format('DD MMMM, YYYY')}
+                                                        <b>{t("Fim")}:</b>{' '}{moment(epoch.end_date).locale(selectedLanguage).format('DD MMMM, YYYY')}
                                                     </Popup.Content>
                                                 </Popup>
                                                 <div className="legend-list-item-actions">
@@ -351,7 +357,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                                                 <Header as="h5">{ t('Última alteração') }:</Header>
                                             </span>
                                             <div className='margin-top-xs'>
-                                                {moment(calendarInfo?.calendar_last_update,).format('DD MMMM, YYYY HH:mm')}
+                                                {moment(calendarInfo?.calendar_last_update).locale(selectedLanguage).format('DD MMMM, YYYY HH:mm')}
                                             </div>
                                         </div>
 
