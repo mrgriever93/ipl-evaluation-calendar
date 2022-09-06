@@ -39,6 +39,10 @@ return new class extends Migration
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('set null');
             $table->foreign('course_unit_group_id')->references('id')->on('course_unit_groups')->onDelete('set null');
 
+            $table->integer('registered')->nullable();
+            $table->integer('passed')->nullable();
+            $table->integer('flunk')->nullable();
+
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable()->useCurrentOnUpdate();
         });

@@ -33,4 +33,19 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 RickRoll::routes();
 Route::get('/dev/logs-viewer', [LogViewerController::class, 'index']);
 
+/*
+Route::get('/mailable/preview', function () {
+    $calendar = \App\Models\Calendar::find(1);
+    return new App\Mail\CalendarPublishedEmail($calendar);
+});
+Route::get('/mailable/send', function () {
+    $calendar = \App\Models\Calendar::find(1);
+    $students = $calendar->course->students()->pluck('email')->join(', ');
+    if($students != "") {
+        Mail::bcc($students)->send(new CalendarPublishedEmail($calendar));
+    }
+});
+*/
+Route::get('/exams/{exam}/calendar-event', [ReactController::class, 'icsDownload']);
+Route::get('/calendario/{id}', [ReactController::class, 'index'])->name('calendar-detail');
 Route::get('/{any}', [ReactController::class, 'index'])->where('any', '.*');

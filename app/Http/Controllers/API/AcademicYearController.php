@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Resources\Generic\AcademicYearMenuResource;
+use App\Http\Resources\Generic\AcademicYearSearchResource;
 use App\Models\AcademicYear;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AcademicYearRequest;
@@ -31,6 +32,15 @@ class AcademicYearController extends Controller
     public function menu()
     {
         return AcademicYearMenuResource::collection(AcademicYear::where('active', true)->get()->sortBy('display'));
+    }
+
+    /**
+     * This will return a list of active academic years
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
+    public function search()
+    {
+        return AcademicYearSearchResource::collection(AcademicYear::where('active', true)->get()->sortBy('display'));
     }
 
     public function switch(AcademicYearSwitchRequest $request)

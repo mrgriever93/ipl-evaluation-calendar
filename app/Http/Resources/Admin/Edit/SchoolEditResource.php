@@ -27,6 +27,11 @@ class SchoolEditResource extends JsonResource
             'index_course_unit_curricular_year' => $this->index_course_unit_curricular_year,
             'index_course_unit_teachers'        => $this->index_course_unit_teachers,
 
+            'index_course_unit_registered'      => $this->index_course_unit_registered,
+            'index_course_unit_passed'          => $this->index_course_unit_passed,
+            'index_course_unit_flunk'           => $this->index_course_unit_flunk,
+            'index_course_unit_branch'          => $this->index_course_unit_branch,
+
             'query_param_academic_year'         => $this->query_param_academic_year,
             'query_param_semester'              => $this->query_param_semester,
             'gop_group_id'                      => $this->gop_group_id,

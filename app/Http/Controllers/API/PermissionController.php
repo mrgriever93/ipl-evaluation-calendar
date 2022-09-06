@@ -43,6 +43,7 @@ class PermissionController extends Controller
                         //->pluck('phases')
             ])->leftJoin('group_permissions', 'permissions.id', '=', 'group_permissions.permission_id')
                 ->where("category_id", 2)
+                ->where("enabled", true)
                 ->whereIn('group_permissions.group_id', $userGroupsId)
                 ->groupBy('code', 'phases')
                 ->get();

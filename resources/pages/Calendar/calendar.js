@@ -322,16 +322,24 @@ const Calendar = () => {
                                     );
                                 },
                             );
-
                             // get list of exams for this day
-                            const weekExams = examList.filter((item) => {
+                            const dayExams = examList.filter((item) => {
                                 const examStartDate = moment(item.date_start, 'YYYY-MM-DD');
                                 const examEndDate = moment(item.date_end, 'YYYY-MM-DD');
-                                if ( ((start_date.isAfter(examStartDate) && start_date.isBefore(examEndDate)) ||
-                                    start_date.isSame(examStartDate, 'day') || start_date.isSame(examEndDate, 'day')) && item.epoch_id === curr.id){
-                                    return item;
+                                if(item.epoch_id === curr.id){
+                                    if ( (start_date.isAfter(examStartDate) && start_date.isBefore(examEndDate)) || start_date.isSame(examStartDate, 'day') || start_date.isSame(examEndDate, 'day') ){
+                                        return item;
+                                    }
                                 }
+
                             });
+
+                           // define epochs daily
+                            let dayEpochs = {
+                                id: curr.id,
+                                name: curr.name,
+                                code: curr.code
+                            };
 
                             const week = acc.find(({week}) => week === start_date.isoWeek());
                             if (!week.days.find((day) => day.weekDay === start_date.day())) {
@@ -340,8 +348,13 @@ const Calendar = () => {
                                     date: start_date.format(),
                                     interruption: currentInterruption,
                                     interruptionDays: 1,
-                                    exams: weekExams
+                                    exams: dayExams,
+                                    epochsDaily: [dayEpochs]
                                 });
+                            } else {
+                                let dayIndex = week.days.findIndex((day) => day.weekDay === start_date.day());
+                                week.days[dayIndex].epochsDaily.push(dayEpochs);
+                                week.days[dayIndex].exams = week.days[dayIndex].exams.concat(dayExams);
                             }
 
                             const multiDaysSameInterruption = acc.find(({week}) => week === start_date.isoWeek())
@@ -368,6 +381,9 @@ const Calendar = () => {
                                     code: curr.code
                                 }];
                             }
+
+                            const weekEpochsFiltered = week.days.filter((item) => item.weekDay === start_date.day());
+                            week.epochsOverlap = weekEpochsFiltered.filter((item) => item.epochsDaily.length > 1).length > 0;
                         }
                         start_date.add(1, 'days');
                     }
@@ -481,6 +497,7 @@ const Calendar = () => {
     const weekDayContentCell = (epoch, days, courseIndex, year, weekDay, weekDayIndex, epochsLength) => {
         // TODO add exam to the dates (by single cols or colspan)
         const day = days.find((day) => day.weekDay === weekDay);
+
         const firstDayAvailable = moment(days[0].date);
         const lastDayAvailable = moment(days[days.length - 1].date);
         const {interruption} = day || {};
@@ -494,6 +511,21 @@ const Calendar = () => {
         if ((isInterruption && alreadyAddedRowSpan && courseIndex > 0) || (isInterruption && interruptionDays++ >= day?.interruptionDays)) {
             return null;
         }
+
+        if(day?.epochsDaily === undefined){
+            return (<Table.Cell key={weekDayIndex} />);
+        }
+        if(epoch === null){
+            if(day.epochsDaily.length > 0) {
+                epoch = day.epochsDaily[0];
+            } else {
+                return (<Table.Cell key={weekDayIndex} />);
+            }
+        }
+        if(day.epochsDaily.filter((item) => item.code === epoch.code).length === 0){
+            return (<Table.Cell key={weekDayIndex} />);
+        }
+
         // check if is 1 year and not a date OR if is an interruption
         if ((year === 1 && !day?.date) || isInterruption) {
             // is an interruption and for multiple days
@@ -524,7 +556,7 @@ const Calendar = () => {
             const currentDate = moment(day.date);
             // get exams for this date
             const existingExamsAtThisDate = day.exams.filter((exam) => {
-                return  exam.academic_year === year && exam.epoch_id === epoch.id &&
+                return exam.academic_year === year && exam.epoch_id === epoch.id &&
                         currentDate.isBetween(exam.date_start, exam.date_end, 'date','[]');
             });
             let examsComponents = null;
@@ -646,7 +678,7 @@ const Calendar = () => {
                         <Grid stackable className='calendar-tables'>
                             <Grid.Row>
                                 <Grid.Column width="16">
-                                    {epochsList.length > 0 && weekData && weekData.map(({week, year, days, epochs}, tableIndex) => {
+                                    {epochsList.length > 0 && weekData && weekData.map(({week, year, days, epochs, epochsOverlap}, tableIndex) => {
                                         interruptionDays = 0;
                                         alreadyAddedColSpan = false;
                                         return (
@@ -679,14 +711,24 @@ const Calendar = () => {
                                                         { courseYears.map((year, courseIndex) => {
                                                             alreadyAddedColSpan = false;
                                                             alreadyAddedRowSpan = false;
-                                                            return epochs.map((epoch, epochIndex) => (
-                                                                <Table.Row key={courseIndex + "-" + epochIndex} >
-                                                                    {epochIndex === 0 && (
-                                                                        <Table.Cell textAlign="center" rowSpan={epochs.length}>{ t("Ano") + " " + year }</Table.Cell>
-                                                                    )}
-                                                                    {weekDays.map((weekDay, weekDayIndex) => weekDayContentCell(epoch, days, courseIndex, year, weekDay, weekDayIndex, epochs.length))}
-                                                                </Table.Row>
-                                                            ));
+                                                            if(epochsOverlap) {
+                                                                return epochs.map((epoch, epochIndex) => (
+                                                                    <Table.Row key={courseIndex + "-" + epochIndex}>
+                                                                        {epochIndex === 0 && (
+                                                                            <Table.Cell textAlign="center"
+                                                                                        rowSpan={epochs.length}>{t("Ano") + " " + year}</Table.Cell>
+                                                                        )}
+                                                                        {weekDays.map((weekDay, weekDayIndex) => weekDayContentCell(epoch, days, courseIndex, year, weekDay, weekDayIndex, epochs.length))}
+                                                                    </Table.Row>
+                                                                ));
+                                                            } else {
+                                                                return (
+                                                                    <Table.Row key={courseIndex + "-" + year}>
+                                                                        <Table.Cell textAlign="center">{t("Ano") + " " + year}</Table.Cell>
+                                                                        {weekDays.map((weekDay, weekDayIndex) => weekDayContentCell(null, days, courseIndex, year, weekDay, weekDayIndex, 1))}
+                                                                    </Table.Row>
+                                                                )
+                                                            }
                                                         })}
                                                     </Table.Body>
                                                 </Table>
@@ -717,6 +759,7 @@ const Calendar = () => {
             <PopupScheduleEvaluation
                 isOpen={openScheduleExamModal}
                 onClose={closeScheduleExamModal}
+                interruptions={interruptionsList}
                 scheduleInformation={scheduleExamInfo}
                 addedExam={addExamToList}
                 updatedExam={updateExamInList}

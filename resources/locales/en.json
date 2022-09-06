@@ -279,7 +279,7 @@
         "Marcar": "Schedule",
         "Todas as épocas ficaram escondidas": "All epochs are now hidden",
         "Fase do calendário atualizada!": "Calendar phase was updated!",
-        
+
         "Ao criar uma cópia deste calendário, irá eliminar todas as cópias criadas anteriormente deste mesmo calendário!<br/><br/><strong>Tem a certeza que deseja criar uma cópia do calendário?</strong>": "If you create a clone of this calendar, all other previous clones of this calendar will be deleted!<br/><br/><strong>Are you sure you want to create a clone of this calendar?</strong>",
         "Cópia do calendário criada com sucesso!": "Calendar clone created with success!",
         "Ocorreu um erro ao tentar criar uma cópia do calendário!": "There was a problem while trying to clone the calendar!",
@@ -490,7 +490,7 @@
         "Calendários criados com sucesso!": "Calendars created successfully!",
         "Erro!": "Error!",
         "Ocorreu um erro ao tentar criar o calendário de avaliação": "An error occurred while trying to create the assessment calendar",
-        "Ocorreu um erro ao tentar criar os calendários de avaliação": "An error occurred while trying to create the assessment calendars",        
+        "Ocorreu um erro ao tentar criar os calendários de avaliação": "An error occurred while trying to create the assessment calendars",
         "Ocorreu um erro ao tentar publicar o calendário!": "An error occurred while trying to publish the calendar!",
         "Ocorreu um erro ao tentar atualizar o calendário!": "An error occurred while trying to update the calendar!",
         "Novo Calendário": "New Calendar",
@@ -555,6 +555,7 @@
 
 
 
+        "Não tem Unidades Curriculares associadas para os dados selecionados ou não tem permissões.": "It does not have Course Units associated with the selected data or does not have permissions.",
 
 
 

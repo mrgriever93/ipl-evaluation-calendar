@@ -1,18 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-    Card,
-    Container,
-    Table,
-    Form,
-    Icon,
-    Modal,
-    Button,
-    Header,
-    Dimmer,
-    Loader,
-    Popup,
-    Checkbox, Segment
-} from 'semantic-ui-react';
+import { Card, Container, Table, Form, Icon, Modal, Button, Header, Dimmer, Loader, Popup, Checkbox, List } from 'semantic-ui-react';
 import axios from 'axios';
 import {Link, useSearchParams} from 'react-router-dom';
 import _ from 'lodash';
@@ -24,6 +11,8 @@ import ShowComponentIfAuthorized, {useComponentIfAuthorized} from '../../compone
 import {successConfig, errorConfig} from '../../utils/toastConfig';
 import EmptyTable from "../../components/EmptyTable";
 import Semesters from "../../components/Filters/Semesters";
+import CurricularYears from "../../components/Filters/CurricularYears";
+import GroupUnits from "../../components/Filters/GroupUnits";
 import Courses from "../../components/Filters/Courses";
 import FilterOptionPerPage from "../../components/Filters/PerPage";
 import PaginationDetail from "../../components/Pagination";
@@ -41,11 +30,14 @@ const CourseUnitsList = () => {
     const [contentLoading, setContentLoading] = useState(true);
 
     const [courseFilter, setCourseFilter] = useState();
-    const [courseUnitAllFilter, setCourseUnitAllFilter] = useState();
+    const [courseUnitAllFilter, setCourseUnitAllFilter] = useState(false);
     const [semesterFilter, setSemesterFilter] = useState();
+    const [curricularYearFilter, setCurricularYearFilter] = useState();
+    const [groupUnitFilter, setGroupUnitFilter] = useState();
     const [searchFilter, setSearchFilter] = useState();
     const [perPage, setPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+    const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
     useEffect(() => {
         if(searchCourse){
@@ -56,10 +48,12 @@ const CourseUnitsList = () => {
     const fetchCourseUnits = () => {
         setContentLoading(true);
         let link = '/course-units?page=' + currentPage;
-        link += (semesterFilter         ? '&semester='  + semesterFilter        : '');
-        link += (courseFilter           ? '&course='    + courseFilter          : '');
-        link += (searchFilter           ? '&search='    + searchFilter          : '');
-        link += (courseUnitAllFilter    ? '&show_all='  + courseUnitAllFilter   : '');
+        link += (semesterFilter         ? '&semester='      + semesterFilter        : '');
+        link += (courseFilter           ? '&course='        + courseFilter          : '');
+        link += (curricularYearFilter   ? '&year='          + curricularYearFilter  : '');
+        link += (groupUnitFilter        ? '&group_unit='    + groupUnitFilter       : '');
+        link += (searchFilter           ? '&search='        + searchFilter          : '');
+        link += (courseUnitAllFilter    ? '&show_all='      + courseUnitAllFilter   : '');
         link += '&per_page=' + perPage;
 
         axios.get(link).then((response) => {
@@ -78,7 +72,7 @@ const CourseUnitsList = () => {
         } else {
             setCurrentPage(1);
         }
-    }, [semesterFilter, courseFilter, searchFilter, courseUnitAllFilter]);
+    }, [semesterFilter, courseFilter, curricularYearFilter, groupUnitFilter, searchFilter, courseUnitAllFilter]);
 
     useEffect(() => {
         fetchCourseUnits();
@@ -123,14 +117,28 @@ const CourseUnitsList = () => {
         setSemesterFilter(value);
     };
 
+    const filterByCurricularYear = (value) => {
+        setCurricularYearFilter(value);
+    };
+
+    const filterByGroupUnit = (value) => {
+        setGroupUnitFilter(value);
+    };
+
+    const toggleAdvancedFilters = (event) => {
+        event.preventDefault();
+        setShowAdvancedFilters(!showAdvancedFilters);
+    };
+
     const columns = [
         {name: t('Nome')},
-        {name: t('Ramo')},
         {
             name: t('Agrupamento'),
+            align: 'center',
             permission: [SCOPES.VIEW_UC_GROUPS],
         },
-        {name: t('Semestre'),   align: 'center', style: {width: '10%'} },
+        {name: t('Outros'), align: 'center', style: {width: '15%'} },
+        {name: t('Ramo'),   align: 'center', style: {width: '11%'}  },
         {
             name: t('Ações'),
             align: 'center',
@@ -157,16 +165,32 @@ const CourseUnitsList = () => {
                     <Form>
                         <Form.Group>
                             <Form.Input icon='search' iconPosition='left' width={5} onChange={_.debounce(handleSearchCourseUnits, 400)} placeholder={t("Pesquisar por nome")} label={t("Pesquisar por nome")} />
-                            <Courses widthSize={5} eventHandler={filterByCourse} />
-                            <Semesters widthSize={3} eventHandler={filterBySemester} withSpecial={false} />
-                            <Form.Field width={2}>
-                                <label>Todas as UCs</label>
-                                <Form.Field>
-                                    <Checkbox onChange={(e, {checked}) => filterByAllCourseUnits(checked) }/>
-                                </Form.Field>
+                            <Form.Field width={9}>
+                                <div className='margin-top-l'>
+                                    <a href="#" onClick={toggleAdvancedFilters}>
+                                        { t('Filtros avançandos') }
+                                        <Icon name='angle down' />
+                                    </a>
+                                </div>
                             </Form.Field>
                             <FilterOptionPerPage widthSize={2} eventHandler={(value) => setPerPage(value)} />
                         </Form.Group>
+                        { showAdvancedFilters && (
+                            <Form.Group>
+                                <Courses widthSize={4} eventHandler={filterByCourse} />
+                                <GroupUnits widthSize={3} eventHandler={filterByGroupUnit} />
+                                <Semesters widthSize={3} eventHandler={filterBySemester} withSpecial={false} />
+                                <CurricularYears widthSize={2} eventHandler={filterByCurricularYear}/>
+
+                                <Form.Field width={4}>
+                                    <label>{ t("UCs visíveis")}</label>
+                                    <Button.Group fluid>
+                                        <Button positive={!courseUnitAllFilter} onClick={(e) => filterByAllCourseUnits(false)}>{ t("Apenas as minhas") }</Button>
+                                        <Button positive={courseUnitAllFilter} onClick={(e) => filterByAllCourseUnits(true)}>{ t("Todas") }</Button>
+                                    </Button.Group>
+                                </Form.Field>
+                            </Form.Group>
+                        )}
                     </Form>
                 </Card.Content>
                 <Card.Content>
@@ -195,7 +219,7 @@ const CourseUnitsList = () => {
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
-                                    {courseUnits.map(({id, name, code, has_methods, has_responsable, branch_label, has_branch, group_name, course_description, semester}) => (
+                                    {courseUnits.map(({id, name, code, has_methods, has_responsable, branch_label, has_branch, group_name, group_id, course_description, curricularYear, semester}) => (
                                         <Table.Row key={id} warning={ (useComponentIfAuthorized(SCOPES.EDIT_COURSE_UNITS) ? (!has_methods || !has_responsable) : false) }>
                                             <Table.Cell>
                                                 <ShowComponentIfAuthorized permission={[SCOPES.EDIT_COURSE_UNITS]}>
@@ -211,14 +235,36 @@ const CourseUnitsList = () => {
                                                 </ShowComponentIfAuthorized>
                                                 ({code}) - {name}
                                             </Table.Cell>
-                                            <Table.Cell>
-                                                { !has_branch && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher a que ramo pertence.')} position='top center'/> }
-                                                {branch_label}
-                                            </Table.Cell>
                                             <ShowComponentIfAuthorized permission={[SCOPES.VIEW_UC_GROUPS]}>
-                                                <Table.Cell>{group_name || '-'}</Table.Cell>
+                                                <Table.Cell>
+                                                    { group_name || "-" }
+                                                    { group_id && (
+                                                        <Link target={"_blank"} to={`/agrupamento-unidade-curricular/edit/${group_id}`} className={"margin-left-xs"}>
+                                                            <Icon name={"external alternate"} />
+                                                        </Link>
+                                                    )}
+                                                </Table.Cell>
                                             </ShowComponentIfAuthorized>
-                                            <Table.Cell>{semester}</Table.Cell>
+                                            <Table.Cell>
+                                                <List verticalAlign='middle'>
+                                                    <List.Item>
+                                                        <List.Content floated='right'>
+                                                            <b>{ semester }</b>
+                                                        </List.Content>
+                                                        <List.Content>{ t('Semestre') + ': ' }</List.Content>
+                                                    </List.Item>
+                                                    <List.Item>
+                                                        <List.Content floated='right'>
+                                                            <b>{ curricularYear }</b>
+                                                        </List.Content>
+                                                        <List.Content>{ t('Ano Curricular') + ': ' }</List.Content>
+                                                    </List.Item>
+                                                </List>
+                                            </Table.Cell>
+                                            <Table.Cell textAlign='center'>
+                                                { !has_branch && <Popup trigger={<Icon name="warning sign" />} content={t('Falta preencher a que ramo pertence.')} position='top center'/> }
+                                                { branch_label }
+                                            </Table.Cell>
                                             <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COURSE_UNITS, SCOPES.EDIT_COURSE_UNITS, SCOPES.DELETE_COURSE_UNITS]}>
                                                 <Table.Cell textAlign={"center"}>
                                                     <ShowComponentIfAuthorized permission={[SCOPES.VIEW_COURSE_UNITS, SCOPES.EDIT_COURSE_UNITS]}>

@@ -88,6 +88,11 @@ Route::middleware('auth:api')->group(function () {
         Route::patch('/calendar/{calendar}',                'update'           );
         Route::delete('/calendar/{calendar}',               'destroy'          );
 
+        Route::post('/calendar/{calendar}/approval',         'approval'            );
+
+        Route::post('/calendar/{calendar}/publish',         'publish'              );
+        Route::post('/calendar/{calendar}/copy',            'copyCalendar'         );
+
         Route::get('/calendar/{calendar}/warnings',         'getCalendarWarnings');
         /* Previous Methods */
         Route::get('/available-methods/{calendar}',         'getAvailableMethods'  );
@@ -96,10 +101,6 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/new-calendar/semesters',               'calendarSemesters'    );
         Route::get('/new-calendar/interruptions',           'calendarInterruptions');
 
-        Route::post('/calendar/{calendar}/approval',         'approval'            );
-
-        Route::post('/calendar/{calendar}/publish',         'publish'              );
-        Route::post('/calendar/{calendar}/copy',            'copyCalendar'         );
         Route::get('/calendar-phases-full',                 'phases'               );
         Route::get('/calendar-phases-full/groups',          'phasesGroups'         );
     });
@@ -151,11 +152,12 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::controller(ExamController::class)->group(function () {
-        Route::get('/exams/{exam}',           'show'   );
-        Route::post('/exams',                 'store'  );
-        Route::patch('/exams/{exam}',         'update' );
-        Route::delete('/exams/date/{calendar}/{date}',   'destroyByDate');
-        Route::delete('/exams/{exam}',        'destroy');
+        Route::get('/exams/{exam}',                     'show'        );
+        Route::get('/exams/{exam}/calendar-event',      'icsDownload' );
+        Route::post('/exams',                           'store'       );
+        Route::patch('/exams/{exam}',                   'update'      );
+        Route::delete('/exams/date/{calendar}/{date}',  'destroyByDate');
+        Route::delete('/exams/{exam}',                  'destroy');
     });
 
     Route::controller(ExamCommentController::class)->group(function () {
@@ -167,13 +169,15 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::controller(AcademicYearController::class)->group(function () {
-        Route::post('/academic-years',                      'store' );
-        Route::get('/academic-years',                       'index' );
-        Route::get('/academic-years/menu',                  'menu' );
-        Route::post('/academic-years/switch',               'switch');
-        Route::delete('/academic-year/{id}',                'destroy');
-        Route::post('/academic-year/{id}/active',           'active');
-        Route::post('/academic-year/{id}/selected',         'selected');
+        Route::get('/academic-years',                       'index'     );
+        Route::get('/academic-years/menu',                  'menu'      );
+        Route::get('/academic-years/search',                'search'    );
+
+        Route::post('/academic-years',                      'store'     );
+        Route::post('/academic-years/switch',               'switch'    );
+        Route::delete('/academic-year/{id}',                'destroy'   );
+        Route::post('/academic-year/{id}/active',           'active'    );
+        Route::post('/academic-year/{id}/selected',         'selected'  );
         Route::get('/academic-year/{id}/sync/{semester}',   'sync')->where(['id' => '[0-9]+', 'semester' => '[1-2]']);;
     });
 
@@ -192,6 +196,11 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/methods/{method}',         'show'          );
         Route::patch('/methods/{method}',       'update'        );
         Route::delete('/methods/{method}',      'destroy'       );
+
+        Route::get('/method/copy',              'methodsToCopy' );
+        Route::post('/method/clone',            'methodsClone'  );
+        Route::post('/method/clone-grouped',    'methodsCloneGrouped'  );
+
     });
 
     Route::controller(InterruptionController::class)->group(function () {
@@ -217,6 +226,7 @@ Route::middleware('auth:api')->group(function () {
 
         Route::get('/courses/{course}/branches',             'branchesList'     );
         Route::post('/courses/{course}/branch',              'branchAdd'        );
+        Route::patch('/courses/{course}/branch',             'branchUpdate'     );
         Route::delete('/courses/{course}/branch/{branch}',   'deleteBranch'     );
 
         Route::get('/courses/{course}/units',                'getUnits'         );
@@ -236,6 +246,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/course-units',                                     'index'               );
         Route::post('/course-units',                                    'store'               );
         Route::get('/course-units/search',                              'search'              );
+        Route::get('/course-units/years',                               'years'               );
         Route::get('/course-units/{courseUnit}',                        'show'                );
         Route::patch('/course-units/{courseUnit}',                      'update'              );
         Route::delete('/course-units/{courseUnit}',                     'destroy'             );
@@ -251,6 +262,7 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/course-units/{courseUnit}/teacher/{teacherId}', 'removeTeacher'       );
         // methods for the course unit
         Route::get('/course-units/{courseUnit}/methods',                'methodsForCourseUnit');
+
         //Route::get('/course-units/{courseUnit}/epochs',                 'epochsForCourseUnit' );
         Route::patch('/course-units/{courseUnit}/responsible',          'assignResponsible'   );
         // get all logs for this course unit
@@ -260,11 +272,14 @@ Route::middleware('auth:api')->group(function () {
 
     Route::controller(CourseUnitGroupController::class)->group(function () {
         Route::get('/course-unit-groups',                     'index'  );
+        Route::get('/course-unit-groups/search',              'search'  );
         Route::get('/course-unit-groups/{courseUnitGroup}',   'show'   );
-        // methods for the course unit
+        // methods for the course unit group
         Route::get('/course-unit-groups/{courseUnitGroup}/methods', 'methodsForCourseUnitGroup');
-        // get all logs for this course unit
-        Route::get('/course-unit-groups/{courseUnitGroup}/logs',    'logs'                );
+        // get all logs for this course unit group
+        Route::get('/course-unit-groups/{courseUnitGroup}/logs',    'logs'      );
+        // get all courses for this course unit group
+        Route::get('/course-unit-groups/{courseUnitGroup}/courses', 'courses'   );
         // relations with teachers
         Route::get('/course-unit-groups/{courseUnitGroup}/teachers',               'teachers'            );
         Route::post('/course-unit-groups/{courseUnitGroup}/teacher',               'addTeacher'          );

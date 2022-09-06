@@ -7,6 +7,7 @@ import {errorConfig, successConfig} from "../../../utils/toastConfig";
 import Slider from "../../../components/Slider";
 import EmptyTable from "../../../components/EmptyTable";
 import {useTranslation} from "react-i18next";
+import AcademicYears from "../../../components/Filters/AcademicYears";
 
 const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
     const { t } = useTranslation();
@@ -30,6 +31,13 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
     const [openClone, setOpenClone] = React.useState(false)
     const [selectedEpochFrom, setSelectedEpochFrom] = useState(-1);
     const [selectedEpochTo, setSelectedEpochTo] = useState([]);
+
+    const [openCopy, setOpenCopy] = useState(false);
+    const [loadingUCs, setLoadingUCs] = useState(false);
+    const [curricularUnitsOptions, setCurricularUnitsOptions] = useState([]);
+    const [curricularUnitSelected, setCurricularUnitSelected] = useState(-1);
+    const [academicYearSelected, setAcademicYearSelected] = useState(-1);
+
 
     const isFormValid = (methodList) => {
         let isValid = true;
@@ -263,6 +271,31 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
         setOpenClone(false);
     }
 
+    const closeModalCopy = () => {
+        setOpenCopy(false);
+    }
+    const selectAcademicYear = (yearId) => {
+        setLoadingUCs(true);
+        setAcademicYearSelected(yearId);
+        axios.get('/method/copy?year=' + yearId).then((res) => {
+            if (res.status === 200) {
+                setCurricularUnitsOptions(res?.data?.data?.map(({key, value, text}) => ({key, value, text})));
+                setLoadingUCs(false);
+            }
+        });
+    }
+    const handleSubmitCopy = () => {
+        axios.post('/method/clone', {
+            copy_course_unit_id: curricularUnitSelected,
+            new_course_unit_id: unitId
+        }).then((res) => {
+            if (res.status === 200) {
+                loadMethods();
+                setOpenCopy(false);
+            }
+        });
+    }
+
     return (
         <div ref={contextRef}>
             { epochs?.length < 1 || isLoading ? (
@@ -297,6 +330,9 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
                     { !hasGroup && (
                         <Sticky offset={50} context={contextRef}>
                             <div className='sticky-methods-header'>
+                                <Button onClick={() => setOpenCopy(true)} icon labelPosition="left" color="blue" disabled={!hasNoMethods}>
+                                    <Icon name={"clone outline"}/>{ t("Copiar metodos") }
+                                </Button>
                                 <Button onClick={() => setOpenClone(true)} icon labelPosition="left" color="yellow" disabled={hasNoMethods}>
                                     <Icon name={"clone outline"}/>{ t("Duplicar metodos") }
                                 </Button>
@@ -496,6 +532,34 @@ const UnitTabMethods = ({ unitId, hasGroup, warningsHandler }) => {
                     </Modal>
                 )}
             />
+
+            <Modal onClose={closeModalCopy} onOpen={() => setOpenCopy(true)} open={openCopy}>
+                <Modal.Header>{t("Copiar Métodos de outra UC")}</Modal.Header>
+                <Modal.Content>
+                    <Form>
+                        <Header as="h4">{t("Selecione o ano curricular")}</Header>
+                        <Grid columns={2}>
+                            <GridColumn width={6}>
+                                <AcademicYears eventHandler={selectAcademicYear} isSearch={false} />
+                            </GridColumn>
+                            <GridColumn width={10}>
+                                <Form.Dropdown selectOnBlur={false} selection search={true} value={curricularUnitSelected} disabled={ (academicYearSelected === -1) || curricularUnitsOptions.length === 0 }
+                                               options={curricularUnitsOptions} label={t("Unidade Curricular")} placeholder={ t("Unidade Curricular") }
+                                               loading={loadingUCs} onChange={(e, {value}) => setCurricularUnitSelected(value)}/>
+                                { academicYearSelected !== -1 && curricularUnitsOptions.length === 0 && !loadingUCs && (
+                                    <Message warning>
+                                        <p>{ t("Não existe nenhuma unidade curricular com métodos definidos para o ano letivo selecionado!") }</p>
+                                    </Message>
+                                )}
+                            </GridColumn>
+                        </Grid>
+                    </Form>
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button negative onClick={closeModalCopy}>{ t("Cancel") }</Button>
+                    <Button positive onClick={handleSubmitCopy}>{ t("Copiar") }</Button>
+                </Modal.Actions>
+            </Modal>
         </div>
     )
 };

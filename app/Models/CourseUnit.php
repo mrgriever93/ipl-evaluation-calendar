@@ -24,6 +24,9 @@ class CourseUnit extends Model
         "initials",
         "curricular_year",
         "semester_id",
+        "registered",
+        "passed",
+        "flunk"
     ];
 
     public function course()

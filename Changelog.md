@@ -1,5 +1,30 @@
 # Changelog
 
+## Versão 1.1 - XXXXXXXXXXXXX/07/2022
+<ins>Novas features:</ins>
+- Adicionada tab de cursos nos agrupamentos de UCs, para ver quais os cursos das UCs agrupadas (informação também visivel na lista neste momento)
+- Adicionados links de atalho para UC e Curso quando estamos a ver o detalhe de uma avaliação (caso tenhamos um utilizador com permissões)
+
+
+<ins>Issues corrigidos:</ins>
+- Correção da possibilidade de editar uma avaliação para uma data de uma interrupção, não permitindo overlap
+- Correções gerais das permissões de vários utilizadores e da atualização das permissões ao mudar de fase
+- Correção de um erro ao ter épocas a terminar e começar no meio da mesma semana (exemplo: Exame normal e Exame recurso)
+- Correção de não ser possível ver a marcação de uma avaliação quando havia épocas a acontecer em simultâneo
+- Correção do sistema de login com LDAP que não estava a associar os utilizadores ao grupo correto (no caso dos estudantes pelo menos)
+- Correção de alguns problemas de traduções que não estavam a vir na linguagem correta
+- Correção da publicação quando GOP ou Direção que não estava a ser marcada como definitiva como era suposto.
+
+<ins>Coisas a melhorar/corrigir:</ins>
+
+- Validar permissões de edição de avaliações tendo em conta que
+  - Avaliações marcadas pelo GOP apenas devem ser editadas pelo GOP
+  - Responsável de UC apenas pode marcar / editar as suas UCs
+  - Coordenador de Curso pode marcar e editar sempre a não ser que seja marcada pelo GOP
+- Rever quem pode ou não adicionar comentários e se deve estar associado às fases
+- Permitir copiar avaliações e métodos de outro calendário
+- Permitir copiar avaliações e métodos de outros anos letivos
+
 ## Versão 1.0 - 18/07/2022
 <ins>Novas features:</ins>
 - Adicionadas datas dos exames ao popup de revisão para maior/melhor informação disponível a rever;

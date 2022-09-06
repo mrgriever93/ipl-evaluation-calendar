@@ -16,7 +16,10 @@ class CourseUnitFilters extends QueryFilters
 
     public function search($search) {
         $lang = (in_array($this->request->header("lang"), ["en", "pt"]) ? $this->request->header("lang") : "pt");
-        return $this->builder->where('code', 'like', "%{$search}%")->orWhere('name_' . $lang, 'like', "%{$search}%");
+        return $this->builder->where(function($query) use ($search, $lang){
+            $query->where('code', 'like', "%{$search}%")
+                ->orWhere('name_' . $lang, 'like', "%{$search}%");
+        });
     }
 
     public function semester($semester) {
@@ -45,8 +48,8 @@ class CourseUnitFilters extends QueryFilters
         return $this->builder->where('course_id', $course);
     }
 
-    public function withoutGroup() {
-        return $this->builder->where('course_unit_group_id', null);
+    public function group_unit($groupUnit) {
+        return $this->builder->where('course_unit_group_id', $groupUnit);
     }
 
     public function including($ids) {

@@ -14,10 +14,8 @@ use App\Http\Resources\Generic\SemestersSearchResource;
 use App\Models\Calendar;
 use App\Models\Semester;
 use App\Services\CalendarService;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 
 class CalendarController extends Controller
 {
