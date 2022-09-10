@@ -87,11 +87,10 @@ const UnitTabTeacher = ({ unitId, isLoading, warningsHandler }) => {
         <div>
             <ShowComponentIfAuthorized permission={[SCOPES.DEFINE_COURSE_UNIT_TEACHERS]}>
                 <Form>
-                    <Form.Group widths="2">
+                    <Form.Group widths="2" className={"align-items-end"}>
                         <Teachers isSearch={false} eventHandler={(value) => handleSearchTeachers(value)} isDisabled={loading}/>
                         <Form.Field className={"align-bottom"}>
                             <Button onClick={addTeacher} color={"green"}>{ t("Adicionar professor")}</Button>
-
                         </Form.Field>
                     </Form.Group>
                 </Form>

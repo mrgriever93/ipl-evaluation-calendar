@@ -32,7 +32,7 @@ class LdapController extends Controller
     // Get necessary search results
     private function getLocalUsers($querySearchLDAP, $search, $isStudent = false){
         $results = [];
-        if(env('APP_SERVER')) {
+        if(env('APP_SERVER') && $search) {
             $query = $this->connection->query()->setDn($querySearchLDAP);
             $query->whereContains('displayName', $search);
             if($isStudent){
@@ -53,6 +53,9 @@ class LdapController extends Controller
                 $results[] = ["value" => $user->email, "text" => $user->name . " - (" . $user->email . ")"];
             }
         }
+        // sort array by email
+        $values = array_column($results, 'value');
+        array_multisort($values, SORT_ASC, $results);
         return response()->json($results);
     }
 
