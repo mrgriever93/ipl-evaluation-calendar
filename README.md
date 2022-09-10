@@ -41,36 +41,38 @@
 
         $> cd /mnt/c/path_to_your_git_folder        
 
-5) Add sail alias to machine
+5) Make sure .env file exists, and has the right configurations
+
+6) Add sail alias to machine
 
         $> alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
 
-6) Init docker with sail
+7) Init docker with sail
 
         $> sail up -d
 
-7) Instal laravel vendor stuff
+8) Instal laravel vendor stuff
 
         $> composer install
 
 
-8) Run migrations and seeders for the database 
+9) Run migrations and seeders for the database 
 
         $> sail artisan migrate --seed
         ---- or -----
         $> sail artisan migrate:fresh --seed
 
-9) Create personal Token for login
+10) Create personal Token for login
 
         $> sail artisan passport:client --personal
 
-10) Test LDAP connection
+11) Test LDAP connection
 
         $> sail artisan ldap:test
 
 -----
 
-11) To run React frontend
+12) To run React frontend
 
         $> npm install
 
@@ -82,15 +84,15 @@
         $> npm run dev          // compile once
 
 
-12) Preview sent emails:
+13) Preview sent emails:
     After having the docker with sail running, you can go to this link http://localhost:8025/ and preview the email sent.
 
-12) Plugins
+14) Plugins
 
    [Translations](https://react.i18next.com/)
 
 
-13) Links
+15) Links
 
 https://laravel-mix.com/
 
@@ -100,12 +102,12 @@ https://bobbyhadz.com/blog/javascript-remove-object-from-array-by-value
     
 https://github.com/rap2hpoutre/laravel-log-viewer
     
-14) Best practices
+16) Best practices
 
    https://github.com/alexeymezenin/laravel-best-practices
 
 
-15) Server commands
+17) Server commands
 
         $> composer install --optimize-autoloader --no-dev
         $> php artisan config:cache
