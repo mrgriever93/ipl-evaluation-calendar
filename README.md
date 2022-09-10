@@ -101,6 +101,8 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/DELETE
 https://bobbyhadz.com/blog/javascript-remove-object-from-array-by-value
     
 https://github.com/rap2hpoutre/laravel-log-viewer
+
+https://github.com/spatie/calendar-links
     
 16) Best practices
 

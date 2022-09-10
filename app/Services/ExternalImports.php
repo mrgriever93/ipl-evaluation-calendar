@@ -219,9 +219,9 @@ class ExternalImports
                                 "name_pt" => $info[$school->index_course_unit_name_pt],
                                 "name_en" => $info[$school->index_course_unit_name_en], // this will duplicate the value as default, to prevent empty states
 
-                                "registered"=> $info[$school->index_course_unit_registered],
-                                "passed"    => $info[$school->index_course_unit_passed],
-                                "flunk"     => $info[$school->index_course_unit_flunk],
+                                "registered"=> $info[$school->index_course_unit_registered] ? $info[$school->index_course_unit_registered]  : 0,
+                                "passed"    => $info[$school->index_course_unit_passed]     ? $info[$school->index_course_unit_passed]      : 0,
+                                "flunk"     => $info[$school->index_course_unit_flunk]      ? $info[$school->index_course_unit_flunk]       : 0,
                             ]
                         );
 
