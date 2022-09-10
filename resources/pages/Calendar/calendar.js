@@ -305,6 +305,7 @@ const Calendar = () => {
 
     const weekData = useMemo(() => {
         if(epochsList.length > 0 && !isCalendarInfoLoading) {
+            console.log('weekData');
             return _.orderBy(
                 epochsList.filter((item) => showingEpochs.includes(item.id)).reduce((acc, curr) => {
                     const start_date = moment(curr.start_date);
@@ -316,6 +317,7 @@ const Calendar = () => {
                                     week: start_date.isoWeek(),
                                     year: start_date.year(),
                                     days: [],
+                                    epochsOverlap: false,
                                 });
                             }
 
@@ -389,9 +391,10 @@ const Calendar = () => {
                                     code: curr.code
                                 }];
                             }
-
-                            const weekEpochsFiltered = week.days.filter((item) => item.weekDay === start_date.day());
-                            week.epochsOverlap = weekEpochsFiltered.filter((item) => item.epochsDaily.length > 1).length > 0;
+                            if(!week.epochsOverlap) {
+                                const weekEpochsFiltered = week.days.filter((item) => item.weekDay === start_date.day());
+                                week.epochsOverlap = weekEpochsFiltered.filter((item) => item.epochsDaily.length > 1).length > 0;
+                            }
                         }
                         start_date.add(1, 'days');
                     }

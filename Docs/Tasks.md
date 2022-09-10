@@ -58,9 +58,9 @@
 
 ## Feedback Prof
 
-- [ ] 1 > No último dia agendado para a avaliação periódica não aparece identificado graficamente(fundo), e não é possível marcar avaliações (ver calendários de EI e de MCD )
+- [X] 1 > No último dia agendado para a avaliação periódica não aparece identificado graficamente(fundo), e não é possível marcar avaliações (ver calendários de EI e de MCD )
 
-- [ ] 2 > Quando se coloca a época normal a coincidir com a avaliação periódica a sobreposição não aparece corretamente na última semana, desaparecendo a época normal 
+- [X] 2 > Quando se coloca a época normal a coincidir com a avaliação periódica a sobreposição não aparece corretamente na última semana, desaparecendo a época normal 
            (com exceção do último dia devido ao bug 1). Ao colocar invisível a época periódica confirma-se a existência da época normal (ver calendários EIPL e MCD).
 
 - [X] 3 > Apresentar as iniciais dos ramos no calendário, entre parentesis. Note-se que não faz sentido apresentar o Tronco Comum. Nos cursos deveria impedir a edição 
