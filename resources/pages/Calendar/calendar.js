@@ -38,6 +38,9 @@ const Calendar = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isCalendarInfoLoading, setIsCalendarInfoLoading] = useState(true);
 
+    const [courseInfo, setCourseInfo] = useState();
+    const [phaseInfo, setPhaseInfo] = useState();
+
     const [openScheduleExamModal, setOpenScheduleExamModal] = useState(false);
     const [openExamDetailModal, setOpenExamDetailModal] = useState(false);
     const [viewExamId, setViewExamId] = useState(undefined);
@@ -90,8 +93,8 @@ const Calendar = () => {
     const scheduleExamHandler = (scholarYear, epoch, date, existingExamsAtThisDate) => {
         setScheduleExamInfo({
             calendarId: parseInt(calendarId, 10),
-            courseId: generalInfo?.course?.id,
-            courseName: generalInfo?.course?.display_name,
+            courseId: courseInfo?.id,
+            courseName: courseInfo?.display_name,
             scholarYear: scholarYear,
             group_id: undefined,
             date_start: date,
@@ -108,8 +111,8 @@ const Calendar = () => {
         event.stopPropagation();
         setScheduleExamInfo({
             calendarId: parseInt(calendarId, 10),
-            courseId: generalInfo?.course?.id,
-            courseName: generalInfo?.course?.display_name,
+            courseId: courseInfo?.id,
+            courseName: courseInfo?.display_name,
             scholarYear: scholarYear,
             epochs: epochsList,
             selected_epoch: epoch,
@@ -254,6 +257,8 @@ const Calendar = () => {
                                 epochs,
                                 general_info,
                                 week_ten,
+                                course,
+                                phase,
                             },
                         },
                     } = response;
@@ -262,6 +267,9 @@ const Calendar = () => {
                     setIsPublished(!!published);
                     setInterruptions(interruptions);
                     setEpochsList(epochs);
+
+                    setCourseInfo(course);
+                    setPhaseInfo(phase);
 
                     let startDate = epochs.length > 0 ? epochs[0].start_date : undefined;
                     let endDate = epochs.length > 0 ? epochs[0].end_date : undefined;
@@ -409,7 +417,7 @@ const Calendar = () => {
         return Array(end - start + 1).fill().map((_, idx) => start + idx);
     }
 
-    const courseYears = generalInfo?.course?.duration ? range(1, generalInfo?.course?.duration) : [];
+    const courseYears = courseInfo?.duration ? range(1, courseInfo?.duration) : [];
     const weekDays = [1, 2, 3, 4, 5, 6];
     let alreadyAddedColSpan = false;
     let alreadyAddedRowSpan = false;
@@ -569,7 +577,7 @@ const Calendar = () => {
                         // For the Future (drag and drop
                         // draggable="false" onDragStart={drag}
                         <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )}
-                            title={ (exam.in_class ? t('Aula') + " - " : "" ) + exam.course_unit.name + " - " + (exam.method?.description || exam.method?.name) }
+                            title={ (exam.in_class ? t('Aula') + " - " : "" ) + exam.course_unit.name_full + " - " + (exam.method?.description || exam.method?.name) }
                             color="blue" key={exam.id}
                             onClick={() => openExamDetailHandler(year, exam)}>
                             { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
@@ -582,7 +590,7 @@ const Calendar = () => {
                                 </div>
                             )}
                             <div className="btn-exam-content">
-                                <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : (exam.in_class ? t('Aula') + " - " : "" ) ) + (exam.course_unit.initials || exam.course_unit.name) }</div>
+                                <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : (exam.in_class ? t('Aula') + " - " : "" ) ) + (exam.course_unit.initials || exam.course_unit.name_full) }</div>
                                 <div className="btn-exam-type">{ (exam.method?.description || exam.method?.name) }</div>
                             </div>
                         </Button>
@@ -622,7 +630,7 @@ const Calendar = () => {
             <div className="margin-bottom-base">
                 <Link to="/"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
             </div>
-            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings} isLoading={isLoading}
+            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} course={courseInfo} phase={phaseInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings} isLoading={isLoading}
                              isPublished={isPublished} isTemporary={isTemporary} showingEpochs={showingEpochs} epochsViewHandler={setShowingEpochs}
                              hasCurrentWeek={ (moment(calendarStartDate, "DD-MM-YYYY").isSameOrBefore(moment()) && moment(calendarEndDate, "DD-MM-YYYY").isSameOrAfter(moment()))  } />
             <AnimatePresence>
@@ -752,7 +760,7 @@ const Calendar = () => {
             <PopupEvaluationDetail
                 isPublished={isPublished || isTemporary}
                 isOpen={openExamDetailModal}
-                currentPhaseId={generalInfo?.phase?.id || 0}
+                currentPhaseId={phaseInfo?.id || 0}
                 onClose={closeExamDetailHandler}
                 examId={viewExamId} />
 

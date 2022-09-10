@@ -18,7 +18,7 @@ import PopupRevisionDetail from "./popup-revision";
 
 const SweetAlertComponent = withReactContent(Swal);
 
-const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublished, isTemporary, epochsViewHandler, hasCurrentWeek = false}) => {
+const InfosAndActions = ( {isLoading, epochs, calendarInfo, course, phase, warnings, isPublished, isTemporary, epochsViewHandler, hasCurrentWeek = false}) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     // get URL params
@@ -93,10 +93,10 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
     }, [warnings]);
 
     useEffect(() => {
-        if (calendarInfo?.phase?.id > 0) {
-            setCalendarPhase(calendarInfo?.phase?.id);
+        if (phase?.id > 0) {
+            setCalendarPhase(phase?.id);
         }
-    }, [calendarInfo]);
+    }, [phase]);
 
     useEffect(() => {
         if (typeof calendarPhase === 'number' && calendarPhase <= 0) {
@@ -160,7 +160,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
 
     const updatePhaseHandler = (newPhase) => {
         setCalendarPhase(newPhase);
-        calendarInfo.phase.id =  newPhase;
+        phase.id =  newPhase;
     }
 
     useEffect(() => {
@@ -213,8 +213,8 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
             <div className='main-content-title-section'>
                 <div className='main-content-title'>
                     <Header as="h3">
-                        { t('Calendário de Avaliação') }
-                        <div className='heading-description'>{ calendarInfo?.course?.name_pt ? " (" + calendarInfo.course.name_pt + ")": '' }</div>
+                        {calendarInfo && (<>{ t('Calendário de Avaliação') } - { calendarInfo.semester } <small>({ calendarInfo.academic_year })</small></>)}
+                        {course && (<div className='heading-description'>{ course.initials } - { course.display_name }</div>)}
                     </Header>
                 </div>
                 <div className='main-content-actions'>
@@ -308,7 +308,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                                                     <Header as="h5">{ t('Fase') }:</Header>
                                                 </span>
                                                 <div className='margin-top-xs'>
-                                                    {calendarPhases.find((x) => x.key === calendarPhase)?.text || calendarInfo?.phase?.description}
+                                                    {calendarPhases.find((x) => x.key === calendarPhase)?.text || phase?.description}
                                                 </div>
                                             </div>
                                         )}
@@ -399,7 +399,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
                                                         <div className="revision-column-content">
                                                             <ul className="margin-top-base">
                                                                 <li>{ t('Existem') +" "+ methodsIncompleteCount + " " + t('elementos de avaliação por submeter') }.</li>
-                                                                <li>{ t('Existem') +" "+ methodsMissingCount + " " + t('UCs com') + " " }<a href={ "/unidade-curricular?curso="+calendarInfo?.course?.id} target="_blank">{ t('métodos')} <Icon name="external alternate" /></a> { t('por preencher') }.</li>
+                                                                <li>{ t('Existem') +" "+ methodsMissingCount + " " + t('UCs com') + " " }<a href={ "/unidade-curricular?curso=" + course?.id} target="_blank">{ t('métodos')} <Icon name="external alternate" /></a> { t('por preencher') }.</li>
                                                             </ul>
                                                         </div>
                                                         <div className={"text-center"}>
@@ -440,7 +440,7 @@ const InfosAndActions = ( {isLoading, epochs, calendarInfo, warnings, isPublishe
             </Sticky>
 
             <ShowComponentIfAuthorized permission={[SCOPES.CHANGE_CALENDAR_PHASE, SCOPES.PUBLISH_CALENDAR]}>
-                <PopupSubmitCalendar isOpen={openSubmitModal} onClose={closeSubmitModalHandler} calendarId={calendarId} currentPhaseId={calendarInfo?.phase?.id} updatePhase={updatePhaseHandler}/>
+                <PopupSubmitCalendar isOpen={openSubmitModal} onClose={closeSubmitModalHandler} calendarId={calendarId} currentPhaseId={phase?.id} updatePhase={updatePhaseHandler}/>
             </ShowComponentIfAuthorized>
 
             <ShowComponentIfAuthorized permission={[SCOPES.ADD_EXAMS, SCOPES.EDIT_EXAMS, SCOPES.REMOVE_EXAMS, SCOPES.EDIT_COURSE_UNITS]}>

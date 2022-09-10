@@ -11,7 +11,7 @@ class AvailableCourseUnitsResource extends JsonResource
     {
         return [
             'id'            => $this->id,
-            'name'          => ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
+            'name'          =>  ($this->branch->branch_number == 0 ? '' : '(' . ($request->header("lang") == "en" ? $this->branch->initials_en : $this->branch->initials_pt) . ') ' ) . ($request->header("lang") == "en" ? $this->name_en : $this->name_pt),
             'initials'      => $this->initials,
             'methods'       => AvailableMethodsResource::collection($this->methods),
             'is_complete'   => $this->is_complete && !empty($this->methods),
