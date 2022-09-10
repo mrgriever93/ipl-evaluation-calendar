@@ -39,6 +39,7 @@
     - [ ] Validar se esta completo
 - [X] Rever quem pode ver detalhe de UC
 - [ ] Rever quem pode ou não adicionar comentários e se deve estar associado às fases
+- [ ] Adicionar Ramo as UCs caso nao seja tronco comum
 
 
 > UCs Agrupadas
@@ -54,6 +55,17 @@
 
 > Qualquer Lista
 - [ ] validar os filtros
+
+## Feedback Prof
+
+- [ ] 1 > No último dia agendado para a avaliação periódica não aparece identificado graficamente(fundo), e não é possível marcar avaliações (ver calendários de EI e de MCD )
+- [ ] 2 > Quando se coloca a época normal a coincidir com a avaliação periódica a sobreposição não aparece corretamente na última semana, desaparecendo a época normal (com exceção do último dia devido ao bug 1). Ao colocar invisível a época periódica confirma-se a existência da época normal (ver calendários EIPL e MCD).
+- [ ] 3 > Apresentar as iniciais dos ramos no calendário, entre parentesis. Note-se que não faz sentido apresentar o Tronco Comum. Nos cursos deveria impedir a edição (e eliminação) do Tronco comum (ramo 0) pois todos os cursos o têm....
+- [ ] 4 > No início dos calendários (campo superior esquerdo) para além do nome do curso era importante colocar também a sigla, para distinguir os cursos que têm vários regimes e edições em vários locais.
+- [ ] 5 > BUG ao acrescentar Professor Alexandrino Gonçalves como responsável de uma UC ...email correto, mas associa a Alexandre Apolinário. a pesquisa também me parece estra com alguns problemas (não vem logo todos os nomes....)
+- [ ] 6 > Necessidade de marcar no calendário de EI a UC referente ao plano da Matemática ...essa UC aparece como sendo do curso Matemáticas Gerais. Recordo de termos falado neste assunto, mas não me lembro da solução. Para "desenrascar" poderia eventualmente permitir (apenas ao) GOP marcar num calendário uma UC de outro curso. É que nesse caso os agrupamentos não funcionam, pois em EI (e em outras Engas) não há nenhuma UC para grupar com essa....
+- [ ] 7 > Alteração da password do admistrador para uma mais segura. O ideal é que o administrador pudesse alterar a sua password.
+- [ ] Call com Veiga > Gerar PDF do calendario (tipo excel)
 
 
 # Done - Last Push
