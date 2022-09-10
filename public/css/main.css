@@ -933,3 +933,52 @@ div.inline{
     color: #fff;
     background: #3699ed;
 }
+
+
+
+@media print {
+    .ui.menu,
+    .ui.footer {
+        display: none;
+    }
+
+    .main-content-actions,
+    .breadcrumbs-back-link,
+    .app-content .main-sticky-section,
+    .button.btn-schedule-exam,
+    .calendar-tables .table td .button.btn-exam-details .btn-action-wrapper {
+        display: none;
+    }
+
+    .main-content-title {
+        text-align: center;
+    }
+
+    .calendar-tables .table-week * {
+        font-size: 10px;
+    }
+
+    .calendar-tables .table-week table {
+        border: 1px solid #999;
+        border-collapse: collapse;
+    }
+
+    .calendar-tables .ui.celled.table tr td, 
+    .calendar-tables .ui.celled.table tr th {
+        border: 1px solid #999;
+        height: 40px;
+        padding: 3px;
+        width: 15%;
+    }
+
+    .calendar-tables .ui.celled.table tr td:first-child, 
+    .calendar-tables .ui.celled.table tr th:first-child {
+        width: 10%;
+    }
+
+    .calendar-tables .table td .button.btn-exam-details {
+        border: 1px solid #999;
+        padding: 2px;
+        width: 100%;
+    }
+ }
