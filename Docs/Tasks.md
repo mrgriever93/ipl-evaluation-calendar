@@ -78,7 +78,7 @@
 
 - [ ] 7 > Alteração da password do admistrador para uma mais segura. O ideal é que o administrador pudesse alterar a sua password.
 
-- [ ] Call com Veiga > Gerar PDF do calendario (tipo excel)
+- [X] 8 > Call com Veiga > Gerar PDF do calendario (tipo excel)
 
 
 # Done - Last Push
