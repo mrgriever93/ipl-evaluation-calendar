@@ -75,6 +75,9 @@ body {
 .justify_space_between{
     justify-content: space-between;
 }
+.align-items-end{
+    align-items: end;
+}
 
 .footer.ui.inverted.vertical.segment{
     min-height: 145px;
@@ -963,7 +966,7 @@ div.inline{
         border-collapse: collapse;
     }
 
-    .calendar-tables .ui.celled.table tr td, 
+    .calendar-tables .ui.celled.table tr td,
     .calendar-tables .ui.celled.table tr th {
         border: 1px solid #999;
         height: 40px;
@@ -971,7 +974,7 @@ div.inline{
         width: 15%;
     }
 
-    .calendar-tables .ui.celled.table tr td:first-child, 
+    .calendar-tables .ui.celled.table tr td:first-child,
     .calendar-tables .ui.celled.table tr th:first-child {
         width: 10%;
     }

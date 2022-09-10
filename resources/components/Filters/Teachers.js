@@ -37,7 +37,7 @@ const FilterOptionTeacher = ({ widthSize, eventHandler, value, isSearch = true, 
         <Form.Dropdown search selectOnBlur={false} width={widthSize} selection value={teacher} options={teachersOptions} label={t("Professores")}
                        placeholder={ t((isSearch ? "Todos os Professores" : "Professores")) } loading={loading}
                        disabled={isDisabled}
-                       onSearchChange={_.debounce(handleSearchTeacher, 400)}
+                       onSearchChange={_.debounce(handleSearchTeacher, 600)}
                        onChange={filterByTeacher} />
     );
 };
