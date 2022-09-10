@@ -28,6 +28,7 @@ html, body {
 
 body {
     background: var(--background-color);
+    -webkit-print-color-adjust: exact !important;
 }
 
 .app-content{
@@ -934,6 +935,62 @@ div.inline{
     background: #3699ed;
 }
 
+/* print classes test */
+.pdf-print-button {
+    float: right;
+    margin: -8px .25em 8px 0 !important;
+}
+
+.printing .ui.menu,
+.printing .ui.footer {
+    display: none;
+}
+
+.printing .main-content-actions,
+.printing .breadcrumbs-back-link,
+.printing .main-sticky-section,
+.printing .button.btn-schedule-exam,
+.printing .calendar-tables .table td .button.btn-exam-details .btn-action-wrapper,
+.printing .hide-on-print {
+    display: none;
+}
+
+.printing .main-content-title {
+    text-align: center;
+}
+
+.printing .calendar-tables .table-week * {
+    font-size: 11px;
+}
+
+.printing .calendar-tables .table-week table {
+    border: 2px solid #ddd;
+    border-collapse: collapse;
+    page-break-inside: avoid;
+    margin: 8px 0;
+}
+
+.printing .calendar-tables .ui.celled.table tr td, 
+.printing .calendar-tables .ui.celled.table tr th {
+    border: 2px solid #ddd;
+    height: 40px;
+    padding: 3px;
+    width: 15%;
+}
+
+.printing .calendar-tables .ui.celled.table tr td:first-child, 
+.printing .calendar-tables .ui.celled.table tr th:first-child {
+    width: 10%;
+}
+
+.printing .calendar-tables .table td .button.btn-exam-details {
+    background-color: #eee;
+    border: 2px solid #ddd;
+    color: #222;
+    padding: 2px;
+    width: 100%;
+}
+
 
 
 @media print {
@@ -946,8 +1003,9 @@ div.inline{
     .breadcrumbs-back-link,
     .app-content .main-sticky-section,
     .button.btn-schedule-exam,
-    .calendar-tables .table td .button.btn-exam-details .btn-action-wrapper {
-        display: none;
+    .calendar-tables .table td .button.btn-exam-details .btn-action-wrapper,
+    .hide-on-print {
+        display: none !important;
     }
 
     .main-content-title {
@@ -955,17 +1013,19 @@ div.inline{
     }
 
     .calendar-tables .table-week * {
-        font-size: 10px;
+        font-size: 11px;
     }
 
     .calendar-tables .table-week table {
-        border: 1px solid #999;
+        border: 2px solid #ddd;
         border-collapse: collapse;
+        page-break-inside: avoid;
+        margin: 8px 0;
     }
 
     .calendar-tables .ui.celled.table tr td, 
     .calendar-tables .ui.celled.table tr th {
-        border: 1px solid #999;
+        border: 2px solid #ddd;
         height: 40px;
         padding: 3px;
         width: 15%;
@@ -977,7 +1037,9 @@ div.inline{
     }
 
     .calendar-tables .table td .button.btn-exam-details {
-        border: 1px solid #999;
+        background-color: #eee !important;
+        border: 2px solid #ddd;
+        color: #222 !important;
         padding: 2px;
         width: 100%;
     }
