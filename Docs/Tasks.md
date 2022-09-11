@@ -56,6 +56,15 @@
 > Qualquer Lista
 - [ ] validar os filtros
 
+
+
+- [ ] ver a questão de registar as alterações das UCs que foram alteradas ao gravar uma nova versão do calendário
+- [ ] download .ics das várias uc's que estou inscrito
+- [ ] popup com estudantes que estão inscritos, para fazer comparação dos estudantes que estão inscritos nas duas e perceber que influencia isso poderá ter nas datas calendarizadas
+
+
+
+
 ## Feedback Prof
 
 - [X] 1 > No último dia agendado para a avaliação periódica não aparece identificado graficamente(fundo), e não é possível marcar avaliações (ver calendários de EI e de MCD )
@@ -76,7 +85,7 @@
           neste assunto, mas não me lembro da solução. Para "desenrascar" poderia eventualmente permitir (apenas ao) GOP marcar num calendário uma UC de outro curso. É que nesse 
           caso os agrupamentos não funcionam, pois em EI (e em outras Engas) não há nenhuma UC para grupar com essa....
 
-- [ ] 7 > Alteração da password do admistrador para uma mais segura. O ideal é que o administrador pudesse alterar a sua password.
+- [X] 7 > Alteração da password do admistrador para uma mais segura. O ideal é que o administrador pudesse alterar a sua password.
 
 - [X] 8 > Call com Veiga > Gerar PDF do calendario (tipo excel)
 

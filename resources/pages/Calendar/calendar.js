@@ -67,7 +67,7 @@ const Calendar = () => {
     const handlePrint = useReactToPrint({
         content: () => componentRef.current,
         bodyClass: 'printing',
-        documentTitle: courseInfo?.initials +" - " + courseInfo?.display_name,
+        documentTitle: '(' + generalInfo.academic_year + "_" + generalInfo.semester + ') ' + courseInfo?.initials + "_" + courseInfo?.display_name,
         pageStyle: `@page {
                         margin: 12mm;
                     }`,
@@ -791,7 +791,7 @@ const Calendar = () => {
                     calendarDates={{minDate: calendarStartDate, maxDate: calendarEndDate}}/>
             </Container>
         </div>
-        
+
     );
 };
 export default Calendar;
