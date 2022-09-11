@@ -146,9 +146,10 @@ Route::middleware('auth:api')->group(function () {
      */
 
     Route::controller(UserController::class)->group(function () {
-        Route::get('/users/{user}',           'show'  );
-        Route::get('/users',                  'index' );
-        Route::patch('/user/{user}',          'update');
+        Route::get('/users/{user}',             'show'      );
+        Route::get('/users',                    'index'     );
+        Route::patch('/user/{user}',            'update'    );
+        Route::post('/user/{user}/password',    'password'  );
     });
 
     Route::controller(ExamController::class)->group(function () {
