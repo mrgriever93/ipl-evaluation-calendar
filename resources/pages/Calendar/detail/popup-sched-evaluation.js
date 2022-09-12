@@ -20,15 +20,12 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
     const calendarId = id;
 
     const [epochsList, setEpochsList] = useState([]);
-    const [differences, setDifferences] = useState();
-    const [isLoading, setIsLoading] = useState(true);
     const [loadRemainingCourseUnits, setLoadRemainingCourseUnits] = useState(false);
     const [selectedEpoch, setSelectedEpoch] = useState();
     const [selectedCourseUnitId, setSelectedCourseUnitId] = useState(-1);
     const [courseUnits, setCourseUnits] = useState([]);
     const [methodList, setMethodList] = useState([]);
 
-    const [calendarPhase, setCalendarPhase] = useState(true);
     const [changeData, setChangeData] = useState(false);
     const [savingExam, setSavingExam] = useState(false);
     const [showEmptyUcs, setShowEmptyUcs] = useState(false);
@@ -37,6 +34,9 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
 
     const [epochStartDate, setEpochStartDate] = useState();
     const [epochEndDate, setEpochEndDate] = useState();
+
+    const [showOtherUnits, setShowOtherUnits] = useState(false);
+    const [otherCourseUnits, setOtherCourseUnits] = useState([]);
 
     useEffect( () => {
         if(!!scheduleInformation.epochs) {
@@ -78,6 +78,8 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
                                 disabled: !has_methods,
                             }),
                         );
+                        mapped.push({key: 'other', value: 'other', text: t("Outra Unidade Curricular"), description: t("Matemáticas, Inglês, etc...")});
+
                         setCourseUnits(mapped);
                         // has curricular unit with missing methods?
                         //setShowMissingMethodsLink(response.data.data?.length === 0 || beforeSetCourseUnits?.length === 0);
@@ -88,6 +90,33 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
             setLoadRemainingCourseUnits(false);
         }
     }, [loadRemainingCourseUnits, scheduleInformation]);
+
+
+    useEffect(() => {
+        setShowMissingMethodsLink(courseUnits.filter((item) => !item?.methods?.length > 0 && item.key !== 'other' ).length > 0);
+        if(showOtherUnits){
+            axios.get(`/available-methods/${calendarId}/others?epoch_id=${selectedEpoch}&year=${scheduleInformation.scholarYear}`)
+                .then((response) => {
+                    if (response.status === 200) {
+                        let beforeSetCourseUnits = [];
+                        beforeSetCourseUnits = response.data.data;
+                        const mapped = beforeSetCourseUnits?.map(({id, name, methods, is_complete, has_methods}) => ({
+                                key: id,
+                                value: id,
+                                text: name,
+                                methods,
+                                icon: ((!has_methods ? {color: 'yellow', name:'warning circle'} : is_complete ? {color: 'green', name:'check circle'} : undefined)),
+                                description: (!has_methods ? t("Métodos em falta") : undefined),
+                                disabled: !has_methods,
+                            }),
+                        );
+                        setShowMissingMethodsLink(beforeSetCourseUnits.filter((item) => !item.has_methods).length > 0);
+                        setOtherCourseUnits(mapped);
+                    }
+                });
+        }
+    }, [showOtherUnits]);
+
 
     const epochDropdownOnChange = (event, value) => {
         setCourseUnits([]);
@@ -101,22 +130,28 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
 
     const methodListFilterHandler = (course_unit_id) => {
         setSelectedCourseUnitId(course_unit_id);
-        if(courseUnits?.length > 0 ) {
-            setMethodList(
-                courseUnits.find((courseUnit) => courseUnit.value === course_unit_id)?.methods.map(({id, description, name, minimum, weight, is_done}) => ({
-                        key: id,
-                        value: id,
-                        text: (description || name),
-                        description: `Min. ${minimum} / ${t('Peso')}: ${parseInt(weight, 10)}%`,
-                        icon: (is_done ? {color: 'green', name:'check circle'} : undefined),
-                    })
-                )
-            );
+        if(course_unit_id !== "other"){
+            let allUnits = courseUnits.concat(otherCourseUnits);
+
+            if(allUnits?.length > 0 ) {
+                setMethodList(
+                    allUnits.find((courseUnit) => courseUnit.value === course_unit_id)?.methods
+                        .map(({id, description, name, minimum, weight, is_done}) => ({
+                            key: id,
+                            value: id,
+                            text: (description || name),
+                            description: `Min. ${minimum} / ${t('Peso')}: ${parseInt(weight, 10)}%`,
+                            icon: (is_done ? {color: 'green', name:'check circle'} : undefined),
+                        })
+                    )
+                );
+            }
         }
     };
 
     const checkMethodAlreadyScheduled = (methodId) => {
-        let courseUnitMethods = courseUnits.find((courseUnit) => courseUnit.value === selectedCourseUnitId)?.methods;
+        const allUnits = courseUnits.concat(otherCourseUnits);
+        let courseUnitMethods = allUnits.find((courseUnit) => courseUnit.value === selectedCourseUnitId)?.methods;
         if(courseUnitMethods.length > 0) {
             let foundMethod = courseUnitMethods.find((method) => method.id === methodId);
             if(foundMethod?.is_done) {
@@ -144,7 +179,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
         const examScheduleObj = {
             calendar_id: parseInt(calendarId, 10),
             course_id: parseInt(scheduleInformation?.courseId),
-            course_unit_id: values.courseUnit,
+            course_unit_id: values.courseUnit == 'other' ? values.otherCourseUnit :  values.otherCourseUnit,
             group_id: values.group_id,
             date_start: dateStart,
             date_end: dateEnd,
@@ -179,6 +214,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
     useEffect(() => {
         if (!isOpen) {
             setShowMissingMethodsLink(false);
+            setShowOtherUnits(false);
             setSelectedEpoch(undefined);
             setCourseUnits([]);
             setMethodList([]);
@@ -230,6 +266,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
                 hour:            scheduleInformation?.exam_id ? scheduleInformation?.hour              : null,
                 room:            scheduleInformation?.exam_id ? scheduleInformation?.room              : null,
                 courseUnit:      scheduleInformation?.exam_id ? scheduleInformation?.course_unit_id    : -1,
+                otherCourseUnit: scheduleInformation?.exam_id ? scheduleInformation?.course_unit_id    : -1,
                 method:          scheduleInformation?.exam_id ? scheduleInformation?.method_id         : -1,
                 group_id:        scheduleInformation?.exam_id ? scheduleInformation?.group_id          : null
             }}
@@ -360,22 +397,58 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
                                                 </Field>
                                                 <Field name="courseUnit">
                                                     {({input: courseUnitInput}) => (
-                                                        <Form.Dropdown
-                                                            options={courseUnits}
-                                                            label={ t("Unidade Curricular") }
-                                                            {...courseUnitInput}
-                                                            selection search
-                                                            selectOnBlur={false}
-                                                            placeholder={t("Selecione a Unidade Curricular")}
-                                                            disabled={!courseUnits?.length}
-                                                            loading={courseUnits !== undefined ? !courseUnits.length : false}
-                                                            onChange={(e, {value, options}) => {
-                                                                methodListFilterHandler(value);
-                                                                courseUnitInput.onChange(value);
-                                                            }}
-                                                        />
+                                                        <Field name="otherCourseUnit">
+                                                            {({input: otherCourseUnitInput}) => (
+                                                                <div className={"field"}>
+                                                                    <Form.Dropdown
+                                                                        options={courseUnits}
+                                                                        label={ t("Unidade Curricular") }
+                                                                        {...courseUnitInput}
+                                                                        selection search
+                                                                        selectOnBlur={false}
+                                                                        placeholder={t("Selecione a Unidade Curricular")}
+                                                                        disabled={!courseUnits?.length}
+                                                                        loading={courseUnits !== undefined ? !courseUnits.length : false}
+                                                                        onChange={(e, {value, options}) => {
+                                                                            if(value === "other") {
+                                                                                setShowOtherUnits(true);
+                                                                            } else {
+                                                                                setShowOtherUnits(false);
+                                                                                methodListFilterHandler(value);
+                                                                            }
+                                                                            courseUnitInput.onChange(value);
+                                                                        }}
+                                                                    />
+                                                                    {showOtherUnits && (
+                                                                        <div>
+                                                                            { otherCourseUnits?.length === 0 ? (
+                                                                                <Message size='tiny' info={true}>
+                                                                                    <div>{ t('Sem outras Unidades curriculares para mostrar') }</div>
+                                                                                </Message>
+                                                                            ) : (
+                                                                                <Form.Dropdown
+                                                                                    options={otherCourseUnits}
+                                                                                    label={ t("Unidade Curricular - Outras") }
+                                                                                    {...otherCourseUnitInput}
+                                                                                    selection search
+                                                                                    selectOnBlur={false}
+                                                                                    placeholder={t("Selecione a Unidade Curricular - Outras")}
+                                                                                    disabled={!otherCourseUnits?.length}
+                                                                                    loading={otherCourseUnits !== undefined ? !otherCourseUnits.length : false}
+                                                                                    onChange={(e, {value, options}) => {
+                                                                                        methodListFilterHandler(value);
+                                                                                        otherCourseUnitInput.onChange(value);
+                                                                                    }}
+                                                                                />
+                                                                            )}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            )}
+                                                        </Field>
                                                     )}
                                                 </Field>
+
                                                 { showMissingMethodsLink && (
                                                         <Message size='tiny' warning={true}>
                                                             <div>{ t("Existem Unidades Curriculares sem métodos definidos.")}</div>

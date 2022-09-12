@@ -88,15 +88,16 @@ Route::middleware('auth:api')->group(function () {
         Route::patch('/calendar/{calendar}',                'update'           );
         Route::delete('/calendar/{calendar}',               'destroy'          );
 
-        Route::post('/calendar/{calendar}/approval',         'approval'            );
+        Route::post('/calendar/{calendar}/approval',         'approval'             );
 
-        Route::post('/calendar/{calendar}/publish',         'publish'              );
-        Route::post('/calendar/{calendar}/copy',            'copyCalendar'         );
+        Route::post('/calendar/{calendar}/publish',         'publish'               );
+        Route::post('/calendar/{calendar}/copy',            'copyCalendar'          );
 
-        Route::get('/calendar/{calendar}/warnings',         'getCalendarWarnings');
+        Route::get('/calendar/{calendar}/warnings',         'getCalendarWarnings'   );
         /* Previous Methods */
-        Route::get('/available-methods/{calendar}',         'getAvailableMethods'  );
-        Route::get('/semesters',                            'listSemesters'        );
+        Route::get('/available-methods/{calendar}',         'getAvailableMethods'       );
+        Route::get('/available-methods/{calendar}/others',  'getAvailableMethodsOthers' );
+        Route::get('/semesters',                            'listSemesters'             );
 
         Route::get('/new-calendar/semesters',               'calendarSemesters'    );
         Route::get('/new-calendar/interruptions',           'calendarInterruptions');

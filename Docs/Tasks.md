@@ -59,7 +59,7 @@
 
 
 - [ ] ver a questão de registar as alterações das UCs que foram alteradas ao gravar uma nova versão do calendário
-- [ ] download .ics das várias uc's que estou inscrito
+  - [ ] download .ics das várias uc's que estou inscrito
 - [ ] popup com estudantes que estão inscritos, para fazer comparação dos estudantes que estão inscritos nas duas e perceber que influencia isso poderá ter nas datas calendarizadas
 
 

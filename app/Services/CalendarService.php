@@ -361,6 +361,73 @@ class CalendarService
         return AvailableCourseUnitsResource::collection($response);
     }
 
+    public static function getAvailableMethodsOthers(Request $request, Calendar $calendar) {
+
+        $generic_courses = Course::where("degree", 0)->pluck('id')->toArray();
+        $epoch_type_id = Epoch::find($request->epoch_id)->epoch_type_id;
+        $availableMethods = CourseUnit::where("curricular_year", $request->year)
+            ->whereIn('course_id', $generic_courses);
+
+        if(!$calendar->semester->special) {
+            $availableMethods->where('semester_id', $calendar->semester_id);
+        }
+
+        //return AvailableCourseUnitsResource::collection($availableMethods);
+        $includedCUs = [];
+        if (Auth::user()->groups()->isTeacher()->exists()
+            && (
+                Auth::user()->groups()->coordinator()->exists() && Auth::user()->groups()->board()->exists()
+                && Auth::user()->groups()->superAdmin()->exists() && Auth::user()->groups()->admin()->exists()
+                && Auth::user()->groups()->pedagogic()->exists() && Auth::user()->groups()->responsiblePedagogic()->exists()
+                && Auth::user()->groups()->gop()->exists()
+            )
+        ) {
+            // where Teachers have those CUs [CourseUnit.id in (....)]
+            $includedCUs = Auth::user()->courseUnits->pluck('id');
+        }
+
+        if (Auth::user()->groups()->responsible()->exists()) {
+            // include CUs that the user is responsible for
+            $ucs = CourseUnit::where('responsible_user_id', Auth::user()->id)->get()->pluck('id')->toArray();
+            if(empty($includedCUs)){
+                $includedCUs = $ucs;
+            } else {
+                $includedCUs[] = $ucs;
+            }
+        }
+        if(!empty($includedCUs)) {
+            $availableMethods->whereIn('course_units.id', $includedCUs);
+        }
+        $eachCourseUnit = $availableMethods->distinct()->get();
+        $response = collect();
+
+        foreach ($eachCourseUnit as $courseUnit) {
+            $response->push($courseUnit);
+        }
+
+        //$availableMethods = $availableMethods->join("evaluation_types", function($join){
+        //    $join->on("evaluation_types.id", "methods.evaluation_type_id");
+        //});
+
+        foreach($response->toArray() as $key => $courseUnit) {
+            //dd($response[$key]->methods);
+            $response[$key]->methods = Method::whereHas('epochType', function (Builder $query) use($epoch_type_id) {
+                $query->where('epoch_type_id', $epoch_type_id);
+            })->whereRelation('courseUnits', 'course_unit_id', $courseUnit['id'])
+                ->with('evaluationType')
+                ->get()->toArray();
+
+            $is_complete = !Method::whereHas('epochType', function (Builder $query) use($epoch_type_id) {
+                $query->where('epoch_type_id', $epoch_type_id);
+            })->whereRelation('courseUnits', 'course_unit_id', $courseUnit['id'])
+                ->doesntHave('exams')
+                ->exists();//get()->toArray();
+            //dd($is_complete);
+            $response[$key]->is_complete = $is_complete;
+        }
+        return AvailableCourseUnitsResource::collection($response);
+    }
+
     public static function calendarInterruptions(Request $request)
     {
         $yearOfFirstDay = $request->input("first_year");

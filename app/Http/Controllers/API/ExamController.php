@@ -48,7 +48,7 @@ class ExamController extends Controller
         }
 
         if ($eventExam->in_class) {
-            $link = Link::createAllDay($title, $from, $to);
+            $link = Link::createAllDay($title, $from, 1);
         } else {
             $link = Link::create($title, $from, $to);
         }
