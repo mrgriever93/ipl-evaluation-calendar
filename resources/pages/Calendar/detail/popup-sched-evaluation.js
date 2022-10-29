@@ -65,8 +65,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
             axios.get(`/available-methods/${calendarId}/?epoch_id=${selectedEpoch}&year=${scheduleInformation.scholarYear}`)
                 .then((response) => {
                     if (response.status === 200) {
-                        let beforeSetCourseUnits = [];
-                        beforeSetCourseUnits = response.data.data;
+                        let beforeSetCourseUnits = response.data.data;
 
                         const mapped = beforeSetCourseUnits?.map(({id, name, methods, is_complete, has_methods}) => ({
                                 key: id,
@@ -98,8 +97,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
             axios.get(`/available-methods/${calendarId}/others?epoch_id=${selectedEpoch}&year=${scheduleInformation.scholarYear}`)
                 .then((response) => {
                     if (response.status === 200) {
-                        let beforeSetCourseUnits = [];
-                        beforeSetCourseUnits = response.data.data;
+                        let beforeSetCourseUnits = response.data.data;
                         const mapped = beforeSetCourseUnits?.map(({id, name, methods, is_complete, has_methods}) => ({
                                 key: id,
                                 value: id,
@@ -110,6 +108,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
                                 disabled: !has_methods,
                             }),
                         );
+
                         setShowMissingMethodsLink(beforeSetCourseUnits.filter((item) => !item.has_methods).length > 0);
                         setOtherCourseUnits(mapped);
                     }
@@ -179,7 +178,7 @@ const PopupScheduleEvaluation = ( {scheduleInformation, interruptions, isOpen, o
         const examScheduleObj = {
             calendar_id: parseInt(calendarId, 10),
             course_id: parseInt(scheduleInformation?.courseId),
-            course_unit_id: values.courseUnit == 'other' ? values.otherCourseUnit :  values.otherCourseUnit,
+            course_unit_id: values.courseUnit == 'other' ? values.otherCourseUnit :  values.courseUnit,
             group_id: values.group_id,
             date_start: dateStart,
             date_end: dateEnd,

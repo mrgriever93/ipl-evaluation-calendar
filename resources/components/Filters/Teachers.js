@@ -12,8 +12,10 @@ const FilterOptionTeacher = ({ widthSize, eventHandler, value, isSearch = true, 
 
     const getList = (search) => {
         setLoading(true);
+        setTeachersOptions([]);
         axios.get('/search/users' + (search ? "?q=" + search : "")).then((response) => {
             if (response.status >= 200 && response.status < 300) {
+                console.log(teachersOptions);
                 response.data.unshift({value: '', text: t((isSearch ? "Todos os Professores" : "Professores"))});
                 setTeachersOptions(response.data);
                 setLoading(false);

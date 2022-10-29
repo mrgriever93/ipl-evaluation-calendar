@@ -269,6 +269,13 @@ class ExternalImports
                         //$newestCourseUnit->academicYears()->syncWithoutDetaching($academicYearId); // -> Old logic, it had a pivot table [academic_year_course_unit]
                         // split teaches from request
                         // 2100;Matemáticas Gerais;210001;Matemática A ;Ana Cristina Felizardo Henriques(ana.f.henriques),Diogo Pedro Ferreira Nascimento Baptista(diogo.baptista),Fátima Maria Marques da Silva(fatima.silva),José Maria Gouveia Martins(jmmartins);1
+
+
+                        // Retrieve CourseUnit by code or create it if it doesn't exist...
+                        if($info[$school->index_course_unit_code] == "2197212"){
+                            Log::channel('courses_sync')->info($info);
+                        }
+
                         $teachers = explode(",", $info[$school->index_course_unit_teachers]);
                         $teachersForCourseUnit = [];
                         foreach ($teachers as $teacher) {
