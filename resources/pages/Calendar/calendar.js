@@ -1,12 +1,13 @@
 import axios from 'axios';
 import _ from 'lodash';
 import moment from 'moment';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {Link, useParams, useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {Button, Card, Container, Divider, Grid, Header, Icon, Placeholder, Table} from 'semantic-ui-react';
 import {AnimatePresence} from 'framer-motion';
 import {toast} from 'react-toastify';
+import { useReactToPrint } from 'react-to-print';
 
 import PageLoader from '../../components/PageLoader';
 import SCOPES from '../../utils/scopesConstants';
@@ -38,6 +39,9 @@ const Calendar = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isCalendarInfoLoading, setIsCalendarInfoLoading] = useState(true);
 
+    const [courseInfo, setCourseInfo] = useState();
+    const [phaseInfo, setPhaseInfo] = useState();
+
     const [openScheduleExamModal, setOpenScheduleExamModal] = useState(false);
     const [openExamDetailModal, setOpenExamDetailModal] = useState(false);
     const [viewExamId, setViewExamId] = useState(undefined);
@@ -58,6 +62,16 @@ const Calendar = () => {
 
     const [calendarWarnings, setCalendarWarnings] = useState([]);
     const [showingEpochs, setShowingEpochs] = useState([]);
+
+    const componentRef = useRef();
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+        bodyClass: 'printing',
+        documentTitle: '(' + generalInfo?.academic_year + "_" + generalInfo?.semester + ') ' + courseInfo?.initials + "_" + courseInfo?.display_name,
+        pageStyle: `@page {
+                        margin: 12mm;
+                    }`,
+    });
 
 
     useEffect(() => {
@@ -90,8 +104,8 @@ const Calendar = () => {
     const scheduleExamHandler = (scholarYear, epoch, date, existingExamsAtThisDate) => {
         setScheduleExamInfo({
             calendarId: parseInt(calendarId, 10),
-            courseId: generalInfo?.course?.id,
-            courseName: generalInfo?.course?.display_name,
+            courseId: courseInfo?.id,
+            courseName: courseInfo?.display_name,
             scholarYear: scholarYear,
             group_id: undefined,
             date_start: date,
@@ -108,8 +122,8 @@ const Calendar = () => {
         event.stopPropagation();
         setScheduleExamInfo({
             calendarId: parseInt(calendarId, 10),
-            courseId: generalInfo?.course?.id,
-            courseName: generalInfo?.course?.display_name,
+            courseId: courseInfo?.id,
+            courseName: courseInfo?.display_name,
             scholarYear: scholarYear,
             epochs: epochsList,
             selected_epoch: epoch,
@@ -254,6 +268,8 @@ const Calendar = () => {
                                 epochs,
                                 general_info,
                                 week_ten,
+                                course,
+                                phase,
                             },
                         },
                     } = response;
@@ -262,6 +278,9 @@ const Calendar = () => {
                     setIsPublished(!!published);
                     setInterruptions(interruptions);
                     setEpochsList(epochs);
+
+                    setCourseInfo(course);
+                    setPhaseInfo(phase);
 
                     let startDate = epochs.length > 0 ? epochs[0].start_date : undefined;
                     let endDate = epochs.length > 0 ? epochs[0].end_date : undefined;
@@ -297,6 +316,7 @@ const Calendar = () => {
 
     const weekData = useMemo(() => {
         if(epochsList.length > 0 && !isCalendarInfoLoading) {
+            console.log('weekData');
             return _.orderBy(
                 epochsList.filter((item) => showingEpochs.includes(item.id)).reduce((acc, curr) => {
                     const start_date = moment(curr.start_date);
@@ -308,6 +328,7 @@ const Calendar = () => {
                                     week: start_date.isoWeek(),
                                     year: start_date.year(),
                                     days: [],
+                                    epochsOverlap: false,
                                 });
                             }
 
@@ -381,9 +402,10 @@ const Calendar = () => {
                                     code: curr.code
                                 }];
                             }
-
-                            const weekEpochsFiltered = week.days.filter((item) => item.weekDay === start_date.day());
-                            week.epochsOverlap = weekEpochsFiltered.filter((item) => item.epochsDaily.length > 1).length > 0;
+                            if(!week.epochsOverlap) {
+                                const weekEpochsFiltered = week.days.filter((item) => item.weekDay === start_date.day());
+                                week.epochsOverlap = weekEpochsFiltered.filter((item) => item.epochsDaily.length > 1).length > 0;
+                            }
                         }
                         start_date.add(1, 'days');
                     }
@@ -409,7 +431,7 @@ const Calendar = () => {
         return Array(end - start + 1).fill().map((_, idx) => start + idx);
     }
 
-    const courseYears = generalInfo?.course?.duration ? range(1, generalInfo?.course?.duration) : [];
+    const courseYears = courseInfo?.duration ? range(1, courseInfo?.duration) : [];
     const weekDays = [1, 2, 3, 4, 5, 6];
     let alreadyAddedColSpan = false;
     let alreadyAddedRowSpan = false;
@@ -569,7 +591,7 @@ const Calendar = () => {
                         // For the Future (drag and drop
                         // draggable="false" onDragStart={drag}
                         <Button className={"btn-exam-details" + (exam.in_class ? " exam-in-class" : "" )}
-                            title={ (exam.in_class ? t('Aula') + " - " : "" ) + exam.course_unit.name + " - " + (exam.method?.description || exam.method?.name) }
+                            title={ (exam.in_class ? t('Aula') + " - " : "" ) + exam.course_unit.name_full + " - " + (exam.method?.description || exam.method?.name) }
                             color="blue" key={exam.id}
                             onClick={() => openExamDetailHandler(year, exam)}>
                             { !isPublished  && (calendarPermissions.filter((x) => x.name === SCOPES.EDIT_EXAMS).length > 0) && (
@@ -582,7 +604,7 @@ const Calendar = () => {
                                 </div>
                             )}
                             <div className="btn-exam-content">
-                                <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : (exam.in_class ? t('Aula') + " - " : "" ) ) + (exam.course_unit.initials || exam.course_unit.name) }</div>
+                                <div className="btn-exam-label">{ (exam.hour ? exam.hour + ' ' : (exam.in_class ? t('Aula') + " - " : "" ) ) + (exam.course_unit.initials || exam.course_unit.name_full) }</div>
                                 <div className="btn-exam-type">{ (exam.method?.description || exam.method?.name) }</div>
                             </div>
                         </Button>
@@ -618,154 +640,158 @@ const Calendar = () => {
      * Calendar
      */
     return (
-        <Container>
-            <div className="margin-bottom-base">
-                <Link to="/"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
-            </div>
-            <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings} isLoading={isLoading}
-                             isPublished={isPublished} isTemporary={isTemporary} showingEpochs={showingEpochs} epochsViewHandler={setShowingEpochs}
-                             hasCurrentWeek={ (moment(calendarStartDate, "DD-MM-YYYY").isSameOrBefore(moment()) && moment(calendarEndDate, "DD-MM-YYYY").isSameOrAfter(moment()))  } />
-            <AnimatePresence>
-                {isLoading && (<PageLoader animate={pageLoaderAnimate} exit={pageLoaderExit}/>)}
-            </AnimatePresence>
-            <div className='margin-top-l'>
-                { isLoading ? (
-                    <div className={"calendar-loader"}>
-                        <Card fluid>
-                            <Card.Content>
-                                <Placeholder fluid>
-                                    <Placeholder.Line length={"full"} />
-                                    <Placeholder.Line length={"full"} />
-                                </Placeholder>
-                                <Placeholder fluid className={"year-lines"}>
-                                    <Placeholder.Line length={"full"} />
-                                    <Placeholder.Line length={"full"} />
-                                    <Placeholder.Line length={"full"} />
-                                </Placeholder>
-                            </Card.Content>
-                        </Card>
-                        <Card fluid>
-                            <Card.Content>
-                                <Placeholder fluid>
-                                    <Placeholder.Line length={"full"} />
-                                    <Placeholder.Line length={"full"} />
-                                </Placeholder>
-                                <Placeholder fluid className={"year-lines"}>
-                                    <Placeholder.Line length={"full"} />
-                                    <Placeholder.Line length={"full"} />
-                                    <Placeholder.Line length={"full"} />
-                                </Placeholder>
-                            </Card.Content>
-                        </Card>
-                        <Card fluid>
-                            <Card.Content>
-                                <Placeholder fluid>
-                                    <Placeholder.Line length={"full"} />
-                                    <Placeholder.Line length={"full"} />
-                                </Placeholder>
-                                <Placeholder fluid className={"year-lines"}>
-                                    <Placeholder.Line length={"full"} />
-                                    <Placeholder.Line length={"full"} />
-                                    <Placeholder.Line length={"full"} />
-                                </Placeholder>
-                            </Card.Content>
-                        </Card>
-                    </div>
-                ) : (
-                    showingEpochs.length === 0 ? (
-                        <EmptyTable isLoading={false} label={t('Todas as épocas ficaram escondidas')}/>
+        <div ref={componentRef}>
+            <Container >
+                <Button onClick={handlePrint} className="pdf-print-button hide-on-print" color='blue'>{ t('Imprimir') }</Button>
+                <div className="margin-bottom-base breadcrumbs-back-link">
+                    <Link to="/"> <Icon name="angle left" /> {t('Voltar à lista')}</Link>
+                </div>
+                <InfosAndActions epochs={epochsList} calendarInfo={generalInfo} course={courseInfo} phase={phaseInfo} updatePhase={setCalendarPhase} warnings={calendarWarnings} isLoading={isLoading}
+                                isPublished={isPublished} isTemporary={isTemporary} showingEpochs={showingEpochs} epochsViewHandler={setShowingEpochs}
+                                hasCurrentWeek={ (moment(calendarStartDate, "DD-MM-YYYY").isSameOrBefore(moment()) && moment(calendarEndDate, "DD-MM-YYYY").isSameOrAfter(moment()))  } />
+                <AnimatePresence>
+                    {isLoading && (<PageLoader animate={pageLoaderAnimate} exit={pageLoaderExit}/>)}
+                </AnimatePresence>
+                <div className='margin-top-l'>
+                    { isLoading ? (
+                        <div className={"calendar-loader"}>
+                            <Card fluid>
+                                <Card.Content>
+                                    <Placeholder fluid>
+                                        <Placeholder.Line length={"full"} />
+                                        <Placeholder.Line length={"full"} />
+                                    </Placeholder>
+                                    <Placeholder fluid className={"year-lines"}>
+                                        <Placeholder.Line length={"full"} />
+                                        <Placeholder.Line length={"full"} />
+                                        <Placeholder.Line length={"full"} />
+                                    </Placeholder>
+                                </Card.Content>
+                            </Card>
+                            <Card fluid>
+                                <Card.Content>
+                                    <Placeholder fluid>
+                                        <Placeholder.Line length={"full"} />
+                                        <Placeholder.Line length={"full"} />
+                                    </Placeholder>
+                                    <Placeholder fluid className={"year-lines"}>
+                                        <Placeholder.Line length={"full"} />
+                                        <Placeholder.Line length={"full"} />
+                                        <Placeholder.Line length={"full"} />
+                                    </Placeholder>
+                                </Card.Content>
+                            </Card>
+                            <Card fluid>
+                                <Card.Content>
+                                    <Placeholder fluid>
+                                        <Placeholder.Line length={"full"} />
+                                        <Placeholder.Line length={"full"} />
+                                    </Placeholder>
+                                    <Placeholder fluid className={"year-lines"}>
+                                        <Placeholder.Line length={"full"} />
+                                        <Placeholder.Line length={"full"} />
+                                        <Placeholder.Line length={"full"} />
+                                    </Placeholder>
+                                </Card.Content>
+                            </Card>
+                        </div>
                     ) : (
-                        <Grid stackable className='calendar-tables'>
-                            <Grid.Row>
-                                <Grid.Column width="16">
-                                    {epochsList.length > 0 && weekData && weekData.map(({week, year, days, epochs, epochsOverlap}, tableIndex) => {
-                                        interruptionDays = 0;
-                                        alreadyAddedColSpan = false;
-                                        return (
-                                            <div key={tableIndex} className={"table-week" + (weekToday - 1 == week ? " current-week" : "")}>
-                                                {weekTen === week && (
-                                                    <Divider horizontal style={{marginTop: "var(--space-l)"}}>
-                                                        <Header as='h4' style={{textTransform: "uppercase"}}>
-                                                            <Icon name='calendar alternate outline' />
-                                                            { t("10ª semana") }
-                                                        </Header>
-                                                    </Divider>
-                                                )}
-                                                <Table celled>
-                                                    <Table.Header>
-                                                        <Table.Row textAlign="center">
-                                                            <Table.HeaderCell width="2">#{week}</Table.HeaderCell>
-                                                            <Table.HeaderCell width="2">{t('calendar.2ª Feira')}</Table.HeaderCell>
-                                                            <Table.HeaderCell width="2">{t('calendar.3ª Feira')}</Table.HeaderCell>
-                                                            <Table.HeaderCell width="2">{t('calendar.4ª Feira')}</Table.HeaderCell>
-                                                            <Table.HeaderCell width="2">{t('calendar.5ª Feira')}</Table.HeaderCell>
-                                                            <Table.HeaderCell width="2">{t('calendar.6ª Feira')}</Table.HeaderCell>
-                                                            <Table.HeaderCell width="2">{t('calendar.Sábado')}</Table.HeaderCell>
-                                                        </Table.Row>
-                                                        <Table.Row>
-                                                            <Table.HeaderCell textAlign="center">{year}</Table.HeaderCell>
-                                                            {weekDays.map((weekDay, index) => weekDayHeaderCell(days, weekDay, index) )}
-                                                        </Table.Row>
-                                                    </Table.Header>
-                                                    <Table.Body>
-                                                        { courseYears.map((year, courseIndex) => {
-                                                            alreadyAddedColSpan = false;
-                                                            alreadyAddedRowSpan = false;
-                                                            if(epochsOverlap) {
-                                                                return epochs.map((epoch, epochIndex) => (
-                                                                    <Table.Row key={courseIndex + "-" + epochIndex}>
-                                                                        {epochIndex === 0 && (
-                                                                            <Table.Cell textAlign="center"
-                                                                                        rowSpan={epochs.length}>{t("Ano") + " " + year}</Table.Cell>
-                                                                        )}
-                                                                        {weekDays.map((weekDay, weekDayIndex) => weekDayContentCell(epoch, days, courseIndex, year, weekDay, weekDayIndex, epochs.length))}
-                                                                    </Table.Row>
-                                                                ));
-                                                            } else {
-                                                                return (
-                                                                    <Table.Row key={courseIndex + "-" + year}>
-                                                                        <Table.Cell textAlign="center">{t("Ano") + " " + year}</Table.Cell>
-                                                                        {weekDays.map((weekDay, weekDayIndex) => weekDayContentCell(null, days, courseIndex, year, weekDay, weekDayIndex, 1))}
-                                                                    </Table.Row>
-                                                                )
-                                                            }
-                                                        })}
-                                                    </Table.Body>
-                                                </Table>
-                                            </div>
-                                        );
-                                    })}
-                                </Grid.Column>
-                            </Grid.Row>
-                        </Grid>
-                    )
-                )}
-            </div>
-            { /* TODO pass min and max dates */ }
-            <PopupScheduleInterruption
-                isOpen={openInterruptionModal}
-                onClose={closeInterruptionModal}
-                addedInterruption={addInterruptionToList}
-                deletedInterruption={removeInterruptionFromList}
-                info={interruptionModalInfo} />
+                        showingEpochs.length === 0 ? (
+                            <EmptyTable isLoading={false} label={t('Todas as épocas ficaram escondidas')}/>
+                        ) : (
+                            <Grid stackable className='calendar-tables'>
+                                <Grid.Row>
+                                    <Grid.Column width="16">
+                                        {epochsList.length > 0 && weekData && weekData.map(({week, year, days, epochs, epochsOverlap}, tableIndex) => {
+                                            interruptionDays = 0;
+                                            alreadyAddedColSpan = false;
+                                            return (
+                                                <div key={tableIndex} className={"table-week" + (weekToday - 1 == week ? " current-week" : "")}>
+                                                    {weekTen === week && (
+                                                        <Divider horizontal style={{marginTop: "var(--space-l)"}}>
+                                                            <Header as='h4' style={{textTransform: "uppercase"}}>
+                                                                <Icon name='calendar alternate outline' />
+                                                                { t("10ª semana") }
+                                                            </Header>
+                                                        </Divider>
+                                                    )}
+                                                    <Table celled>
+                                                        <Table.Header>
+                                                            <Table.Row textAlign="center">
+                                                                <Table.HeaderCell width="2">#{week}</Table.HeaderCell>
+                                                                <Table.HeaderCell width="2">{t('calendar.2ª Feira')}</Table.HeaderCell>
+                                                                <Table.HeaderCell width="2">{t('calendar.3ª Feira')}</Table.HeaderCell>
+                                                                <Table.HeaderCell width="2">{t('calendar.4ª Feira')}</Table.HeaderCell>
+                                                                <Table.HeaderCell width="2">{t('calendar.5ª Feira')}</Table.HeaderCell>
+                                                                <Table.HeaderCell width="2">{t('calendar.6ª Feira')}</Table.HeaderCell>
+                                                                <Table.HeaderCell width="2">{t('calendar.Sábado')}</Table.HeaderCell>
+                                                            </Table.Row>
+                                                            <Table.Row>
+                                                                <Table.HeaderCell textAlign="center">{year}</Table.HeaderCell>
+                                                                {weekDays.map((weekDay, index) => weekDayHeaderCell(days, weekDay, index) )}
+                                                            </Table.Row>
+                                                        </Table.Header>
+                                                        <Table.Body>
+                                                            { courseYears.map((year, courseIndex) => {
+                                                                alreadyAddedColSpan = false;
+                                                                alreadyAddedRowSpan = false;
+                                                                if(epochsOverlap) {
+                                                                    return epochs.map((epoch, epochIndex) => (
+                                                                        <Table.Row key={courseIndex + "-" + epochIndex}>
+                                                                            {epochIndex === 0 && (
+                                                                                <Table.Cell textAlign="center"
+                                                                                            rowSpan={epochs.length}>{t("Ano") + " " + year}</Table.Cell>
+                                                                            )}
+                                                                            {weekDays.map((weekDay, weekDayIndex) => weekDayContentCell(epoch, days, courseIndex, year, weekDay, weekDayIndex, epochs.length))}
+                                                                        </Table.Row>
+                                                                    ));
+                                                                } else {
+                                                                    return (
+                                                                        <Table.Row key={courseIndex + "-" + year}>
+                                                                            <Table.Cell textAlign="center">{t("Ano") + " " + year}</Table.Cell>
+                                                                            {weekDays.map((weekDay, weekDayIndex) => weekDayContentCell(null, days, courseIndex, year, weekDay, weekDayIndex, 1))}
+                                                                        </Table.Row>
+                                                                    )
+                                                                }
+                                                            })}
+                                                        </Table.Body>
+                                                    </Table>
+                                                </div>
+                                            );
+                                        })}
+                                    </Grid.Column>
+                                </Grid.Row>
+                            </Grid>
+                        )
+                    )}
+                </div>
+                { /* TODO pass min and max dates */ }
+                <PopupScheduleInterruption
+                    isOpen={openInterruptionModal}
+                    onClose={closeInterruptionModal}
+                    addedInterruption={addInterruptionToList}
+                    deletedInterruption={removeInterruptionFromList}
+                    info={interruptionModalInfo} />
 
-            <PopupEvaluationDetail
-                isPublished={isPublished || isTemporary}
-                isOpen={openExamDetailModal}
-                currentPhaseId={generalInfo?.phase?.id || 0}
-                onClose={closeExamDetailHandler}
-                examId={viewExamId} />
+                <PopupEvaluationDetail
+                    isPublished={isPublished || isTemporary}
+                    isOpen={openExamDetailModal}
+                    currentPhaseId={phaseInfo?.id || 0}
+                    onClose={closeExamDetailHandler}
+                    examId={viewExamId} />
 
-            <PopupScheduleEvaluation
-                isOpen={openScheduleExamModal}
-                onClose={closeScheduleExamModal}
-                interruptions={interruptionsList}
-                scheduleInformation={scheduleExamInfo}
-                addedExam={addExamToList}
-                updatedExam={updateExamInList}
-                deletedExam={removeExamFromList}
-                calendarDates={{minDate: calendarStartDate, maxDate: calendarEndDate}}/>
-        </Container>
+                <PopupScheduleEvaluation
+                    isOpen={openScheduleExamModal}
+                    onClose={closeScheduleExamModal}
+                    interruptions={interruptionsList}
+                    scheduleInformation={scheduleExamInfo}
+                    addedExam={addExamToList}
+                    updatedExam={updateExamInList}
+                    deletedExam={removeExamFromList}
+                    calendarDates={{minDate: calendarStartDate, maxDate: calendarEndDate}}/>
+            </Container>
+        </div>
+
     );
 };
 export default Calendar;

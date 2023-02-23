@@ -219,9 +219,9 @@ class ExternalImports
                                 "name_pt" => $info[$school->index_course_unit_name_pt],
                                 "name_en" => $info[$school->index_course_unit_name_en], // this will duplicate the value as default, to prevent empty states
 
-                                "registered"=> $info[$school->index_course_unit_registered],
-                                "passed"    => $info[$school->index_course_unit_passed],
-                                "flunk"     => $info[$school->index_course_unit_flunk],
+                                "registered"=> $info[$school->index_course_unit_registered] ? $info[$school->index_course_unit_registered]  : 0,
+                                "passed"    => $info[$school->index_course_unit_passed]     ? $info[$school->index_course_unit_passed]      : 0,
+                                "flunk"     => $info[$school->index_course_unit_flunk]      ? $info[$school->index_course_unit_flunk]       : 0,
                             ]
                         );
 
@@ -269,6 +269,13 @@ class ExternalImports
                         //$newestCourseUnit->academicYears()->syncWithoutDetaching($academicYearId); // -> Old logic, it had a pivot table [academic_year_course_unit]
                         // split teaches from request
                         // 2100;Matemáticas Gerais;210001;Matemática A ;Ana Cristina Felizardo Henriques(ana.f.henriques),Diogo Pedro Ferreira Nascimento Baptista(diogo.baptista),Fátima Maria Marques da Silva(fatima.silva),José Maria Gouveia Martins(jmmartins);1
+
+
+                        // Retrieve CourseUnit by code or create it if it doesn't exist...
+                        if($info[$school->index_course_unit_code] == "2197212"){
+                            Log::channel('courses_sync')->info($info);
+                        }
+
                         $teachers = explode(",", $info[$school->index_course_unit_teachers]);
                         $teachersForCourseUnit = [];
                         foreach ($teachers as $teacher) {

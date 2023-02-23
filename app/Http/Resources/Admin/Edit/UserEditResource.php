@@ -10,11 +10,12 @@ class UserEditResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'        => $this->id,
-            'email'     => $this->email,
-            'name'      => $this->name,
-            'enabled'   => $this->enabled,
-            'groups'    => IdResource::collection($this->whenLoaded('groups'))
+            'id'            => $this->id,
+            'email'         => $this->email,
+            'name'          => $this->name,
+            'enabled'       => $this->enabled,
+            'is_protected'  => $this->protected,
+            'groups'        => IdResource::collection($this->whenLoaded('groups'))
         ];
     }
 }

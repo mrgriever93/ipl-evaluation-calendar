@@ -547,6 +547,7 @@
         "Calendário de Avaliação": "Calendário de Avaliação",
         "Esta semana": "Esta semana",
         "Detalhe da Unidade Curricular": "Detalhe da Unidade Curricular",
+        "Imprimir": "Imprimir",
 
 
         "Não tem Unidades Curriculares associadas para os dados selecionados ou não tem permissões.": "Não tem Unidades Curriculares associadas para os dados selecionados ou não tem permissões.",
@@ -555,7 +556,10 @@
 
         "Detalhe de Agrupamento de Unidades Curriculares - ": "Detalhe de Agrupamento de Unidades Curriculares - ",
 
-        "Calendários de Avaliação - IPLeiria": "Calendários de Avaliação - IPLeiria"
+        "Calendários de Avaliação - IPLeiria": "Calendários de Avaliação - IPLeiria",
 
+        "A nova password tem de ter pelo menos 8 digitos": "A nova password tem de ter pelo menos 8 digitos",
+        "The new must contain at least one uppercase and one lowercase letter.": "A nova password tem de ter pelo menos uma letra maiuscula e uma minuscula",
+        "The new must contain at least one number.": "A nova password tem de ter pelo menos um número"
     }
 }

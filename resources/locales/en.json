@@ -551,7 +551,7 @@
         "Calendário de Avaliação": "Assessments Calendar",
         "Esta semana": "This week",
         "Detalhe da Unidade Curricular": "Curricular unit detail",
-
+        "Imprimir": "Print",
 
 
 
@@ -564,6 +564,10 @@
 
 
         "Detalhe de Agrupamento de Unidades Curriculares - ": "Detalhe de Agrupamento de Unidades Curriculares - ",
-        "Calendários de Avaliação - IPLeiria": "Calendários de Avaliação - IPLeiria"
+        "Calendários de Avaliação - IPLeiria": "Calendários de Avaliação - IPLeiria",
+
+        "A nova password tem de ter pelo menos 8 digitos": "The new password must have at least 8 digits",
+        "The new must contain at least one uppercase and one lowercase letter.": "The new password must contain at least one uppercase and one lowercase letter.",
+        "The new must contain at least one number.": "The new password must contain at least one number."
     }
 }
