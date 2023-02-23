@@ -83,6 +83,12 @@ class CalendarController extends Controller
         return $response;
     }
 
+    public function getAvailableMethodsOthers(Request $request, Calendar $calendar)
+    {
+        $response = CalendarService::getAvailableMethodsOthers($request, $calendar);
+        return $response;
+    }
+
     public function listSemesters(Request $request)
     {
         if($request->has('special')){

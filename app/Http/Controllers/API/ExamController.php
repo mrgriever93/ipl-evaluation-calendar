@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\NewExamRequest;
 use App\Http\Resources\ExamResource;
 use App\Models\Calendar;
+use App\Models\Course;
 use App\Models\CourseUnit;
 use App\Models\CourseUnitGroup;
 use App\Models\Epoch;
@@ -48,7 +49,7 @@ class ExamController extends Controller
         }
 
         if ($eventExam->in_class) {
-            $link = Link::createAllDay($title, $from, $to);
+            $link = Link::createAllDay($title, $from, 1);
         } else {
             $link = Link::create($title, $from, $to);
         }
@@ -98,9 +99,20 @@ class ExamController extends Controller
 
         $courseUnitGroup = CourseUnit::find($request->course_unit_id)->group;
         $courseUnitGroup = $courseUnitGroup ? $courseUnitGroup->id : null;
+
         if ($courseUnitGroup) {
             $cal = Calendar::find($calendarId);
+
             $courses = CourseUnitGroup::find($courseUnitGroup)->courseUnits->pluck('course_id');
+            $specialCourses = false;
+            if($courses->unique()->count() == 1){
+                $courseCheck = Course::find($courses->unique()->first());
+                if($courseCheck->degree == 0){
+                    $specialCourses = true;
+                    $courses[] = $request->course_id;
+                }
+            }
+
             $calendars = Calendar::whereIn('course_id', $courses)
                 ->where('semester_id', $cal->semester_id)
                 ->ofAcademicYear($cal->academic_year_id)
@@ -118,7 +130,12 @@ class ExamController extends Controller
 
                     // This will let the users create multiple times an exam for the method
                     if ($hasEpoch){// && !$hasExams) {
-                        $courseUnit = CourseUnit::where('course_id', $calendar->course_id)->where('course_unit_group_id', $courseUnitGroup)->first();
+                        if($specialCourses){
+                            $courseUnit = CourseUnit::find($request->course_unit_id);
+                        } else {
+                            $courseUnit = CourseUnit::where('course_id', $calendar->course_id)->where('course_unit_group_id', $courseUnitGroup)->first();
+                        }
+
                         if($courseUnit) {
                             $newGroupedExam = new Exam($request->all());
                             // dynamic fields

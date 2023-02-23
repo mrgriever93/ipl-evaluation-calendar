@@ -1,28 +1,13 @@
 import axios from 'axios';
-import _ from 'lodash';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
-import {
-    Button,
-    Form,
-    Header,
-    Icon,
-    List,
-    Modal,
-    Comment,
-    Divider,
-    Segment,
-    Dimmer,
-    Loader,
-    Dropdown
-} from 'semantic-ui-react';
+import {Button, Form, Header, Icon, List, Modal, Comment, Divider, Segment, Dimmer, Loader, Dropdown} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
 
 import ShowComponentIfAuthorized from '../../../components/ShowComponentIfAuthorized';
 import SCOPES from '../../../utils/scopesConstants';
 import {errorConfig, successConfig} from '../../../utils/toastConfig';
-import {Link} from "react-router-dom";
 
 const PopupEvaluationDetail = ( {isPublished, isOpen, currentPhaseId, onClose, examId} ) => {
     // const history = useNavigate();
